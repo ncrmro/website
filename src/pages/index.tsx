@@ -6,6 +6,6 @@ export default withSiteData(({ title, posts }: { title: string, posts: any }) =>
     <h1>
       {title}
     </h1>
-    {posts.map((post: any) => <div>{post.id}</div>)}
+    {posts.map((post: any) => <div key={post.id}>{post.id}</div>)}
   </div>
 ))
