@@ -2,7 +2,7 @@ import React from 'react'
 import { Root, Routes } from 'react-static'
 import { Link } from '@reach/router'
 import './app.css'
-import FancyDiv from '@components/FancyDiv'
+// import FancyDiv from '@components/FancyDiv'
 
 function App() {
   return (
@@ -13,9 +13,7 @@ function App() {
         <Link to="/blog">Blog</Link>
       </nav>
       <div className="content">
-        <FancyDiv>
           <Routes />
-        </FancyDiv>
       </div>
     </Root>
   )
