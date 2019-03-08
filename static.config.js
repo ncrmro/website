@@ -22,7 +22,7 @@ export default {
   plugins: ['react-static-plugin-typescript'],
   entry: path.join(__dirname, 'src', 'index.tsx'),
   getSiteData: () => ({
-    title: 'React Static',
+    title: 'NCRMRO',
   }),
   getRoutes: async () => {
     const posts = readStaticMarkdown();
