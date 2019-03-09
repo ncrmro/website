@@ -23,7 +23,8 @@ function readStaticMarkdown() {
 function setClientVariables() {
     const environment_variables = {
         client: true,
-        SENTRY_DSN: process.env.SENTRY_DSN
+        SENTRY_DSN: process.env.SENTRY_DSN,
+        ENVIRONMENT: process.env.ENVIRONMENT
     }
     return `const process = ${JSON.stringify( { env: environment_variables } )}`
 }

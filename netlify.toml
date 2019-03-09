@@ -5,10 +5,9 @@
 
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
-#[context.master]
-#  command = "yarn run build"
-#  [context.master.environment]
-#    ACCESS_TOKEN = "super secret"
+[context.master]
+  [context.master.environment]
+    ENVIRONMENT = "production"
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.

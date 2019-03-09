@@ -7,4 +7,5 @@ export interface PostType {
 
 export interface ENV {
   SENTRY_DSN?: string
+  ENVIRONMENT: 'production' | 'development'
 }
