@@ -1,5 +1,7 @@
 import path from 'path'
 import fs from 'fs'
+import React, {Component} from "react";
+
 
 function readStaticMarkdown() {
   const dir = './public/posts/'
@@ -18,9 +20,19 @@ function readStaticMarkdown() {
   return posts
 }
 
+function setClientVariables() {
+    const environment_variables = {
+        client: true,
+        SENTRY_DSN: process.env.SENTRY_DSN
+    }
+    return `const env = ${JSON.stringify( environment_variables )}`
+}
+
+
 export default {
   plugins: ['react-static-plugin-typescript'],
-  entry: path.join(__dirname, 'src', 'index.tsx'),
+    siteRoot: process.env.SITE_ROOT,
+    entry: path.join( __dirname, 'src', 'index.tsx' ),
   getSiteData: () => ({
     title: 'NCRMRO', posts: readStaticMarkdown()
   }),
@@ -40,4 +52,26 @@ export default {
       },
     ]
   },
+    Document: class CustomHtml extends Component {
+        render() {
+            const { Html, Head, Body, children } = this.props;
+
+            return (
+                <Html>
+                <Head>
+                    <meta charSet="utf-8"/>
+                    <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1"
+                    />
+
+                    <script dangerouslySetInnerHTML={{ __html: setClientVariables() }}/>
+                </Head>
+                <Body>
+                {children}
+                </Body>
+                </Html>
+            );
+        }
+    }
 }

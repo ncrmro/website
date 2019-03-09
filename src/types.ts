@@ -4,3 +4,7 @@ export interface PostType {
   body: string
   title: string
 }
+
+export interface ENV {
+  SENTRY_DSN?: string
+}

@@ -1,5 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import onStart from './onStart'
+
+// Initialize any third party libraries here
+onStart()
 
 // Your top level component
 import App from './App'

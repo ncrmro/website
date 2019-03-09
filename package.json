@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@reach/router": "^1.2.1",
+    "@sentry/browser": "^4.6.4",
     "axios": "^0.18.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
