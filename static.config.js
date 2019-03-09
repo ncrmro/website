@@ -25,7 +25,7 @@ function setClientVariables() {
         client: true,
         SENTRY_DSN: process.env.SENTRY_DSN
     }
-    return `const env = ${JSON.stringify( environment_variables )}`
+    return `const process = ${JSON.stringify( { env: environment_variables } )}`
 }
 
 
