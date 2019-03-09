@@ -8,11 +8,13 @@
     "bundle": "react-static bundle",
     "export": "react-static export",
     "serve": "serve dist -p 3000 -s",
-    "prettier": "prettier --write 'src/**/*{.ts,.tsx,js}'"
+    "prettier": "prettier --write 'src/**/*{.ts,.tsx,js}'",
+    "sentry_release": "sentry-cli releases new -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --auto"
   },
   "dependencies": {
     "@reach/router": "^1.2.1",
     "@sentry/browser": "^4.6.4",
+    "@sentry/cli": "^1.40.0",
     "axios": "^0.18.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
