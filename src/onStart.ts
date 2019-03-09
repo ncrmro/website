@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/browser'
-import { ENV } from './types'
+import * as Sentry from "@sentry/browser";
+import { ENV } from "./types";
 
 declare const process: {
   ['env']: ENV
@@ -10,6 +10,7 @@ function onStart() {
     Sentry.init({
       environment: process.env.ENVIRONMENT,
       dsn: process.env.SENTRY_DSN,
+      release: process.env.COMMIT_REF,
     })
   }
 }
