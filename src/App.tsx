@@ -13,7 +13,7 @@ function App() {
         <Link to="/blog">Blog</Link>
       </nav>
       <div className="content">
-          <Routes />
+        <Routes />
       </div>
     </Root>
   )

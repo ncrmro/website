@@ -1,6 +1,6 @@
 export interface PostType {
-  id: number,
-  fileName: string,
+  id: number
+  fileName: string
   body: string
   title: string
 }
