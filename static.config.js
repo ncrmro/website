@@ -1,4 +1,3 @@
-import axios from 'axios'
 import path from 'path'
 import fs from 'fs'
 
@@ -9,9 +8,10 @@ function readStaticMarkdown() {
   for (const file of files) {
     posts.push(
         {
-          'id': file.replace('.md', ''),
-          'title': file.replace('.md', ''),
-          'body': fs.readFileSync(dir + file, {encoding: 'utf8'})
+            id: file.replace('.md', ''),
+            fileName: file,
+            title: file.replace('.md', ''),
+            // 'body': fs.readFileSync(dir + file, {encoding: 'utf8'})
         }
     )
   }

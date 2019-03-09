@@ -1,9 +1,9 @@
 import React from 'react'
 import { withRouteData } from 'react-static'
 import { Link } from '@reach/router'
-import { Post } from '../types'
+import { PostType } from '../types'
 
-export default withRouteData(({ posts }: { posts: Post[] }) => (
+export default withRouteData(({ posts }: { posts: PostType[] }) => (
   <div>
     <h1>It's blog time.</h1>
     <br />
