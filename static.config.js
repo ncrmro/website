@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import React, {Component} from "react";
-
+require('dotenv').config()
 
 function readStaticMarkdown() {
   const dir = './public/posts/'
