@@ -1,19 +1,24 @@
 import path from 'path'
 import fs from 'fs'
 import React, {Component} from "react";
+import extractMarkdownMetaData from "markdownExtractor"
+
 require('dotenv').config()
 
 function readStaticMarkdown() {
   const dir = './public/posts/'
   const posts = []
   const files = fs.readdirSync(dir)
-  for (const file of files) {
+    for (let file of files) {
+        file = fs.readFileSync( dir + file, { encoding: 'utf8' } );
+        const { markdown, metadata } = extractMarkdownMetaData( file );
     posts.push(
         {
             id: file.replace('.md', ''),
             fileName: file,
             title: file.replace('.md', ''),
-            // 'body': fs.readFileSync(dir + file, {encoding: 'utf8'})
+            'body': markdown,
+            ...metadata
         }
     )
   }

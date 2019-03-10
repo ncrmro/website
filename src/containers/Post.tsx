@@ -14,13 +14,15 @@ class Post extends React.Component<any, PostType> {
   componentDidMount() {
     axios.get(`/posts/${this.state.fileName}`).then((res: any) => {
       const { markdown, metadata } = extractMarkdownMetaData(res.data)
-      this.setState({ body: markdown, metadata })
+      this.setState({ body: markdown, ...metadata })
     })
   }
 
   public render(): JSX.Element {
     return (
       <div>
+        <h1>{this.state.title}</h1>
+        <div>{this.state.datePosted}</div>
         <ReactMarkdown source={this.state.body} />
       </div>
     )

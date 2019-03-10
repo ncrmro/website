@@ -3,7 +3,7 @@ export interface PostType {
   fileName: string
   body: string
   title: string
-  metadata: any
+  datePosted: string
 }
 
 export interface ENV {
