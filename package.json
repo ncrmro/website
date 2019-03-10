@@ -9,7 +9,7 @@
     "export": "react-static export",
     "serve": "serve dist -p 3000 -s",
     "prettier": "prettier --write 'src/**/*{.ts,.tsx,js}'",
-    "sentry_release": "sentry-cli releases new --finalize -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --auto $COMMIT_REF && sentry-cli releases deploys $COMMIT_REF new -e $ENVIRONMENT"
+    "sentry_release": "sentry-cli releases new --finalize -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --commit ncrmro/ncrmro-static@$COMMIT_REF $COMMIT_REF && sentry-cli releases deploys $COMMIT_REF new -e $ENVIRONMENT"
   },
   "dependencies": {
     "@reach/router": "^1.2.1",
