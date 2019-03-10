@@ -11,4 +11,5 @@ export interface ENV {
   SENTRY_DSN?: string
   ENVIRONMENT: 'production' | 'development'
   COMMIT_REF: string
+  GOOGLE_ANALYTICS: string
 }
