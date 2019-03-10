@@ -14,14 +14,17 @@
   "dependencies": {
     "@reach/router": "^1.2.1",
     "@sentry/browser": "^4.6.4",
+    "@types/yaml": "^1.0.2",
     "axios": "^0.18.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-hot-loader": "^4.3.12",
     "react-markdown": "^4.0.6",
-    "react-static": "^6.0.18"
+    "react-static": "^6.0.18",
+    "yaml": "^1.4.0"
   },
   "devDependencies": {
+    "@sentry/cli": "^1.40.0",
     "@types/node": "^10.12.23",
     "@types/reach__router": "^1.2.2",
     "@types/react": "^16.8.2",
@@ -29,7 +32,6 @@
     "@types/react-hot-loader": "^4.1.0",
     "@types/webpack-env": "^1.13.6",
     "dotenv": "^6.2.0",
-    "@sentry/cli": "^1.40.0",
     "prettier": "1.16.4",
     "react-static-plugin-typescript": "^3.1.0",
     "serve": "10.1.1"

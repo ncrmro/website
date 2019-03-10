@@ -1,8 +1,8 @@
-import { Link } from '@reach/router'
 import axios from 'axios'
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import { withRouteData } from 'react-static'
+import extractMarkdownMetaData from '../markdownExtractor'
 import { PostType } from '../types'
 
 class Post extends React.Component<any, PostType> {
@@ -13,15 +13,14 @@ class Post extends React.Component<any, PostType> {
 
   componentDidMount() {
     axios.get(`/posts/${this.state.fileName}`).then((res: any) => {
-      const content = res.data
-      this.setState({ body: content })
+      const { markdown, metadata } = extractMarkdownMetaData(res.data)
+      this.setState({ body: markdown, metadata })
     })
   }
 
   public render(): JSX.Element {
     return (
       <div>
-        <Link to="/blog/">{'<'} Back</Link>
         <ReactMarkdown source={this.state.body} />
       </div>
     )
