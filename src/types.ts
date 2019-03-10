@@ -4,6 +4,7 @@ export interface PostType {
   body: string
   title: string
   datePosted: string
+  description: string
 }
 
 export interface ENV {
