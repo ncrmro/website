@@ -7,7 +7,7 @@ export default withSiteData(
     <div style={{ textAlign: 'center' }}>
       <h1>{title}</h1>
       {posts.map((post: any) => (
-        <Link key={post.id} to={`/blog/post/${post.id}/`}>
+        <Link key={post.id} to={`/posts/${post.id}`}>
           {post.title}
         </Link>
       ))}

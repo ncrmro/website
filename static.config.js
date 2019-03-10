@@ -42,10 +42,10 @@ export default {
     const posts = readStaticMarkdown();
     return [
       {
-        path: '/blog',
+        path: '/',
         getData: () => ({ posts } ),
         children: posts.map(post => ({
-          path: `/post/${post.id}`,
+          path: `/posts/${post.id}`,
           component: 'src/containers/Post',
           getData: () => ({
             post,
