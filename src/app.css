@@ -41,3 +41,7 @@ nav a {
 ul {
   list-style: none;
 }
+
+.post_link {
+  padding: 1rem;
+}
