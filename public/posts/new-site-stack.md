@@ -25,6 +25,6 @@ datePosted: 3/9/2019
 The new site was created using...
 ```
 
-The goal was to have an extremely customizable blog I can write markdown in and make any customizations I like easily.
+The goal was to have an extremely customizable blog I can write markdown in and make any customizations I like easily while having zero worries about maintenance.
 
 The source code for the site can be found on Github here [here](https://github.com/ncrmro/ncrmro-static).
