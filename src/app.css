@@ -1,6 +1,8 @@
 body {
   font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial,
     'Lucida Grande', sans-serif;
+  background-image: url("/images/white-waves.png");
+  background-repeat: repeat-xy;
   font-weight: 300;
   font-size: 16px;
   margin: 0;
@@ -30,4 +32,7 @@ nav a {
 
 .content {
   padding: 1rem;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
 }
