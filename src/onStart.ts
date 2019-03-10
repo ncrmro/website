@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/browser";
-import { ENV } from "./types";
+import * as Sentry from '@sentry/browser'
+import { ENV } from './types'
 
 declare const process: {
   ['env']: ENV
