@@ -1,7 +1,7 @@
 ---
 layout: post
 title: MacOS fast user switching.
-description: Use fast user switching for hygienic speration between personal and professional accounts on a single laptop.
+description: Use fast user switching for hygienic separation between personal and professional accounts on a single laptop.
 datePosted: 4/9/2019
 ---
 
