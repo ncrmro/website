@@ -1,8 +1,8 @@
 ---
 layout: post
-title: MacOS fast user switching.
-description: Use fast user switching for hygienic separation between personal and professional accounts on a single laptop.
-datePosted: 4/9/2019
+title: Learning network security with IoT/HomeKit.
+description: How setting up IoT/HomeKit can teach you about network security.
+datePosted: 4/15/2019
 ---
 
 It started with [HomeKit](https://www.apple.com/ios/home/).
