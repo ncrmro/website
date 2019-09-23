@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import onStart from './onStart'
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 // Initialize any third party libraries here
 onStart()
 
