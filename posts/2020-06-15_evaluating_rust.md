@@ -2,7 +2,7 @@
 slug: '/posts/evaluating-rust'
 title: 'Evaluating Rust.'
 description: 'A look at setting up a based Rust REST API.'
-date: '2020-05-29'
+date: '2020-06-15'
 tags:
   ['programming', 'embedded', 'Rust', 'Python', 'IoT', 'software', 'hardware']
 ---
