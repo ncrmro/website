@@ -1,23 +1,25 @@
 import React from 'react'
+import { OutboundLink } from "gatsby-plugin-google-analytics"
 
 const Footer = () => (
   <div id="footer">
     <div className="inner">
       <ul className="icons">
         <li>
-          <a href="https://twitter.com/ncrmro" className="icon fa-twitter">
+
+          <OutboundLink href="https://twitter.com/ncrmro" className="icon fa-twitter">
             <span className="label">Twitter</span>
-          </a>
+          </OutboundLink>
         </li>
         <li>
-          <a href="https://github.com/ncrmro" className="icon fa-github">
+          <OutboundLink href="https://github.com/ncrmro" className="icon fa-github">
             <span className="label">Github</span>
-          </a>
+          </OutboundLink>
         </li>
         <li>
-          <a href="#" className="icon fa-linkedin">
+          <OutboundLink href="#" className="icon fa-linkedin">
             <span className="label">Linkdin</span>
-          </a>
+          </OutboundLink>
         </li>
       </ul>
     </div>
