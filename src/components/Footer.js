@@ -22,7 +22,10 @@ const Footer = () => (
           </OutboundLink>
         </li>
         <li>
-          <OutboundLink href="https://www.linkedin.com/in/ncrmro/" className="icon fa-linkedin">
+          <OutboundLink
+            href="https://www.linkedin.com/in/ncrmro/"
+            className="icon fa-linkedin"
+          >
             <span className="label">Linkdin</span>
           </OutboundLink>
         </li>
