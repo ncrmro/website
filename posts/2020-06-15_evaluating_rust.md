@@ -50,7 +50,7 @@ Previously I've written a React/Django Boilerplate called [Rjango](https://githu
 I've found GraphQL and Relay are pretty optional outside (Relay I don't even really recommend using) so I like to stick to
 stick with just REST nowadays.
 
-### The replacement in Rust: [planet-express](https://github.com/ncrmro/planet-express)
+### The replacement API built in Rust: [planet-express](https://github.com/ncrmro/planet-express)
 
 My replacement for Rjango is a Rust Boilerplate called [planet-express](https://github.com/ncrmro/planet-express). It uses [SQLx](https://github.com/launchbadge/sqlx) so your queries are written in
 SQL which is checked at compile time to ensure your SQL is compliant and your Database and Rust Types are always in line.
