@@ -19,8 +19,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^5.2.1",
-    "react-images": "^1.0.0",
-    "sentry_release": "sentry-cli releases new --finalize -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --commit ncrmro/ncrmro-static@$COMMIT_REF $COMMIT_REF && sentry-cli releases -p ncrmro-static files $COMMIT_REF upload-sourcemaps dist && sentry-cli releases deploys $COMMIT_REF new -e $ENVIRONMENT"
+    "react-images": "^1.0.0"
   },
   "keywords": [
     "gatsby"
@@ -30,7 +29,8 @@
     "build": "gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sentry_release": "sentry-cli releases new --finalize -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --commit ncrmro/ncrmro-static@$COMMIT_REF $COMMIT_REF && sentry-cli releases -p ncrmro-static files $COMMIT_REF upload-sourcemaps dist && sentry-cli releases deploys $COMMIT_REF new -e $ENVIRONMENT"
   },
   "devDependencies": {
     "@sentry/cli": "^1.40.0",
