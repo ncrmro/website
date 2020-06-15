@@ -1,7 +1,7 @@
 ---
 slug: '/posts/evaluating-rust'
 title: 'Evaluating Rust.'
-description: 'A look at setting up a based Rust REST API.'
+description: 'A look at setting using Rust for REST APIs and Embedded development.'
 date: '2020-06-15'
 tags:
   ['programming', 'embedded', 'Rust', 'Python', 'IoT', 'software', 'hardware']
