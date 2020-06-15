@@ -30,7 +30,7 @@
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.js\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sentry_release": "sentry-cli releases new --finalize -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --commit ncrmro/ncrmro-static@$COMMIT_REF $COMMIT_REF && sentry-cli releases -p ncrmro-static files $COMMIT_REF upload-sourcemaps public && sentry-cli releases deploys $COMMIT_REF new -e $ENVIRONMENT"
+    "sentry_release": "sentry-cli releases new --finalize -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --commit ncrmro/ncrmro-static@$COMMIT_REF $COMMIT_REF && sentry-cli releases -p ncrmro-static files $COMMIT_REF upload-sourcemaps public && sentry-cli releases deploys $COMMIT_REF new -e $CONTEXT"
   },
   "devDependencies": {
     "@sentry/cli": "^1.40.0",
