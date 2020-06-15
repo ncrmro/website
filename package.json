@@ -1,48 +1,45 @@
 {
-  "name": "react-static-example-typescript",
+  "name": "ncrmro-static",
   "private": true,
   "version": "v0.0.0",
-  "scripts": {
-    "start": "react-static start",
-    "stage": "react-static build --staging",
-    "build": "react-static build",
-    "bundle": "react-static bundle",
-    "export": "react-static export",
-    "serve": "serve dist -p 3000 -s",
-    "prettier": "prettier --write 'src/**/*{.ts,.tsx,js}'",
+  "author": "Nicholas Romero",
+  "dependencies": {
+    "@sentry/browser": "^4.6.4",
+    "gatsby": "^2.20.12",
+    "gatsby-plugin-google-analytics": "^2.3.4",
+    "gatsby-plugin-manifest": "^2.3.3",
+    "gatsby-plugin-netlify": "^2.3.5",
+    "gatsby-plugin-offline": "^3.1.2",
+    "gatsby-plugin-react-helmet": "^3.2.1",
+    "gatsby-plugin-sass": "^2.2.1",
+    "gatsby-plugin-sentry": "^1.0.1",
+    "gatsby-source-filesystem": "^2.3.11",
+    "gatsby-transformer-remark": "^2.8.15",
+    "node-sass": "^4.13.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-helmet": "^5.2.1",
+    "react-images": "^1.0.0",
     "sentry_release": "sentry-cli releases new --finalize -p ncrmro-static $COMMIT_REF && sentry-cli releases set-commits --commit ncrmro/ncrmro-static@$COMMIT_REF $COMMIT_REF && sentry-cli releases -p ncrmro-static files $COMMIT_REF upload-sourcemaps dist && sentry-cli releases deploys $COMMIT_REF new -e $ENVIRONMENT"
   },
-  "dependencies": {
-    "@reach/router": "^1.2.1",
-    "@sentry/browser": "^4.6.4",
-    "@types/yaml": "^1.0.2",
-    "axios": "^0.18.0",
-    "bootstrap": "^4.3.1",
-    "react": "^16.8.1",
-    "react-bootstrap": "^1.0.0-beta.12",
-    "react-dom": "^16.8.1",
-    "react-ga": "^2.5.7",
-    "react-hot-loader": "^4.3.12",
-    "react-markdown": "^4.0.6",
-    "react-static": "^6.0.18",
-    "yaml": "^1.4.0"
+  "keywords": [
+    "gatsby"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "format": "prettier --write \"**/*.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
     "@sentry/cli": "^1.40.0",
-    "@types/node": "^10.12.23",
-    "@types/reach__router": "^1.2.2",
-    "@types/react": "^16.8.2",
-    "@types/react-dom": "^16.8.0",
-    "@types/react-hot-loader": "^4.1.0",
-    "@types/webpack-env": "^1.13.6",
-    "dotenv": "^6.2.0",
-    "prettier": "1.16.4",
-    "react-static-plugin-typescript": "^3.1.0",
-    "serve": "10.1.1"
+    "husky": "^4.2.5",
+    "prettier": "^2.0.2"
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all"
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format"
+    }
   }
 }
