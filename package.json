@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@sentry/cli": "^1.40.0",
-    "husky": "^4.2.5",
     "prettier": "^2.0.2"
   },
   "husky": {
