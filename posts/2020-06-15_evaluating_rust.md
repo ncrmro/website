@@ -68,6 +68,11 @@ For hardware, I've primarily been using [Raspberry Pi Zero WH](https://www.raspb
 and [ESP32](https://en.wikipedia.org/wiki/ESP32) (ESP32 and ESP8266) are often used to add WiFi or Bluetooth capabilities to Ardunio but can be programmed
 outright with their own set of [GPIO](https://en.wikipedia.org/wiki/General-purpose_input/output) pins, [I2C](https://en.wikipedia.org/wiki/I²C), PWM, real-time clock support, etc.
 
+For the various kids of hardware you might find there is usally a [embedded-hal](https://github.com/rust-embedded/embedded-hal)) implementation available.
+
+A [HAL](https://en.wikipedia.org/wiki/Hardware_abstraction) is a hardware abstraction layer it provides a standardized
+way to interact with GPIO pins, i2c, PWM etc. One available for linx is [linux-embedded-hal](https://github.com/rust-embedded/linux-embedded-hal)
+
 ### Rust on Pi
 
 Getting Rust to work on a Pi is much simpler with compiling happening in a docker container on your local machine and then being deployed over
