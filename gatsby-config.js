@@ -3,6 +3,7 @@ module.exports = {
     title: 'Nicholas Romero',
     author: 'Nicholas Romero',
     description: 'Personal site of Nicholas Romero',
+    siteUrl: `https://ncrmro.com`,
   },
   plugins: [
     'gatsby-plugin-react-helmet',
@@ -53,5 +54,6 @@ module.exports = {
       },
     },
     `gatsby-plugin-netlify`,
+    `gatsby-plugin-sitemap`,
   ],
 }

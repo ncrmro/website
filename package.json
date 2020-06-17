@@ -13,6 +13,7 @@
     "gatsby-plugin-react-helmet": "^3.2.1",
     "gatsby-plugin-sass": "^2.2.1",
     "gatsby-plugin-sentry": "^1.0.1",
+    "gatsby-plugin-sitemap": "^2.4.5",
     "gatsby-remark-google-analytics-track-links": "0.0.9",
     "gatsby-source-filesystem": "^2.3.11",
     "gatsby-transformer-remark": "^2.8.15",
