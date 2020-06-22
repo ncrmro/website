@@ -18,7 +18,7 @@ cat <<EOT >> $posts_dir/$post_file_name
 ---
 slug: '/posts/$post_file_name'
 title: $post_tile
-datePosted: '${current_date}'
+date: '${current_date}'
 description: CHANGEME
 tags: ['CHANGEME']
 ---
