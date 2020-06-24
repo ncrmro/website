@@ -72,6 +72,62 @@ the Uno you'll get 6, the ESP32 has 16!
 This [article](http://blog.oddbit.com/post/2017-09-26-some-notes-on-pwm-on-the-raspberry-pi/) getting the Pi
 hardware PWM working.
 
+A simple working example for the Arduino IDE and ESP32 follows.
+This spins the motor one direction and then reverse.
+
+```
+/*Example sketch to control a stepper motor with A4988/DRV8825 stepper motor driver and Arduino without a library. More info: https://www.makerguides.com */
+
+// Define stepper motor connections and steps per revolution:
+#define dirPin 16
+#define stepPin 17
+#define stepsPerRevolution 200
+
+void setup() {
+  Serial.begin(9600);
+
+  Serial.println("Stepper test!");
+
+  // Declare pins as output:
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+}
+
+void loop() {
+  Serial.println("Going clockwise!");
+  // Set the spinning direction clockwise:
+  digitalWrite(dirPin, HIGH);
+
+  Serial.println("One slow revolution");
+  // Spin the stepper motor 1 revolution slowly:
+  for (int i = 0; i < stepsPerRevolution; i++) {
+    // These four lines result in 1 step:
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(2000);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(2000);
+  }
+
+  delay(1000);
+
+  Serial.println("Set direction counterclockwise");
+  // Set the spinning direction counterclockwise:
+  digitalWrite(dirPin, LOW);
+
+  Serial.println("One slow revolution");
+  // Spin the stepper motor 1 revolution quickly:
+  for (int i = 0; i < stepsPerRevolution; i++) {
+    // These four lines result in 1 step:
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(1000);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(1000);
+  }
+
+  delay(1000);
+}
+```
+
 ### It works!
 
 `gif:working-motor.gif`
