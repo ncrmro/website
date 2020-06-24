@@ -6,6 +6,7 @@ current_date=$(date +'%m/%d/%Y')
 post_tile=$1
 post_title_lower=$(echo "$post_tile" | awk '{print tolower($0)}')
 post_title_underscored="${post_title_lower// /_}"
+post_title_slug="${post_title_lower// /-}"
 
 posts_dir=posts
 
@@ -16,7 +17,7 @@ echo Creating file.. "$post_file_name"
 
 cat <<EOT >> $posts_dir/$post_file_name
 ---
-slug: '/posts/$post_file_name'
+slug: '/posts/$post_title_slug'
 title: $post_tile
 date: '${current_date}'
 description: CHANGEME
