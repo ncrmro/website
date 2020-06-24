@@ -1,0 +1,62 @@
+.interactive-gif {
+}
+
+/* Responsive flicker-less display */
+.interactive-gif .embedded {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.interactive-gif .loading,
+.interactive-gif .still-container,
+.interactive-gif .gif-container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.interactive-gif .still,
+.interactive-gif .gif {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Loading indicator */
+.interactive-gif .loading .indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  filter: contrast(0.5);
+}
+
+/* Play button */
+.interactive-gif .still-container .play {
+  cursor: pointer;
+  filter: grayscale(100%);
+  width: 20%;
+  position: absolute;
+  opacity: 0.9;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+/* Text underneath the gif */
+.interactive-gif .caption {
+  font-size: 90%;
+  font-style: italic;
+}
+
+/* Image displayed when the gif cannot be found */
+.interactive-gif .placeholder {
+  filter: grayscale(100%);
+  text-align: center;
+}
+
+.interactive-gif .placeholder img {
+  width: 200px;
+}

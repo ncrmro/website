@@ -48,6 +48,18 @@ module.exports = {
               maxWidth: 800,
             },
           },
+          {
+            resolve: `gatsby-remark-interactive-gifs`,
+            options: {
+              root: `${__dirname}`,
+              src: `${__dirname}/posts/gifs`,
+              dest: `${__dirname}/public/static/gifs`,
+              play: `${__dirname}/src/assets/gifs/play-button.png`,
+              placeholder: `${__dirname}/src/assets/gifs/loading.gif`,
+              loading: `${__dirname}/src/assets/gifs/loading.gif`,
+              relativePath: `/static/gifs`,
+            },
+          },
         ],
       },
     },
