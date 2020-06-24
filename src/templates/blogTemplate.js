@@ -12,7 +12,9 @@ export default function Template({
     <Layout>
       <div id="main" className="blog-post-container">
         <div className="blog-post">
-          <Img fluid={frontmatter.featuredImage.childImageSharp.fluid} />
+          {frontmatter.featuredImage ? (
+            <Img fluid={frontmatter.featuredImage.childImageSharp.fluid} />
+          ) : null}
 
           <h1>{frontmatter.title}</h1>
           <h2>{frontmatter.date}</h2>
