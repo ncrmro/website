@@ -17,6 +17,8 @@
     "gatsby-plugin-sharp": "^2.6.12",
     "gatsby-plugin-sitemap": "^2.4.5",
     "gatsby-remark-google-analytics-track-links": "0.0.9",
+    "gatsby-remark-image-attributes": "^0.2.1",
+    "gatsby-remark-images": "^3.3.11",
     "gatsby-source-filesystem": "^2.3.11",
     "gatsby-transformer-remark": "^2.8.15",
     "gatsby-transformer-sharp": "^2.5.5",
@@ -24,7 +26,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^5.2.1",
-    "react-images": "^1.0.0"
+    "react-images": "^1.0.0",
+    "remark-image-attributes": "^0.1.3"
   },
   "keywords": [
     "gatsby"

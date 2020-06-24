@@ -42,6 +42,12 @@ module.exports = {
         plugins: [
           //...
           `gatsby-remark-google-analytics-track-links`,
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 800,
+            },
+          },
         ],
       },
     },
@@ -63,5 +69,24 @@ module.exports = {
     },
     `gatsby-plugin-netlify`,
     `gatsby-plugin-sitemap`,
+    `remark-image-attributes`,
+    {
+      resolve: `gatsby-remark-image-attributes`,
+      options: {
+        // ?Array<String>
+        //   Any names declared here are added
+        //   to the default set of attributes,
+        //   which the plugin will use to style
+        //   the image.
+        styleAttributes: [`display`, `position`, `border`],
+
+        // ?Boolean
+        //   If true, all attributes that
+        //   aren't styleAttributes, will be
+        //   added as data-* attributes to the
+        //   image.
+        dataAttributes: true,
+      },
+    },
   ],
 }
