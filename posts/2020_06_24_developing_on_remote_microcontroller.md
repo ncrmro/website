@@ -87,6 +87,7 @@ changes. After which it starts a miniterm session to listen to the serial consol
 
 ```bash
 # sh deploy.sh
+arduino_cli=~/.local/bin/arduino-cli
 SRC="my_sketch"
 PORT="/dev/ttyUSB0"
 BOARD="esp32:esp32:esp32"
@@ -102,11 +103,11 @@ CHECKSUM="$CHECKSUM_SRC"
 
 if [ ! "$CHECKSUM" = "$PREVIOUS_CHECKSUM" ]; then
     echo "Different checksums building and deploying"
-    arduino-cli compile \
+    $arduino_cli compile \
     --fqbn $BOARD \
     $SRC
 
-    arduino-cli upload \
+    $arduino_cli upload \
     --port $PORT \
     --fqbn $BOARD \
     $SRC
