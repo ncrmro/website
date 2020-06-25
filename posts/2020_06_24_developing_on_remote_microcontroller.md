@@ -1,7 +1,7 @@
 ---
 slug: '/posts/developing-on-remote-microcontroller'
 title: Compiling and Testing on a remote microcontroller
-date: '06/24/2020'
+date: '2020-06-24'
 description: We learn how we can develop microcontroller code using the Arduino CLI, compile it and the upload our code to the micrcontroller.
 tags: ['embedded', 'esp32', 'microcontroller', 'arduino']
 ---

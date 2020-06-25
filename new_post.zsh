@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 ## backup dir format ##
-current_date=$(date +'%m/%d/%Y')
+current_date=$(date +'%Y-%m-%d')
 
 post_tile=$1
 post_title_lower=$(echo "$post_tile" | awk '{print tolower($0)}')
