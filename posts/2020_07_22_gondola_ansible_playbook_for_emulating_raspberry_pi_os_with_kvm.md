@@ -18,3 +18,6 @@ Then run `sh main.sh` this will take a few minutes.
 After running the Ansible play you'll have a PI that you can clone, revert etc.
 
 The project is available [here](https://github.com/ncrmro/gondola).
+
+## Some updates jul 29 2020
+Some limitations is its single threaded and limited to 256mb of ram and I haven't had enough time to investigate.
