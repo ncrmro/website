@@ -17,6 +17,31 @@ Alpine (not even a different arch).
 For less common platforms eg linux/arm/v6 (pi zero and original pis) or linux/arm64 some of these
 builds can take forever and require a dedicated PI (or a [emulated VM](/posts/gondola_ansible_playbook_for_emulating_raspberry_pi_os_with_kvm))
 
+#### The Difference is in the logs
+
+To demonstrate this we can look at the buildx logs of a image _based_ on the one _we will be building_ in this post.
+
+If we later build the image on an arm64 based on our prebuilt multi arch image we can see it's building for `linux/arm64`,
+we can also see it
+
+- already has Pythom FFmpeg
+- Installing Pip packages
+  - `aionotify` does have a pre built wheel for this arch.
+  - `asyncpg` doesn't have a wheel to download for this arch
+
+The `asyncpg` not having a wheel is what takes so long for different distributions/architectures.
+
+```
+ => CACHED [linux/arm64 production 4/5] COPY requirements.txt /app/requirements.txt                                                                                                                                                                                                                                                 0.0s
+ => [linux/arm64 production 5/5] RUN apt-get update     && apt-get install -y build-essential     && pip install --no-cache-dir -r requirements.txt && apt-get remove -y build-essential && apt-get auto-remove -y && rm -rf /var/lib/apt/lists/*                                                                                  75.5s
+ => => # Requirement already satisfied: python-ffmpeg==1.0.11 in /usr/local/lib/python3.8/site-packages (from -r requirements.txt (line 3)) (1.0.11)
+ => => # Collecting aionotify==0.2.0
+ => => #   Downloading aionotify-0.2.0-py3-none-any.whl (6.6 kB)
+ => => # Requirement already satisfied: pyee in /usr/local/lib/python3.8/site-packages (from python-ffmpeg==1.0.11->-r requirements.txt (line 3)) (7.0.2)
+ => => # Building wheels for collected packages: asyncpg
+ => => #   Building wheel for asyncpg (setup.py): started
+```
+
 ## [Docker BuildX](https://docs.docker.com/buildx/working-with-buildx/)
 
 Some notes from the Docker Docs.
@@ -121,6 +146,11 @@ services:
   privileged: true
 ```
 
-This will create three image's, `latest`, `python FFmpeg ver`, `git sha`
+
+Also note we 
+* started `qemu-user-static` This is what emulates our different cpu architectures.
+* created a builder and seet it as the active builder
+* created three image's, `latest`, `python FFmpeg ver`, `git sha`
+
 
 Hope you enjoyed the post
