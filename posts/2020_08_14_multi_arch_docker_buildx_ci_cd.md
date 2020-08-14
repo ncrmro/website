@@ -2,8 +2,8 @@
 slug: '/posts/multi_arch_docker_buildx_ci_cd'
 title: Multi Arch Docker Buildx in CI/CD
 date: '2020-08-14'
-description: CHANGEME
-tags: ['CHANGEME']
+description: Automated Multi Arch Docker Image Builds
+tags: ['docker', 'devops', 'ci/cd']
 ---
 
 I've recently been working on some projects with some heavy dependencies (FFmpeg, scipy, NumPy, etc).
@@ -107,7 +107,6 @@ steps:
       from_secret: dockerhub_access_token
   commands:
   - docker version
-  - mkdir -p ~/.docker/cli-plugins
   - docker buildx version
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
