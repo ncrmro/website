@@ -1,6 +1,6 @@
 ---
 slug: '/posts/scytale_automated_private_key_infrastructure'
-title: Scytale: Ansible Automated Private Key Infrastructure.
+title: 'Scytale: Ansible Automated Private Key Infrastructure.'
 date: '2020-08-23'
 description: Automated private key infrastructure (PKI), Ansible managed certificate authority, server and client certificates. 
 tags: ['Private Key Infrastructure', 'Security', 'Intranet', 'Ansible', 'Certificate Authority', 'Certificates', 'TLS', 'SSL']
