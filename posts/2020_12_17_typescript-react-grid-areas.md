@@ -6,7 +6,7 @@ description: A Reusable Component Design Pattern for CSS Grid Areas in Typescrip
 tags: ['react', 'typescript', 'grid']
 ---
 
-While working on [JTX](https://jtronics.exchange) I've started to design for mobile-first. [CSS Grid Layout
+While working on [JTX](https://jtronics.exchange/) I've started to design for mobile-first. [CSS Grid Layout
 ](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout) has been on my to-learn list for a long time. While
 learning more about Grid Layout I learned about this neat feature (CSS property) called [grid-template-areas](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-areas)
 
