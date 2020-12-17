@@ -36,15 +36,23 @@ enum GridAreas {
 
 const SearchResults: React.FC<SearchResultsProps> = (props) => {
   return (
-    <PageLayout id='search'>
+    <PageLayout id="search">
       <Grid
         type={GridTypes.ThreeColumn}
         areas={[GridAreas.Sidebar, GridAreas.Results]}
       >
-        <GridSection id={GridAreas.Sidebar} className="w-auto md:w-64" area={GridAreas.Sidebar}>
+        <GridSection
+          id={GridAreas.Sidebar}
+          className="w-auto md:w-64"
+          area={GridAreas.Sidebar}
+        >
           <SearchFilters />
         </GridSection>
-        <GridSection id={GridAreas.Results} className="col-span-2" area={GridAreas.Results}>
+        <GridSection
+          id={GridAreas.Results}
+          className="col-span-2"
+          area={GridAreas.Results}
+        >
           <Grid type={GridTypes.SingleColumn}>
             {data.searchResuls.nodes.map((result, idx) => (
               <div key={idx}>result.name</div>
@@ -60,6 +68,10 @@ const SearchResults: React.FC<SearchResultsProps> = (props) => {
 ```typescript jsx
 import React from 'react'
 
+/**
+ * These are the various ways we want to use out grid
+ * @enum {string}
+ * */
 export enum GridTypes {
   Auto = 'grid-flow-row md:grid-flow-col auto-cols-max',
   SingleColumn = 'grid-flow-row auto-cols-max',
@@ -80,6 +92,7 @@ interface GridStyles {
 
 /**
  * Our universal grid component
+ * The areas props allows us to use named grid areas
  */
 export const Grid: React.FC<GridProps> = (props) => {
   const type = props.type ? props.type : GridTypes.Auto
@@ -100,6 +113,10 @@ export const Grid: React.FC<GridProps> = (props) => {
   )
 }
 
+/**
+ * Our universal grid section component
+ * The area prop allows us to specify the grid area name
+ */
 export interface GridSectionProps {
   id: string
   children
@@ -108,7 +125,11 @@ export interface GridSectionProps {
 }
 
 export const GridSection: React.FC<GridSectionProps> = (props) => (
-  <div id={props.id} className={props.className} style={{ gridArea: `${props.area}` }}>
+  <div
+    id={props.id}
+    className={props.className}
+    style={{ gridArea: `${props.area}` }}
+  >
     {props.children}
   </div>
 )
