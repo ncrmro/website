@@ -66,28 +66,28 @@ const SearchResults: React.FC<SearchResultsProps> = (props) => {
 ```
 
 ```typescript jsx
-import React from 'react'
+import React from "react";
 
 /**
  * These are the various ways we want to use out grid
  * @enum {string}
  * */
 export enum GridType {
-  Auto = 'grid-flow-row md:grid-flow-col auto-cols-max',
-  SingleColumn = 'grid-flow-row auto-cols-max',
-  ThreeColumn = 'grid-cols-3 gap-4',
+  Auto = "grid-flow-row md:grid-flow-col auto-cols-max",
+  SingleColumn = "grid-flow-row auto-cols-max",
+  ThreeColumn = "grid-cols-3 gap-4",
 }
 
 interface GridProps {
-  children
-  type?: GridType
-  gridTemplateAreas?: string
-  className?: string
-  areas?: Array<string>
+  children;
+  type?: GridType;
+  gridTemplateAreas?: string;
+  className?: string;
+  areas?: Array<Array<string>>;
 }
 
 interface GridStyles {
-  gridTemplateAreas?: string
+  gridTemplateAreas?: string;
 }
 
 /**
@@ -95,33 +95,39 @@ interface GridStyles {
  * The areas props allows us to use named grid areas
  */
 export const Grid: React.FC<GridProps> = (props) => {
-  const type = props.type ? props.type : GridType.Auto
-  const className = `grid ${type} ${props.className ? props.className : ''}`
-  const styles: GridStyles = {}
+  const type = props.type ? props.type : GridType.Auto;
+  const className = `grid ${type} ${props.className ? props.className : ""}`;
+  const styles: GridStyles = {};
 
   if (props.areas) {
-    styles.gridTemplateAreas = ''
-    props.areas.forEach(
-      (area) =>
-        (styles.gridTemplateAreas = `${styles.gridTemplateAreas} '${area}'`)
-    )
+    styles.gridTemplateAreas = "";
+    props.areas.forEach((rowColumns) => {
+      let rowString = "";
+      rowColumns.forEach((column) => {
+        rowString = rowString === "" ? column : `${rowString} ${column}`;
+      });
+      styles.gridTemplateAreas =
+        styles.gridTemplateAreas === ""
+          ? `'${rowString}'`
+          : `${styles.gridTemplateAreas} '${rowString}'`;
+    });
   }
   return (
     <div className={className} style={styles}>
       {props.children}
     </div>
-  )
-}
+  );
+};
 
 /**
  * Our universal grid section component
  * The area prop allows us to specify the grid area name
  */
 export interface GridSectionProps {
-  id?: string
-  children
-  className: string
-  area: string
+  id?: string;
+  children;
+  className: string;
+  area: string;
 }
 
 export const GridSection: React.FC<GridSectionProps> = (props) => (
@@ -132,7 +138,7 @@ export const GridSection: React.FC<GridSectionProps> = (props) => (
   >
     {props.children}
   </div>
-)
+);
 
-export default Grid
+export default Grid;
 ```
