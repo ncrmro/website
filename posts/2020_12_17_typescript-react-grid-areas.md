@@ -25,6 +25,7 @@ I will first show us using the components and the next section shows the actual 
 ```typescript jsx
 import React from 'react'
 import PageLayout from '../components/PageLayout'
+import SearchFilters from '../components/SearchFilters'
 import { Grid, GridSection, GridTypes } from '../components/Grid'
 
 interface SearchResultsProps {}
@@ -35,13 +36,13 @@ enum GridAreas {
 
 const SearchResults: React.FC<SearchResultsProps> = (props) => {
   return (
-    <PageLayout>
+    <PageLayout id='search'>
       <Grid
         type={GridTypes.ThreeColumn}
         areas={[GridAreas.Sidebar, GridAreas.Results]}
       >
         <GridSection className="w-auto md:w-64" area={GridAreas.Sidebar}>
-          <PartSearchFilters category={props.category} />
+          <SearchFilters />
         </GridSection>
         <GridSection className="col-span-2" area={GridAreas.Results}>
           <Grid type={GridTypes.SingleColumn}>
