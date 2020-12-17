@@ -6,7 +6,7 @@ description: A Reusable Component Design Pattern for CSS Grid Areas in Typescrip
 tags: ['react', 'typescript', 'grid']
 ---
 
-While working on [JTX](jtronics.exchange) I've started to design for mobile-first. [CSS Grid Layout
+While working on [JTX](https://jtronics.exchange) I've started to design for mobile-first. [CSS Grid Layout
 ](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout) has been on my to-learn list for a long time. While
 learning more about Grid Layout I learned about this neat feature (CSS property) called [grid-template-areas](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-areas)
 
@@ -26,10 +26,10 @@ I will first show us using the components and the next section shows the actual 
 import React from 'react'
 import PageLayout from '../components/PageLayout'
 import SearchFilters from '../components/SearchFilters'
-import { Grid, GridSection, GridTypes } from '../components/Grid'
+import { Grid, GridSection, GridType } from '../components/Grid'
 
 interface SearchResultsProps {}
-enum GridAreas {
+enum GridArea {
   Sidebar = 'search-sidebar',
   Results = 'search-results',
 }
@@ -38,22 +38,22 @@ const SearchResults: React.FC<SearchResultsProps> = (props) => {
   return (
     <PageLayout id="search">
       <Grid
-        type={GridTypes.ThreeColumn}
-        areas={[GridAreas.Sidebar, GridAreas.Results]}
+        type={GridType.ThreeColumn}
+        areas={[GridArea.Sidebar, GridArea.Results]}
       >
         <GridSection
-          id={GridAreas.Sidebar}
+          id={GridArea.Sidebar}
           className="w-auto md:w-64"
-          area={GridAreas.Sidebar}
+          area={GridArea.Sidebar}
         >
           <SearchFilters />
         </GridSection>
         <GridSection
-          id={GridAreas.Results}
+          id={GridArea.Results}
           className="col-span-2"
-          area={GridAreas.Results}
+          area={GridArea.Results}
         >
-          <Grid type={GridTypes.SingleColumn}>
+          <Grid type={GridType.SingleColumn}>
             {data.searchResuls.nodes.map((result, idx) => (
               <div key={idx}>result.name</div>
             ))}
@@ -72,7 +72,7 @@ import React from 'react'
  * These are the various ways we want to use out grid
  * @enum {string}
  * */
-export enum GridTypes {
+export enum GridType {
   Auto = 'grid-flow-row md:grid-flow-col auto-cols-max',
   SingleColumn = 'grid-flow-row auto-cols-max',
   ThreeColumn = 'grid-cols-3 gap-4',
@@ -80,7 +80,7 @@ export enum GridTypes {
 
 interface GridProps {
   children
-  type?: GridTypes
+  type?: GridType
   gridTemplateAreas?: string
   className?: string
   areas?: Array<string>
@@ -95,7 +95,7 @@ interface GridStyles {
  * The areas props allows us to use named grid areas
  */
 export const Grid: React.FC<GridProps> = (props) => {
-  const type = props.type ? props.type : GridTypes.Auto
+  const type = props.type ? props.type : GridType.Auto
   const className = `grid ${type} ${props.className ? props.className : ''}`
   const styles: GridStyles = {}
 
