@@ -41,10 +41,10 @@ const SearchResults: React.FC<SearchResultsProps> = (props) => {
         type={GridTypes.ThreeColumn}
         areas={[GridAreas.Sidebar, GridAreas.Results]}
       >
-        <GridSection className="w-auto md:w-64" area={GridAreas.Sidebar}>
+        <GridSection id={GridAreas.Sidebar} className="w-auto md:w-64" area={GridAreas.Sidebar}>
           <SearchFilters />
         </GridSection>
-        <GridSection className="col-span-2" area={GridAreas.Results}>
+        <GridSection id={GridAreas.Results} className="col-span-2" area={GridAreas.Results}>
           <Grid type={GridTypes.SingleColumn}>
             {data.searchResuls.nodes.map((result, idx) => (
               <div key={idx}>result.name</div>
@@ -101,13 +101,14 @@ export const Grid: React.FC<GridProps> = (props) => {
 }
 
 export interface GridSectionProps {
+  id: string
   children
   className: string
   area: string
 }
 
 export const GridSection: React.FC<GridSectionProps> = (props) => (
-  <div className={props.className} style={{ gridArea: `${props.area}` }}>
+  <div id={props.id} className={props.className} style={{ gridArea: `${props.area}` }}>
     {props.children}
   </div>
 )
