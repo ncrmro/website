@@ -118,7 +118,7 @@ export const Grid: React.FC<GridProps> = (props) => {
  * The area prop allows us to specify the grid area name
  */
 export interface GridSectionProps {
-  id: string
+  id?: string
   children
   className: string
   area: string
