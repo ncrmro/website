@@ -136,3 +136,5 @@ export const GridSection: React.FC<GridSectionProps> = (props) => (
 
 export default Grid
 ```
+
+Hope you enjoyed!
