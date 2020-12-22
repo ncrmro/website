@@ -1,5 +1,5 @@
 ---
-slug: '/posts/2020_06_16_driving_stepper_motors_with_microcontroller.md'
+slug: 2020_06_16_driving_stepper_motors_with_microcontroller.md
 title: 'Driving a stepper motor with a microcontroller'
 date: '2020-06-16'
 description: 'Controlling a stepper motor.'

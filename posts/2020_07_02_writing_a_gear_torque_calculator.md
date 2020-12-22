@@ -1,5 +1,5 @@
 ---
-slug: '/posts/writing_a_gear_torque_calculator'
+slug: writing_a_gear_torque_calculator
 title: Writing a gear torque calculator
 date: '2020-07-02'
 description: While utilizing a stepper motor and gears. I needed more torque and different sized gears. So I wrote a small gear torque calculator.

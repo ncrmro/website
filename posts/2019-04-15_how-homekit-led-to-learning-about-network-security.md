@@ -1,5 +1,5 @@
 ---
-slug: '/posts/2019-04-15_how-homekit-led-to-learning-about-network-security'
+slug: 2019-04-15_how-homekit-led-to-learning-about-network-security
 title: 'Learning network security with IoT/HomeKit.'
 date: '2019-04-15'
 description: 'How setting up IoT/HomeKit can teach you about network security.'

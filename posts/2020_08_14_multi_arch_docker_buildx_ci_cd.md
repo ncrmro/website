@@ -1,5 +1,5 @@
 ---
-slug: '/posts/multi_arch_docker_buildx_ci_cd'
+slug: multi_arch_docker_buildx_ci_cd
 title: Multi Arch Docker Buildx in CI/CD
 date: '2020-08-14'
 description: Automated Multi Arch Docker Image Builds
