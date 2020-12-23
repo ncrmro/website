@@ -1,3 +1,8 @@
+import GithubIcon from "@components/Icons/Github";
+import InstagramIcon from "@components/Icons/Instagram";
+import LinkedinIcon from "@components/Icons/Linkedin";
+import TwitterIcon from "@components/Icons/Twitter";
+import PageLayout from "@components/PageLayout";
 import { Post } from "@utils/markdown";
 import { GetStaticProps } from "next";
 import Head from "next/head";
@@ -28,16 +33,31 @@ const PostCard: React.FC<Post> = (props) => (
 
 function Home(props) {
   return (
-    <div>
+    <PageLayout>
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {props.posts.reverse().map((post) => (
-        <PostCard key={post.slug} {...post} />
-      ))}
-    </div>
+      <div>
+        <div className="place-self-center w-full">
+          <div className="place-self-center">
+            Nicholas Romero
+            <br />
+            <p>
+              Howdy, I'm Nic. I live in Houston/Austin. I'm a senor software
+              engineer. PyCon India 2017 Speaker. I enjoy dabling in music
+              production and been known to dj here and there. Plants are Jazz
+              and Animals my diggs.
+            </p>
+          </div>
+        </div>
+
+        {props.posts.reverse().map((post) => (
+          <PostCard key={post.slug} {...post} />
+        ))}
+      </div>
+    </PageLayout>
   );
 }
 
