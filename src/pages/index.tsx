@@ -35,7 +35,7 @@ function Home(props) {
       </Head>
 
       {props.posts.reverse().map((post) => (
-        <PostCard {...post} />
+        <PostCard key={post.slug} {...post} />
       ))}
     </div>
   );

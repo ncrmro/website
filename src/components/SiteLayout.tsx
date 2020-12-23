@@ -23,12 +23,8 @@ const SiteLayout: React.FC = ({ children }) => (
     }}
   >
     <Nav />
-    <main className="" style={{ gridArea: "main" }}>
-      {children}
-    </main>
-    <footer className="" style={{ gridArea: "footer" }}>
-      Footah
-    </footer>
+    <main style={{ gridArea: "main" }}>{children}</main>
+    <footer style={{ gridArea: "footer" }}>Footah</footer>
   </div>
 );
 

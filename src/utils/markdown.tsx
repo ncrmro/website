@@ -1,3 +1,4 @@
+import React from "react";
 import unified from "unified";
 import parse from "remark-parse";
 import remark2react from "remark-react";
@@ -16,7 +17,22 @@ export const getMetadata = (
 ): FrontMatterResult<PostAttributes> => fm(markdown);
 
 export const getContent = (markdown: string) =>
-  unified().use(parse).use(remark2react).processSync(markdown).result;
+  unified()
+    .use(parse)
+    .use(remark2react, {
+      sanitize: { attributes: { "*": ["className"] } },
+      remarkReactComponents: {
+        pre: (props) => (
+          <pre className="whitespace-pre-wrap break-words	overflow-x-auto">
+            {props.children}
+          </pre>
+        ),
+        code: (props) => (
+          <code className="overflow-x-auto">{props.children}</code>
+        ),
+      },
+    })
+    .processSync(markdown).result;
 
 export interface Post extends PostAttributes {
   body: string;
