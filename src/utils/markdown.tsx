@@ -46,13 +46,13 @@ export const getContent = (markdown: string) =>
         pre: (props) => {
           const className: string = props.children[0].props?.className;
           if (className.includes("language-")) {
-            const language = className.replace("language-", "");
-            let code = props.children[0].props.children[0];
-            if (code === "typescript") {
-              code = "jsx";
+            let language = className.replace("language-", "");
+            const code = props.children[0].props.children[0];
+            if (language === "typescript") {
+              language = "jsx";
             }
-            if (code)
-              return <CodeBlock code={code} language={language as Language} />;
+
+            return <CodeBlock code={code} language={language as Language} />;
           }
 
           return <pre>{props.children}</pre>;
