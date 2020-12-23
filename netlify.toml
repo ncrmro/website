@@ -1,8 +1,8 @@
 [build]
   command   = "yarn build"
-  functions = "out_functions"
-  publish   = "out_publish"
 
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
