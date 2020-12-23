@@ -1,8 +1,10 @@
+import CodeBlock from "@components/CodeBlock";
+import { Language } from "prism-react-renderer";
 import React from "react";
 import fm, { FrontMatterResult } from "front-matter";
-import remark from "remark";
-import html from "remark-html";
-import prism from "remark-prism";
+import unified from "unified";
+import parse from "remark-parse";
+import remark2react from "remark-react";
 
 interface PostAttributes {
   slug: string;
@@ -35,7 +37,30 @@ export const getPosts = (fs): Array<Post> => {
   return paths;
 };
 
-export default async function markdownToHtml(markdown) {
-  const result = await remark().use(html).use(prism).process(markdown);
-  return result.toString();
-}
+export const getContent = (markdown: string) =>
+  unified()
+    .use(parse)
+    .use(remark2react, {
+      sanitize: { attributes: { "*": ["className"] } },
+      remarkReactComponents: {
+        pre: (props) => {
+          const className: string = props.children[0].props?.className;
+          if (className.includes("language-")) {
+            const language = className.replace("language-", "");
+            let code = props.children[0].props.children[0];
+            if (code === "typescript") {
+              code = "jsx";
+            }
+            if (code)
+              return <CodeBlock code={code} language={language as Language} />;
+          }
+
+          return <pre>{props.children}</pre>;
+        },
+        // code: (props) => (
+        //   <code className="overflow-x-auto">{props.children}</code>
+        // ),
+      },
+    })
+    // .use(prism)
+    .processSync(markdown).result;

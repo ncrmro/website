@@ -1,5 +1,5 @@
 import PageLayout from "@components/PageLayout";
-import markdownToHtml, { Post } from "@utils/markdown";
+import { Post, getContent } from "@utils/markdown";
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
@@ -15,13 +15,7 @@ const PostPage: React.FC<Post> = (props) => {
               </span>
             </h1>
           </div>
-
-          <div
-            className="mt-6 prose prose-indigo prose-lg text-gray-500 w-full	"
-            dangerouslySetInnerHTML={{
-              __html: props.content,
-            }}
-          />
+          <div>{getContent(props.content)}</div>
         </div>
       </div>
     </PageLayout>
@@ -35,10 +29,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .getPosts(fs)
     .reverse()
     .find((post) => post.slug === context.params.slug);
-  const content = await markdownToHtml(post.body || "");
 
   return {
-    props: { ...post, content },
+    props: { ...post, content: post.body },
   };
 };
 
