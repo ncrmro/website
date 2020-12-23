@@ -18,37 +18,41 @@ const Nav = () => {
       className="bg-white border-gray-200 h-16 mx-auto px-4 grid items-center py-2"
       style={{ gridArea: "nav" }}
     >
-      <div className="flex space-x-2 items-center border-b py-2">
-        <a href="https://www.linkedin.com/in/ncrmro/">
-          <LinkedinIcon className={iconClassName} />
-        </a>
-        <a href="https://github.com/ncrmro">
-          <GithubIcon className={iconClassName} />
-        </a>
+      <div className="flex space-x-2 items-center border-b py-2 justify-self-center ">
         <Link href="/">
-          <a className="place-self-center">{isHome ? "NCRMRO" : "HOME"}</a>
+          <a className="place-self-center text-gray-500 uppercase">
+            {isHome ? "Nicholas Romero" : "Home"}
+          </a>
         </Link>
-        <a href="https://twitter.com/ncrmro">
-          <TwitterIcon className={iconClassName} />
-        </a>
-        <a href="https://www.instagram.com/ncrmro">
-          <InstagramIcon className={iconClassName} />
-        </a>
       </div>
-      <div className="flex justify-self-center space-x-2 text-gray-400">
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-        {/*<Link href="/about">*/}
-        {/*  <a>Travel</a>*/}
-        {/*</Link>*/}
-        {/*<Link href="/about">*/}
-        {/*  <a>Music</a>*/}
-        {/*</Link>*/}
-        {/*<Link href="/about">*/}
-        {/*  <a>Tech</a>*/}
-        {/*</Link>*/}
-      </div>
+      {isHome ? (
+        <div className="flex justify-self-center space-x-3 text-gray-400 pt-2">
+          <a href="https://www.linkedin.com/in/ncrmro/">
+            <LinkedinIcon className={iconClassName} />
+          </a>
+          <a href="https://github.com/ncrmro">
+            <GithubIcon className={iconClassName} />
+          </a>
+          <Link href="/about">
+            <a className="uppercase">About</a>
+          </Link>
+          {/*<Link href="/about">*/}
+          {/*  <a>Travel</a>*/}
+          {/*</Link>*/}
+          {/*<Link href="/about">*/}
+          {/*  <a>Music</a>*/}
+          {/*</Link>*/}
+          {/*<Link href="/about">*/}
+          {/*  <a>Tech</a>*/}
+          {/*</Link>*/}
+          <a href="https://twitter.com/ncrmro">
+            <TwitterIcon className={iconClassName} />
+          </a>
+          <a href="https://www.instagram.com/ncrmro">
+            <InstagramIcon className={iconClassName} />
+          </a>
+        </div>
+      ) : null}
     </nav>
   );
 };
@@ -62,7 +66,12 @@ const SiteLayout: React.FC = ({ children }) => (
   >
     <Nav />
     <main style={{ gridArea: "main" }}>{children}</main>
-    <footer style={{ gridArea: "footer" }}>Footah</footer>
+    <footer
+      className="flex justify-self-center m-3"
+      style={{ gridArea: "footer" }}
+    >
+      Nicholas Romero
+    </footer>
   </div>
 );
 

@@ -25,7 +25,7 @@ function Home(props) {
           <div className="space-y-4">
             <div className="text-lg leading-6 font-medium space-y-1">
               <h3>Nicholas Romero</h3>
-              <p className="text-indigo-600">Sr Software Engineer</p>
+              <p className="text-indigo-600">SR Software Engineer</p>
             </div>
             <div className="text-lg">
               <p className="text-gray-500">
