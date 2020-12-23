@@ -45,7 +45,7 @@ export const getContent = (markdown: string) =>
       remarkReactComponents: {
         pre: (props) => {
           const className: string = props.children[0].props?.className;
-          if (className.includes("language-")) {
+          if (className && className.includes("language-")) {
             let language = className.replace("language-", "");
             const code = props.children[0].props.children[0];
             if (language === "typescript") {
