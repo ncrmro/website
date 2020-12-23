@@ -17,7 +17,7 @@ export const getMetadata = (
 ): FrontMatterResult<PostAttributes> => fm(markdown);
 
 export interface Post extends PostAttributes {
-  body: string;
+  content: string;
 }
 
 export const getPosts = (fs): Array<Post> => {
