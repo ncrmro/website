@@ -6,6 +6,7 @@ import PageLayout from "@components/PageLayout";
 import { Post } from "@utils/markdown";
 import { GetStaticProps } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -39,19 +40,18 @@ function Home(props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
-        <div className="place-self-center w-full">
-          <div className="place-self-center">
-            Nicholas Romero
-            <br />
-            <p>
-              Howdy, I'm Nic. I live in Houston/Austin. I'm a senor software
-              engineer. PyCon India 2017 Speaker. I enjoy dabling in music
-              production and been known to dj here and there. Plants are Jazz
-              and Animals my diggs.
-            </p>
-          </div>
-        </div>
+      <div className="grid w-full">
+        {/*<div className="flex">*/}
+        {/*  <Image*/}
+        {/*    src="/images/avatar.jpg"*/}
+        {/*    alt="Picture of the author"*/}
+        {/*    width={50}*/}
+        {/*    height={50}*/}
+        {/*    className="object-cover shadow-lg rounded-lg"*/}
+        {/*  />*/}
+        {/*  <h1 className="">Nicholas Romero</h1>*/}
+        {/*  <br />*/}
+        {/*</div>*/}
 
         {props.posts.reverse().map((post) => (
           <PostCard key={post.slug} {...post} />

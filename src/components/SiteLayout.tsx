@@ -26,7 +26,7 @@ const Nav = () => {
           <GithubIcon className={iconClassName} />
         </a>
         <Link href="/">
-          <a className="place-self-center">NCRMRO</a>
+          <a className="place-self-center">{isHome ? "NCRMRO" : "HOME"}</a>
         </Link>
         <a href="https://twitter.com/ncrmro">
           <TwitterIcon className={iconClassName} />
@@ -35,19 +35,19 @@ const Nav = () => {
           <InstagramIcon className={iconClassName} />
         </a>
       </div>
-      <div className="flex space-x-2 text-gray-400">
+      <div className="flex justify-self-center space-x-2 text-gray-400">
         <Link href="/about">
           <a>About</a>
         </Link>
-        <Link href="/about">
-          <a>Travel</a>
-        </Link>
-        <Link href="/about">
-          <a>Music</a>
-        </Link>
-        <Link href="/about">
-          <a>Tech</a>
-        </Link>
+        {/*<Link href="/about">*/}
+        {/*  <a>Travel</a>*/}
+        {/*</Link>*/}
+        {/*<Link href="/about">*/}
+        {/*  <a>Music</a>*/}
+        {/*</Link>*/}
+        {/*<Link href="/about">*/}
+        {/*  <a>Tech</a>*/}
+        {/*</Link>*/}
       </div>
     </nav>
   );
