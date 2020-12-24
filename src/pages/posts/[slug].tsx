@@ -10,7 +10,7 @@ import Image from "next/image";
 const PostPage: React.FC<Post> = (props) => {
   return (
     <PageLayout>
-      <div className="relative py-16 bg-white overflow-hidden">
+      <div className="relative py-4 bg-white overflow-hidden">
         <div className="relative px-4 sm:px-6 lg:px-8">
           <div className="text-lg max-w-prose mx-auto">
             <h1>

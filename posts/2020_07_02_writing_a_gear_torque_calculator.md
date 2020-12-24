@@ -10,7 +10,7 @@ Recently I ran into the problem of my stepper motor not able to produce enough t
 adding some [gears](https://www.thingiverse.com/thing:4305) I found on Thingverse based on [Wades Extruder](https://reprap.org/wiki/Wade%27s_Geared_Extruder)
 used in 3D printing.
 
-In a previous post I talk about [driving a stepper motor](/posts/2020_06_16_driving_stepper_motors_with_microcontroller.md) with a microcontroller.
+In a [previous post](/posts/2020_06_16_driving_stepper_motors_with_microcontroller.md) previous post I talk about driving a stepper motor with a microcontroller.
 
 The main components are.
 
