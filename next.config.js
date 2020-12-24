@@ -3,6 +3,7 @@ module.exports = {
   target: "experimental-serverless-trace",
   env: {
     POSTS_DIR: `${__dirname}/posts`,
+    GOOGLE_ANALYTICS_CODE: "UA-79226152-1",
   },
   // i18n: {
   //   locales: ["en-US", "de"],
