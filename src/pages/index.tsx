@@ -37,7 +37,7 @@ function Home(props) {
     <PageLayout>
       <Head>
         <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <div className="grid w-full">
