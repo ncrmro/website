@@ -23,11 +23,11 @@ After field-testing the motor I found it does not have enough torque for my appl
 The cool thing about the previously mentioned gear models is they come with `.scad` files so they can be opened in OpenCAD
 to make larger/smaller or adjust tooth count.
 
-![Viewing the CAD files in OpenCAD](images/2020_07_02_writing_a_gear_torque_calculator/gear_in_opencad.png)
+![Viewing the CAD files in OpenCAD](/images/post/2020_07_02_writing_a_gear_torque_calculator/gear_in_opencad.png)
 
 The code for the large gear for example looks like this.
 
-```
+```bash
 module WadesL(){
    difference(){
       gear (number_of_teeth=39,

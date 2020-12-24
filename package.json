@@ -13,16 +13,15 @@
     "front-matter": "^4.0.2",
     "next": "10.0.3",
     "postcss": "^8.2.1",
-    "prettier": "^2.2.1",
+
     "prism-react-renderer": "^1.1.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "remark-parse": "^9.0.0",
-    "remark-react": "^8.0.0",
-    "tailwindcss": "^2.0.2",
-    "unified": "^9.2.0"
+    "react-remark": "^2.0.2",
+    "tailwindcss": "^2.0.2"
   },
   "devDependencies": {
+      "prettier": "^2.2.1",
     "@netlify/plugin-nextjs": "^1.0.3",
     "@types/node": "^14.14.14",
     "@types/react": "^17.0.0",
