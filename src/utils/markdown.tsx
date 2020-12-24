@@ -29,5 +29,5 @@ export const getPosts = (fs): Array<Post> => {
       paths.push({ ...attributes, body });
     }
   });
-  return paths;
+  return paths.sort((a, b) => a.date - b.date);
 };
