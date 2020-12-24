@@ -4,7 +4,6 @@ import { initializeAnalaytics } from "@utils/analytics";
 import config from "@utils/config";
 
 function MyApp({ Component, pageProps }) {
-  console.debug(config);
   initializeAnalaytics();
   return (
     <SiteLayout>

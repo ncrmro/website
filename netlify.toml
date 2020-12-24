@@ -10,7 +10,7 @@
 [context.master]
   [context.master.environment]
     ENVIRONMENT = "production"
-    WEB_DEBUG = "true"
+    WEB_DEBUG = "false"
     GOOGLE_ANALYTICS_ENABLED = "true"
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
