@@ -31,7 +31,7 @@ we can also see it
 
 The `asyncpg` not having a wheel is what takes so long for different distributions/architectures.
 
-```
+```bash
  => CACHED [linux/arm64 production 4/5] COPY requirements.txt /app/requirements.txt                                                                                                                                                                                                                                                 0.0s
  => [linux/arm64 production 5/5] RUN apt-get update     && apt-get install -y build-essential     && pip install --no-cache-dir -r requirements.txt && apt-get remove -y build-essential && apt-get auto-remove -y && rm -rf /var/lib/apt/lists/*                                                                                  75.5s
  => => # Requirement already satisfied: python-ffmpeg==1.0.11 in /usr/local/lib/python3.8/site-packages (from -r requirements.txt (line 3)) (1.0.11)
@@ -60,7 +60,7 @@ a buildx enabled docker image (to run [docker in docker](https://www.docker.com/
 
 To install locally just run the last two `RUN`'s.
 
-```Dockerfile
+```dockerfile
 FROM docker:19.03.10
 
 RUN wget https://github.com/docker/buildx/releases/download/v0.4.1/buildx-v0.4.1.linux-amd64
@@ -81,7 +81,7 @@ The [Dockerfile](https://github.com/ncrmro/py-ffmpeg-docker-images/blob/master/D
 handles cleaning up dependencies. This file could have a few layers, but it's the same dockerfile I use for all my Debian
 based python docker images.
 
-```Dockerfile
+```dockerfile
 ARG BASE_IMAGE=python:3.8.5-slim-buster
 FROM $BASE_IMAGE as base
 WORKDIR /app
