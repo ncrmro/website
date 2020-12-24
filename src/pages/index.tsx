@@ -53,7 +53,7 @@ function Home(props) {
         {/*  <br />*/}
         {/*</div>*/}
 
-        {props.posts.reverse().map((post) => (
+        {props.posts.map((post) => (
           <PostCard key={post.slug} {...post} />
         ))}
       </div>

@@ -25,9 +25,8 @@ export const getPosts = (fs): Array<Post> => {
     if (file.includes(".md")) {
       const content = fs.readFileSync(file, "utf8");
       const { body, attributes } = getMetadata(content);
-
-      paths.push({ ...attributes, body });
+      paths.push({ ...attributes, date: Date.parse(attributes.date), body });
     }
   });
-  return paths.sort((a, b) => a.date - b.date);
+  return paths.sort((a, b) => b.date - a.date);
 };
