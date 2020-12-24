@@ -36,7 +36,7 @@ function Home(props) {
   return (
     <PageLayout>
       <Head>
-        <title>Create Next App</title>
+        <title>Nicholas Romero</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
 
