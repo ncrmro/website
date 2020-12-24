@@ -1,5 +1,5 @@
 ---
-slug: 2019-03-10_new-site-stack
+slug: new-site-stack
 title: 'New site stack'
 date: '2019-03-09'
 description: 'We take a look at the process and technology behind this site.'
