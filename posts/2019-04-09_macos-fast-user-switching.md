@@ -1,5 +1,5 @@
 ---
-slug: '/posts/2019-04-09_macos-fast-user-switching'
+slug: macos-fast-user-switching
 title: 'MacOS fast user switching.'
 date: '2019-04-09'
 description: 'Use fast user switching for hygienic separation between personal and professional accounts on a single laptop.'

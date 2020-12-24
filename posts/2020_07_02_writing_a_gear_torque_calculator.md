@@ -1,5 +1,5 @@
 ---
-slug: '/posts/writing_a_gear_torque_calculator'
+slug: writing-a-gear-torque-calculator
 title: Writing a gear torque calculator
 date: '2020-07-02'
 description: While utilizing a stepper motor and gears. I needed more torque and different sized gears. So I wrote a small gear torque calculator.
@@ -10,7 +10,7 @@ Recently I ran into the problem of my stepper motor not able to produce enough t
 adding some [gears](https://www.thingiverse.com/thing:4305) I found on Thingverse based on [Wades Extruder](https://reprap.org/wiki/Wade%27s_Geared_Extruder)
 used in 3D printing.
 
-In a previous post I talk about [driving a stepper motor](/posts/2020_06_16_driving_stepper_motors_with_microcontroller.md) with a microcontroller.
+In a [previous post](/posts/2020_06_16_driving_stepper_motors_with_microcontroller.md) previous post I talk about driving a stepper motor with a microcontroller.
 
 The main components are.
 
@@ -23,11 +23,11 @@ After field-testing the motor I found it does not have enough torque for my appl
 The cool thing about the previously mentioned gear models is they come with `.scad` files so they can be opened in OpenCAD
 to make larger/smaller or adjust tooth count.
 
-![Viewing the CAD files in OpenCAD](images/2020_07_02_writing_a_gear_torque_calculator/gear_in_opencad.png)
+![Viewing the CAD files in OpenCAD](/images/post/2020_07_02_writing_a_gear_torque_calculator/gear_in_opencad.png)
 
 The code for the large gear for example looks like this.
 
-```
+```bash
 module WadesL(){
    difference(){
       gear (number_of_teeth=39,

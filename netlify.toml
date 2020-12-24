@@ -1,14 +1,17 @@
 [build]
-  publish = "public"
-  command = "npm run build && npm run sentry_release"
+  command   = "yarn build && yarn export"
+  publish   = "out"
 
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
 [context.master]
   [context.master.environment]
     ENVIRONMENT = "production"
-
+    WEB_DEBUG = "true"
+    GOOGLE_ANALYTICS_ENABLED = "true"
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 #[context.deploy-preview.environment]
