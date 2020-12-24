@@ -75,7 +75,7 @@ hardware PWM working.
 A simple working example for the Arduino IDE and ESP32 follows.
 This spins the motor one direction and then reverse.
 
-```
+```c
 /*Example sketch to control a stepper motor with A4988/DRV8825 stepper motor driver and Arduino without a library. More info: https://www.makerguides.com */
 
 // Define stepper motor connections and steps per revolution:
@@ -130,4 +130,5 @@ void loop() {
 
 ### It works!
 
-`gif:working-motor.gif`
+
+![spinning stepper motor](/images/post/2020_06_16_driving_stepper_motors_with_microcontroller/working-motor.gif)
