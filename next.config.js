@@ -3,7 +3,12 @@ module.exports = {
   target: "experimental-serverless-trace",
   env: {
     POSTS_DIR: `${__dirname}/posts`,
+    WEB_DEBUG: process.env.WEB_DEBUG,
+    ENVIRONMENT: process.env.ENVIRONMENT,
+    // RELEASE: process.env.RELEASE,
     GOOGLE_ANALYTICS_CODE: "UA-79226152-1",
+    GOOGLE_ANALYTICS_ENABLED: process.env.GOOGLE_ANALYTICS_ENABLED,
+    // SENTRY_ENABLED: process.env.SENTRY_ENABLED,
   },
   // i18n: {
   //   locales: ["en-US", "de"],
