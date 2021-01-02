@@ -1,5 +1,5 @@
 ---
-slug: "/posts/apollo-cache-overview"
+slug: apollo-cache-overview
 title: Apollo Cache Overview
 date: "2021-01-02"
 description: "What is the Apollo cache, ensure correct usage and update post mutation."
