@@ -17,7 +17,7 @@ echo Creating file.. "$post_file_name"
 
 cat <<EOT >> $posts_dir/$post_file_name
 ---
-slug: '/posts/$post_title_slug'
+slug: $post_title_slug
 title: $post_tile
 date: '${current_date}'
 description: CHANGEME
