@@ -11,24 +11,24 @@ object in your App I would highly recommend familiarizing it. As you may not be 
 working with [Graphql Mutations](https://graphql.org/learn/queries/#mutations).
 
 In this case, while working on [JTX](https://jtronics.exchange/) I was trying to show a list of user parts,
-then creating a new part which should then be reflected in the [React](https://reactjs.org/) frontend.
+then creating a new used part which should then be reflected in the [React](https://reactjs.org/) frontend.
 
-After taking a look at your GraphQL cache you might find you need to explicitly request ids for every object and in your
-mocks you will need to remember to apply the `__typname` field.
+After taking a look at your GraphQL cache you might find things are not being cached, this is because you need to explicitly 
+request ids for every object and in your mocks you will need to remember to apply the `__typname` field.
 
-The best way to ensure your cache is set up correctly (especially in testing where GQL responses are mocked) is
-to compare it to a clean cache only modified by built-in Apollo Queries.
+When testing Mutations modifying the cache or what the cache should look like during testing it's best to extract the cache
+in testing and compare with the cache in your application.
 
 ### GraphQL Caching
 
 [This article](https://www.apollographql.com/blog/demystifying-cache-normalization/) goes much more in-depth into how the Apollo GraphQL cache works by implementing cache normalization.
 
-But this might be what your cache looks like while browsing your parts on JTX. As we can see it's just an object!
+The cache is simply an object!
 
 #### Unique Identifies
 
 Each of the keys is the GraphQL cache is `__typename` + the `id` ([uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier) in this case)
-this is the object's Unique Identifier.
+this is the object's Unique Identifier in side of your cache.
 
 ```json
 {
@@ -44,8 +44,10 @@ this is the object's Unique Identifier.
 
 #### Accessing the Apollo Cache
 
-In a few places around your app, you can access the cache object, you should be able to import the cache
-you initially passed to your client and also perform a cache extraction.
+Throughout your app, you can access the cache object you initially passed into your Apollo client. This can be extracted
+at any point and be inspected.
+
+#### Mutations
 
 Mutations when creating or deleting nodes don't automatically update the cache and thus you can specify an [update function](https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates)
 on the [Mutation options](https://www.apollographql.com/docs/react/data/mutations/#options).
