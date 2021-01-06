@@ -73,6 +73,35 @@ client.extract();
 cache.extract();
 ```
 
+## Testing the Cache
+
+Here we can demonstrate using running a snapshot on the extracted snapshot. We could do all sorts of additional assertions but
+more than anything the snapshot gives us a quick visual inspection and then again on any git commits.
+
+```typescript jsx
+describe("ViewerPartsRoute", () => {
+  beforeEach(() => {
+    cache = new InMemoryCache();
+    page = render(
+      <MockedProvider mocks={graphqlMocks} cache={cache} addTypename={true}>
+        <ViewerContext.Provider value={Viewer}>
+          <ViewerOwnedPartsPage />
+        </ViewerContext.Provider>
+      </MockedProvider>
+    );
+  });
+  it("should query with cache", () => {
+    await waitFor(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(cache.extract()).toMatchSnapshot(
+      "cache should have a viewer parts query"
+    );
+  });
+});
+```
+
 ---
 
 ## Custom Cache Key
