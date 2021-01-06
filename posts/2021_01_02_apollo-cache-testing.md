@@ -7,11 +7,11 @@ tags: ["GraphQL", "Apollo", "React"]
 ---
 
 If your using [Apollo](https://www.apollographql.com/docs/) [GraphQL](https://graphql.org/) and you've not yet looked at
-the [Apollo Cache](https://www.apollographql.com/docs/react/caching/cache-configuration/) object in your App I would
+the [Apollo Cache](https://www.apollographql.com/docs/react/caching/cache-configuration/) object in your app I would
 highly recommend getting familiar with it. As you may not be getting the benefits of caching as you thought, which I
 didn't catch until working with [Graphql Mutations](https://graphql.org/learn/queries/#mutations).
 
-In this post we will cover a few aspects of the Apollo cache.
+In this post, we will cover a few aspects of the Apollo cache.
 
 - [Unique Identities](#unique-identities)
 - [Accessing the Cache](#accessing-the-apollo-cache)
@@ -39,12 +39,12 @@ in testing and compare with the cache in your application.
 [This article](https://www.apollographql.com/blog/demystifying-cache-normalization/) by [Khalil Stemmler](https://khalilstemmler.com/)
 on the official Apollo Blog goes much more in-depth into how the Apollo GraphQL cache works by implementing cache normalization.
 
-The cache is simply an object!
+An Apollo cache is simply an object!
 
 ## Unique Identities
 
 Each of the keys is the GraphQL cache is `__typename` + the `id` ([uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier) in this case)
-this is the object's Unique Identifier in side of your cache.
+this is the object's Unique Identifier in your cache.
 
 ```json
 {
@@ -60,12 +60,12 @@ this is the object's Unique Identifier in side of your cache.
 
 ## Custom Cache Key
 
-In some cases we would rather not cache based on a unique ID, In my case we build the Next app in CI so that each statically
-rendered page contains a hot cache for that page. Since we do this with a fresh database rather than putting load on the
+In some cases we would rather not cache based on a unique ID, In my case, we build the Next app in CI so that each statically
+rendered page contains a hot cache for that page. Since we do this with a fresh database rather than putting a load on the
 production database, this leads to different cache keys (uuids) on the statically generated page vs when the client
 makes a query.
 
-Luckly we store another unique key in our database which is the Part slug which we use in our urls!
+Luckily we store another unique key in our database which is the Part slug that we use in our urls!
 
 ```typescript
 import { InMemoryCache } from "@apollo/client";
@@ -181,8 +181,21 @@ to make a Mutation.
 
 Mutating a node that already exists in the cache will automatically update it.
 
-Adding a new node to our viewers OwnedPartConnection is a little trickier. This means the new part is in our cache but
+Adding a new node to our viewer's OwnedPartConnection is a little trickier. This means the new part is in our cache but
 doesn't show up on the page because the original Viewer Part Connection on our Viewer part Query in our Cache hasn't been updated.
+
+To Demonstrate courtesy of [JTX](https://jtronics.exchange/account/parts).
+
+PS. apologies for the scaling of the video feel free to zoom in for now!
+
+![Demonstrating the Mutation Updating the Apollo Cache](/images/post/2021_01_02_apollo-cache-testing/mutation_example.gif)
+
+We can see the cache has a few items,
+
+- one of which is the Viewer/User which contains our OwnedParts connection which has two objects in it,
+- once we perform our part search those are then loaded into the cache.
+- After performing the mutation the cached viewer Owned Part connection should have three items in it
+- a new card should appear in the frontend
 
 ```typescript
 const update = (cache, { data: { createOwnedPart } }) => {
