@@ -58,10 +58,27 @@ this is the object's Unique Identifier in your cache.
 }
 ```
 
+---
+
+## Accessing the Apollo Cache
+
+Throughout your app, you can access the cache object you initially passed into your Apollo client. This can be at any
+point extracted and be inspected.
+
+```typescript
+import { client, cache } from "../utils/apollo";
+
+client.extract();
+
+cache.extract();
+```
+
+---
+
 ## Custom Cache Key
 
 In some cases we would rather not cache based on a unique ID, In my case, we build the Next app in CI so that each statically
-rendered page contains a hot cache for that page. Since we do this with a fresh database rather than putting a load on the
+rendered page (like a [part category page](https://jtronics.exchange/parts/cpu)) contains a hot cache for that page. Since we do this with a fresh database rather than putting a load on the
 production database, this leads to different cache keys (uuids) on the statically generated page vs when the client
 makes a query.
 
@@ -92,19 +109,6 @@ Now our cached part looks like this
 }
 ```
 
-## Accessing the Apollo Cache
-
-Throughout your app, you can access the cache object you initially passed into your Apollo client. This can be at any
-point extracted and be inspected.
-
-```typescript
-import { client, cache } from "../utils/apollo";
-
-client.extract();
-
-cache.extract();
-```
-
 ### Cache Access in Mutations
 
 Mutations when creating or deleting nodes don't automatically update the cache and thus you can specify an
@@ -116,6 +120,8 @@ const update = (cache, { data: { createOwnedPart } }) => {
   console.log("EXISTING CACHE", JSON.stringify(cache.extract()));
 };
 ```
+
+---
 
 ## A more fleshed out Cache example
 
@@ -176,6 +182,8 @@ viewer object on the `ROOT_QUERY` points to the key `USER:uuid` which then has a
 In this way, we end up only ever keeping one copy of the actual object around and every other GraphQL node in the cache references
 that cache key. This stops bloat but also means any components that are using that object automatically update if we need
 to make a Mutation.
+
+---
 
 ## Updating Cache after Mutation
 
