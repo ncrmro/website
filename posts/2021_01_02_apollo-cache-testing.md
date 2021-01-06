@@ -15,6 +15,7 @@ In this post, we will cover a few aspects of the Apollo cache.
 
 - [Unique Identities](#unique-identities)
 - [Accessing the Cache](#accessing-the-apollo-cache)
+- [Testing the Cache](#testing-the-cache)
 - [Updating Cache after Mutation](#updating-cache-after-mutation)
 - [Full Cache Example](#a-more-fleshed-out-cache-example)
 - [Further Reading](#other-parts-of-the-apollo-cache-not-covered-here)
