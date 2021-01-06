@@ -1,6 +1,7 @@
 import CodeBlock from "@components/CodeBlock";
 import PageLayout from "@components/PageLayout";
 import { Post } from "@utils/markdown";
+import slugify from "@utils/slugify";
 import { Language } from "prism-react-renderer";
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
@@ -44,6 +45,22 @@ const PostPage: React.FC<Post> = (props) => {
 
                     return <pre>{props.children}</pre>;
                   },
+                  h2: (props) => (
+                    <h2
+                      id={slugify(props.children[0])}
+                      className="font-semibold text-2xl"
+                    >
+                      {props.children}
+                    </h2>
+                  ),
+                  h3: (props) => (
+                    <h3
+                      id={slugify(props.children[0])}
+                      className="font-semibold text-2xl"
+                    >
+                      {props.children}
+                    </h3>
+                  ),
                   // img: (props) => (
                   //   <Image
                   //     className=" flex justify-centermax-w-xs max-h-xs"
@@ -53,6 +70,14 @@ const PostPage: React.FC<Post> = (props) => {
                   //     alt={props.alt as string}
                   //   />
                   // ),
+                  a: (props: { href; children }) => (
+                    <a
+                      className="text-indigo-600 hover:text-indigo-500"
+                      href={props.href}
+                    >
+                      {props.children}
+                    </a>
+                  ),
                   p: (props) => {
                     console.log(props);
                     return (
