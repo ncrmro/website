@@ -126,7 +126,33 @@ const update = (cache, { data: { createOwnedPart } }) => {
 ## A more fleshed out Cache example
 
 In our case the Viewer object is always based on the JWT token found in the GraphQL requests header, we can see that the
-viewer object on the `ROOT_QUERY` points to the key `USER:uuid` which then has a few other objects on it.
+viewer object on the `ROOT_QUERY` points to the key `USER:uuid` which then has a few other objects on it. Notice the viewer query
+it actually pointing to a GraphQL User:uuid object.
+
+```json
+{
+  "User:e1e5989c-37f5-42e8-85d1-06ea6de5f29b": {
+    "id": "e1e5989c-37f5-42e8-85d1-06ea6de5f29b",
+    "__typename": "User",
+    "systemsByOwnerId": {
+      "__typename": "SystemsConnection",
+      "nodes": [
+        {
+          "__ref": "System:8dd2bcf4-d722-4d10-9aa5-14300ec86186"
+        }
+      ]
+    },
+    "ROOT_QUERY": {
+      "__typename": "Query",
+      "viewer": {
+        "__ref": "User:e1e5989c-37f5-42e8-85d1-06ea6de5f29b"
+      }
+    }
+  }
+}
+```
+
+We can see a more full interconnected cache here.
 
 ```json
 {
