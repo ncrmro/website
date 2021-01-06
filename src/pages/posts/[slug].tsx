@@ -48,7 +48,7 @@ const PostPage: React.FC<Post> = (props) => {
                   h2: (props) => (
                     <h2
                       id={slugify(props.children[0])}
-                      className="font-semibold text-2xl"
+                      className="font-semibold text-2xl pt-4"
                     >
                       {props.children}
                     </h2>
@@ -56,7 +56,7 @@ const PostPage: React.FC<Post> = (props) => {
                   h3: (props) => (
                     <h3
                       id={slugify(props.children[0])}
-                      className="font-semibold text-2xl"
+                      className="font-semibold text-xl  pt-4"
                     >
                       {props.children}
                     </h3>
