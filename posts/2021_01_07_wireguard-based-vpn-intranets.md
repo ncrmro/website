@@ -7,7 +7,7 @@ tags: ["CHANGEME"]
 ---
 
 In this post, we will discuss why you might want a private intranet. An intranet
-is a private computer network, a subspace of the internet, or another computer network.
+is a private computer network, a subspace of the internet.
 
 ## LAN Intranets
 
