@@ -66,7 +66,9 @@ so we could have many services sitting behind a single VPN IP address.
 Once we have our DNS server we can then assign any IP address routed by our VPN to any number of hostnames. We can typically
 tell our VPN client software we would like all DNS traffic routed to a specified server (typically one also listening on the VPN).
 
-## [PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure) and Certificates
+## PKI and Certificates
+
+PKI means [Public Key Infrastructures](https://en.wikipedia.org/wiki/Public_key_infrastructure)
 
 Even though all of our network traffic is encrypted already over the VPN, all major browsers will give you the dreaded
 SSL warnings. Furthermore, with trusted SSL certs for these custom domains, the VPN server itself would not be able
