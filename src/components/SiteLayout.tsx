@@ -62,6 +62,7 @@ const SiteLayout: React.FC = ({ children }) => (
     className="grid"
     style={{
       gridTemplateAreas: mobile,
+      gridTemplateRows: "auto 1fr auto",
     }}
   >
     <Nav />
