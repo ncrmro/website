@@ -9,6 +9,14 @@ tags: ["CHANGEME"]
 In this post, we will discuss why you might want a private intranet. An intranet
 is a private computer network, a subspace of the internet.
 
+* [LAN Intranets](#lan-intranets)
+* [VPN Intranets](#vpn-intranets)
+* [Private and Off the Grid](#private-and-off-the-grid)
+* [How VPN's Work](#how-vpns-works)
+* [Domains and DNS](#domains-and-dns)
+* [PKI (SSL Certs)](#pki-and-certificates)
+* [Implementation](#implementation)
+
 ## LAN Intranets
 
 Almost everyone these days has an intranet already, your wifi router gives all of your home
@@ -31,7 +39,7 @@ In many situations, if you wanted to access your self-hosted server you could al
 The problem of course is now everyone can access your server good passwords or not it would still be nicer if
 we could both access our servers remotely but not have them publicly accessible.
 
-## How the VPN works
+## How VPN's works
 
 Both your VPN and it's clients (your devices and server) all get an IP address, the VPN most likely listening on an
 either port forwarded port from your public external IP or listings directly on the external address.
