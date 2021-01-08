@@ -6,12 +6,10 @@ import { Language } from "prism-react-renderer";
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { Remark } from "react-remark";
-import Image from "next/image";
 
 const PostPage: React.FC<Post> = (props) => {
   return (
-    <PageLayout>
-      <div className="relative py-4 bg-white overflow-hidden">
+    <PageLayout title={props.title} className="relative py-4 bg-white overflow-hidden max-w-6xl	">
         <div className="relative px-4 sm:px-6 lg:px-8">
           <div className="text-lg max-w-prose mx-auto">
             <h1>
@@ -20,7 +18,6 @@ const PostPage: React.FC<Post> = (props) => {
               </span>
             </h1>
           </div>
-          {/*<div>{getContent(props.content)}</div>*/}
           <div className="flex flex-col space-y-3 text-base max-w-prose mx-auto lg:max-w-none">
             <Remark
               rehypeReactOptions={{
@@ -95,7 +92,6 @@ const PostPage: React.FC<Post> = (props) => {
               {props.content}
             </Remark>
           </div>
-        </div>
       </div>
     </PageLayout>
   );
@@ -114,10 +110,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => {
   const fs = require("fs");
   return {
-    paths: require("@utils/markdown")
+    paths: await require("@utils/markdown")
       .getPosts(fs)
       .map((post) => ({
         params: post,
