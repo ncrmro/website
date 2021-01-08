@@ -9,19 +9,19 @@ tags: ["CHANGEME"]
 In this post, we will discuss why you might want a private intranet. An intranet
 is a private computer network, a subspace of the internet.
 
-* [LAN Intranets](#lan-intranets)
-* [VPN Intranets](#vpn-intranets)
-* [Private and Off the Grid](#private-and-off-the-grid)
-* [How VPN's Work](#how-vpns-works)
-* [Domains and DNS](#domains-and-dns)
-* [PKI (SSL Certs)](#pki-and-certificates)
-* [Implementation](#implementation)
+- [LAN Intranets](#lan-intranets)
+- [VPN Intranets](#vpn-intranets)
+- [Private and Off the Grid](#private-and-off-the-grid)
+- [How VPN's Work](#how-vpns-works)
+- [Domains and DNS](#domains-and-dns)
+- [PKI (SSL Certs)](#pki-and-certificates)
+- [Implementation](#implementation)
 
 ## LAN Intranets
 
 Almost everyone these days has an intranet already, your wifi router gives all of your home
-devices a pocket of the internet behind a single public IP address. Mapping ports to and from
-devices to a port not in use on the external-facing IP address.
+devices a LAN (pocket of the internet) behind a single public IP address. This process of mapping ports to and from
+device IP addresses to a port not in use on the external-facing IP address is called [Network Address Translation](https://en.wikipedia.org/wiki/Network_address_translation).
 
 Inside this network, you can access other computers and servers like a NAS for instance say maybe to perform a backup
 or watch a movie of it. What happens though when you want to access this server remotely or maybe have a family
@@ -29,8 +29,9 @@ member access or host a server.
 
 ## VPN Intranets
 
-In this case, we want a Virtual Private Network VPN, this is a server that acts very much like the router you have at home.
-The VPN also authenticates and encrypts any connections to the VPN server. Most people are familiar with this usage
+In this case, we want a [Virtual Private Network VPN](https://en.wikipedia.org/wiki/Virtual_private_network),
+this is a server that acts very much like the router you have at home. The VPN also authenticates and encrypts any
+connections to the VPN server. Most people are familiar with this usage
 to send all your data over a VPN for privacy or to route around Geolocation restorations.
 
 ## Private and "Off the Grid"
@@ -49,7 +50,7 @@ The clients get LAN IP addresses from whatever router's lan they are on.
 ### VPN Subnet
 
 Now all these LANs have their subnets defined by the router. Our VPN is no different (then a router) and has it's
-own subnet.
+own [subnet](https://en.wikipedia.org/wiki/Subnetwork).
 
 For my VPN subnets I typically like `10.2.3.0/24` (easy to remember it 1.2.3), this means our VPN server would usually
 give it's self the first IP in that list of 256 IP address, all the clients would then get an IP from the remainder available
@@ -63,7 +64,7 @@ networks.
 Now trying to connect to all of your services by IP address would be a huge pain And this is cause we've only implemented
 [layer 3 (Network layer IP4/IP6)](https://en.wikipedia.org/wiki/Network_layer) and [Layer 4 (Transport Layer TCP/UDP)](https://en.wikipedia.org/wiki/Transport_layer) of the [OSI Model](https://en.wikipedia.org/wiki/OSI_model)
 
-DNS the protocol that maps hostnames to IP address is actually [layer 7 (Application Layer)](https://en.wikipedia.org/wiki/Application_layer)
+[DNS](https://en.wikipedia.org/wiki/Domain_Name_System) the protocol that maps hostnames to IP address is actually [layer 7 (Application Layer)](https://en.wikipedia.org/wiki/Application_layer)
 and not required or implemented by a VPN server.
 
 Furthermore, we probably want to have our services sit behind a [proxy server](https://en.wikipedia.org/wiki/Proxy_server)
@@ -82,7 +83,7 @@ Even though all of our network traffic is encrypted already over the VPN, all ma
 SSL warnings. Furthermore, with trusted SSL certs for these custom domains, the VPN server itself would not be able
 to read traffic in the clear between any two clients or servers.
 
-This means generating a Root CA, distributing and installing it to any clients or servers, then generating Certs for
+This means generating a [Root CA](https://en.wikipedia.org/wiki/Root_certificate), distributing and installing it to any clients or servers, then generating Certs for
 your various services.
 
 ## Implementation
