@@ -1,3 +1,4 @@
+import "../styles/globals.css";
 import "tailwindcss/tailwind.css";
 import SiteLayout from "@components/SiteLayout";
 import { initializeAnalaytics } from "@utils/analytics";

@@ -59,16 +59,21 @@ const Nav = () => {
 
 const SiteLayout: React.FC = ({ children }) => (
   <div
-    className="grid"
+    className="grid h-full"
     style={{
       gridTemplateAreas: mobile,
       gridTemplateRows: "auto 1fr auto",
     }}
   >
     <Nav />
-    <main style={{ gridArea: "main" }}>{children}</main>
+    <main
+      className="grid place-self-center w-full h-full"
+      style={{ gridArea: "main" }}
+    >
+      {children}
+    </main>
     <footer
-      className="flex justify-self-center m-3"
+      className="flex justify-self-center m-3 pb-3"
       style={{ gridArea: "footer" }}
     >
       Nicholas Romero
