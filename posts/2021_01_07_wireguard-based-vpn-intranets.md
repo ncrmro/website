@@ -28,7 +28,7 @@ not in use on the external-facing IP address is called
 Inside this network, you can access other computers and servers like a NAS for
 instance say maybe to perform a backup or watch a movie of it. What happens
 though when you want to access this server remotely or maybe have a family
-member access or host a server.
+member access or host a server themselves for you to access.
 
 ## VPN Intranets
 
@@ -37,7 +37,7 @@ In this case, we want a
 this is a server that acts very much like the router you have at home. The VPN
 also authenticates and encrypts any connections to the VPN server. Most people
 are familiar with this usage to send all your data over a VPN for privacy or to
-route around Geolocation restorations.
+route around Geolocation restrictions.
 
 ## Private and "Off the Grid"
 
