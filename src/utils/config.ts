@@ -11,7 +11,8 @@ interface Config {
   };
 }
 
-const debug = process.env.WEB_DEBUG === "true";
+// const debug = process.env.WEB_DEBUG === "true";
+const debug = true;
 
 const config: Config = {
   production: process.env.NODE_ENV === "production",
