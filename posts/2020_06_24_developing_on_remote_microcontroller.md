@@ -1,25 +1,31 @@
 ---
 slug: developing-on-remote-microcontroller
 title: Compiling and Testing on a remote microcontroller
-date: '2020-06-24'
-description: We learn how we can develop microcontroller code using the Arduino CLI, compile it and the upload our code to the micrcontroller.
-tags: ['embedded', 'esp32', 'microcontroller', 'arduino']
+date: "2020-06-24"
+description:
+  We learn how we can develop microcontroller code using the Arduino CLI,
+  compile it and the upload our code to the micrcontroller.
+tags: ["embedded", "esp32", "microcontroller", "arduino"]
 ---
 
-Recently I've been doing a lot of microcontroller work. And I've wanted to offload compiling code as well as
-having the microcontroller hosted without carrying it around. These microcontrollers could be Arduino/esp32 etc.
+Recently I've been doing a lot of microcontroller work. And I've wanted to
+offload compiling code as well as having the microcontroller hosted without
+carrying it around. These microcontrollers could be Arduino/esp32 etc.
 
-I've got an Intel NUC that I've set up to automatically connect to my Wireguard server. This means I always have
-the same IP to connect to as well as remote access if I'm not on the same LAN.
+I've got an Intel NUC that I've set up to automatically connect to my Wireguard
+server. This means I always have the same IP to connect to as well as remote
+access if I'm not on the same LAN.
 
-Finally, I'd like to avoid using the Arduino IDE as I find it very limited in capability.
+Finally, I'd like to avoid using the Arduino IDE as I find it very limited in
+capability.
 
 I believe most of this could be dockerized but let's keep it simple for now.
 
 On Ubuntu 20.
 
-Installing the Arduino CLI instructions can be found [here](https://arduino.github.io/arduino-cli/installation/). Brew installs are available
-if you'd prefer to use a mac.
+Installing the Arduino CLI instructions can be found
+[here](https://arduino.github.io/arduino-cli/installation/). Brew installs are
+available if you'd prefer to use a mac.
 
 ```bash
 mkdir ~/.local/bin &&
@@ -43,8 +49,7 @@ Update and install the boards you need.
 
 `arduino-cli core update-index && core install esp32:esp32`
 
-Now if you plug in an ESP32 and run list
-`arduino-cli board list`
+Now if you plug in an ESP32 and run list `arduino-cli board list`
 
 You should see the board.
 
@@ -53,10 +58,10 @@ Port         Type              Board Name FQBN Core
 /dev/ttyUSB0 Serial Port (USB) Unknown
 ```
 
-Let us create a new Arduino sketch.
-`arduino-cli sketch my_sketch`
+Let us create a new Arduino sketch. `arduino-cli sketch my_sketch`
 
-At this point, I've set up my Pycharm IDE to auto-deploy and sync the project folder over SSH.
+At this point, I've set up my Pycharm IDE to auto-deploy and sync the project
+folder over SSH.
 
 Lets make our ESP32 blink
 
@@ -82,8 +87,9 @@ void loop() {
 }
 ```
 
-Now we have a bash script that checksums our sketch folder and compiles and uploads our code if anything
-changes. After which it starts a miniterm session to listen to the serial console.
+Now we have a bash script that checksums our sketch folder and compiles and
+uploads our code if anything changes. After which it starts a miniterm session
+to listen to the serial console.
 
 ```bash
 # sh deploy.sh
@@ -122,7 +128,8 @@ echo "Listening on Port"
 miniterm $PORT 9600
 ```
 
-To call this script over ssh (we could make this into another script if ya catch my drift) we can run.
+To call this script over ssh (we could make this into another script if ya catch
+my drift) we can run.
 
 `ssh -t -t username@hostname.local "cd ~/code/my_sketch && bash deploy.sh"`
 

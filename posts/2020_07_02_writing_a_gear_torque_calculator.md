@@ -1,16 +1,22 @@
 ---
 slug: writing-a-gear-torque-calculator
 title: Writing a gear torque calculator
-date: '2020-07-02'
-description: While utilizing a stepper motor and gears. I needed more torque and different sized gears. So I wrote a small gear torque calculator.
-tags: ['python', 'opensource']
+date: "2020-07-02"
+description:
+  While utilizing a stepper motor and gears. I needed more torque and different
+  sized gears. So I wrote a small gear torque calculator.
+tags: ["python", "opensource"]
 ---
 
-Recently I ran into the problem of my stepper motor not able to produce enough torque. This is even after
-adding some [gears](https://www.thingiverse.com/thing:4305) I found on Thingverse based on [Wades Extruder](https://reprap.org/wiki/Wade%27s_Geared_Extruder)
-used in 3D printing.
+Recently I ran into the problem of my stepper motor not able to produce enough
+torque. This is even after adding some
+[gears](https://www.thingiverse.com/thing:4305) I found on Thingverse based on
+[Wades Extruder](https://reprap.org/wiki/Wade%27s_Geared_Extruder) used in 3D
+printing.
 
-In a [previous post](/posts/2020_06_16_driving_stepper_motors_with_microcontroller.md) previous post I talk about driving a stepper motor with a microcontroller.
+In a
+[previous post](/posts/2020_06_16_driving_stepper_motors_with_microcontroller.md)
+previous post I talk about driving a stepper motor with a microcontroller.
 
 The main components are.
 
@@ -18,10 +24,12 @@ The main components are.
 - [ESP32](https://en.wikipedia.org/wiki/ESP32)
 - [DRV8825](https://www.pololu.com/product/2133)
 
-After field-testing the motor I found it does not have enough torque for my application.
+After field-testing the motor I found it does not have enough torque for my
+application.
 
-The cool thing about the previously mentioned gear models is they come with `.scad` files so they can be opened in OpenCAD
-to make larger/smaller or adjust tooth count.
+The cool thing about the previously mentioned gear models is they come with
+`.scad` files so they can be opened in OpenCAD to make larger/smaller or adjust
+tooth count.
 
 ![Viewing the CAD files in OpenCAD](/images/post/2020_07_02_writing_a_gear_torque_calculator/gear_in_opencad.png)
 
@@ -44,11 +52,14 @@ module WadesL(){
 }
 ```
 
-This is the moment I started to realize I need to brush up the relationship between torque and gearing. Rather than guessing
-if a bigger motor or gear would be sufficient I decided to write a small python library to pass different sized gears
-and figure out the final torque.
+This is the moment I started to realize I need to brush up the relationship
+between torque and gearing. Rather than guessing if a bigger motor or gear would
+be sufficient I decided to write a small python library to pass different sized
+gears and figure out the final torque.
 
-The source can be found on Github [here](https://github.com/ncrmro/gear-torque-calc), the Python package can be found [here](https://pypi.org/project/gear-torque-calc/1.0.0/)
+The source can be found on Github
+[here](https://github.com/ncrmro/gear-torque-calc), the Python package can be
+found [here](https://pypi.org/project/gear-torque-calc/1.0.0/)
 
 Usage is as follows.
 

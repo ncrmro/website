@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev  -p 3300",
     "build": "next build",
     "start": "next start",
     "export": "next export",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "p": "prettier --write --prose-wrap=always ./posts/*"
   },
   "dependencies": {
     "autoprefixer": "^10.1.0",

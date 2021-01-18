@@ -2,14 +2,18 @@
 slug: apollo-cache-overview
 title: Apollo Cache Overview
 date: "2021-01-02"
-description: "What is the Apollo cache, ensure correct usage and update post mutation."
+description:
+  "What is the Apollo cache, ensure correct usage and update post mutation."
 tags: ["GraphQL", "Apollo", "React"]
 ---
 
-If your using [Apollo](https://www.apollographql.com/docs/) [GraphQL](https://graphql.org/) and you've not yet looked at
-the [Apollo Cache](https://www.apollographql.com/docs/react/caching/cache-configuration/) object in your app I would
-highly recommend getting familiar with it. As you may not be getting the benefits of caching as you thought, which I
-didn't catch until working with [Graphql Mutations](https://graphql.org/learn/queries/#mutations).
+If your using [Apollo](https://www.apollographql.com/docs/)
+[GraphQL](https://graphql.org/) and you've not yet looked at the
+[Apollo Cache](https://www.apollographql.com/docs/react/caching/cache-configuration/)
+object in your app I would highly recommend getting familiar with it. As you may
+not be getting the benefits of caching as you thought, which I didn't catch
+until working with
+[Graphql Mutations](https://graphql.org/learn/queries/#mutations).
 
 In this post, we will cover a few aspects of the Apollo cache.
 
@@ -24,28 +28,34 @@ In this post, we will cover a few aspects of the Apollo cache.
 
 ### Background
 
-In this case, while working on [JTX](https://jtronics.exchange/) I was trying to show a list of user parts,
-then creating a new used part which should then be reflected in the [React](https://reactjs.org/) frontend.
+In this case, while working on [JTX](https://jtronics.exchange/) I was trying to
+show a list of user parts, then creating a new used part which should then be
+reflected in the [React](https://reactjs.org/) frontend.
 
-After taking a look at your GraphQL cache you might find things are not being cached, this is because you need to explicitly
-request ids for every object and in your mocks you will need to remember to apply the `__typname` field.
+After taking a look at your GraphQL cache you might find things are not being
+cached, this is because you need to explicitly request ids for every object and
+in your mocks you will need to remember to apply the `__typname` field.
 
-When testing Mutations modifying the cache or what the cache should look like during testing it's best to extract the cache
-in testing and compare with the cache in your application.
+When testing Mutations modifying the cache or what the cache should look like
+during testing it's best to extract the cache in testing and compare with the
+cache in your application.
 
 ---
 
 ## GraphQL Caching
 
-[This article](https://www.apollographql.com/blog/demystifying-cache-normalization/) by [Khalil Stemmler](https://khalilstemmler.com/)
-on the official Apollo Blog goes much more in-depth into how the Apollo GraphQL cache works by implementing cache normalization.
+[This article](https://www.apollographql.com/blog/demystifying-cache-normalization/)
+by [Khalil Stemmler](https://khalilstemmler.com/) on the official Apollo Blog
+goes much more in-depth into how the Apollo GraphQL cache works by implementing
+cache normalization.
 
 An Apollo cache is simply an object!
 
 ## Unique Identities
 
-Each of the keys is the GraphQL cache is `__typename` + the `id` ([uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier) in this case)
-this is the object's Unique Identifier in your cache.
+Each of the keys is the GraphQL cache is `__typename` + the `id`
+([uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier) in this
+case) this is the object's Unique Identifier in your cache.
 
 ```json
 {
@@ -63,8 +73,8 @@ this is the object's Unique Identifier in your cache.
 
 ## Accessing the Apollo Cache
 
-Throughout your app, you can access the cache object you initially passed into your Apollo client. This can be at any
-point extracted and be inspected.
+Throughout your app, you can access the cache object you initially passed into
+your Apollo client. This can be at any point extracted and be inspected.
 
 ```typescript
 import { client, cache } from "../utils/apollo";
@@ -76,8 +86,9 @@ cache.extract();
 
 ## Testing the Cache
 
-Here we can demonstrate using running a snapshot on the extracted snapshot. We could do all sorts of additional assertions but
-more than anything the snapshot gives us a quick visual inspection and then again on any git commits.
+Here we can demonstrate using running a snapshot on the extracted snapshot. We
+could do all sorts of additional assertions but more than anything the snapshot
+gives us a quick visual inspection and then again on any git commits.
 
 ```typescript jsx
 describe("ViewerPartsRoute", () => {
@@ -107,12 +118,15 @@ describe("ViewerPartsRoute", () => {
 
 ## Custom Cache Key
 
-In some cases we would rather not cache based on a unique ID, In my case, we build the Next app in CI so that each statically
-rendered page (like a [part category page](https://jtronics.exchange/parts/cpu)) contains a hot cache for that page. Since we do this with a fresh database rather than putting a load on the
-production database, this leads to different cache keys (uuids) on the statically generated page vs when the client
-makes a query.
+In some cases we would rather not cache based on a unique ID, In my case, we
+build the Next app in CI so that each statically rendered page (like a
+[part category page](https://jtronics.exchange/parts/cpu)) contains a hot cache
+for that page. Since we do this with a fresh database rather than putting a load
+on the production database, this leads to different cache keys (uuids) on the
+statically generated page vs when the client makes a query.
 
-Luckily we store another unique key in our database which is the Part slug that we use in our urls!
+Luckily we store another unique key in our database which is the Part slug that
+we use in our urls!
 
 ```typescript
 import { InMemoryCache } from "@apollo/client";
@@ -141,9 +155,12 @@ Now our cached part looks like this
 
 ### Cache Access in Mutations
 
-Mutations when creating or deleting nodes don't automatically update the cache and thus you can specify an
+Mutations when creating or deleting nodes don't automatically update the cache
+and thus you can specify an
 [update function](https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates)
-on the [Mutation options](https://www.apollographql.com/docs/react/data/mutations/#options). We cover this more [further down](#updating-cache-after-mutation)
+on the
+[Mutation options](https://www.apollographql.com/docs/react/data/mutations/#options).
+We cover this more [further down](#updating-cache-after-mutation)
 
 ```typescript
 const update = (cache, { data: { createOwnedPart } }) => {
@@ -155,9 +172,10 @@ const update = (cache, { data: { createOwnedPart } }) => {
 
 ## A more fleshed out Cache example
 
-In our case the Viewer object is always based on the JWT token found in the GraphQL requests header, we can see that the
-viewer object on the `ROOT_QUERY` points to the key `USER:uuid` which then has a few other objects on it. Notice the viewer query
-it actually pointing to a GraphQL User:uuid object.
+In our case the Viewer object is always based on the JWT token found in the
+GraphQL requests header, we can see that the viewer object on the `ROOT_QUERY`
+points to the key `USER:uuid` which then has a few other objects on it. Notice
+the viewer query it actually pointing to a GraphQL User:uuid object.
 
 ```json
 {
@@ -235,9 +253,10 @@ We can see a more full interconnected cache here.
 }
 ```
 
-In this way, we end up only ever keeping one copy of the actual object around and every other GraphQL node in the cache references
-that cache key. This stops bloat but also means any components that are using that object automatically update if we need
-to make a Mutation.
+In this way, we end up only ever keeping one copy of the actual object around
+and every other GraphQL node in the cache references that cache key. This stops
+bloat but also means any components that are using that object automatically
+update if we need to make a Mutation.
 
 ---
 
@@ -245,8 +264,10 @@ to make a Mutation.
 
 Mutating a node that already exists in the cache will automatically update it.
 
-Adding a new node to our viewer's OwnedPartConnection is a little trickier. This means the new part is in our cache but
-doesn't show up on the page because the original Viewer Part Connection on our Viewer part Query in our Cache hasn't been updated.
+Adding a new node to our viewer's OwnedPartConnection is a little trickier. This
+means the new part is in our cache but doesn't show up on the page because the
+original Viewer Part Connection on our Viewer part Query in our Cache hasn't
+been updated.
 
 To Demonstrate courtesy of [JTX](https://jtronics.exchange/account/parts).
 
@@ -256,9 +277,11 @@ PS. apologies for the scaling of the video feel free to zoom in for now!
 
 We can see the cache has a few items,
 
-- one of which is the Viewer/User which contains our OwnedParts connection which has two objects in it,
+- one of which is the Viewer/User which contains our OwnedParts connection which
+  has two objects in it,
 - once we perform our part search those are then loaded into the cache.
-- After performing the mutation the cached viewer Owned Part connection should have three items in it
+- After performing the mutation the cached viewer Owned Part connection should
+  have three items in it
 - a new card should appear in the frontend
 
 ```typescript
