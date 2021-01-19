@@ -30,13 +30,13 @@ enum FormState {
   Billing, // 2
 }
 
-const Form: ReactFC = () => {
-  const [formStep, setFormStep] = useState<CreateExistingViewerSystemState>(
-    CreateExistingViewerSystemState.Default
+const Form: React.FC = () => {
+  const [formStep, setFormStep] = useState<FormState>(
+    FormState.Default
   );
   let step;
-  switch (formState) {
-    case CreateExistingViewerSystemState.Default:
+  switch (formStep) {
+    case FormState.Default:
     default:
       step = <>First step</>;
       break;
@@ -45,8 +45,8 @@ const Form: ReactFC = () => {
     <form>
       <div>{step}</div>
       <div>
-        <Button onClick={() => setFormStage(formState - 1)}>Back</Button>
-        <Button onClick={() => setFormStage(formState + 1)}>Next</Button>
+        <Button onClick={() => setFormStep(formStep - 1)}>Back</Button>
+        <Button onClick={() => setFormStep(formStep + 1)}>Next</Button>
       </div>
     </form>
   );
@@ -64,18 +64,18 @@ enum FormState {
 }
 
 const Form = () => {
-  const [formStep, setFormStep] = useState<CreateExistingViewerSystemState>(
-    CreateExistingViewerSystemState.Default
+  const [formStep, setFormStep] = useState<FormState>(
+    FormState.Default
   );
   let step;
-  switch (formState) {
+  switch (formStep) {
     case FormState.Address:
       step = <div>Address Step</div>;
       break;
-    case CreateExistingViewerSystemState.Billing:
+    case FormState.Billing:
       step = <div>Billing Step</div>;
       break;
-    case CreateExistingViewerSystemState.Default:
+    case FormState.Default:
     default:
       step = <>First step</>;
       break;
@@ -89,10 +89,10 @@ const Form = () => {
     >
       <div style={{ gridArea: "step-body" }}>{step}</div>
       <div className="flex justify-end" style={{ gridArea: "step-action" }}>
-        <Button onClick={() => setFormStage(formState - 1)} className="mr-2">
+        <Button onClick={() => setFormStep(formStep - 1)} className="mr-2">
           Back
         </Button>
-        <Button onClick={() => setFormStage(formState + 1)}>Next</Button>
+        <Button onClick={() => setFormStep(formStep + 1)}>Next</Button>
       </div>
     </form>
   );
