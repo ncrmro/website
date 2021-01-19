@@ -21,3 +21,13 @@ export const initializeAnalaytics = (): void => {
     window.GA_INITIALIZED = true;
   }
 };
+
+export const logPageView = (url: string): void => {
+  if (window.GA_INITIALIZED) {
+    if (config.debug) {
+      console.debug("PAGE VIEW", url);
+    }
+    ReactGA.set({ page: window.location.pathname });
+    ReactGA.pageview(url);
+  }
+};
