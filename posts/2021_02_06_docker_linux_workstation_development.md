@@ -71,7 +71,7 @@ systemctl --user stop docker
 Create or modify the `daemon.json`
 
 ```bash
-nano ~/.config/docker/daemon.JSON
+nano ~/.config/docker/daemon.json
 ```
 
 Content should be as follows.
