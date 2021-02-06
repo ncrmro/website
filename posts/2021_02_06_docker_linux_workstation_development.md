@@ -2,8 +2,7 @@
 slug: docker-linux-workstation-development
 title: Docker Linux Workstation Development
 date: "2021-02-06"
-description: Brining Linux Workstation Docker Development inline with Docker Desktop for
-macOS and Windows.
+description: Bringing Linux Workstation Docker Development inline with Docker Desktop for macOS and Windows.
 tags: ["docker", "zfs", "linux", "ubuntu"]
 ---
 
