@@ -19,7 +19,8 @@ jobs:
             # https://developers.cloudflare.com/workers/cli-wrangler/configuration
             CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
             CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-      - run: yarn
+      - run: yarn --frozen-lockfile
       - run: yarn build
-      - run: yarn global add @cloudflare/wrangler
+      - run: yarn add @cloudflare/wrangler
+      - run: wrangler config --api-key
       - run: yarn pub
