@@ -2,7 +2,7 @@
 slug: docker-linux-workstation-development
 title: Docker Linux Workstation Development
 date: "2021-02-06"
-description: Bringing Linux Workstation Docker Development inline with Docker Desktop for macOS and Windows.
+description: Making linux Docker more like Docker Desktop for macOS and Windows.
 tags: ["docker", "zfs", "linux", "ubuntu"]
 ---
 
@@ -42,7 +42,7 @@ Starting the rootless docker image like so
 
 Would result in something like this.
 
-```
+```bash
 ...
 ERRO[2021-02-06T07:59:07.331974204-06:00] failed to mount overlay: invalid argument     storage-driver=overlay2
 INFO[2021-02-06T07:59:07.332726224-06:00] stopping healthcheck following graceful shutdown  module=libcontainerd
@@ -94,7 +94,8 @@ systemctl --user status docker.service
 
 ### VFS Capping Usage
 
-> note for now, i've had a little trouble getting this to start with storage-opts
+- note for now, i've had a little trouble getting this to start with
+  storage-opts \*
 
 To keep our VFS from consuming all of our disk space we can set a max amount of
 storage the VFS storage driver will use.
