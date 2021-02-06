@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev  -p 3300",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
-    "export": "next export",
+    "pub": "wrangler publish",
     "postbuild": "next-sitemap",
     "p": "prettier --write --prose-wrap=always ./posts/*"
   },

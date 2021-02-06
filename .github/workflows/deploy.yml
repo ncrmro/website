@@ -1,0 +1,25 @@
+name: Deploy
+
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+        env:
+            # https://developers.cloudflare.com/workers/cli-wrangler/authentication
+            CF_EMAIL: ${{secrets.CF_EMAIL}}
+            CF_API_KEY: ${{secrets.CF_API_KEY}}
+            # https://developers.cloudflare.com/workers/cli-wrangler/configuration
+            CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+            CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      - run: yarn
+      - run: yarn build
+      - run: yarn global add @cloudflare/wrangler
+      - run: yarn pub
