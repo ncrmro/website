@@ -96,12 +96,14 @@ systemctl --user status docker.service
 
 ### VFS Capping Usage
 
+> note for now, i've had a little trouble getting this to start with storage-opts
+
 To keep our VFS from consuming all of our disk space we can set a max amount of
 storage the VFS storage driver will use.
 
 ```json5
 {
   "storage-driver": "vfs",
-  "storage-opts": ["size=25GB"],
+  "storage-opts": ["size=25G"],
 }
 ```
