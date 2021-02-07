@@ -2,7 +2,7 @@ name = "ncrmro-static"
 type = "javascript"
 #account_id = ""
 workers_dev = true
-route = ""
+#route = ""
 #zone_id = ""
 
 [site]
