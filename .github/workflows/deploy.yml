@@ -21,5 +21,6 @@ jobs:
       - run: yarn --frozen-lockfile
       - run: yarn build
       - run: yarn add @cloudflare/wrangler
+      - run: env
 #      - run: yarn wrangler config --api-key
       - run: yarn pub
