@@ -14,13 +14,12 @@ jobs:
           node-version: 12
         env:
             # https://developers.cloudflare.com/workers/cli-wrangler/authentication
-            CF_EMAIL: ${{secrets.CF_EMAIL}}
-            CF_API_KEY: ${{secrets.CF_API_KEY}}
+            CF_API_TOKEN: ${{secrets.CF_API_TOKEN}}
             # https://developers.cloudflare.com/workers/cli-wrangler/configuration
             CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
             CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
       - run: yarn --frozen-lockfile
       - run: yarn build
       - run: yarn add @cloudflare/wrangler
-      - run: yarn wrangler config --api-key
+#      - run: yarn wrangler config --api-key
       - run: yarn pub
