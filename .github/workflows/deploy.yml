@@ -29,8 +29,8 @@ jobs:
             CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
             CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
       - run: yarn --frozen-lockfile
-#      - run: yarn build
-#      - run: yarn add @cloudflare/wrangler
-#      - run: env
-##      - run: yarn wrangler config --api-key
-#      - run: yarn pub
+      - run: yarn build
+      - run: yarn add @cloudflare/wrangler
+      - run: env
+#      - run: yarn wrangler config --api-key
+      - run: yarn pub
