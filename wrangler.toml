@@ -1,7 +1,7 @@
 name = "ncrmro-static"
 type = "javascript"
 #account_id = ""
-workers_dev = true
+#workers_dev = false
 #route = ""
 #zone_id = ""
 
