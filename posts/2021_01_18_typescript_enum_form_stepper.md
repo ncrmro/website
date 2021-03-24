@@ -31,9 +31,7 @@ enum FormState {
 }
 
 const Form: React.FC = () => {
-  const [formStep, setFormStep] = useState<FormState>(
-    FormState.Default
-  );
+  const [formStep, setFormStep] = useState<FormState>(FormState.Default);
   let step;
   switch (formStep) {
     case FormState.Default:
@@ -64,9 +62,7 @@ enum FormState {
 }
 
 const Form = () => {
-  const [formStep, setFormStep] = useState<FormState>(
-    FormState.Default
-  );
+  const [formStep, setFormStep] = useState<FormState>(FormState.Default);
   let step;
   switch (formStep) {
     case FormState.Address:
