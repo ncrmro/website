@@ -154,7 +154,7 @@ These mocks might live in a file or folder like `utils/mocks.ts`
 
 import { TodoSimpleFragment } from "@gqlgen";
 
-export const TodoSimpleFragment: TodoSimpleFragment = {
+export const todoSimpleFragment: TodoSimpleFragment = {
   __typename: "Todo",
   id: "todo-mock-id",
   text: "My mocked todo text",
@@ -172,7 +172,7 @@ import {
   ViewerTodosVariables,
   ViewerTodos,
 } from "@gqlgen";
-import { ViewerSimpleFragment, TodoSimpleFragment } from "./utils/mocks";
+import { viewerSimpleFragment, todoSimpleFragment } from "./utils/mocks";
 
 export const ViewerTodosMock: GraphQLMock<ViewerTodosVariables, ViewerTodos> = {
   request: {
@@ -183,8 +183,8 @@ export const ViewerTodosMock: GraphQLMock<ViewerTodosVariables, ViewerTodos> = {
     data: {
       __typename: "Query",
       viewer: {
-        ...ViewerSimpleFragment,
-        todos: { nodes: [{ ...TodoSimpleFragment, createdAt: "NOW" }] },
+        ...viewerSimpleFragment,
+        todos: { nodes: [{ ...todoSimpleFragment, createdAt: "NOW" }] },
       },
     },
   },
