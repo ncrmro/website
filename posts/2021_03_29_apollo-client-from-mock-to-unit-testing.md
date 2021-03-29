@@ -2,7 +2,9 @@
 slug: apollo-client-from-mock-to-unit-testing
 title: Apollo Client Work Flow - From Mock to Unit Testing
 date: "2021-03-29"
-description: In this post we cover an optimal work flow for building out and testing React components that use GraphQL queries
+description:
+  In this post we cover an optimal work flow for building out and testing React
+  components that use GraphQL queries
 tags: ["CHANGEME"]
 ---
 
@@ -19,12 +21,15 @@ building your graphQL queries, fragments and mocks to be Apollo Cache Compliant.
 What I mean by being cache compliant is each item in your queries needs to
 include an `ID` field and your mocks need to include a `__typename` field.
 
-Check out my other post for more in-depth Apollo Cache testing notes.
+Check out my
+[Apollo Cache Testing post](https://ncrmro.com/posts/apollo-cache-overview) for
+more in-depth Apollo Cache testing notes.
 
-If using GraphQL codegen to generate typescript types and functions I would
-recommend adding the `nonOptionalTypename: true` this will throw TS errors when
-any of your typed mocks are missing `__typename` (often making it hard to figure
-out why the Apollo cache isn't working as expected).
+If using [GraphQL codegen](https://graphql-code-generator.com/) to generate
+typescript types and functions I would recommend adding the
+`nonOptionalTypename: true` this will throw TS errors when any of your typed
+mocks are missing `__typename` (often making it hard to figure out why the
+Apollo cache isn't working as expected).
 
 Additionally, when performing mutations, your queries inside the mutation
 response fields should match any cached queries.
