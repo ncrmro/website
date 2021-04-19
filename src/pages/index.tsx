@@ -11,7 +11,7 @@ import Link from "next/link";
 import React from "react";
 
 const PostCard: React.FC<Post> = (props) => (
-  <div className="flex-1 bg-white p-6 flex flex-col justify-between">
+  <div className="flex-1 bg-white flex flex-col justify-between">
     <div className="flex-1">
       <Link href={`/posts/${props.slug}`}>
         <a href="#" className="block mt-2">
@@ -34,25 +34,13 @@ const PostCard: React.FC<Post> = (props) => (
 
 function Home(props) {
   return (
-    <PageLayout>
+    <PageLayout className="p-6">
       <Head>
         <title>Nicholas Romero</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <div className="grid w-full">
-        {/*<div className="flex">*/}
-        {/*  <Image*/}
-        {/*    src="/images/avatar.jpg"*/}
-        {/*    alt="Picture of the author"*/}
-        {/*    width={50}*/}
-        {/*    height={50}*/}
-        {/*    className="object-cover shadow-lg rounded-lg"*/}
-        {/*  />*/}
-        {/*  <h1 className="">Nicholas Romero</h1>*/}
-        {/*  <br />*/}
-        {/*</div>*/}
-
+      <div className="grid w-full gap-12">
         {props.posts.map((post) => (
           <PostCard key={post.slug} {...post} />
         ))}
