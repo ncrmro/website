@@ -17,16 +17,28 @@ export interface Post extends PostAttributes {
   content: string;
 }
 
-export const getPosts = (fs): Array<Post> => {
+export const getPosts = (tags?: string[]): Array<Post> => {
+  const fs = require("fs");
   const postsDir = process.env.POSTS_DIR;
-  const paths = [];
+  let posts = [];
   fs.readdirSync(postsDir).forEach((file) => {
     file = `${postsDir}/${file}`;
     if (file.includes(".md")) {
       const content = fs.readFileSync(file, "utf8");
       const { body, attributes } = getMetadata(content);
-      paths.push({ ...attributes, date: Date.parse(attributes.date), body });
+      posts.push({ ...attributes, date: Date.parse(attributes.date), body });
     }
   });
-  return paths.sort((a, b) => b.date - a.date);
+  posts.sort((a, b) => b.date - a.date);
+  if (tags) {
+    let tag;
+    posts = posts.filter((post) => {
+      for (tag of tags) {
+        if (post.tags.includes(tag)) {
+          return true;
+        }
+      }
+    });
+  }
+  return posts;
 };

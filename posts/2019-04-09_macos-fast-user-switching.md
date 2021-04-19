@@ -5,6 +5,7 @@ date: "2019-04-09"
 description:
   "Use fast user switching for hygienic separation between personal and
   professional accounts on a single laptop."
+tags: ["tech"]
 ---
 
 [Fast user switching](https://en.wikipedia.org/wiki/Fast_user_switching)

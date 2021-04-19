@@ -7,6 +7,7 @@ description:
   authority, server and client certificates.
 tags:
   [
+    "tech", 
     "Private Key Infrastructure",
     "Security",
     "Intranet",

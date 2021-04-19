@@ -5,7 +5,7 @@ date: "2020-12-04"
 description:
   A script to attempt keeping my code folder in sync between my laptop and
   workstation.
-tags: ["rsync", "automation"]
+tags: ["tech", "rsync", "automation"]
 ---
 
 I often find myself trying to keep the folder called code in which I keep my

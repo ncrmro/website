@@ -3,7 +3,7 @@ slug: multi-arch-docker-buildx-ci-cd
 title: Multi Arch Docker Buildx in CI/CD
 date: "2020-08-14"
 description: Automated Multi Arch Docker Image Builds
-tags: ["docker", "devops", "ci/cd"]
+tags: ["tech", "docker", "devops", "ci/cd"]
 ---
 
 I've recently been working on some projects with some heavy dependencies

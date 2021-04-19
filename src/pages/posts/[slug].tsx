@@ -105,10 +105,8 @@ const PostPage: React.FC<Post> = (props) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const fs = require("fs");
-
   const post = require("@utils/markdown")
-    .getPosts(fs)
+    .getPosts()
     .reverse()
     .find((post) => post.slug === context.params.slug);
 
@@ -118,10 +116,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const fs = require("fs");
   return {
     paths: await require("@utils/markdown")
-      .getPosts(fs)
+      .getPosts()
       .map((post) => ({
         params: post,
       })),

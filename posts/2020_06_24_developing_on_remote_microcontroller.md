@@ -5,7 +5,7 @@ date: "2020-06-24"
 description:
   We learn how we can develop microcontroller code using the Arduino CLI,
   compile it and the upload our code to the micrcontroller.
-tags: ["embedded", "esp32", "microcontroller", "arduino"]
+tags: ["tech", "embedded", "esp32", "microcontroller", "arduino"]
 ---
 
 Recently I've been doing a lot of microcontroller work. And I've wanted to
