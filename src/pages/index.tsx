@@ -1,24 +1,18 @@
-import React from "react";
+import { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import PageLayout from "@components/PageLayout";
+import Posts from "@components/Posts";
 import { Post } from "@utils/markdown";
 
-
-function Home(props) {
+function Home(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
     <PageLayout className="p-6">
       <Head>
         <title>Nicholas Romero</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-
-      <div className="grid w-full gap-12">
-        {props.posts.map((post) => (
-          <PostCard key={post.slug} {...post} />
-        ))}
-      </div>
+      <Posts posts={props.posts} />
     </PageLayout>
   );
 }
