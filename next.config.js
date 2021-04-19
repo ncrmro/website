@@ -1,4 +1,7 @@
 module.exports = {
+  future: {
+    webpack5: true,
+  },
   reactStrictMode: true,
   target: "experimental-serverless-trace",
   env: {
