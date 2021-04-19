@@ -14,11 +14,8 @@ function Home(props: PropsWithChildren<{ posts: Post[] }>) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const fs = require("fs");
-  const posts = require("@utils/markdown").getPosts(fs);
-
   return {
-    props: { posts },
+    props: { posts: require("@utils/markdown").getPosts() },
   };
 };
 
