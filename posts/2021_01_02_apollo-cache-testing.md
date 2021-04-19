@@ -314,6 +314,82 @@ const update = (cache, { data: { createOwnedPart } }) => {
 };
 ```
 
+### Use Fragments
+
+One thing that will throw you for a loop during testing is if your updating a
+query after mutation if the shape of the data is diffrent this will cause
+problems.
+
+For instance
+
+```graphql
+query MyBlogPostsQuery {
+  blogPosts {
+    id
+    text
+    completed
+    comments(first: 10) {
+      totalCount
+      nodes {
+        id
+        author
+        content
+      }
+    }
+  }
+}
+```
+
+This (over fetched) mutation returns the blog post and all of it's comments, but
+if you notice comments is missing a total count. This would work in the front
+end but cause errors during testing.
+
+```graphql
+mutation MyBlogPostAddComment {
+  addComment(postId: "test-post-id", text: "Im making a comment") {
+    id
+    text
+    completed
+    comments(first: 10) {
+      nodes {
+        id
+        author
+        content
+      }
+    }
+  }
+}
+```
+
+Better to use a shared fragment to insure that our data shapes match.
+
+```graphql
+query MyBlogPostsQuery {
+  blogPosts {
+    ...MyBlogPostFragment
+  }
+}
+
+mutation MyBlogPostAddComment {
+  addComment(postId: "test-post-id", text: "Im making a comment") {
+    ...MyBlogPostFragment
+  }
+}
+
+fragment MyBlogPostFragment on Post {
+  id
+  text
+  completed
+  comments(first: 10) {
+    nodes {
+      id
+      author
+      content
+    }
+  }
+}
+```
+
 ## Other Parts of the Apollo Cache not covered here.
 
 - [Setting Fetch Policy](https://www.apollographql.com/docs/react/data/queries/#setting-a-fetch-policy)
