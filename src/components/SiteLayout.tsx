@@ -3,6 +3,7 @@ import InstagramIcon from "@components/Icons/Instagram";
 import LinkedinIcon from "@components/Icons/Linkedin";
 import TwitterIcon from "@components/Icons/Twitter";
 import routes from "@router";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -48,10 +49,10 @@ const Nav: React.FC = () => {
             <Link {...routes.about}>
               <a className="uppercase">About</a>
             </Link>
-            <Link {...routes.about}>
+            <Link {...routes.posts.travel}>
               <a className="uppercase">Travel</a>
             </Link>
-            <Link {...routes.about}>
+            <Link {...routes.posts.food}>
               <a className="uppercase">Food</a>
             </Link>
           </div>
