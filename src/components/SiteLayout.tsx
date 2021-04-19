@@ -85,6 +85,10 @@ const SiteLayout: React.FC = ({ children }) => (
       gridTemplateRows: "auto 1fr auto",
     }}
   >
+    <Head>
+      <title>Nicholas Romero</title>
+      <link rel="icon" href="/favicon.png" />
+    </Head>
     <Nav />
     <main
       className="grid place-self-center w-full h-full"

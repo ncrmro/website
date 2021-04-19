@@ -7,11 +7,7 @@ import { Post } from "@utils/markdown";
 
 function Home(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
-    <PageLayout className="p-6">
-      <Head>
-        <title>Nicholas Romero</title>
-        <link rel="icon" href="/favicon.png" />
-      </Head>
+    <PageLayout>
       <Posts posts={props.posts} />
     </PageLayout>
   );
