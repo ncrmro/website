@@ -3,7 +3,7 @@ slug: driving-stepper-motors-with-microcontroller
 title: "Driving a stepper motor with a microcontroller"
 date: "2020-06-16"
 description: "Controlling a stepper motor."
-tags: ["embedded", "esp32", "microcontroller"]
+tags: ["tech", "embedded", "esp32", "microcontroller"]
 featuredImage: ./images/2020_06_16_driving_stepper_motors_with_microcontroller/header_image.jpeg
 ---
 

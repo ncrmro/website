@@ -3,7 +3,7 @@ slug: docker-linux-workstation-development
 title: Docker Linux Workstation Development
 date: "2021-02-06"
 description: Making linux Docker more like Docker Desktop for macOS and Windows.
-tags: ["docker", "zfs", "linux", "ubuntu"]
+tags: ["tech", "docker", "zfs", "linux", "ubuntu"]
 ---
 
 Something that will become apparent at some point of your journey using a Linux
