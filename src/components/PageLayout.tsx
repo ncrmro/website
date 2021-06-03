@@ -25,9 +25,9 @@ const PageLayout: React.FC<Props> = (props) => {
   return (
     <div
       id={id}
-      className={`container mx-auto min-h-full mt-4 ${
+      className={`container mx-auto min-h-full mt-4 p-3 ${
         props.className ?? ""
-      } p-6`}
+      }`}
     >
       {props.title && (
         <Head>

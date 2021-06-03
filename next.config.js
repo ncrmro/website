@@ -6,6 +6,7 @@ module.exports = {
   target: "experimental-serverless-trace",
   env: {
     POSTS_DIR: `${__dirname}/posts`,
+    DOCUMENTS_DIR: `${__dirname}/documents`,
     WEB_DEBUG: process.env.WEB_DEBUG,
     ENVIRONMENT: process.env.ENVIRONMENT,
     // RELEASE: process.env.RELEASE,
