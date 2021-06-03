@@ -11,7 +11,7 @@ const Home: React.FC<{ jobs: JobDocument[] }> = (props) => (
       <title>About</title>
     </Head>
 
-    <div className="space-y-4 sm:grid sm:grid-cols-3 sm:items-start sm:gap-6 sm:space-y-0 pt-10">
+    <div className="space-y-4 sm:grid sm:grid-cols-3 sm:items-start sm:gap-6 sm:space-y-0">
       <div className="aspect-w-3 aspect-h-2 sm:aspect-w-3 sm:aspect-h-4">
         <img
           src="/images/avatar.jpg"
