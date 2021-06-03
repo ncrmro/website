@@ -55,6 +55,9 @@ const Nav: React.FC = () => {
             <Link {...routes.posts.food}>
               <a className="uppercase">Food</a>
             </Link>
+            <Link {...routes.resume}>
+              <a className="uppercase">Resume</a>
+            </Link>
           </div>
         )}
         {isHome && (

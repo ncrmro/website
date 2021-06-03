@@ -5,6 +5,9 @@ export const routes = {
   about: {
     href: "/about",
   },
+  resume: {
+    href: "/resume",
+  },
   posts: {
     post: ({ slug }: { slug: string }) => ({
       href: { pathname: "/posts/[slug]", query: { slug } },
