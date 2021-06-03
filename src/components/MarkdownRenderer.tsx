@@ -71,7 +71,9 @@ const MarkdownRenderer: React.FC<{ content: string }> = (props) => (
           );
         },
         ul: (props) => (
-          <ul className="list-disc list-inside">{props.children}</ul>
+          <ul className="list-disc list-inside flex flex-col gap-1">
+            {props.children}
+          </ul>
         ),
       },
     }}

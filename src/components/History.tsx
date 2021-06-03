@@ -1,3 +1,4 @@
+import MarkdownRenderer from "@components/MarkdownRenderer";
 import { JobDocument } from "@utils/documents";
 import TechUrls from "@utils/techUrls";
 import React from "react";
@@ -47,7 +48,7 @@ const HistoryItem: React.FC<{ job: JobDocument; verticalLine?: boolean }> = ({
             </p>
           </div>
           <div className="mt-2 text-sm text-gray-700">
-            <p>{job.body}</p>
+            <MarkdownRenderer content={job.body} />
           </div>
           <div className="flex flex-wrap gap-1 pt-3">
             {job.tech?.map((tech) => (
