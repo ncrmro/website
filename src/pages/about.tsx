@@ -12,13 +12,13 @@ const Home: React.FC<{ jobs: JobDocument[] }> = (props) => (
     </Head>
 
     <div className="space-y-4 sm:grid sm:grid-cols-3 sm:items-start sm:gap-6 sm:space-y-0">
-      <div className="aspect-w-3 aspect-h-2 sm:aspect-w-3 sm:aspect-h-4">
+      <div className="aspect-w-3 aspect-h-2 sm:aspect-w-3 sm:aspect-h-4 flex justify-center">
         <img
           src="/images/avatar.jpg"
           alt="Picture of the author"
           // width={500}
           // height={500}
-          className="object-cover shadow-lg rounded-lg"
+          className="object-cover shadow-lg rounded-lg max-h-72"
         />
       </div>
       <div className="sm:col-span-2">
