@@ -10,14 +10,18 @@ tech:
   [
     "Python",
     "Django",
+    "Docker",
     "Kubernetes",
     "Azure",
     "Elasticsearch",
     "SQL",
     "Postgres",
+    "PostGIS",
+    "Hipaa",
   ]
 ---
 
-Worked with Healthcare data to build a backend platform to help companies to
-choose doctors ranked by by us for their network and there employees find those
-doctors by rank and location.
+- Developed backend server and database platform to help companies like
+  Microsoft and Walmart find the best doctors for their employees.
+- ElasticSearch was utilized along with PostGIS to build a search engine by
+  indexing Doctors stats, fees and their office locations.
