@@ -1,7 +1,13 @@
 enum TechUrls {
   React = "https://reactjs.org",
+  "React Native" = "https://reactnative.dev",
+  "Next.JS" = "https://nextjs.org",
+  "Apollo GraphQL" = "https://www.apollographql.com",
+  Relay = "https://relay.dev",
   Typescript = "https://www.typescriptlang.org",
+  Docker = "https://www.docker.com",
   GraphQL = "https://graphql.org",
+  Graphene = "https://graphene-python.org",
   Node = "https://nodejs.org",
   Python = "https://www.python.org",
   Django = "https://www.djangoproject.com",
@@ -12,7 +18,18 @@ enum TechUrls {
   AWS = "https://aws.amazon.com",
   Azure = "https://azure.microsoft.com",
   Postgres = "https://www.postgresql.org",
+  PostGIS = "https://postgis.net",
   SQL = "https://en.wikipedia.org/wiki/SQL",
+  Playwright = "https://playwright.dev",
+  Jest = "https://jestjs.io",
+  "Gitlab CI" = "https://docs.gitlab.com/ce/ci",
+  "Travis CI" = "https://www.travis-ci.com",
+  Backstage = "https://backstage.io",
+  Hipaa = "https://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act",
+  "Unreal Engine" = "https://www.unrealengine.com",
+  Selenium = "https://www.selenium.dev",
+  "Go" = "https://golang.org",
+  "WordPress" = "https://wordpress.org",
 }
 
 export default TechUrls;
