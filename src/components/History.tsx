@@ -1,4 +1,5 @@
 import { JobDocument } from "@utils/documents";
+import TechUrls from "@utils/techUrls";
 import React from "react";
 
 const VerticalLine: React.FC = () => (
@@ -8,7 +9,7 @@ const VerticalLine: React.FC = () => (
   />
 );
 
-const SmallBadge: React.FC = (props) => (
+const SmallBadge: React.FC<{ link: string }> = (props) => (
   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
     <svg
       className="mr-1.5 h-2 w-2 text-indigo-400"
@@ -17,7 +18,7 @@ const SmallBadge: React.FC = (props) => (
     >
       <circle cx="4" cy="4" r="3" />
     </svg>
-    {props.children}
+    <a href={props.link}>{props.children}</a>
   </span>
 );
 
@@ -50,7 +51,7 @@ const HistoryItem: React.FC<{ job: JobDocument; verticalLine?: boolean }> = ({
           </div>
           <div className="flex flex-wrap gap-1 pt-3">
             {job.tech?.map((tech) => (
-              <SmallBadge key={tech}>{tech}</SmallBadge>
+              <SmallBadge key={tech} children={tech} link={TechUrls[tech]} />
             ))}
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { getMetadata } from "@utils/markdown";
+import TechUrls from "@utils/techUrls";
 
 export enum DocumentType {
   jobs = "jobs",
@@ -16,7 +17,7 @@ export interface JobDocument extends Document {
   type: "Contract" | "Salaried";
   start: string;
   end: string | "Present";
-  tech: string[];
+  tech: Array<TechUrls>;
 }
 
 export const getDocuments = (type: DocumentType): Array<Record<any, any>> => {
