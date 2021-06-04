@@ -3,7 +3,7 @@ module.exports = {
     webpack5: true,
   },
   reactStrictMode: true,
-  target: "experimental-serverless-trace",
+  target: "serverless",
   env: {
     POSTS_DIR: `${__dirname}/posts`,
     DOCUMENTS_DIR: `${__dirname}/documents`,
