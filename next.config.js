@@ -4,6 +4,11 @@ module.exports = {
   },
   reactStrictMode: true,
   target: "serverless",
+  serverRuntimeConfig: {
+    CONTACT_INFO_JSON:
+      process.env.CONTACT_INFO_JSON ??
+      '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
+  },
   env: {
     POSTS_DIR: `${__dirname}/posts`,
     DOCUMENTS_DIR: `${__dirname}/documents`,

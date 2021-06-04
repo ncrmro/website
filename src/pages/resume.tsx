@@ -3,18 +3,38 @@ import PageLayout from "@components/PageLayout";
 import { JobDocument } from "@utils/documents";
 import { GetStaticProps } from "next";
 import Head from "next/head";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
-const Resume: React.FC<{ jobs: JobDocument[] }> = (props) => (
-  <PageLayout>
-    <Head>
-      <title>Resume</title>
-    </Head>
-    <div className="pt-12">
-      <History jobs={props.jobs} />
-    </div>
-  </PageLayout>
-);
+const Resume: React.FC<{ jobs: JobDocument[] }> = (props) => {
+  const router = useRouter();
+  const [contactInfo, setContactInfo] = useState();
+
+  const loadContactInfo = async () => {
+    const res = await fetch(
+      `/api/contact-info?password=${router.query.password}`
+    );
+    const data = await res.json();
+    setContactInfo(data);
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      loadContactInfo();
+    }
+  }, [contactInfo === null]);
+
+  return (
+    <PageLayout>
+      <Head>
+        <title>Resume</title>
+      </Head>
+      <div className="pt-12">
+        <History jobs={props.jobs} />
+      </div>
+    </PageLayout>
+  );
+};
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { getDocuments, DocumentType } = require("@utils/documents");
