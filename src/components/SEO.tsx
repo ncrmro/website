@@ -4,6 +4,7 @@ export interface SEOProps {
   description?: string;
   title?: string;
   image?: string;
+  imageAltText?: string;
   path?: string;
   article?: boolean;
   articleTags?: string[];
@@ -15,6 +16,7 @@ const SEO: React.FC<SEOProps> = ({
   description,
   title,
   image,
+  imageAltText,
   path,
   article,
   articleTags,
@@ -28,13 +30,16 @@ const SEO: React.FC<SEOProps> = ({
     social: { twitter },
     currentURL,
     originalImage,
+    originalAltText,
   } = {
     originalTitle: "NCRMRO",
     originalDescription: "Personal Site of Nicholas Romero",
     siteName: "",
     social: { twitter: "ncrmro" },
     currentURL: "https://ncrmro.com",
-    originalImage: "",
+    originalImage: "https://ncrmro.com/images/avatar.jpg",
+    originalAltText:
+      "Headshot of Nicholas Romero in a blue oxford shirt in front of a red ceder fence ",
   };
   return (
     <Head>
@@ -61,7 +66,7 @@ const SEO: React.FC<SEOProps> = ({
           )}
           {articleTags &&
             articleTags.map((tag) => (
-              <meta property="article:tag" content={tag} />
+              <meta key={tag} property="article:tag" content={tag} />
             ))}
         </>
       ) : (
@@ -108,6 +113,11 @@ const SEO: React.FC<SEOProps> = ({
         content={`${image ? image : originalImage}`}
         key="ogimage"
       />
+      <meta
+        property="og:image:alt"
+        content={image && imageAltText ? imageAltText : originalAltText}
+      />
+
       <meta property="og:site_name" content={siteName} key="ogsitename" />
     </Head>
   );
