@@ -6,7 +6,7 @@ module.exports = {
   target: "serverless",
   serverRuntimeConfig: {
     CONTACT_INFO_JSON:
-      process.env.CONTACT_INFO_JSON ??
+      process.env.CONTACT_INFO_JSON ||
       '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
   },
   env: {
