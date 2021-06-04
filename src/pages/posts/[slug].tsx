@@ -8,6 +8,10 @@ const PostPage: React.FC<Post> = (props) => {
   return (
     <PageLayout
       title={props.title}
+      path={`/posts/${props.slug}`}
+      description={props.description}
+      article
+      articleTags={props.tags}
       className="relative py-4 bg-white overflow-hidden max-w-6xl	"
     >
       <div className="relative px-4 sm:px-6 lg:px-8">

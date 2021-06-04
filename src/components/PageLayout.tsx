@@ -1,7 +1,7 @@
+import SEO, { SEOProps } from "@components/SEO";
 import React from "react";
-import Head from "next/head";
 
-interface Props {
+interface Props extends SEOProps {
   id?: string;
   title?: string;
   className?: string;
@@ -29,11 +29,14 @@ const PageLayout: React.FC<Props> = (props) => {
         props.className ?? ""
       }`}
     >
-      {props.title && (
-        <Head>
-          <title>{props.title}</title>
-        </Head>
-      )}
+      <SEO
+        title={props.title}
+        description={props.description}
+        image={props.image}
+        path={props.path}
+        article={props.article}
+        articleTags={props.articleTags}
+      />
       {props.children}
     </div>
   );

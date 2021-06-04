@@ -25,10 +25,11 @@ const Resume: React.FC<{ jobs: JobDocument[] }> = (props) => {
   }, [contactInfo === null]);
 
   return (
-    <PageLayout>
-      <Head>
-        <title>Resume</title>
-      </Head>
+    <PageLayout
+      title="Resume"
+      description="The Resume of Nicholas Romero"
+      path="/resume"
+    >
       <div className="pt-12">
         <History jobs={props.jobs} />
       </div>
