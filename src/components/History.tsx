@@ -133,17 +133,15 @@ const HistorySmallItem: React.FC = () => (
 );
 
 const History: React.FC<{ jobs: JobDocument[] }> = (props) => (
-  <div className="flow-root">
-    <ul className="-mb-8">
-      {props.jobs.map((item, idx) => (
-        <HistoryItem
-          job={item}
-          // Show vertical line on all but last item
-          verticalLine={props.jobs.length !== idx + 1}
-        />
-      ))}
-    </ul>
-  </div>
+  <ul >
+    {props.jobs.map((item, idx) => (
+      <HistoryItem
+        job={item}
+        // Show vertical line on all but last item
+        verticalLine={props.jobs.length !== idx + 1}
+      />
+    ))}
+  </ul>
 );
 
 export default History;

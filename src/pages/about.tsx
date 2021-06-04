@@ -37,7 +37,7 @@ const Home: React.FC<{ jobs: JobDocument[] }> = (props) => (
         </div>
       </div>
     </div>
-    <div className="pt-12">
+    <div className="flex justify-center pt-12">
       <History jobs={props.jobs} />
     </div>
   </PageLayout>
