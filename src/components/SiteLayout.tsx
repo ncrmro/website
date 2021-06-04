@@ -30,7 +30,7 @@ const Nav: React.FC = () => {
   const router = useRouter();
   const isHome = router.pathname === "/";
   return (
-    <nav className="flex mx-auto" style={{ gridArea: "nav" }}>
+    <nav className="flex mx-auto print:hidden" style={{ gridArea: "nav" }}>
       <div>
         <div className="flex justify-center">
           <div className="border-b py-2">

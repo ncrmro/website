@@ -28,40 +28,48 @@ const HistoryTitle: React.FC<{ url?: string }> = (props) => (
   </div>
 );
 
-const HistoryItem: React.FC<{ job: JobDocument; verticalLine?: boolean }> = ({
-  job,
-  ...props
-}) => (
-  <li>
-    <div className="relative pb-8">
-      {props.verticalLine && <VerticalLine />}
-      <div className="relative flex items-start space-x-3">
-        <div className="relative">
-          <img
-            className="h-10 w-10 bg-white rounded-full flex items-center justify-center ring-8 ring-white"
-            src={job.favicon}
-          />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div>
-            <div className="text-sm">{job.role}</div>
-            <HistoryTitle url={job.url}>{job.title}</HistoryTitle>
-            <p className="mt-0.5 text-sm text-gray-500">
-              {job.start} {job.end}
-            </p>
+const HistoryItem: React.FC<{
+  job: JobDocument;
+  verticalLine?: boolean;
+  pageBreak: boolean;
+}> = ({ job, ...props }) => {
+  let style, className;
+  if (props.pageBreak) {
+    style = { "page-break-before": "always" };
+    className = "print:pt-6";
+  }
+  return (
+    <li className={className} style={style}>
+      <div className="relative pb-8">
+        {props.verticalLine && <VerticalLine />}
+        <div className="relative flex items-start space-x-3">
+          <div className="relative">
+            <img
+              className="h-10 w-10 bg-white rounded-full flex items-center justify-center ring-8 ring-white"
+              src={job.favicon}
+            />
           </div>
-          <div className="mt-2 text-sm text-gray-700">
-            <MarkdownRenderer content={job.body} />
-          </div>
-          <div className="flex flex-wrap gap-1 pt-3">
-            {job.tech?.map((tech) => (
-              <SmallBadge key={tech} children={tech} link={TechUrls[tech]} />
-            ))}
+          <div className="min-w-0 flex-1">
+            <div>
+              <div className="text-sm">{job.role}</div>
+              <HistoryTitle url={job.url}>{job.title}</HistoryTitle>
+              <p className="mt-0.5 text-sm text-gray-500">
+                {job.start} {job.end}
+              </p>
+            </div>
+            <div className="mt-2 text-sm text-gray-700">
+              <MarkdownRenderer content={job.body} />
+            </div>
+            <div className="flex flex-wrap gap-1 pt-3">
+              {job.tech?.map((tech) => (
+                <SmallBadge key={tech} children={tech} link={TechUrls[tech]} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </li>
-);
+    </li>
+  );
+};
 
 export default HistoryItem;

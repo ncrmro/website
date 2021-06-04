@@ -1,28 +1,26 @@
-import History from "@components/History";
 import PageLayout from "@components/PageLayout";
+import Resume from "@components/Resume";
 import { JobDocument } from "@utils/documents";
 import { GetStaticProps } from "next";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-const Resume: React.FC<{ jobs: JobDocument[] }> = (props) => {
+const ResumePage: React.FC<{ jobs: JobDocument[] }> = (props) => {
   const router = useRouter();
   const [contactInfo, setContactInfo] = useState();
 
-  const loadContactInfo = async () => {
-    const res = await fetch(
-      `/api/contact-info?password=${router.query.password}`
-    );
+  const loadContactInfo = async (password) => {
+    const res = await fetch(`/api/contact-info?password=${password}`);
     const data = await res.json();
     setContactInfo(data);
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      loadContactInfo();
+    console.log(typeof window !== "undefined" && router.query.password);
+    if (typeof window !== "undefined" && router.query.password) {
+      loadContactInfo(router.query.password);
     }
-  }, [contactInfo === null]);
+  }, [contactInfo === null, router.query.password]);
 
   return (
     <PageLayout
@@ -30,9 +28,7 @@ const Resume: React.FC<{ jobs: JobDocument[] }> = (props) => {
       description="The Resume of Nicholas Romero"
       path="/resume"
     >
-      <div className="pt-12">
-        <History jobs={props.jobs} />
-      </div>
+      <Resume jobs={props.jobs} contactInfo={contactInfo} />
     </PageLayout>
   );
 };
@@ -47,4 +43,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 };
 
-export default Resume;
+export default ResumePage;
