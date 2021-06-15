@@ -23,7 +23,7 @@ const Resume: React.FC<{
         Full-stack software engineer with experience architecting, deploying and
         supporting technical solutions. Including automation of tasks, quality
         assurance, uptime reliability and cloud migrations. Speaker at PyCon
-        India and other community meetup.
+        India and other community meetups.
       </p>
     </div>
     <History className="md:col-span-2" jobs={props.jobs} />
