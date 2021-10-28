@@ -3,7 +3,6 @@ module.exports = {
     webpack5: true,
   },
   reactStrictMode: true,
-  target: "serverless",
   serverRuntimeConfig: {
     CONTACT_INFO_JSON:
       process.env.CONTACT_INFO_JSON ||

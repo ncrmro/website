@@ -1,22 +1,6 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
+/// <reference types="next/image-types/global" />
 
-import { User } from "@gqlgen";
-
-declare global {
-  type stringBool = "true" | "false";
-  namespace NodeJS {
-    interface ProcessEnv {
-      RELEASE: string;
-      WEB_DEBUG: stringBool;
-      SENTRY_ENABLED: stringBool;
-      GOOGLE_ANALYTICS_ENABLED: stringBool;
-      ENVIRONMENT: "development" | "staging" | "production";
-    }
-  }
-  interface Window {
-    GA_INITIALIZED: boolean;
-  }
-}
-
-export {};
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.
