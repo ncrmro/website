@@ -35,7 +35,7 @@ const HistoryItem: React.FC<{
 }> = ({ job, ...props }) => {
   let style, className;
   if (props.pageBreak) {
-    style = { "page-break-before": "always" };
+    style = { pageBreakBefore: "always" };
     className = "print:pt-6";
   }
   return (

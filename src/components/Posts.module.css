@@ -1,4 +1,5 @@
 .root {
+  max-width: 50rem;
   width: 100%;
   display: flex;
   flex-direction: column;

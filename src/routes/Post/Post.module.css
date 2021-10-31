@@ -1,0 +1,22 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  max-width: 120ch;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.root h1 {
+  text-align: center;
+  text-transform: uppercase;
+  color: rgba(79, 70, 229, 1);
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+.root pre {
+  overflow-x: scroll;
+}
+
+/*relative px-4 sm:px-6 lg:px-8*/

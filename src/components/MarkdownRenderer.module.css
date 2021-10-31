@@ -1,0 +1,18 @@
+.root {
+}
+
+.root a {
+  color: rgba(79, 70, 229, 1);
+}
+
+.root pre {
+  padding: 1rem;
+}
+
+.root ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  list-style-position: inside;
+  padding: 0;
+}

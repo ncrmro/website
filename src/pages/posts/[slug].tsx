@@ -1,33 +1,10 @@
-import MarkdownRenderer from "@components/MarkdownRenderer";
-import PageLayout from "@components/PageLayout";
+import PostRoute from "@routes/Post";
 import { Post } from "@utils/markdown";
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 const PostPage: React.FC<Post> = (props) => {
-  return (
-    <PageLayout
-      title={props.title}
-      path={`/posts/${props.slug}`}
-      description={props.description}
-      article
-      articleTags={props.tags}
-      className="relative py-4 bg-white overflow-hidden max-w-6xl	"
-    >
-      <div className="relative px-4 sm:px-6 lg:px-8">
-        <div className="text-lg max-w-prose mx-auto">
-          <h1>
-            <span className="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase pb-6">
-              {props.title}
-            </span>
-          </h1>
-        </div>
-        <div className="flex flex-col space-y-3 text-base max-w-prose mx-auto lg:max-w-none">
-          <MarkdownRenderer content={props.content} />
-        </div>
-      </div>
-    </PageLayout>
-  );
+  return <PostRoute {...props} />;
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
