@@ -32,40 +32,34 @@ const Nav: React.FC = () => {
   const isHome = router.pathname === "/";
   return (
     <nav className={styles.navbar}>
-      <div>
-        <div className={styles.navTitle}>
-          <Link {...routes.landing}>
-            <a className="text-gray-500 uppercase">
-              {isHome ? "Nicholas Romero" : "Home"}
-            </a>
-          </Link>
+      <Link {...routes.landing}>
+        <a className={styles.navTitle}>{isHome ? "Nicholas Romero" : "Home"}</a>
+      </Link>
+      {isHome && (
+        <div className={styles.homeLinks}>
+          <Link {...routes.posts.technology}>Tech</Link>
+          <Link {...routes.about}>About</Link>
+          <Link {...routes.posts.travel}>Travel</Link>
+          <Link {...routes.posts.food}>Food</Link>
+          <Link {...routes.resume}>Resume</Link>
         </div>
-        {isHome && (
-          <div className={styles.homeLinks}>
-            <Link {...routes.posts.technology}>Tech</Link>
-            <Link {...routes.about}>About</Link>
-            <Link {...routes.posts.travel}>Travel</Link>
-            <Link {...routes.posts.food}>Food</Link>
-            <Link {...routes.resume}>Resume</Link>
-          </div>
-        )}
-        {isHome && (
-          <div className={styles.iconLinks}>
-            <a href="https://www.linkedin.com/in/ncrmro/">
-              <LinkedinIcon className={iconClassName} />
-            </a>
-            <a href="https://github.com/ncrmro">
-              <GithubIcon className={iconClassName} />
-            </a>
-            <a href="https://twitter.com/ncrmro">
-              <TwitterIcon className={iconClassName} />
-            </a>
-            <a href="https://www.instagram.com/ncrmro">
-              <InstagramIcon className={iconClassName} />
-            </a>
-          </div>
-        )}
-      </div>
+      )}
+      {isHome && (
+        <div className={styles.iconLinks}>
+          <a href="https://www.linkedin.com/in/ncrmro/">
+            <LinkedinIcon className={iconClassName} />
+          </a>
+          <a href="https://github.com/ncrmro">
+            <GithubIcon className={iconClassName} />
+          </a>
+          <a href="https://twitter.com/ncrmro">
+            <TwitterIcon className={iconClassName} />
+          </a>
+          <a href="https://www.instagram.com/ncrmro">
+            <InstagramIcon className={iconClassName} />
+          </a>
+        </div>
+      )}
     </nav>
   );
 };
