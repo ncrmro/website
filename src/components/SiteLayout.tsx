@@ -9,22 +9,6 @@ import { useRouter } from "next/router";
 import React from "react";
 import styles from "./SiteLayout.module.css";
 
-// const SocialLinkWings: React.FC<{ isHome: boolean }> = (props) => {
-//   const iconClassName = "fill-current text-gray-300";
-//
-//   return (
-//     <div>
-//       {props.isHome && (
-//
-//       )}
-//       {props.children}
-//       {props.isHome && (
-//         <div className="flex space-x-3 place-self-center px-2"></div>
-//       )}
-//     </div>
-//   );
-// };
-
 const iconClassName = "fill-current text-gray-300";
 
 const Nav: React.FC = () => {
