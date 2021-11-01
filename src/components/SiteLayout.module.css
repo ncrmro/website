@@ -20,7 +20,7 @@
   border-bottom-style: solid;
   text-transform: uppercase;
   opacity: 90%;
-  color: rgba(107, 114, 128, 1);
+  color: var(--color-grey);
   min-width: 10rem;
 }
 

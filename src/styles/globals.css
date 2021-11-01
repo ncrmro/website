@@ -27,3 +27,8 @@ a {
 * {
   box-sizing: border-box;
 }
+
+:root {
+  --color-primary: rgba(79, 70, 229, 1);
+  --color-grey: rgba(107, 114, 128, 1);
+}

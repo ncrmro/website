@@ -1,4 +1,4 @@
-import History from "@components/History";
+import History from "@routes/Resume/History";
 import PageLayout from "@components/PageLayout";
 import { JobDocument } from "@utils/documents";
 import { GetStaticProps } from "next";

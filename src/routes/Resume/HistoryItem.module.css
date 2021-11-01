@@ -1,0 +1,23 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.root img {
+  position: absolute;
+  left: -0.4rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 9999px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.info {
+  gap: 0.25rem;
+}

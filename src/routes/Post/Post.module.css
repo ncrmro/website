@@ -10,7 +10,7 @@
 .root h1 {
   text-align: center;
   text-transform: uppercase;
-  color: rgba(79, 70, 229, 1);
+  color: var(--primary-color);
   font-size: 1.5rem;
   line-height: 1.5rem;
   font-weight: 600;
