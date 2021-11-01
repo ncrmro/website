@@ -19,3 +19,9 @@
     max-width: 65%;
   }
 }
+
+@media print {
+  .root {
+    max-width: 90%;
+  }
+}

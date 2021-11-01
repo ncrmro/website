@@ -5,6 +5,11 @@ import { JobDocument } from "@utils/documents";
 import React from "react";
 import styles from "./History.module.css";
 
+// if (props.pageBreak) {
+//   style = { "page-break-before": "always" };
+//   className = "print:pt-6";
+// }
+
 const History: React.FC<{ jobs: JobDocument[]; className?: string }> = (
   props
 ) => (

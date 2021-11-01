@@ -55,3 +55,12 @@
   align-items: center;
   height: 3rem;
 }
+
+@media print {
+  .navbar {
+    display: none;
+  }
+  .footer {
+    display: none;
+  }
+}

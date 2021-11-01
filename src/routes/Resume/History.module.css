@@ -72,3 +72,12 @@
 .info {
   gap: 0.25rem;
 }
+
+@media print {
+  .historyList {
+    display: block;
+  }
+  .historyItem {
+    page-break-inside: avoid;
+  }
+}
