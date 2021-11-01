@@ -15,7 +15,7 @@ const History: React.FC<{ jobs: JobDocument[]; className?: string }> = (
 ) => (
   <ul className={styles.historyList}>
     {props.jobs.map((job, idx) => (
-      <li className={styles.historyItem}>
+      <li key={job.title} className={styles.historyItem}>
         <img className={styles.img} src={job.favicon} />
         <div className={styles.historyItemTitle}>
           <div>
