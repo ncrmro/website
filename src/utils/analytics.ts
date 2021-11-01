@@ -5,6 +5,7 @@ export const initializeAnalaytics = (): void => {
   if (
     config.isClient &&
     config.googleAnalytics.enabled &&
+    // @ts-ignore
     !window.GA_INITIALIZED
   ) {
     if (config.debug) {
@@ -18,11 +19,13 @@ export const initializeAnalaytics = (): void => {
     //   options.gaOptions = { userId: viewer.id };
     // }
     ReactGA.initialize(trackingCode, options);
+    // @ts-ignore
     window.GA_INITIALIZED = true;
   }
 };
 
 export const logPageView = (url: string): void => {
+  // @ts-ignore
   if (window.GA_INITIALIZED) {
     if (config.debug) {
       console.debug("PAGE VIEW", url);
