@@ -29,6 +29,7 @@ a {
 }
 
 :root {
-  --color-primary: rgba(79, 70, 229, 1);
-  --color-grey: rgba(107, 114, 128, 1);
+  --color-primary: rgb(79, 70, 229);
+  --color-grey: rgb(107, 114, 128);
+  --color-light-grey: rgb(156, 163, 175);
 }
