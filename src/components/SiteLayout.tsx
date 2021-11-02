@@ -30,16 +30,28 @@ const Nav: React.FC = () => {
       )}
       {isHome && (
         <div className={styles.iconLinks}>
-          <a href="https://www.linkedin.com/in/ncrmro/">
+          <a
+            href="https://www.linkedin.com/in/ncrmro/"
+            aria-label="Linkedin profile"
+          >
             <LinkedinIcon className={iconClassName} />
           </a>
-          <a href="https://github.com/ncrmro">
+          <a
+            href="https://github.com/ncrmro"
+            aria-label="Github profile"
+          >
             <GithubIcon className={iconClassName} />
           </a>
-          <a href="https://twitter.com/ncrmro">
+          <a
+            href="https://twitter.com/ncrmro"
+            aria-label="Twitter profile"
+          >
             <TwitterIcon className={iconClassName} />
           </a>
-          <a href="https://www.instagram.com/ncrmro">
+          <a
+            href="https://www.instagram.com/ncrmro"
+            aria-label="Instagram profile"
+          >
             <InstagramIcon className={iconClassName} />
           </a>
         </div>
