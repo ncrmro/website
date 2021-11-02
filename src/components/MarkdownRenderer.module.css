@@ -1,15 +1,8 @@
-.root {
-}
-
-.root a {
+.link {
   color: var(--color-primary);
 }
 
-.root pre {
-  padding: 1rem;
-}
-
-.root ul {
+.list {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
