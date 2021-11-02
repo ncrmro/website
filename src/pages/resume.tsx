@@ -1,5 +1,5 @@
 import PageLayout from "@components/PageLayout";
-import Resume from "@components/Resume";
+import Resume from "@routes/Resume";
 import { JobDocument } from "@utils/documents";
 import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
@@ -16,7 +16,6 @@ const ResumePage: React.FC<{ jobs: JobDocument[] }> = (props) => {
   };
 
   useEffect(() => {
-    console.log(typeof window !== "undefined" && router.query.password);
     if (typeof window !== "undefined" && router.query.password) {
       loadContactInfo(router.query.password);
     }

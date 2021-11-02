@@ -1,0 +1,13 @@
+.link {
+  color: var(--color-primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  list-style: disc inside;
+  padding: 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}

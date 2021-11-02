@@ -1,7 +1,7 @@
 ---
 title: "Pycon India"
 url: "https://in.pycon.org"
-favicon: "https://in.pycon.org/2021/images/favicon.png"
+favicon: "/job_icons/pycon-india.jpg"
 role: "Speaker"
 type: "Conference Presentation"
 start: "2017-05"

@@ -1,5 +1,4 @@
 import "../styles/globals.css";
-import "tailwindcss/tailwind.css";
 import SiteLayout from "@components/SiteLayout";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";

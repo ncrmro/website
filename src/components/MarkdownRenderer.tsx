@@ -3,6 +3,7 @@ import slugify from "@utils/slugify";
 import { Language } from "prism-react-renderer";
 import React from "react";
 import { Remark } from "react-remark";
+import styles from "./MarkdownRenderer.module.css";
 
 const MarkdownRenderer: React.FC<{ content: string }> = (props) => (
   <Remark
@@ -29,7 +30,6 @@ const MarkdownRenderer: React.FC<{ content: string }> = (props) => (
                 ? props.children[0]
                 : props.children[0].props.children[0]
             )}
-            className="font-semibold text-2xl pt-4"
           >
             {props.children}
           </h2>
@@ -41,40 +41,22 @@ const MarkdownRenderer: React.FC<{ content: string }> = (props) => (
                 ? props.children[0]
                 : props.children[0].props.children[0]
             )}
-            className="font-semibold text-xl  pt-4"
           >
             {props.children}
           </h3>
         ),
-        // img: (props) => (
-        //   <Image
-        //     className=" flex justify-centermax-w-xs max-h-xs"
-        //     height={200}
-        //     width={400}
-        //     src={props.src as string}
-        //     alt={props.alt as string}
-        //   />
-        // ),
+        img: (props) => (
+          <img
+            src={props.src as string}
+            alt={props.alt as string}
+            className={styles.link}
+          />
+        ),
         a: (props: { href; children }) => (
-          <a
-            className="text-indigo-600 hover:text-indigo-500"
-            href={props.href}
-          >
-            {props.children}
-          </a>
+          <a href={props.href}>{props.children}</a>
         ),
-        p: (props) => {
-          return (
-            <div className="">
-              <p className="">{props.children}</p>
-            </div>
-          );
-        },
-        ul: (props) => (
-          <ul className="list-disc list-inside flex flex-col gap-1">
-            {props.children}
-          </ul>
-        ),
+        p: (props) => <p>{props.children}</p>,
+        ul: (props) => <ul className={styles.list}>{props.children}</ul>,
       },
     }}
   >

@@ -1,0 +1,27 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.info a {
+  color: rgba(29, 78, 216, 1);
+}
+
+@media (min-width: 768px) {
+  .root {
+    max-width: 65%;
+  }
+}
+
+@media print {
+  .root {
+    max-width: 90%;
+  }
+}

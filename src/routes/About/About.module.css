@@ -1,0 +1,25 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.info {
+}
+
+.img {
+  margin: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .root {
+    max-width: 65%;
+    flex-direction: row;
+    gap: 2rem;
+  }
+  .info {
+    flex-basis: 30%;
+  }
+  .history {
+    flex-basis: 70%;
+  }
+}

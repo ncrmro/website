@@ -1,0 +1,19 @@
+.root {
+  max-width: 50rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.post p:nth-child(1) {
+  color: rgba(17, 24, 39, 1);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.post p:nth-child(2) {
+  margin-top: 1rem;
+  color: var(--color-grey);
+}

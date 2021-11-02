@@ -1,7 +1,7 @@
 ---
 title: "Pathlight"
 url: "https://www.pathlight.com"
-favicon: "https://www.pathlight.com/favicon-32x32.png"
+favicon: "/job_icons/pathlight.png"
 role: "Software Developer"
 type: "Contract"
 start: "2017-05"

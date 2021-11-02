@@ -1,7 +1,7 @@
 ---
 title: "Embold Health"
-url: "https://www.shell.com"
-favicon: "https://emboldhealth.com/favicon-32x32.png"
+url: "https://emboldhealth.com/"
+favicon: "/job_icons/embold.png"
 role: "Senior Backend Engineer"
 type: "Salaried"
 start: "2019-12"

@@ -1,5 +1,6 @@
 import SEO, { SEOProps } from "@components/SEO";
 import React from "react";
+import styles from "./PageLayout.module.css";
 
 interface Props extends SEOProps {
   id?: string;
@@ -12,23 +13,8 @@ interface Props extends SEOProps {
  * The PageLayout component provides a singular way to manage out page sizine
  */
 const PageLayout: React.FC<Props> = (props) => {
-  let id = "layout";
-  if (props.id) {
-    id = props.id;
-  } else if (props.title) {
-    id = props.title
-      .toLowerCase()
-      .replace(/ /g, "-")
-      .replace(/[^\w-]+/g, "");
-  }
-  id = `${id}-page`;
   return (
-    <div
-      id={id}
-      className={`container mx-auto min-h-full mt-4 p-3 ${
-        props.className ?? ""
-      }`}
-    >
+    <div className={styles.root}>
       <SEO
         title={props.title}
         description={props.description}
