@@ -13,7 +13,6 @@ module.exports = {
         "http://localhost:3000/about",
         "http://localhost:3000/posts/apollo-cache-overview",
       ],
-      numberOfRuns: 1,
       settings: {
         chromeFlags: "--disable-gpu --no-sandbox --disable-dev-shm-usage",
       },
