@@ -10,6 +10,7 @@ module.exports = {
       url: [
         "http://localhost:3000/",
         "http://localhost:3000/resume",
+        "http://localhost:3000/about",
         "http://localhost:3000/posts/apollo-cache-overview",
       ],
       numberOfRuns: 1,
