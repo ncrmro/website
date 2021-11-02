@@ -7,7 +7,7 @@
 }
 
 .navbar svg {
-  color: rgba(209, 213, 219, 1);
+  color: var(--color-accent-grey);
   fill: currentColor;
 }
 
@@ -16,7 +16,7 @@
   justify-content: center;
   padding: 0.5rem 0;
   border-bottom-width: 1px;
-  border-bottom-color: rgb(229, 231, 235);
+  border-bottom-color: var(--color-accent-grey);
   border-bottom-style: solid;
   text-transform: uppercase;
   opacity: 90%;
@@ -34,7 +34,7 @@
 .homeLinks a {
   text-transform: uppercase;
   opacity: 90%;
-  color: rgba(156, 163, 175, 1);
+  color: var(--color-light-grey);
 }
 
 .iconLinks {

@@ -30,6 +30,7 @@ a {
 
 :root {
   --color-primary: rgb(79, 70, 229);
-  --color-grey: rgb(107, 114, 128);
-  --color-light-grey: rgb(156, 163, 175);
+  --color-grey: rgb(70 70 70);
+  --color-light-grey: rgb(88 88 88);
+  --color-accent-grey: rgb(200 200 200);
 }
