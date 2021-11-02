@@ -18,10 +18,10 @@ module.exports = {
     GOOGLE_ANALYTICS_ENABLED: process.env.GOOGLE_ANALYTICS_ENABLED,
     // SENTRY_ENABLED: process.env.SENTRY_ENABLED,
   },
-  // i18n: {
-  //   locales: ["en-US", "de"],
-  //   defaultLocale: "en-US",
-  // },
+  i18n: {
+    locales: ["en"],
+    defaultLocale: "en",
+  },
   async redirects() {
     return [
       {
