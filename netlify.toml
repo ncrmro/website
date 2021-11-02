@@ -1,6 +1,9 @@
 [build]
-  command   = "yarn build"
-  publish   = "out"
+publish = ".next"
+
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
 
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
@@ -9,6 +12,7 @@
     ENVIRONMENT = "production"
     WEB_DEBUG = "false"
     GOOGLE_ANALYTICS_ENABLED = "true"
+
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 #[context.deploy-preview.environment]
