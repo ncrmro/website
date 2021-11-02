@@ -45,7 +45,7 @@ const SEO: React.FC<SEOProps> = ({
     <Head>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta charSet="utf-8" />
-      <title>{title ?? originalTitle}</title>
+      <title>{title || originalTitle}</title>
       <meta
         name="description"
         content={`${description ? description : originalDescription}`}
