@@ -5,7 +5,10 @@ import React from "react";
 import { Remark } from "react-remark";
 import styles from "./MarkdownRenderer.module.css";
 
-const MarkdownRenderer: React.FC<{ content: string }> = (props) => (
+const MarkdownRenderer: React.FC<{ mediaPath?: string; content: string }> = ({
+  mediaPath,
+  ...props
+}) => (
   <Remark
     rehypeReactOptions={{
       components: {
@@ -47,7 +50,7 @@ const MarkdownRenderer: React.FC<{ content: string }> = (props) => (
         ),
         img: (props) => (
           <img
-            src={props.src as string}
+            src={`${mediaPath}/${props.src as string}`}
             alt={props.alt as string}
             className={styles.link}
           />

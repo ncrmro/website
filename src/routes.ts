@@ -13,7 +13,7 @@ export const routes = {
       href: { pathname: "/posts/[slug]", query: { slug } },
     }),
     technology: {
-      href: "/posts/technology",
+      href: "/posts/technical",
     },
     travel: {
       href: "/posts/travel",

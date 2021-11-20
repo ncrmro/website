@@ -1,5 +1,5 @@
 import PostRoute from "@routes/Post";
-import { Post } from "@utils/markdown";
+import { Post } from "@utils/getPosts";
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
@@ -8,11 +8,8 @@ const PostPage: React.FC<Post> = (props) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const post = require("@utils/markdown")
-    .getPosts()
-    .reverse()
-    .find((post) => post.slug === context.params.slug);
-
+  const posts = await require("@utils/getPosts").default();
+  const post = posts[context.params.slug as string];
   return {
     props: { ...post, content: post.body },
   };
@@ -20,11 +17,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: await require("@utils/markdown")
-      .getPosts()
-      .map((post) => ({
-        params: post,
-      })),
+    paths: Object.keys(await require("@utils/getPosts").default()).map(
+      (slug) => ({ params: { slug } })
+    ),
     fallback: false,
   };
 };

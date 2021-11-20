@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { Post } from "@utils/markdown";
+import { Post } from "@utils/getPosts";
 
 function Home(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
@@ -13,8 +13,10 @@ function Home(props: PropsWithChildren<{ posts: Post[] }>) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
+  const posts = Object.values<Post>(await require("@utils/getPosts").default());
+  posts.sort((a, b) => b.date - a.date);
   return {
-    props: { posts: require("@utils/markdown").getPosts() },
+    props: { posts: posts },
   };
 };
 

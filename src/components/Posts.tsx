@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import Link from "next/link";
 import routes from "@router";
-import { Post } from "@utils/markdown";
+import { Post } from "@utils/getPosts";
 import styles from "./Posts.module.css";
 
 function PostCard(props) {
