@@ -41,7 +41,7 @@ export default async function getPosts(postCategory?: PostCategory) {
 
         posts[attributes.slug] = {
           ...attributes,
-          date: Date.parse(attributes.date ?? attributes.start),
+          date: Date.parse(attributes.date || attributes.start),
           body,
           mediaPath,
         };
