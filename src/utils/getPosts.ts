@@ -39,7 +39,6 @@ export default async function getPosts(postCategory?: PostCategory) {
 
         const { body, attributes } = getMetadata(postContent);
 
-        console.log(mediaPath);
         posts[attributes.slug] = {
           ...attributes,
           date: Date.parse(attributes.date ?? attributes.start),
