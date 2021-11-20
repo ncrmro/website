@@ -13,9 +13,8 @@ function Home(props: PropsWithChildren<{ posts: Post[] }>) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const posts = Object.values(await require("@utils/getPosts").default());
+  const posts = Object.values<Post>(await require("@utils/getPosts").default());
   posts.sort((a, b) => b.date - a.date);
-
   return {
     props: { posts: posts },
   };

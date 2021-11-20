@@ -12,8 +12,13 @@ function FoodPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   );
 }
 export const getStaticProps: GetStaticProps = async (context) => {
+  const posts = Object.values<Post>(
+    await require("@utils/getPosts").default("food")
+  );
+  posts.sort((a, b) => b.date - a.date);
+
   return {
-    props: { posts: require("@utils/markdown").getPosts(["food"]) },
+    props: { posts },
   };
 };
 

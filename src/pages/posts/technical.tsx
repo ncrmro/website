@@ -12,7 +12,7 @@ function TechnologyPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   );
 }
 export const getStaticProps: GetStaticProps = async (context) => {
-  const posts = Object.values(
+  const posts = Object.values<Post>(
     await require("@utils/getPosts").default("technical")
   );
   posts.sort((a, b) => b.date - a.date);
