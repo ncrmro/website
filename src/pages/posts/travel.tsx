@@ -1,8 +1,8 @@
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { Post } from "@utils/markdown";
-import React, { PropsWithChildren } from "react";
+import { Post } from "@utils/getPosts";
 import { GetStaticProps } from "next";
+import React, { PropsWithChildren } from "react";
 
 function TravelPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
@@ -12,8 +12,14 @@ function TravelPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   );
 }
 export const getStaticProps: GetStaticProps = async (context) => {
+  const posts = Object.values(
+    await require("@utils/getPosts").default("travel")
+  );
+  posts.sort((a, b) => b.date - a.date);
   return {
-    props: { posts: require("@utils/markdown").getPosts() },
+    props: {
+      posts,
+    },
   };
 };
 

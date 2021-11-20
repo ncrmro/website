@@ -4,7 +4,7 @@ title: "Driving a stepper motor with a microcontroller"
 date: "2020-06-16"
 description: "Controlling a stepper motor."
 tags: ["tech", "embedded", "esp32", "microcontroller"]
-featuredImage: ./images/2020_06_16_driving_stepper_motors_with_microcontroller/header_image.jpeg
+featuredImage: header_image.jpeg
 ---
 
 I'm sitting here after accidentally destroying another ESP32 module and 3.3v
@@ -41,7 +41,7 @@ Also included
 - [12v Wall wart](https://smile.amazon.com/dp/B07DCPT1N7/ref=cm_sw_em_r_mt_dp_U_dz28EbW3A14S0)
 - [Barrel jack plugs](https://smile.amazon.com/dp/B074LK7G86/ref=cm_sw_em_r_mt_dp_U_Rz28Eb3CF0KZ4)
 
-![A drv8833 stepper motor in a breakout board format.](/images/post/2020_06_16_driving_stepper_motors_with_microcontroller/drv8833.jpeg)
+![A drv8833 stepper motor in a breakout board format.](drv8833.jpeg)
 
 This drv8833 I had to solder the header's to it with the help of my friend
 Johhny.
@@ -59,7 +59,7 @@ mounting points around the shaft, you can typically get the same size motor in
 different lengths for more or less torque. The NEMA 17 for instance has 1.7"
 inch faceplates. Below is a bunch of different sized images.
 
-![Diffrent sized NEMA motors](/images/post/2020_06_16_driving_stepper_motors_with_microcontroller/nema-stepper-motors.jpg)
+![Diffrent sized NEMA motors](nema-stepper-motors.jpg)
 
 ### Power
 
@@ -143,4 +143,4 @@ void loop() {
 
 ### It works!
 
-![spinning stepper motor](/images/post/2020_06_16_driving_stepper_motors_with_microcontroller/working-motor.gif)
+![spinning stepper motor](working-motor.gif)

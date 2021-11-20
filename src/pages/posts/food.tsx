@@ -1,6 +1,6 @@
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { Post } from "@utils/markdown";
+import { Post } from "@utils/getPosts";
 import React, { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
 
