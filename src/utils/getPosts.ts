@@ -5,7 +5,7 @@ const postsDir = `${process.cwd()}/public/posts`;
 enum PostCategory {
   technical = "technical",
   travel = "travel",
-  food = "food",
+  // food = "food",
 }
 
 export interface Post {
