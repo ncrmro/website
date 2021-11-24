@@ -39,3 +39,6 @@ out
 
 .lighthouseci
 .env
+
+# Local Netlify folder
+.netlify
