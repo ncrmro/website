@@ -63,6 +63,16 @@ AN omlet with veg, naan and a chai.
 
 ## Party Time
 
-When I arrived at their apartment I probly slept for 12 hours or so.
+After breakfast Noel and I chatted and shared some whisky, which we get Mooshi
+to drink a little (which may have not be super kosher). Noel then invited her
+friend over and we partaked in
 
-When waking up I was greated
+## Pycon India
+
+Ironically the catalyst for this journey PyCon India is really but a footnote in
+the larger picture. It was held in a small college and had a few interesting
+talks
+
+![Demonstrating the Mutation Updating the Apollo Cache](PyCon_India/)
+
+## Dinner after words
