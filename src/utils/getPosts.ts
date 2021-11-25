@@ -31,15 +31,13 @@ export interface Post {
  * @param filePath
  */
 async function loadPost(filePath: string) {
-  const { data, value } = await fs.promises
-    .readFile(filePath, "utf8")
-    .then(
-      unified()
-        .use(remarkParse)
-        .use(remarkStringify)
-        .use(remarkFrontmatter, ["yaml"])
-        .use(remarkFrontmatterExtract, { yaml: yaml.parse }).process
-    );
+  const fileContent = await fs.promises.readFile(filePath, "utf8");
+  const { data, value } = await unified()
+    .use(remarkParse)
+    .use(remarkStringify)
+    .use(remarkFrontmatter, ["yaml"])
+    .use(remarkFrontmatterExtract, { yaml: yaml.parse })
+    .process(fileContent);
 
   return <Post>{
     ...data,
