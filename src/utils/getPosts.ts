@@ -31,9 +31,9 @@ export interface Post {
  * @param filePath
  */
 async function loadPost(filePath: string) {
-  let mediaPath: string;
+  let mediaPath: string = null;
   if (!filePath.includes(".md")) {
-    mediaPath = `${filePath.split(postsDir)[1]}/media`;
+    mediaPath = `/posts${filePath.split(postsDir)[1]}/media`;
     filePath = `${filePath}/post.md`;
   }
   const fileContent = await fs.promises.readFile(filePath);
@@ -44,11 +44,12 @@ async function loadPost(filePath: string) {
     .use(remarkFrontmatterExtract, { yaml: yaml.parse })
     .process(fileContent);
 
+  const date = Date.parse(
+    (data.date as unknown as string) || (data.start as unknown as string)
+  );
   return <Post>{
     ...data,
-    date: Date.parse(
-      (data.date as unknown as string) || (data.date as unknown as string)
-    ),
+    date,
     mediaPath,
     markdown,
   };
