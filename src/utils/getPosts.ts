@@ -1,8 +1,14 @@
-import { getMetadata, PostAttributes } from "@utils/markdown";
 import fs from "fs";
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkFrontmatterExtract from "remark-extract-frontmatter";
+import remarkStringify from "remark-stringify";
+import yaml from "yaml";
+
 const postsDir = `${process.cwd()}/public/posts`;
 
-enum PostCategory {
+export enum PostCategory {
   technical = "technical",
   travel = "travel",
   // food = "food",
@@ -14,39 +20,99 @@ export interface Post {
   description: string;
   tags: string[];
   date: number;
-  body: string;
+  start?: number;
+  end?: number;
+  markdown: string;
   mediaPath?: string;
 }
 
+/**
+ * Load the markdown content and parse the metadata
+ * @param filePath
+ */
+async function loadPost(filePath: string) {
+  const { data, value } = await fs.promises
+    .readFile(filePath, "utf8")
+    .then(
+      unified()
+        .use(remarkParse)
+        .use(remarkStringify)
+        .use(remarkFrontmatter, ["yaml"])
+        .use(remarkFrontmatterExtract, { yaml: yaml.parse }).process
+    );
+
+  return <Post>{
+    ...data,
+    date: Date.parse(
+      (data.date as unknown as string) || (data.date as unknown as string)
+    ),
+    markdown: value,
+  };
+}
+
 export default async function getPosts(postCategory?: PostCategory) {
-  const posts: Record<string, Post> = {};
-  for (const category of postCategory
-    ? [postCategory]
-    : Object.keys(PostCategory)) {
-    const postCategory = `${postsDir}/${category}`;
-    const yearFolders = fs.readdirSync(postCategory);
-    for (const year of yearFolders) {
-      const yearFolder = `${postCategory}/${year}`;
-      for (const post of fs.readdirSync(yearFolder)) {
-        let postPath = `${yearFolder}/${post}`;
-        let mediaPath = null;
-        if (!post.includes(".md")) {
-          mediaPath = `${postPath.split("public")[1]}/media`;
-          postPath = `${postPath}/post.md`;
-        }
+  const categories = postCategory ? [postCategory] : Object.keys(PostCategory);
+  const posts = new Map<string, Post>();
 
-        const postContent = fs.readFileSync(postPath, "utf-8");
+  const categoryYearFolders = await Promise.all(
+    categories.map((category) =>
+      (async () => [
+        category,
+        await fs.promises.readdir(`${postsDir}/${category}`),
+      ])()
+    )
+  );
+  const categoryYearFiles = await Promise.all(
+    categoryYearFolders.map(([category, years]) =>
+      Promise.all(
+        (years as string[]).map((year) =>
+          fs.promises
+            .readdir(`${postsDir}/${category}/${year}`)
+            .then((contents) => [year, contents])
+        )
+      ).then((yearFiles) => [category, yearFiles])
+    )
+  );
+  await Promise.all(
+    categoryYearFiles.reduce<Promise<void>[]>((acc, [category, years]) => {
+      (years as Array<[string, string[]]>).forEach(([year, postFiles]) => {
+        const dir = `${category}/${year}`;
+        postFiles.forEach((post) => {
+          let filePath = `${postsDir}/${dir}/${post}`;
+          if (!filePath.includes(".md")) {
+            filePath = `${filePath}/post.md`;
+          }
+          acc.push(
+            loadPost(filePath).then((post) => {
+              posts.set(post.slug, post);
+            })
+          );
+        });
+      });
+      return acc;
+    }, [])
+  );
 
-        const { body, attributes } = getMetadata(postContent);
-
-        posts[attributes.slug] = {
-          ...attributes,
-          date: Date.parse(attributes.date || attributes.start),
-          body,
-          mediaPath,
-        };
-      }
-    }
-  }
   return posts;
+}
+
+export async function postSlugs(postCategory?: PostCategory) {
+  const postMap = await getPosts(postCategory);
+  // @ts-ignore
+  const slugs = [...postMap.keys()];
+  slugs.sort((a, b) => b.date - a.date);
+  return slugs;
+}
+
+export async function orderedPostsArray(postCategory?: PostCategory) {
+  const postMap = await getPosts(postCategory);
+  // @ts-ignore
+  const posts = [...postMap.values()];
+  posts.sort((a, b) => b.date - a.date);
+  return posts;
+}
+
+export async function postBySlug(slug: Post["slug"]) {
+  const postMap = await getPosts();
+  return postMap.get(slug);
 }

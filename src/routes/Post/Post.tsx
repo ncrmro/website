@@ -5,7 +5,6 @@ import React from "react";
 import styles from "./Post.module.css";
 
 const PostRoute: React.FC<Post> = (props) => {
-  console.log(props.mediaPath);
   return (
     <PageLayout
       title={props.title}

@@ -4,22 +4,26 @@ import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 const PostPage: React.FC<Post> = (props) => {
-  return <PostRoute {...props} />;
+  // return <PostRoute {...props} />;
+  return <div>console.log</div>;
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const posts = await require("@utils/getPosts").default();
-  const post = posts[context.params.slug as string];
+  const post = await import("@utils/getPosts").then((p) =>
+    p.postBySlug(context.params.slug as string)
+  );
   return {
-    props: { ...post, content: post.body },
+    props: { ...post },
   };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await import("@utils/getPosts").then((p) => p.postSlugs());
+
   return {
-    paths: Object.keys(await require("@utils/getPosts").default()).map(
-      (slug) => ({ params: { slug } })
-    ),
+    paths: slugs.map((slug) => ({
+      params: { slug },
+    })),
     fallback: false,
   };
 };
