@@ -31,11 +31,13 @@ export interface Post {
  * @param filePath
  */
 async function loadPost(filePath: string) {
+  let mediaPath: string;
   if (!filePath.includes(".md")) {
+    mediaPath = `${filePath.split(postsDir)[1]}/media`;
     filePath = `${filePath}/post.md`;
   }
-  const fileContent = await fs.promises.readFile(filePath, "utf8");
-  const { data, value } = await unified()
+  const fileContent = await fs.promises.readFile(filePath);
+  const { data, value: markdown } = await unified()
     .use(remarkParse)
     .use(remarkStringify)
     .use(remarkFrontmatter, ["yaml"])
@@ -47,49 +49,39 @@ async function loadPost(filePath: string) {
     date: Date.parse(
       (data.date as unknown as string) || (data.date as unknown as string)
     ),
-    markdown: value,
+    mediaPath,
+    markdown,
   };
 }
 
 export default async function getPosts(postCategory?: PostCategory) {
   const categories = postCategory ? [postCategory] : Object.keys(PostCategory);
-  const posts = new Map<string, Post>();
+  const postsMap = new Map<string, Post>();
 
-  const categoryYearFolders = await Promise.all(
-    categories.map((category) =>
-      (async () => [
-        category,
-        await fs.promises.readdir(`${postsDir}/${category}`),
-      ])()
-    )
-  );
-  const categoryYearFiles = await Promise.all(
-    categoryYearFolders.map(([category, years]) =>
-      Promise.all(
-        (years as string[]).map((year) =>
-          fs.promises
-            .readdir(`${postsDir}/${category}/${year}`)
-            .then((contents) => [year, contents])
-        )
-      ).then((yearFiles) => [category, yearFiles])
-    )
-  );
   await Promise.all(
-    categoryYearFiles.reduce<Promise<void>[]>((acc, [category, years]) => {
-      (years as Array<[string, string[]]>).forEach(([year, postFiles]) => {
-        postFiles.forEach((post) =>
-          acc.push(
-            loadPost(`${postsDir}/${category}/${year}/${post}`).then((post) => {
-              posts.set(post.slug, post);
-            })
+    categories.map((category) =>
+      (async () => {
+        const years = await fs.promises.readdir(`${postsDir}/${category}`);
+        await Promise.all(
+          years.map((year) =>
+            fs.promises
+              .readdir(`${postsDir}/${category}/${year}`)
+              .then((posts) =>
+                Promise.all(
+                  posts.map((post) =>
+                    loadPost(`${postsDir}/${category}/${year}/${post}`).then(
+                      (post) => postsMap.set(post.slug, post)
+                    )
+                  )
+                )
+              )
           )
         );
-      });
-      return acc;
-    }, [])
+      })()
+    )
   );
 
-  return posts;
+  return postsMap;
 }
 
 export async function postSlugs(postCategory?: PostCategory) {
