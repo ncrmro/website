@@ -1,5 +1,7 @@
 import "../styles/globals.css";
+import "../styles/code-block.css";
 import SiteLayout from "@components/SiteLayout";
+import { Head } from "next/document";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { initializeAnalaytics, logPageView } from "@utils/analytics";

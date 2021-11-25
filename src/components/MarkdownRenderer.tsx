@@ -1,9 +1,5 @@
-import CodeBlock from "@components/CodeBlock";
-import slugify from "@utils/slugify";
-import { Language } from "prism-react-renderer";
 import React from "react";
 import remarkFrontmatter from "remark-frontmatter";
-import styles from "./MarkdownRenderer.module.css";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import slug from "rehype-slug";
