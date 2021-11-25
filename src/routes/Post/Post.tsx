@@ -15,7 +15,10 @@ const PostRoute: React.FC<Post> = (props) => {
     >
       <div className={styles.root}>
         <h1>{props.title}</h1>
-        <MarkdownRenderer content={props.body} mediaPath={props.mediaPath} />
+        <MarkdownRenderer
+          content={props.markdown}
+          mediaPath={props.mediaPath}
+        />
       </div>
     </PageLayout>
   );

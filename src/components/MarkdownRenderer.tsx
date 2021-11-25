@@ -2,27 +2,30 @@ import CodeBlock from "@components/CodeBlock";
 import slugify from "@utils/slugify";
 import { Language } from "prism-react-renderer";
 import React from "react";
+import remarkFrontmatter from "remark-frontmatter";
 import styles from "./MarkdownRenderer.module.css";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
+import slug from "rehype-slug";
+import remarkToc from "remark-toc";
 import remarkRehype from "remark-rehype";
+import rehypeHighlight from "rehype-highlight";
 import rehypeReact from "rehype-react";
 
 const processor = unified()
   .use(remarkParse)
-  // .use(remarkSlug)
-  // .use(remarkToc)
-  // .use(remarkGithub, { repository: "rehypejs/rehype-react" })
+  .use(slug)
+  .use(remarkToc)
   .use(remarkRehype)
-  // .use(rehypeHighlight)
+  .use(rehypeHighlight)
+  .use(remarkFrontmatter, ["yaml"])
   .use(rehypeReact, { createElement: React.createElement });
 
-const MarkdownRenderer: React.FC<{ mediaPath?: string; content: string }> = ({
-  mediaPath,
-  ...props
-}) => {
+const MarkdownRenderer: React.FC<{ mediaPath?: string; content: string }> = (
+  props
+) => {
   const content = processor.processSync(props.content);
-  console.log(content);
+  console.log("render");
   return (
     <>
       <div>{content.result}</div>
