@@ -4,8 +4,8 @@ import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 const PostPage: React.FC<Post> = (props) => {
-  // return <PostRoute {...props} />;
-  return <div>console.log</div>;
+  return <PostRoute {...props} />;
+  // return <div>console.log</div>;
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
