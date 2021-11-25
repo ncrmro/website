@@ -36,16 +36,10 @@ const Nav: React.FC = () => {
           >
             <LinkedinIcon className={iconClassName} />
           </a>
-          <a
-            href="https://github.com/ncrmro"
-            aria-label="Github profile"
-          >
+          <a href="https://github.com/ncrmro" aria-label="Github profile">
             <GithubIcon className={iconClassName} />
           </a>
-          <a
-            href="https://twitter.com/ncrmro"
-            aria-label="Twitter profile"
-          >
+          <a href="https://twitter.com/ncrmro" aria-label="Twitter profile">
             <TwitterIcon className={iconClassName} />
           </a>
           <a
