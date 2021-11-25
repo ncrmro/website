@@ -31,6 +31,9 @@ export interface Post {
  * @param filePath
  */
 async function loadPost(filePath: string) {
+  if (!filePath.includes(".md")) {
+    filePath = `${filePath}/post.md`;
+  }
   const fileContent = await fs.promises.readFile(filePath, "utf8");
   const { data, value } = await unified()
     .use(remarkParse)
@@ -74,18 +77,13 @@ export default async function getPosts(postCategory?: PostCategory) {
   await Promise.all(
     categoryYearFiles.reduce<Promise<void>[]>((acc, [category, years]) => {
       (years as Array<[string, string[]]>).forEach(([year, postFiles]) => {
-        const dir = `${category}/${year}`;
-        postFiles.forEach((post) => {
-          let filePath = `${postsDir}/${dir}/${post}`;
-          if (!filePath.includes(".md")) {
-            filePath = `${filePath}/post.md`;
-          }
+        postFiles.forEach((post) =>
           acc.push(
-            loadPost(filePath).then((post) => {
+            loadPost(`${postsDir}/${category}/${year}/${post}`).then((post) => {
               posts.set(post.slug, post);
             })
-          );
-        });
+          )
+        );
       });
       return acc;
     }, [])
