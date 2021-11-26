@@ -66,7 +66,7 @@ export default async function getPosts(postCategory?: PostCategory) {
         await Promise.all(
           /**
            * For each year folder in the category,
-           * return a promise that reads the posts file or directories
+           * return a promise that reads the posts file or directory
            */
           years.map((year) =>
             fs.promises
