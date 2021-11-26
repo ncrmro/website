@@ -30,7 +30,7 @@ export interface Post {
  * Load the markdown content and parse the metadata
  * @param filePath
  */
-async function loadPost(filePath: string) {
+export async function loadPost(filePath: string) {
   let mediaPath: string = null;
   if (!filePath.includes(".md")) {
     mediaPath = `/posts${filePath.split(postsDir)[1]}/media`;
@@ -64,11 +64,19 @@ export default async function getPosts(postCategory?: PostCategory) {
       (async () => {
         const years = await fs.promises.readdir(`${postsDir}/${category}`);
         await Promise.all(
+          /**
+           * For each year folder in the category,
+           * return a promise that reads the posts file or directories
+           */
           years.map((year) =>
             fs.promises
               .readdir(`${postsDir}/${category}/${year}`)
               .then((posts) =>
                 Promise.all(
+                  /**
+                   * For each post in the directory load and parse it's markdown
+                   * then load into our postsMap
+                   */
                   posts.map((post) =>
                     loadPost(`${postsDir}/${category}/${year}/${post}`).then(
                       (post) => postsMap.set(post.slug, post)

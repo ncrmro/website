@@ -1,6 +1,6 @@
 import PageLayout from "@components/PageLayout";
 import Resume from "@routes/Resume";
-import { JobDocument } from "@utils/documents";
+import { DocumentType, JobDocument } from "@utils/documents";
 import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -33,8 +33,10 @@ const ResumePage: React.FC<{ jobs: JobDocument[] }> = (props) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const { getDocuments, DocumentType } = require("@utils/documents");
-  const jobs: JobDocument = getDocuments(DocumentType.jobs).reverse();
+  const jobs = await import("@utils/documents").then((p) =>
+    p.getDocuments(DocumentType.jobs)
+  );
+
   return {
     props: {
       jobs,

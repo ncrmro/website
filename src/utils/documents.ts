@@ -1,5 +1,6 @@
-import { getMetadata } from "@utils/markdown";
+import { loadPost } from "@utils/getPosts";
 import TechUrls from "@utils/techUrls";
+import fs from "fs";
 
 export enum DocumentType {
   jobs = "jobs",
@@ -20,21 +21,17 @@ export interface JobDocument extends Document {
   tech: Array<TechUrls>;
 }
 
-export const getDocuments = (type: DocumentType): Array<Record<any, any>> => {
-  const fs = require("fs");
-  const documentsDir = `${process.env.DOCUMENTS_DIR}/${type}`;
-  let documents = [];
-  fs.readdirSync(documentsDir).forEach((file) => {
-    file = `${documentsDir}/${file}`;
-    if (file.includes(".md")) {
-      const content = fs.readFileSync(file, "utf8");
-      const { body, attributes } = getMetadata(content);
-      documents.push({
-        ...attributes,
-        body,
-      });
-    }
-  });
+// TODO should prob delete this
+export const getDocuments = async (
+  type: DocumentType
+): Promise<Array<Record<any, any>>> => {
+  const documentsDir = await fs.promises.readdir(
+    `${process.env.DOCUMENTS_DIR}/${type}`
+  );
 
-  return documents;
+  return await Promise.all(
+    documentsDir.map((file) =>
+      loadPost(`${process.env.DOCUMENTS_DIR}/${type}/${file}`)
+    )
+  );
 };
