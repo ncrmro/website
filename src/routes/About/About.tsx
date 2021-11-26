@@ -27,6 +27,7 @@ const AboutRoute: React.FC<{ jobs: JobDocument[] }> = (props) => {
         </div>
       </div>
       <div className={styles.history}>
+        {/*@ts-ignore*/}
         <History jobs={props.jobs} />
       </div>
     </div>
