@@ -23,7 +23,7 @@ that gets messages we send from a
 following (Testing against is the URL of the environment we are testing against,
 redacted for work).
 
-![A Slack message showing which E2E tests failed, what CI job they failed on, the total time, and the error count.](/images/post/2021_03_24_scheduled-ci-e2e-test-failure-slack-notification/slack-notification-for-failed-e2e-tests.jpg)
+![A Slack message showing which E2E tests failed, what CI job they failed on, the total time, and the error count.](slack-notification-for-failed-e2e-tests.jpg)
 
 ## Building it
 
