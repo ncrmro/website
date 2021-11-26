@@ -6,11 +6,10 @@ import remarkParse from "remark-parse";
 import slug from "rehype-slug";
 import remarkToc from "remark-toc";
 import remarkRehype from "remark-rehype";
-import rehypeHighlight  from "rehype-highlight";
+import rehypeHighlight from "rehype-highlight";
 import rehypeReact from "rehype-react";
 import { visit } from "unist-util-visit";
 import dockerfile from "highlight.js/lib/languages/dockerfile";
-
 
 const processor = (mediaPath: string) =>
   unified()
