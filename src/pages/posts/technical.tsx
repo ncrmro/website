@@ -1,6 +1,6 @@
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { Post } from "@utils/getPosts";
+import { Post, PostCategory } from "@utils/getPosts";
 import React, { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
 
@@ -12,10 +12,9 @@ function TechnologyPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   );
 }
 export const getStaticProps: GetStaticProps = async (context) => {
-  const posts = Object.values<Post>(
-    await require("@utils/getPosts").default("technical")
+  const posts = await import("@utils/getPosts").then((p) =>
+    p.orderedPostsArray(PostCategory.technical)
   );
-  posts.sort((a, b) => b.date - a.date);
   return {
     props: {
       posts,

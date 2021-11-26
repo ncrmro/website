@@ -5,7 +5,6 @@ import React from "react";
 import styles from "./Post.module.css";
 
 const PostRoute: React.FC<Post> = (props) => {
-  console.log(props.mediaPath);
   return (
     <PageLayout
       title={props.title}
@@ -16,7 +15,7 @@ const PostRoute: React.FC<Post> = (props) => {
     >
       <div className={styles.root}>
         <h1>{props.title}</h1>
-        <MarkdownRenderer content={props.body} mediaPath={props.mediaPath} />
+        <MarkdownRenderer {...props} />
       </div>
     </PageLayout>
   );
