@@ -22,9 +22,7 @@ export interface JobDocument extends Document {
 }
 
 // TODO should prob delete this
-export const getDocuments = async (
-  type: DocumentType
-): Promise<Array<Record<any, any>>> => {
+export const getDocuments = async (type: DocumentType) => {
   const documentsDir = await fs.promises.readdir(
     `${process.env.DOCUMENTS_DIR}/${type}`
   );
