@@ -8,7 +8,7 @@ post_title_lower=$(echo "$post_tile" | awk '{print tolower($0)}')
 post_title_underscored="${post_title_lower// /_}"
 post_title_slug="${post_title_lower// /-}"
 
-posts_dir=posts
+posts_dir=public/posts
 
 # 2020_06_14_testing_new_post_script.md
 post_file_name=$(date +'%Y_%m_%d')_$post_title_underscored.md
