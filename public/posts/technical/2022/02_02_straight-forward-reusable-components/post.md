@@ -1,9 +1,11 @@
 ---
 slug: straight-forward-reusable-components
-title: straight-forward-reusable-components
+title: Straight forward reusable React components
 date: "2022-02-02"
-description: CHANGEME
-tags: ["CHANGEME"]
+description:
+  Building clean reusable components and avoiding decision paralysis when
+  choosing props.
+tags: ["React"]
 ---
 
 ## Background
