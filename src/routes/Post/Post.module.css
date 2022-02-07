@@ -5,6 +5,7 @@
   max-width: 120ch;
   margin: 0 auto;
   overflow: hidden;
+  width: 100%;
 }
 
 .root h1 {
