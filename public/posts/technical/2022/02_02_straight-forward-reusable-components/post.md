@@ -18,7 +18,7 @@ Now days
 
 - typically just like writing straight simple CSS.
 - Try not to write reusable components too early (premature
-  optimization/abstractions)
+  optimization/abstractions) Reusable components should carry their own state
 
 ## Examples
 
@@ -27,7 +27,7 @@ Now days
 Let's take a `<hr/>` HTML tag for example. Rather than give any specific element
 a bottom border we can instead use an `<hr/>` reusable component.
 
-![Demonstrating the Mutation Updating the Apollo Cache](mutation_example.gif)
+![Demonstrating the Mutation Updating the Apollo Cache](horizontal-rule-in-form.png)
 
 Writing a reusable component can usually result in decision paralysis
 
@@ -36,19 +36,20 @@ Writing a reusable component can usually result in decision paralysis
 - If we want to override the color defined in the CSS we can pass those in as
   styles
 
-Lastly, I don't think reusable components should carry state
+By CMD clicking say the `div` tag we can see the prop types.
 
 ```typescript jsx
 // HorizontalRule.tsx
-import React, { CSSProperties } from "react";
+import React from "react";
 import styles from "./HorizontalRule.module.css";
 
-interface HorizontalRule {
-  style?: CSSProperties;
-}
+type HorizontalRuleProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLHRElement>,
+  HTMLHRElement
+>;
 
-const HorizontalRule: React.FC<HorizontalRule> = (props) => (
-  <hr style={props.style} className={styles.root} />
+const HorizontalRule: React.FC<HorizontalRuleProps> = (props) => (
+  <hr className={styles.root} {...props} />
 );
 
 export default HorizontalRule;
@@ -64,17 +65,11 @@ export default HorizontalRule;
 
 A couple of things to note,
 
-- we define some basic CSS
-- we then pass a style prop that has type `CSS properties`
-  - This allows us to override any style value if need be
+- we define some basic CSS styles throughout the use of classname
+- we spread the props after the initial classname
+- this allows us to pass in a custom classname later or just a styles object
 
 ## Input
-
-For the input, I'm a big fan over
-
-- overriding the onChange to automatically return the value rather than the
-  element
-- We can set autocomplete, required, regex patterns, etc
 
 ```typescript jsx
 import React from "react";
@@ -101,9 +96,9 @@ const Input: React.FC<Props> = ({ label, onChange, ...props }) => (
       </label>
     )}
     <input
-      {...props}
       className={styles.input}
       onChange={(e) => onChange(e.target.value)}
+      {...props}
     />
   </div>
 );
@@ -111,14 +106,20 @@ const Input: React.FC<Props> = ({ label, onChange, ...props }) => (
 export default Input;
 ```
 
+- overriding the onChange to automatically return the value rather than the
+  element
+- Now we can automatically pass props to input autocomplete, required, regex
+  patterns, etc with having to manually define them again
+- Even tho we havea custom onChange method we can still override to get the
+  original element (although we might need two on change function type
+  declerations)
+
 ## Dropdown selector
 
 We can take this idea even further when implementing a dropdown selector in the
 code below we can now pass any props to the root/label/select/options tags.
 
 These types come from the react library typings themselves but are not exported.
-
-By CMD clicking say the `div` tag we can see the prop types.
 
 ```typescript jsx
 import React from "react";
@@ -168,4 +169,61 @@ const DropdownSelect: React.FC<DropdownSelectProps> = (props) => (
 );
 
 export default DropdownSelect;
+```
+
+## RadioButtons
+
+```typescript jsx
+import React from "react";
+import styles from "./RadioButtons.module.css";
+
+interface RadioButtonsProps {
+  name: string;
+  selectedValue: string;
+  onSelect: (value: string) => void;
+  options: Array<{ id?: string; value: string; text: string }>;
+  rootDivProps?: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  >;
+  labelProps?: React.DetailedHTMLProps<
+    React.LabelHTMLAttributes<HTMLLabelElement>,
+    HTMLLabelElement
+  >;
+  radioButtonProps?: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >;
+}
+
+const RadioButtons: React.FC<RadioButtonsProps> = (props) => (
+  <div className={styles.root} {...props.rootDivProps}>
+    {props.options.map((option) => (
+      <div key={option.value}>
+        <input
+          className={styles.input}
+          {...props.radioButtonProps}
+          value={option.value}
+          checked={option.value === props.selectedValue}
+          onChange={({ target: { value } }) => props.onSelect(value)}
+          id={option.id ?? option.value}
+          type="radio"
+        />
+        <label htmlFor={option.id ?? option.value} {...props.labelProps}>
+          {option.text}
+        </label>
+      </div>
+    ))}
+  </div>
+);
+
+export default RadioButtons;
+```
+
+```css
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 ```
