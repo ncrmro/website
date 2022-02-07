@@ -4,7 +4,7 @@ title: Straight forward reusable React components
 date: "2022-02-02"
 description:
   Building clean reusable components and avoiding decision paralysis when
-  choosing props.
+  choosing their props.
 tags: ["React"]
 ---
 
