@@ -10,6 +10,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeReact from "rehype-react";
 import { visit } from "unist-util-visit";
 import dockerfile from "highlight.js/lib/languages/dockerfile";
+import styles from "./MarkdownRenderer.module.css";
 
 const processor = (mediaPath: string) =>
   unified()
@@ -31,6 +32,8 @@ const processor = (mediaPath: string) =>
           if (node.tagName === "img") {
             // @ts-ignore
             node.properties.src = `${mediaPath}/${node.properties.src}`;
+            // @ts-ignore
+            node.properties.className = styles.img;
           }
         })
     )
@@ -38,11 +41,7 @@ const processor = (mediaPath: string) =>
 
 const MarkdownRenderer: React.FC<Post> = (props) => {
   const content = processor(props.mediaPath).processSync(props.markdown);
-  return (
-    <>
-      <div>{content.result}</div>
-    </>
-  );
+  return content.result;
 };
 
 export default MarkdownRenderer;
