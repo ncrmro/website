@@ -12,11 +12,11 @@ tags: ["React"]
 
 I've become a big fan of not using too many libraries in my frontend
 applications both because of performance concerns and often pre-made components
-styles are very hard to override with small tweaks.
+styles are hard to override with small tweaks.
 
 Now days
 
-- typically just like writing straight simple CSS.
+- Typically like writing straight simple CSS.
 - Try not to write reusable components too early (premature
   optimization/abstractions) Reusable components should carry their own state
 
@@ -63,13 +63,23 @@ export default HorizontalRule;
 }
 ```
 
-A couple of things to note,
+A couple of things to note, about this design pattern.
 
-- we define some basic CSS styles throughout the use of classname
-- we spread the props after the initial classname
-- this allows us to pass in a custom classname later or just a styles object
+- Basic CSS styles are applied through the classname prop
+- Props are after the initial classname allowing us to pass in a custom
+  classname later or just a styles object
 
 ## Input
+
+On the Input component a few notes
+
+- The onChange function type is overrode and automatically return the value
+  rather than the element
+- Now we can automatically pass props to input autocomplete, required, regex
+  patterns, etc with having to manually define them again
+- Even tho we have a custom onChange method we can still override to get the
+  original element (although we might need two on change function type
+  declarations)
 
 ```typescript jsx
 import React from "react";
@@ -105,14 +115,6 @@ const Input: React.FC<Props> = ({ label, onChange, ...props }) => (
 
 export default Input;
 ```
-
-- overriding the onChange to automatically return the value rather than the
-  element
-- Now we can automatically pass props to input autocomplete, required, regex
-  patterns, etc with having to manually define them again
-- Even tho we havea custom onChange method we can still override to get the
-  original element (although we might need two on change function type
-  declerations)
 
 ## Dropdown selector
 
@@ -225,5 +227,83 @@ export default RadioButtons;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+```
+
+## Form component
+
+- Classnames can be passed in addition the the bass styles
+- onSubmit prop automatically prevents the default form action to happen
+
+```typescript jsx
+import React, { ReactNode } from "react";
+import styles from "./Form.module.css";
+
+export interface FormProps {
+  id?: string;
+  className?: string;
+  header?: ReactNode;
+  actions?: ReactNode;
+  loading?: boolean;
+  errors?: string[];
+  onSubmit?: () => void;
+}
+
+const Form: React.FC<FormProps> = (props) => (
+  <form
+    id={props.id}
+    className={
+      props.className ? `${styles.root} ${props.className}` : styles.root
+    }
+    onSubmit={(e) => {
+      e.preventDefault();
+      props.onSubmit && props.onSubmit();
+    }}
+  >
+    {props.header}
+    <div className={styles.errors}>
+      {props.errors?.map((e, index) => (
+        <span key={index}>{e}</span>
+      ))}
+    </div>
+    <div className={styles.fields}>{props.children}</div>
+    <div className={styles.actions}>
+      {props.actions || <button type="submit">Submit</button>}
+    </div>
+  </form>
+);
+
+export default Form;
+```
+
+```css
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  align-content: center;
+  /*max-width: 30rem;*/
+}
+
+.errors {
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actions {
+  float: right;
+}
+
+.actions input {
+  float: right;
+}
+
+.actions button {
+  float: right;
 }
 ```
