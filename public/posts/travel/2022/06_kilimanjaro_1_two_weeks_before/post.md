@@ -4,6 +4,7 @@ slug: mt-kilimanjaro-part-1
 places: ["Africa", "Kilimanjaro", "Tanzania", "Rajastan"]
 start: "2022-05-31"
 state: draft
+description: The beginning of my trip to Tanzania Africa to climb Kilimanjaro to raise funds for the Arizona Burn center.
 ---
 
 I'm writing this 13 days out from my trip to Tanzania to climb/hike Kilimanjaro.
@@ -54,6 +55,6 @@ gotten my last haul of shipments and trying to open all the boxes.
 I'm pretty strong (dead lifted 450x5 today) although I could do a bit more
 cardio and I wish I had gotten to do more altitude training. I did some reading
 though on the world record holders and Kili has been (with acclimation and not
-carrying food) sumited in 6 hours, also they say 5 day summits a ton of people don't finish
-and 9 are pretty easy so our 7 day shouldn't be so bad.
+carrying food) sumited in 6 hours, also they say 5 day summits a ton of people
+don't finish and 9 are pretty easy so our 7 day shouldn't be so bad.
 
