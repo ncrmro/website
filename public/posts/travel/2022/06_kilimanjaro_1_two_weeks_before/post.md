@@ -3,8 +3,8 @@ title: "Mount Kilimanjaro Part 1 - Getting ready"
 slug: mt-kilimanjaro-part-1
 places: ["Africa", "Kilimanjaro", "Tanzania", "Rajastan"]
 start: "2022-05-31"
-state: draft 
-description: The beginning of my trip to Tanzania Africa to climb Kilimanjaro to raise funds for the Arizona Burn center.
+state: draft description: Origin's of my Tanzania Africa trip to climb
+Kilimanjaro to raise funds for the Arizona Burn center.
 ---
 
 ## Overview
@@ -24,7 +24,7 @@ My friend and coworker [Juan Palomino](https://twitter.com/JuanForTheMoney)
 invited me. He set up setting up an NFT drop
 called [Viva Muerto](https://www.vivamuertos.com) to raise money for Valley
 Health. Our friend and his girlfriend Mikala works at Valleywise Health and has
-been help run and organize the trip.
+been helping organize the trip.
 
 ## Raising Money
 
@@ -54,9 +54,18 @@ gotten my last haul of shipments and trying to open all the boxes.
 
 ## Physical Fitness and Altitude
 
-I'm pretty strong (dead lifted 450x5 today) although I could do a bit more
-cardio and I wish I had gotten to do more altitude training. I did some reading
-though on the world record holders and Kili has been (with acclimation and not
-carrying food) summited in 6 hours, also they say 5 day summits a ton of people
-don't finish and 9 are pretty easy so our 7 day shouldn't be so bad.
+The summiting the mountain for a group can take anywhere between 5 to 9 days.
+Longer trips give climbers more time to acclimate to the altitude, and they say
+9 day trips have around 80% success summiting the mountain.
+
+It's also recommended to get altitude medication, which is usually Diamox.
+
+I've not done to much to prepare myself physically other than my usual
+powerlifting three times a week (dead lifted 450x4 today for example), Some HIT
+workouts in the pool and some hot yoga. I do wish I was running still a bit more
+and gotten more altitude training in.
+
+I did some reading though on the world record holders and Kili has been (with
+acclimation and not carrying food) summited in 6 hours, this has giving me a large amount
+of hope that I won't have problems summiting.
 
