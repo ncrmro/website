@@ -1,7 +1,7 @@
 ---
 title: "Mount Kilimanjaro Part 1 - Getting ready"
 slug: mt-kilimanjaro-part-1
-places: ["Africa", "Kilimanjaro", "Tanzania", "Rajastan"]
+places: ["Africa", "Kilimanjaro", "Tanzania"]
 start: "2022-05-31"
 state: published
 description: Origin's of my Tanzania Africa trip to climb Kilimanjaro to raise funds for the Arizona Burn center.
