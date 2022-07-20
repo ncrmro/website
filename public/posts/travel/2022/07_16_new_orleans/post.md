@@ -2,8 +2,7 @@
 title: "Mount Kilimanjaro Part 1 - Getting ready"
 slug: new-orleans-with-anonda places: ["New Orleans", "Louisiana"]
 start: "2022-07-19"
-state: draft
-description: Visiting New Orleans with my friend Andy
+state: draft description: Visiting New Orleans with my friend Andy
 ---
 
 ## Background - Friday, July 15, 2022
@@ -54,11 +53,11 @@ because we where missing one of our wallets.
 - Walk along the river
 - Bar / Talked with Chef guy
 
-initially we had plan to keep driving but quickly realized we had a ton of stuff
-left to see and booked another day
+initially, the plan was to keep driving but quickly realized we had a ton of
+stuff (and work) left to see and booked another day
 
-Sunday we started the day of at Itals Garden which was proper vegan soul food. I
-think we orderd just about everything on the menu.
+Sunday we started the day by getting lunch at [Ital Garden]( italgardennola.com)
+which was proper vegan soul food. We ordered just about everything on the menu.
 
 - Cajun Pasta
 - Quona Jumbala
@@ -67,38 +66,46 @@ think we orderd just about everything on the menu.
 - Golden Potatoes
 - Jackfruit Ribs
 
-After this great lunch we where on the hunt for coffee and a place to work. CC's
-coffee down Royal street is where we had originally planed to visit.
+After lunch, we were on the hunt for coffee and a place to
+work. [CC's coffee house](https://www.ccscoffee.com) on Royal street is where we
+had originally planned to visit.
 
-I mentioned we had to do a bit of walking around the French Quarter.
+I mentioned that Andy had to do a bit of walking around the French Quarter and
+more
+specifically [Jackson Square](https://www.neworleans.com/listing/jackson-square/32150/)
+.
 
-It quickly got to hot as we where both wearing jeans and button ups (which I
-suggested against but became important later).
+Quickly though we found the heat to become unbearable as we both wore jeans and
+button-ups (which I suggested against, but became appreciated later).
 
-We proceded to try and sit aorund jackn square but all the places where more
-resturants, this is when our original plan of CC's started to sound real nice.
+We had hoped to find a nice place to get a coffee and do some work but
+eventually, the original destination CC's Coffee house seemed like a better
+idea.
 
-While in CC's I offered a dad mentiong his phone was dead while his daugter used
-the bathroom. This is when two beutifil ladys walked in and sat at the same
-table as I.
+While in CC's I offered a dad who had been mentioning his phone was dead while
+his daughter used the bathroom. This is when two beautiful ladies walked in and
+sat at the same table as me.
 
-Eventually I stuck up a conversation with them by asking had they already done
-all the touristy things? Turns out they are both from Argentina and met through
-an agency the places young women with familys in need of live in help.
+I asked them had they already done all the touristy things which they had and
+were relaxing until their plane ride home that night? Turns out they are both
+from Argentina and met through an agency that places young women with families
+in need of live-in help.
 
-We off an on chat with them when three more women walk up to the table and
-stripe up a coversation (and again also offering charging).
+Three more women walk up to the table and start a conversation (and they also
+were in need of phone charging).
 
-We ask about Hookah places and they suggest Hayfas Hookah. We all decied to go,
-we get a bucket of beer, snacks and have some hook.
+After learning they are locals, we ask about Hookah places and they
+suggest [Haifa](https://haifacusinenola.com). We all decied to go, we get a
+bucket of beer, and snacks while enjoying some hookah.
 
-We then ask if they smoke and then go to the lake Ponchier with them. We walk
-along the river and admire the many pepple fishing, baby ducks, throw a fish
-back in the water and even had andy show us how to dance Salsa to one of the
-fishers boombox's.
+We then ask if they smoke at lake Pontchartrain near our AirBnB.
 
-Afterwords we go to a bar near their hostel and they split and I notice a guy
-with chef knifes.
+The walk along the river has us admiring the people fishing, baby ducks,
+throwing fish back in the water, and even had Andy show us how to dance Salsa to
+one of the fishers boomboxes.
+
+Afterward, we go to a bar near their hostel and they split and I notice a guy
+with chef knives. We split after this
 
 ## Monday - Garden District
 
