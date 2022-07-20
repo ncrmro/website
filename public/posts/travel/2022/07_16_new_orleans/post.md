@@ -2,17 +2,50 @@
 title: "Mount Kilimanjaro Part 1 - Getting ready"
 slug: new-orleans-with-anonda places: ["New Orleans", "Louisiana"]
 start: "2022-07-19"
-state: draft description: Visiting New Orleans with my friend Anonda
+state: draft
+description: Visiting New Orleans with my friend Andy
 ---
 
-## Background - Friday
+## Background - Friday, July 15, 2022
 
-At the coffee shop with Andy and we're talking about some relationship drama.
-Andy tells me he's wanting to visit Chicago or OTHER_PLACE. We then set up the
-trip and decide to leave early Saturday morning which actually turned into
-leaving after lunch at Godivas
+While coworking with my friend Andy at EQ a coffee shop in the Heights he was
+telling me about a trip to Chicago he was planning to calm some mental
+turbulence.
 
-## Saturday Getting Into New Orleans
+With a craving for wanderlust, I naturally asked if I could join him on this
+journey. We decided to leave the next morning which in reality had us departing
+after lunch at Govinda's.
+
+## Getting Into New Orleans - Saturday, July 16, 2022
+
+The trip was uneventful with the only notable stop being Lake Charles. We found
+our way to an [AirBnB](https://www.airbnb.com/rooms/10068423) we booked unloaded
+the car and went on the hunt for dinner.
+
+After unloading and changing into nicer clothes we went
+to [Cafe Carmo](http://cafecarmo.com), which had a nice mix of vegan (Andy is
+vegan) and non-vegan options. The menu was comprised of all sorts of Latin
+American drinks and dishes.
+
+I had the Rico which had boar (pulled pork almost) on top of grilled plantains.
+We also shared a vegan flatbread with cheese and other goodies. For cocktails
+Andy ordered a Cajarita which felt like a bit of a play on a margarita and I
+believe I had a Caipirinhas, both very refreshing drinks perfect for the summer
+or a beach.
+
+After the meal, we talked with the bartender and the two other waitresses. The
+bartender had just moved from Portland and one of the other waitresses was from
+Turkey!
+
+I jokingly asked had the Portlander already made questionable decisions in Heras
+and the Turkish lady laughed and told us how she was super up and then lost a
+bit of money.
+
+We enjoyed our jib on the way back to the car and did a bit of driving to get to
+the [Allways Lounge](https://theallwayslounge.net) which we couldn't get into
+because we where missing one of our wallets.
+
+## Sunday
 
 - French Quarter/Jackson Square
 - CC's Coffee
@@ -20,28 +53,6 @@ leaving after lunch at Godivas
 - Hookah Hayfa - Wanted to go to Kintered
 - Walk along the river
 - Bar / Talked with Chef guy
-
-After our lunch to Godivas, a stop in Lake Charles an uneventful rest of the
-drive we get to our AirBnB. Which was a bit far from the main parts we would
-like to have visited but we very afordable and had some super sweet dogs.
-
-After unloading and changing into nicer clothes we went to Carmon. We had a
-vegan flatbread sort of pizza, a cold gozpatcho, I had some pork on plantains.
-We had some cocktails.
-
-After the meal we ended up talking with the bartender (who I found very pretty)
-and two of the other waitress. The bartender had just moved from portland and
-one of the other waitress was from Turkey!
-
-I joked had the Porlaninan already made questionable deciosinos in Heras and the
-Turkesh lady laughed and told us how she was super up and then lost a ton of
-money.
-
-We enjoyed our jib on the way back to the car and did a bit of driving to get to
-the Always Lounge which we couldn't get into because we where missing one of our
-wallets.
-
-## Sunday
 
 initially we had plan to keep driving but quickly realized we had a ton of stuff
 left to see and booked another day
