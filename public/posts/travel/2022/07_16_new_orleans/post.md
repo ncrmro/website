@@ -11,9 +11,9 @@ While coworking with my friend Andy at EQ a coffee shop in the Heights he was
 telling me about a trip to Chicago he was planning to calm some mental
 turbulence.
 
-With a craving for wanderlust, I naturally asked if I could join him on this
-journey. We decided to leave the next morning which in reality had us departing
-after lunch at Govinda's.
+With a craving for wanderlust, I inquired about joining the journey. It was
+decided to leave the next morning, the departure took place after lunch at
+Govinda's.
 
 ## Getting Into New Orleans - Saturday, July 16, 2022
 
@@ -107,27 +107,49 @@ one of the fishers boomboxes.
 Afterward, we go to a bar near their hostel and they split and I notice a guy
 with chef knives. We split after this
 
-## Monday - Garden District
+## Monday
 
-Once again we decide to stay in New Orlean and do some work. THe local ladies
-recomended the Vintage for Beignets which is in the lovelly garden district. We
-got a traditinal and a rasberry filled one which was amazing.
+Again we decide to stay in New Orleans and do some work.
 
-I ordered a cucumber dil gimlet and Ahi tuna.
+### Breakfast at the [The Vintage](http://thevintagenola.com) in the [Garden District](https://www.neworleans.com/plan/neighborhoods/uptown-garden-district/)
+
+The local ladies we met previously recommended Beignets from the Vintage.
+
+We ordered a traditional and a raspberry-filled beignet which both were amazing.
+I also ordered some egg bites. Andy amusingly couldn't take a bite without
+inhaling powdered sugar.
+
+The espresso machine stopped working after our first order of coffee, I always
+wonder if this happens to stop people from spending all day working. I saw they
+had cucumber dill gimlet (I love gimlets) and ordered one with Ahi tuna which
+was an amazing protein snack.
+
+## Lunch [Killer Po Boys](http://www.killerpoboys.com/)
+
+After this Andy had not eaten and I had to make sure he had a Po Boy before
+leaving New Orleans. He had a Thai BBQ po boy and I had the beef which had
+pickled green beans and horseradish and was quite tasty.
 
 Then we had to get a Po Boy for Andy and Killer Poboys had three vegan options.
 
-After which we found a coffe shop in what I guess was the Irish part of New
-orleans. This palce also serverd as a musueme for the Irish. We started with
-coffee but avoided irish coffe cause I'm not a big fan of the cream. I'd rather
-jsut drink whisky in my coffee.
+## Mid Afternoon - Working at the [Irish Cultural Museum](https://www.neworleans.com/listing/the-irish-cultural-museum-of-new-orleans/30407/)
 
-I chatted with the bartender and wanted to try a reasonable whisky. My friend
-chuck said he wanted to try red breast but they only had 123 and 173 a glass.
+Andy found a coffee shop inside of the Irish Cultural Museum. Fun fact in 1800's
+new orleans the Irish population was 1 in 5. The Irish coffees are said to be
+great, though we didn't want to start drinking so early.
 
-Instead he recommended a Prowlers, Pot still, no fancy barrleys and a guiness.
-Which was a pairing they would be drinking 150 years ago in ireland. I spoke a
-bit about my mexican Irish heritage
+I chatted with the bartender about tasting a reasonable whisky. My friend Chuck
+said he wanted to try [Red Breast](https://www.redbreastwhiskey.com/) but they
+only had 123 and 173 a glass.
+
+After he listened to my preferences (less sweet, no fancy barrels) he recommended
+a [Prowlers John's Lane Pot still](https://www.powerswhiskey.com/en-us/product/johns-lane)
+and a pint of [Guinness](https://www.guinness.com/). He told me this pairing of
+flavors was something they would be drinking 150 years ago in Ireland. I spoke a
+bit about my Mexican Irish heritage and he told me all about the name Irish
+Mexicans.
+
+## Dinner Sneaky Pickle
 
 While I was waiting for him to finish I went and ordered a double well whisky at
 the three legged dog a much seedier local bar that had quite the cast of
