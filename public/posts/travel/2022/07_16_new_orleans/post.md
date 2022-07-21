@@ -1,5 +1,5 @@
 ---
-title: "Summertime Adventure in New New Orleans"
+title: "Summertime Adventure in New Orleans"
 slug: summertime-adventure-in-new-orleans
 places: ["New Orleans", "Louisiana"]
 start: "2022-07-19"
