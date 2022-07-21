@@ -3,7 +3,8 @@ title: "Mount Kilimanjaro Part 1 - Getting ready"
 slug: new-orleans-with-anonda 
 places: ["New Orleans", "Louisiana"]
 start: "2022-07-19"
-state: draft description: Visiting New Orleans with my friend Andy
+state: draft
+description: Visiting New Orleans with my friend Andy
 ---
 
 ## Background - Friday, July 15, 2022
