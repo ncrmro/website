@@ -1,6 +1,6 @@
 ---
-title: "Mount Kilimanjaro Part 1 - Getting ready"
-slug: new-orleans-with-anonda 
+title: "A Summertime New New Orleans adventure"
+slug: summertime-new-orleans-adventure
 places: ["New Orleans", "Louisiana"]
 start: "2022-07-19"
 state: draft
