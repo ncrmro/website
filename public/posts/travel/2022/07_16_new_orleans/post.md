@@ -142,18 +142,20 @@ I chatted with the bartender about tasting a reasonable whisky. My friend Chuck
 said he wanted to try [Red Breast](https://www.redbreastwhiskey.com/) but they
 only had 123 and 173 a glass.
 
-After he listened to my preferences (less sweet, no fancy barrels) he recommended
+After he listened to my preferences (less sweet, no fancy barrels) he
+recommended
 a [Prowlers John's Lane Pot still](https://www.powerswhiskey.com/en-us/product/johns-lane)
 and a pint of [Guinness](https://www.guinness.com/). He told me this pairing of
 flavors was something they would be drinking 150 years ago in Ireland. I spoke a
 bit about my Mexican Irish heritage and he told me all about the name Irish
 Mexicans.
 
-## Dinner Sneaky Pickle
+While I was waiting for him to finish I walked next door and ordered a double
+well whisky at
+the [Three-Legged Dog](https://www.neworleans.com/listing/three-legged-dog/33371/)
+, a much seedier local bar that had quite the cast of characters in it.
 
-While I was waiting for him to finish I went and ordered a double well whisky at
-the three legged dog a much seedier local bar that had quite the cast of
-characters in it.
+### Dinner [Sneaky Pickle](https://www.yousneakypickle.com/)
 
 All wee we had been trying to try the Sneaky Pickle and finally got to try it.
 We talked to two ladies sitting next to us who where in fro seatle for one of
