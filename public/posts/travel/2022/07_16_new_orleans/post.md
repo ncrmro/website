@@ -21,10 +21,13 @@ Govinda's.
 
 The trip was uneventful with the only notable stop being Lake Charles. We found
 our way to an [AirBnB](https://www.airbnb.com/rooms/10068423) we booked unloaded
-the car and went on the hunt for dinner.
+the car, put on some fabcuer clothes and went on the hunt for dinner.
 
-After unloading and changing into nicer clothes we went
-to [Cafe Carmo](http://cafecarmo.com), which had a nice mix of vegan (Andy is
+### Dinner at [Cafe Carmo](http://cafecarmo.com)
+
+![Plates of food a cafe carmo](IMG_0579.jpeg)
+
+Cafe Carmo had a nice mix of vegan (Andy is
 vegan) and non-vegan options. The menu was comprised of all sorts of Latin
 American drinks and dishes.
 
@@ -48,18 +51,13 @@ because we where missing one of our wallets.
 
 ## Sunday
 
-- French Quarter/Jackson Square
-- CC's Coffee
-- Argentina Gals
-- Hookah Hayfa - Wanted to go to Kintered
-- Walk along the river
-- Bar / Talked with Chef guy
-
 initially, the plan was to keep driving but quickly realized we had a ton of
 stuff (and work) left to see and booked another day
 
 Sunday we started the day by getting lunch at [Ital Garden]( italgardennola.com)
 which was proper vegan soul food. We ordered just about everything on the menu.
+
+![Plates of food a ITal](IMG_0586.jpeg)
 
 - Cajun Pasta
 - Quona Jumbala
@@ -67,6 +65,12 @@ which was proper vegan soul food. We ordered just about everything on the menu.
 - Fried Cauliflower
 - Golden Potatoes
 - Jackfruit Ribs
+
+### French Quarter and Jackson Square
+
+![Andy taking a photo in the french quarter](IMG_0597.jpeg)
+
+![The a street in the French Quarter](IMG_0599.jpeg)
 
 After lunch, we were on the hunt for coffee and a place to
 work. [CC's coffee house](https://www.ccscoffee.com) on Royal street is where we
@@ -83,6 +87,8 @@ button-ups (which I suggested against, but became appreciated later).
 We had hoped to find a nice place to get a coffee and do some work but
 eventually, the original destination CC's Coffee house seemed like a better
 idea.
+
+### Coffee Shop, Hookah, Locals and The Argentinans
 
 While in CC's I offered a dad who had been mentioning his phone was dead while
 his daughter used the bathroom. This is when two beautiful ladies walked in and
@@ -115,6 +121,10 @@ Again we decide to stay in New Orleans and do some work.
 
 ### Breakfast at the [The Vintage](http://thevintagenola.com) in the [Garden District](https://www.neworleans.com/plan/neighborhoods/uptown-garden-district/)
 
+![The Bar at the Vintage](IMG_0619.jpeg)
+
+![Beignets at the Vintage](IMG_0620.jpeg)
+
 The local ladies we met previously recommended Beignets from the Vintage.
 
 We ordered a traditional and a raspberry-filled beignet which both were amazing.
@@ -128,6 +138,9 @@ was an amazing protein snack.
 
 ### Lunch [Killer Po Boys](http://www.killerpoboys.com/)
 
+![Po Boys at Killers](IMG_0626.jpeg)
+
+
 After this Andy had not eaten and I had to make sure he had a Po Boy before
 leaving New Orleans. He had a Thai BBQ po boy and I had the beef which had
 pickled green beans and horseradish and was quite tasty.
@@ -135,6 +148,8 @@ pickled green beans and horseradish and was quite tasty.
 Then we had to get a Po Boy for Andy and Killer Poboys had three vegan options.
 
 ### Mid Afternoon - Working at the [Irish Cultural Museum](https://www.neworleans.com/listing/the-irish-cultural-museum-of-new-orleans/30407/)
+
+![A glass of Guiness, Powers Whisky Bottle and glass of Whisky](IMG_0639.jpeg)
 
 Andy found a coffee shop inside the Irish Cultural Museum. Fun fact in 1800s New
 Orleans the Irish population was 1 in 5. The Irish coffees are said to be great,
@@ -171,6 +186,9 @@ The lady next door left a whole half sandwich which we grabbed and ate without
 shame.
 
 ### Evening [Frenchman Street](https://www.neworleans.com/plan/streets/frenchmen-street/)
+
+![Andy Pointing at the Frenchman Inn Sign](IMG_0654.jpeg)
+
 
 At this point, Andy still wanted to see some Jazz. And to be honest, at this the
 point I don't think I've taken full advantage of the music scene in my previous
