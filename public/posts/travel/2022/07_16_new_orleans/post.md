@@ -1,6 +1,6 @@
 ---
-title: "A Summertime New New Orleans adventure"
-slug: summertime-new-orleans-adventure
+title: "Summertime Adventure in New New Orleans"
+slug: summertime-adventure-in-new-orleans
 places: ["New Orleans", "Louisiana"]
 start: "2022-07-19"
 state: draft
