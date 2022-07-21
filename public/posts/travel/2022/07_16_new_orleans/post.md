@@ -124,7 +124,7 @@ wonder if this happens to stop people from spending all day working. I saw they
 had cucumber dill gimlet (I love gimlets) and ordered one with Ahi tuna which
 was an amazing protein snack.
 
-## Lunch [Killer Po Boys](http://www.killerpoboys.com/)
+### Lunch [Killer Po Boys](http://www.killerpoboys.com/)
 
 After this Andy had not eaten and I had to make sure he had a Po Boy before
 leaving New Orleans. He had a Thai BBQ po boy and I had the beef which had
@@ -132,7 +132,7 @@ pickled green beans and horseradish and was quite tasty.
 
 Then we had to get a Po Boy for Andy and Killer Poboys had three vegan options.
 
-## Mid Afternoon - Working at the [Irish Cultural Museum](https://www.neworleans.com/listing/the-irish-cultural-museum-of-new-orleans/30407/)
+### Mid Afternoon - Working at the [Irish Cultural Museum](https://www.neworleans.com/listing/the-irish-cultural-museum-of-new-orleans/30407/)
 
 Andy found a coffee shop inside of the Irish Cultural Museum. Fun fact in 1800's
 new orleans the Irish population was 1 in 5. The Irish coffees are said to be
@@ -157,40 +157,58 @@ the [Three-Legged Dog](https://www.neworleans.com/listing/three-legged-dog/33371
 
 ### Dinner [Sneaky Pickle](https://www.yousneakypickle.com/)
 
-All wee we had been trying to try the Sneaky Pickle and finally got to try it.
-We talked to two ladies sitting next to us who where in fro seatle for one of
-their weedings.
+Almost every one we asked for vegan options recommended Sneaky Pickle and
+finally got to try it. We talked to two ladies at a neighboring table who where
+from Seatle for one of their weddings.
 
-We orderd Trumpt Mushrooms on grits, rueben which had red cabage. The ladys next
-door left a whole half sandwhich which we grabbed and ate without shame.
+* Smoked tempeh Reuben (with a gorgous red cabbage saukrat) with fries
+* A sort of Trumpet Mushrooms on grits
+* Mac n Cheese
 
-- Beignets
-- Gimlet Tuna
-- Killer Po Boy
-- Irish Coffee SHop
-- Sneaky Pickle
-    - Seatle Girls
-    - Ate their food, they where behind us.
+The ladys next door left a whole half sandwhich which we grabbed and ate without
+shame.
 
-## Tuesday - Leaving
+### Evening [Frenchman Street](https://www.neworleans.com/plan/streets/frenchmen-street/)
 
-- Waffle house
+At this point Andy still wanted to see some Jazz. And to be honest, at this
+point I don't think i've taken full advantage of the music scene in my previous
+excursions.
 
-Tuesday I started the morning and walked to Waffle House .7 miles away since
-Andy was not much of a breakfast person.
+We walked though a market and stopped outside a few places until we settled in
+on
+[The spotted cat](https://www.spottedcatmusicclub.com/) which
+had [The Frenchman Street All-stars](https://www.louisianamusicfactory.com/product/dominick-grillo-the-frenchmen-street-all-stars/)
+really doing an amazing job.
 
-Then we worked at Oak bread.
+## Tuesday
 
-Shangia Thai Lunch, Garlic Softshell Crab and pad la.
+Tuesday I started the morning and walked to Waffle House .7 miles away as Andy
+is a breakfast person.
 
-We then worked at the old road coffee shop where I met mark who was also from
-houston and was at eacher. He wrote two books which I skimmed and where quite
+### Morning Downtown NOLA
+
+After that we went ahead and being our working day
+at [Breads on Oak](https://www.breadsonoak.com/), which was sort of an
+enteratining place to work as it's downtown surrounded by hotels so lots of
+opporunities to do people watching.
+
+For lunch we walked over [Shangia Thai](http://singhathai-cafe.com/) Lunch,
+Garlic Softshell Crab and pad la.
+
+### Afternoon [Old World Coffee](https://oldroadcoffee.com/)
+
+At Old World I met a follow Houstonian [Mark](https://linktr.ee/marktwilliamsii)
+who who now lives in NOLA. He wrote two books which I skimmed and where quite
 poetic. He mentioned two art shoes which where also going to be giving away bags
-full of art supplies to youth who needed the mthe most.
+full of art supplies to youth who need them the most.
 
-After this it was decided we would head back home today
+### A long drive home
 
-Had dinner in this place Lousianin/Mexican reasturant called Mestizo. Anonda and
-I ordered some guac which had grilled peaches and feta. A few ordd combo but was
-pretty tasty.
+At this point Andy had to get back to Houston and we decied to star th journey
+home.
+
+On the way we stopped for a quick bite at a Lousianin/Mexican reasturant called
+Mestizo. The Server recomended guac which had grilled peaches and feta, quite
+the odd combo but was pretty tasty. They mentioend that they also do it with
+pomigrante arrils which I think would be quite visually stunning.
 
