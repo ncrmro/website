@@ -95,10 +95,10 @@ Three more women walk up to the table and start a conversation (and they also
 were in need of phone charging).
 
 After learning they are locals, we ask about Hookah places and they
-suggest [Haifa](https://haifacusinenola.com). We all decied to go, we get a
+suggest [Haifa](https://haifacusinenola.com). We all decided to go, we get a
 bucket of beer, and snacks while enjoying some hookah.
 
-We then ask if they smoke at lake Pontchartrain near our AirBnB.
+We then ask if they smoke at lake Pontchartrain near our Airbnb.
 
 The walk along the river has us admiring the people fishing, baby ducks,
 throwing fish back in the water, and even had Andy show us how to dance Salsa to
@@ -134,9 +134,9 @@ Then we had to get a Po Boy for Andy and Killer Poboys had three vegan options.
 
 ### Mid Afternoon - Working at the [Irish Cultural Museum](https://www.neworleans.com/listing/the-irish-cultural-museum-of-new-orleans/30407/)
 
-Andy found a coffee shop inside of the Irish Cultural Museum. Fun fact in 1800's
-new orleans the Irish population was 1 in 5. The Irish coffees are said to be
-great, though we didn't want to start drinking so early.
+Andy found a coffee shop inside the Irish Cultural Museum. Fun fact in 1800s New
+Orleans the Irish population was 1 in 5. The Irish coffees are said to be great,
+though we didn't want to start drinking so early.
 
 I chatted with the bartender about tasting a reasonable whisky. My friend Chuck
 said he wanted to try [Red Breast](https://www.redbreastwhiskey.com/) but they
@@ -157,28 +157,28 @@ the [Three-Legged Dog](https://www.neworleans.com/listing/three-legged-dog/33371
 
 ### Dinner [Sneaky Pickle](https://www.yousneakypickle.com/)
 
-Almost every one we asked for vegan options recommended Sneaky Pickle and
-finally got to try it. We talked to two ladies at a neighboring table who where
-from Seatle for one of their weddings.
+Almost everyone we asked for vegan options recommended Sneaky Pickle and finally
+got to try it. We talked to two ladies at a neighboring table who were from
+Seatle for one of their weddings.
 
-* Smoked tempeh Reuben (with a gorgous red cabbage saukrat) with fries
+* Smoked tempeh Reuben (with a gorgeous red cabbage saukrat) with fries
 * A sort of Trumpet Mushrooms on grits
 * Mac n Cheese
 
-The ladys next door left a whole half sandwhich which we grabbed and ate without
+The lady next door left a whole half sandwich which we grabbed and ate without
 shame.
 
 ### Evening [Frenchman Street](https://www.neworleans.com/plan/streets/frenchmen-street/)
 
-At this point Andy still wanted to see some Jazz. And to be honest, at this
-point I don't think i've taken full advantage of the music scene in my previous
+At this point, Andy still wanted to see some Jazz. And to be honest, at this the
+point I don't think I've taken full advantage of the music scene in my previous
 excursions.
 
-We walked though a market and stopped outside a few places until we settled in
+We walked through a market and stopped outside a few places until we settled in
 on
 [The spotted cat](https://www.spottedcatmusicclub.com/) which
 had [The Frenchman Street All-stars](https://www.louisianamusicfactory.com/product/dominick-grillo-the-frenchmen-street-all-stars/)
-really doing an amazing job.
+doing an amazing job.
 
 ## Tuesday
 
@@ -187,28 +187,29 @@ is a breakfast person.
 
 ### Morning Downtown NOLA
 
-After that we went ahead and being our working day
+After that, we went ahead and being our working day
 at [Breads on Oak](https://www.breadsonoak.com/), which was sort of an
-enteratining place to work as it's downtown surrounded by hotels so lots of
-opporunities to do people watching.
+entertaining place to work as it's downtown surrounded by hotels so lots of
+opportunities to do people watching.
 
-For lunch we walked over [Shangia Thai](http://singhathai-cafe.com/) Lunch,
+For lunch, we walked over to [Shangia Thai](http://singhathai-cafe.com/) Lunch,
 Garlic Softshell Crab and pad la.
 
 ### Afternoon [Old World Coffee](https://oldroadcoffee.com/)
 
-At Old World I met a follow Houstonian [Mark](https://linktr.ee/marktwilliamsii)
-who who now lives in NOLA. He wrote two books which I skimmed and where quite
-poetic. He mentioned two art shoes which where also going to be giving away bags
-full of art supplies to youth who need them the most.
+At Old World, I met a fellow
+Houstonian [Mark](https://linktr.ee/marktwilliamsii)
+who now lives in NOLA. He wrote two books that I skimmed and were quite poetic.
+He mentioned two art shoes which were also going to be giving away bags full of
+art supplies to youth who need them the most.
 
 ### A long drive home
 
-At this point Andy had to get back to Houston and we decied to star th journey
-home.
+At this point, Andy had to get back to Houston and we decided to start the
+journey home.
 
-On the way we stopped for a quick bite at a Lousianin/Mexican reasturant called
-Mestizo. The Server recomended guac which had grilled peaches and feta, quite
-the odd combo but was pretty tasty. They mentioend that they also do it with
-pomigrante arrils which I think would be quite visually stunning.
+On the way we stopped for a quick bite at a Lousianin/Mexican restaurant called
+Mestizo. The Server recommended guac which had grilled peaches and feta, quite
+the odd combo but was pretty tasty. They mentioned that they also do it with
+pomegranate arils which I think would be quite visually stunning.
 
