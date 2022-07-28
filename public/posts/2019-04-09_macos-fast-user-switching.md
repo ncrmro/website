@@ -5,14 +5,14 @@ date: "2019-04-09"
 description:
   "Use fast user switching for hygienic separation between personal and
   professional accounts on a single laptop."
-tags: ["tech"]
+tags: technical
 ---
 
 [Fast user switching](https://en.wikipedia.org/wiki/Fast_user_switching)
 
 [Enabling Fast user Switching MacOS](https://www.howtogeek.com/339517/how-to-enable-fast-user-switching-in-macos/)
 
-- Clean seperation of dependencies.
+- Clean separation of dependencies.
 - All your apps and developer tools are already installed \* Using tools like
   NVM and PyENV allow you to have different versions of Python or Node
 - Install new tools by switching To admin \* Which can be a touchID away.

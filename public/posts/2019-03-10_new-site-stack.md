@@ -3,7 +3,7 @@ slug: new-site-stack
 title: "New site stack"
 date: "2019-03-09"
 description: "We take a look at the process and technology behind this site."
-tags: ["tech"]
+tags: technical
 ---
 
 The new site was created using
