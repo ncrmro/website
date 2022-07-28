@@ -1,0 +1,59 @@
+---
+slug: project-quiescent 
+title: Project Quiescent description: A new project i'm
+working on to build better blogs that live inside of git. tags: ["tech"]
+---
+
+I've had this idea for awhile of a personal website where files exist first and
+foremost as documents committed to a repo rather than a database.
+
+Currently this blog was the initial catalyst for this project. I've acheved the
+tech but the experience of writing posts is still cumbersome.
+
+I started with
+an [shell script](https://github.com/ncrmro/ncrmro-static/blob/4c1573fc0573049b8788ff4385d51bd374d92cea/new_post.zsh)
+that generates the markdown for me with todays data, title, slug and a
+description.
+
+Without all the variables being initialized the main bit is bellow
+
+```bash
+cat <<EOT >> $posts_dir/$post_file_name
+---
+slug: $post_title_slug
+title: $post_tile
+date: '${current_date}'
+description: CHANGEME
+tags: ['CHANGEME']
+---
+Hello World
+EOT
+```
+
+# Current Pain Points about existing workflow
+
+- Prettier always messes up the post attribute
+- Adding pictures is awkward
+  - Galleries is even harder
+- 
+
+### Posts
+
+- Markdown Files
+- Full React file
+  - Style pictures and other media how ever you like
+
+#
+
+The big paradigm here is the frontend can operate both locally and remotely on a
+git repository introducing changes
+
+##
+ The hard part has been getting the thing working 
+
+## Following the Graph back out of the post
+
+Eg how can we have the blog post show case conversations on twitter about it
+without knowing about it's creation
+
+Using analytics and other services
