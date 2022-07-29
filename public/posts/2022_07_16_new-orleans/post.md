@@ -5,6 +5,7 @@ places: ["New Orleans", "Louisiana"]
 start: "2022-07-19"
 state: draft
 description: Visiting New Orleans with my friend Andy
+tags: travel
 ---
 
 ## Background - Friday, July 15, 2022
