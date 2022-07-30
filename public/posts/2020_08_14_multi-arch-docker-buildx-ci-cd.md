@@ -1,9 +1,9 @@
 ---
 slug: multi-arch-docker-buildx-ci-cd
 title: Multi Arch Docker Buildx in CI/CD
-date: "2020-08-14"
+date: 2020-08-14
 description: Automated Multi Arch Docker Image Builds
-tags: ["tech", "docker", "devops", "ci/cd"]
+tags: technical,docker,devops,ci,cd
 ---
 
 I've recently been working on some projects with some heavy dependencies
@@ -32,8 +32,8 @@ we can see it's building for `linux/arm64`, we can also see it
 
 - already has Pythom FFmpeg
 - Installing Pip packages
-  - `aionotify` does have a pre built wheel for this arch.
-  - `asyncpg` doesn't have a wheel to download for this arch
+    - `aionotify` does have a pre built wheel for this arch.
+    - `asyncpg` doesn't have a wheel to download for this arch
 
 The `asyncpg` not having a wheel is what takes so long for different
 distributions/architectures.
@@ -68,7 +68,8 @@ Some notes from the Docker Docs.
 Now to show your how to install BuildX (they say it comes with 19.03 and up but
 does not..) we can look at the dockerfile I wrote for a buildx enabled docker
 image (to run
-[docker in docker](https://www.docker.com/blog/docker-can-now-run-within-docker/)).
+[docker in docker](https://www.docker.com/blog/docker-can-now-run-within-docker/))
+.
 
 To install locally just run the last two `RUN`'s.
 

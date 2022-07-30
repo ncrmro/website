@@ -1,22 +1,9 @@
 ---
 slug: scytale-automated-private-key-infrastructure
-title: "Scytale: Ansible Automated Private Key Infrastructure."
-date: "2020-08-23"
-description:
-  Automated private key infrastructure (PKI), Ansible managed certificate
-  authority, server and client certificates.
-tags:
-  [
-    "tech", 
-    "Private Key Infrastructure",
-    "Security",
-    "Intranet",
-    "Ansible",
-    "Certificate Authority",
-    "Certificates",
-    "TLS",
-    "SSL",
-  ]
+title: Scytale: Ansible Automated Private Key Infrastructure.
+date: 2020-08-23
+description: Automated private key infrastructure (PKI), Ansible managed certificate authority, server and client certificates.
+tags: technical
 ---
 
 > In cryptography, a scytale, is a tool used to perform a transposition cipher,

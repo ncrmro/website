@@ -1,11 +1,9 @@
 ---
 slug: evaluating-rust
-title: "Evaluating Rust."
-description:
-  "A look at setting using Rust for REST APIs and Embedded development."
-date: "2020-06-15"
-tags:
-  ["tech", "programming", "embedded", "Rust", "Python", "IoT", "software", "hardware"]
+title: Evaluating Rust.
+description: A look at setting using Rust for REST APIs and Embedded development.
+date: 2020-06-15
+tags: technical
 ---
 
 # [Rust](https://www.rust-lang.org)
