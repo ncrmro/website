@@ -1,9 +1,9 @@
 ---
 slug: wireguard-based-vpn-intranets
 title: Wireguard Based VPN Intranets
-date: "2021-01-07"
+date: 2021-01-07
 description: Understanding and Implementing Private Intranets
-tags: ["tech", ]
+tags: technical
 ---
 
 In this post, we will discuss why you might want a private intranet. An intranet

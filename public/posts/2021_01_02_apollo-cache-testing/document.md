@@ -1,10 +1,9 @@
 ---
 slug: apollo-cache-overview
 title: Apollo Cache Overview
-date: "2021-01-02"
-description:
-  "What is the Apollo cache, ensure correct usage and update post mutation."
-tags: ["tech", "GraphQL", "Apollo", "React"]
+date: 2021-01-02
+description: What is the Apollo cache, ensure correct usage and update post mutation.
+tags: technical
 ---
 
 If your using [Apollo](https://www.apollographql.com/docs/)
