@@ -1,24 +1,12 @@
 ---
-title: "Embold Health"
-url: "https://emboldhealth.com/"
-favicon: "/job_icons/embold.png"
-role: "Senior Backend Engineer"
-type: "Salaried"
-start: "2019-12"
-end: "2020-05"
-tech:
-  [
-    "Python",
-    "Django",
-    "Docker",
-    "Kubernetes",
-    "Azure",
-    "Elasticsearch",
-    "SQL",
-    "Postgres",
-    "PostGIS",
-    "Hipaa",
-  ]
+title: Embold Health
+url: https://emboldhealth.com/
+favicon: /job_icons/embold.png
+role: Senior Backend Engineer
+type: Salaried
+start: 2019-12
+end: 2020-05
+tech: Python,Django,Docker,Kubernetes,Azure,Elasticsearch,SQL,Postgres,PostGIS,Hipaa
 ---
 
 - Developed backend server and database platform to help companies like

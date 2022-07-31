@@ -1,11 +1,11 @@
 ---
-title: "Pycon India"
-url: "https://in.pycon.org"
-favicon: "/job_icons/pycon-india.jpg"
-role: "Speaker"
-type: "Conference Presentation"
-start: "2017-05"
-tech: ["Python", "GraphQL", "Graphene", "React", "Relay", "Django"]
+title: Pycon India
+url: https://in.pycon.org
+favicon: /job_icons/pycon-india.jpg
+role: Speaker
+type: Conference Presentation
+start: 2017-05
+tech: Python,GraphQL,Graphene,React,Relay,Django
 ---
 
 - Gave a presentation on a [boilerplate](https://github.com/ncrmro/rjango) I

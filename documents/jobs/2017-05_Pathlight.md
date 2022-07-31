@@ -1,11 +1,11 @@
 ---
-title: "Pathlight"
-url: "https://www.pathlight.com"
-favicon: "/job_icons/pathlight.png"
-role: "Software Developer"
-type: "Contract"
-start: "2017-05"
-end: "2017-06"
+title: Pathlight
+url: https://www.pathlight.com
+favicon: /job_icons/pathlight.png
+role: Software Developer
+type: Contract
+start: 2017-05
+end: 2017-06
 tech: ["Python", "GraphQL", "Graphene", "React", "Relay", "Django"]
 ---
 
