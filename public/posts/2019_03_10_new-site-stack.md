@@ -1,8 +1,8 @@
 ---
 slug: new-site-stack
-title: "New site stack"
-date: "2019-03-09"
-description: "We take a look at the process and technology behind this site."
+title: New site stack
+date: 2019-03-09
+description: We take a look at the process and technology behind this site.
 tags: technical
 ---
 
