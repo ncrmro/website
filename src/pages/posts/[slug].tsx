@@ -1,29 +1,34 @@
 import PostRoute from "@routes/Post";
-import { Post } from "@utils/getPosts";
+import { PostDocument } from "@utils/documents";
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 
-const PostPage: React.FC<Post> = (props) => {
-  return <PostRoute {...props} />;
+const PostPage: React.FC<{ post: PostDocument }> = (props) => {
+  return <PostRoute {...props.post} />;
 };
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const post = await import("@utils/getPosts").then((p) =>
-    p.postBySlug(context.params.slug as string)
-  );
-  return {
-    props: { ...post },
-  };
+export const getStaticProps: GetStaticProps<{ post: PostDocument }> = async (
+  context
+) => {
+  const { documentBySlug } = await import("@quiescent/server");
+  if (typeof context.params.slug === "string") {
+    return {
+      props: { post: await documentBySlug("posts", context.params.slug) },
+    };
+  }
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const slugs = await import("@utils/getPosts").then((p) => p.postSlugs());
+export const getStaticPaths: GetStaticPaths = async (context) => {
+  // Importing server code
+  const { getDocumentSlugs } = await import("@quiescent/server");
 
   return {
-    paths: slugs.map((slug) => ({
-      params: { slug },
+    paths: (await getDocumentSlugs("posts", "dynamic")).map((slug) => ({
+      params: {
+        slug,
+      },
     })),
-    fallback: false,
+    fallback: "blocking",
   };
 };
 

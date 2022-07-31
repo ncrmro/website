@@ -1,11 +1,13 @@
 import MarkdownRenderer from "@components/MarkdownRenderer";
 import SmallBadge from "@components/SmallBadge";
-import { Post } from "@utils/getPosts";
+import { JobDocument } from "@utils/documents";
 import TechUrls from "@utils/techUrls";
 import React from "react";
 import styles from "./History.module.css";
 
-const History: React.FC<{ jobs: Post[]; className?: string }> = (props) => (
+const History: React.FC<{ jobs: JobDocument[]; className?: string }> = (
+  props
+) => (
   <ul className={styles.historyList}>
     {props.jobs.map((job, idx) => (
       <li key={job.title} className={styles.historyItem}>

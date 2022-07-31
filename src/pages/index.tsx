@@ -1,24 +1,21 @@
+import { PostDocument } from "@utils/documents";
 import { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { orderedPostsArray, Post } from "@utils/getPosts";
 
-function Home(props: PropsWithChildren<{ posts: Post[] }>) {
+function Home(props: PropsWithChildren<{ posts: PostDocument[] }>) {
   return (
     <PageLayout>
-      <Posts posts={props.posts} />
+      <Posts posts={props.posts.reverse()} />
     </PageLayout>
   );
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const posts = await import("@utils/getPosts").then((p) =>
-    p.orderedPostsArray()
-  );
-
+  const { getDocuments } = await import("@quiescent/server");
   return {
-    props: { posts: posts },
+    props: { posts: await getDocuments("posts", "dynamic") },
   };
 };
 

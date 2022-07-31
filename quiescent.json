@@ -1,0 +1,7 @@
+{
+  "documentTypes": {
+    "posts": {
+      "directory": "public/posts"
+    }
+  }
+}

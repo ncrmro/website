@@ -12,6 +12,7 @@
     "p": "prettier --write ./posts/*"
   },
   "dependencies": {
+    "@quiescent/server": "^0.0.5",
     "autoprefixer": "^10.1.0",
     "highlight.js": "^11.3.1",
     "next": "12.1.6",

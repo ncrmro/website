@@ -1,10 +1,10 @@
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { Post, PostCategory } from "@utils/getPosts";
+import { PostDocument } from "@utils/documents";
 import { GetStaticProps } from "next";
 import React, { PropsWithChildren } from "react";
 
-function TravelPosts(props: PropsWithChildren<{ posts: Post[] }>) {
+function TravelPosts(props: PropsWithChildren<{ posts: PostDocument[] }>) {
   return (
     <PageLayout>
       <Posts posts={props.posts} />
@@ -12,13 +12,9 @@ function TravelPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   );
 }
 export const getStaticProps: GetStaticProps = async (context) => {
-  const posts = await import("@utils/getPosts").then((p) =>
-    p.orderedPostsArray(PostCategory.travel)
-  );
+  const { getDocuments } = await import("@quiescent/server");
   return {
-    props: {
-      posts,
-    },
+    props: { posts: await getDocuments("posts", "dynamic", "travel") },
   };
 };
 
