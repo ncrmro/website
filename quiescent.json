@@ -2,6 +2,9 @@
   "documentTypes": {
     "posts": {
       "directory": "public/posts"
+    },
+    "jobs": {
+      "directory": "public/jobs"
     }
   }
 }
