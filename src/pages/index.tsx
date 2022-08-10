@@ -3,6 +3,7 @@ import { GetStaticProps } from "next";
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
 import { Post } from "../types";
+import { getDocuments } from "@quiescent/server";
 
 function Home(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
