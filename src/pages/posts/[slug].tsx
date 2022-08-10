@@ -1,34 +1,23 @@
-import PostRoute from "@routes/Post";
-import { PostDocument } from "@utils/documents";
+import { getDocumentBySlug } from "@quiescent/server";
+import { PostRoute } from "@routes/Posts/PostRoute";
 import React from "react";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetStaticProps } from "next";
+import { serialize } from "next-mdx-remote/serialize";
+import { MDXPost, Post } from "../../types";
 
-const PostPage: React.FC<{ post: PostDocument }> = (props) => {
-  return <PostRoute {...props.post} />;
+const PostPage: React.FC<{ post: MDXPost }> = (props) => {
+  return <PostRoute post={props.post} />;
 };
 
-export const getStaticProps: GetStaticProps<{ post: PostDocument }> = async (
+export const getServerSideProps: GetStaticProps<{ post: MDXPost }> = async (
   context
 ) => {
-  const { documentBySlug } = await import("@quiescent/server");
-  if (typeof context.params.slug === "string") {
-    return {
-      props: { post: await documentBySlug("posts", context.params.slug) },
-    };
-  }
-};
-
-export const getStaticPaths: GetStaticPaths = async (context) => {
-  // Importing server code
-  const { getDocumentSlugs } = await import("@quiescent/server");
+  if (typeof context.params?.slug !== "string") throw "Slug was not defined";
+  const post = await getDocumentBySlug<Post>("posts", context.params.slug);
+  if (!post) throw "Error loading post";
 
   return {
-    paths: (await getDocumentSlugs("posts", "dynamic")).map((slug) => ({
-      params: {
-        slug,
-      },
-    })),
-    fallback: "blocking",
+    props: { post: { ...post, content: await serialize(post.content) } },
   };
 };
 

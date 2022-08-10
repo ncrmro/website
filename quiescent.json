@@ -1,10 +1,33 @@
 {
   "documentTypes": {
     "posts": {
-      "directory": "public/posts"
-    },
-    "jobs": {
-      "directory": "public/jobs"
+      "directory": "public/posts",
+      "additionalKeys": {
+        "description": {
+          "required": false,
+          "type": "string"
+        },
+        "state": {
+          "required": false,
+          "type": "string"
+        },
+        "places": {
+          "required": false,
+          "type": "string"
+        },
+        "start": {
+          "required": false,
+          "type": "string"
+        },
+        "end": {
+          "required": false,
+          "type": "string"
+        },
+        "featuredImage": {
+          "required": false,
+          "type": "string"
+        }
+      }
     }
   }
 }

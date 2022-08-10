@@ -1,10 +1,10 @@
-import { PostDocument } from "@utils/documents";
 import { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
+import { Post } from "../types";
 
-function Home(props: PropsWithChildren<{ posts: PostDocument[] }>) {
+function Home(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
     <PageLayout>
       <Posts posts={props.posts.reverse()} />
