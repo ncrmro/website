@@ -6,7 +6,7 @@ role: Software Developer
 type: Contract
 start: 2017-05
 end: 2017-06
-tech: ["Python", "GraphQL", "Graphene", "React", "Relay", "Django"]
+tech: Python,GraphQL,Graphene,React,Relay,Django
 ---
 
 - Integrated [Graphene](https://graphene-python.org) with

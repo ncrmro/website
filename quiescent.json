@@ -28,6 +28,39 @@
           "type": "string"
         }
       }
+    },
+    "jobs": {
+      "directory": "public/jobs",
+      "additionalKeys": {
+        "url": {
+          "required": false,
+          "type": "string"
+        },
+        "favicon": {
+          "required": true,
+          "type": "string"
+        },
+        "role": {
+          "required": true,
+          "type": "string"
+        },
+        "type": {
+          "required": true,
+          "type": "string"
+        },
+        "start": {
+          "required": true,
+          "type": "string"
+        },
+        "end": {
+          "required": false,
+          "type": "string"
+        },
+        "tech": {
+          "required": true,
+          "type": "string"
+        }
+      }
     }
   }
 }

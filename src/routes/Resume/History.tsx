@@ -1,8 +1,8 @@
 import MarkdownRenderer from "@components/MarkdownRenderer";
 import SmallBadge from "@components/SmallBadge";
-import { JobDocument } from "@utils/documents";
 import TechUrls from "@utils/techUrls";
 import React from "react";
+import { JobDocument } from '../../types'
 import styles from "./History.module.css";
 
 const History: React.FC<{ jobs: JobDocument[]; className?: string }> = (
@@ -42,7 +42,7 @@ const History: React.FC<{ jobs: JobDocument[]; className?: string }> = (
         <div className={styles.badges}>
           {
             // @ts-ignore
-            job.tech?.map((tech) => (
+            job.tech?.split(',').map((tech) => (
               <SmallBadge key={tech} children={tech} link={TechUrls[tech]} />
             ))
           }

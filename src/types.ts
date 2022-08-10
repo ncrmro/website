@@ -12,3 +12,9 @@ export interface Post extends Document {
 export interface MDXPost extends Omit<Post, "content"> {
   content: MDXRemoteSerializeResult;
 }
+
+export interface JobDocument extends Document {
+  start: string
+  end: string
+  tech: string
+}
