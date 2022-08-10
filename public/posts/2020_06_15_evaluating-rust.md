@@ -1,8 +1,6 @@
 ---
-slug: evaluating-rust
 title: Evaluating Rust.
 description: A look at setting using Rust for REST APIs and Embedded development.
-date: 2020-06-15
 tags: technical
 ---
 

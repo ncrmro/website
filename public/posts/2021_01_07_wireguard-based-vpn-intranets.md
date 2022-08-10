@@ -1,7 +1,5 @@
 ---
-slug: wireguard-based-vpn-intranets
 title: Wireguard Based VPN Intranets
-date: 2021-01-07
 description: Understanding and Implementing Private Intranets
 tags: technical
 ---

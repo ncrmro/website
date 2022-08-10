@@ -1,7 +1,5 @@
 ---
-slug: typescript-react-grid-areas
 title: Typescript React Grid Areas
-date: 2020-12-17
 description: A Reusable Component Design Pattern for CSS Grid Areas in Typescript React.
 tags: technical,react,typescript,grid
 ---

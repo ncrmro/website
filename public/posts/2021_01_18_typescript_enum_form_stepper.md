@@ -1,7 +1,5 @@
 ---
-slug: react-typescript-enum-form-stepper
 title: Building a Enum Based Form Stepper In React Typescript
-date: 2021-01-18
 description: We look at a streamlined form stepper design pattern.
 tags: technical
 ---

@@ -1,7 +1,5 @@
 ---
-slug: straight-forward-reusable-components
 title: Straight forward reusable React components
-date: 2022-02-02
 description: Building clean reusable components and avoiding decision paralysis when choosing their props.
 tags: technical,react
 ---

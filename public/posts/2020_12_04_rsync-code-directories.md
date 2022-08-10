@@ -1,7 +1,5 @@
 ---
-slug: rsync-code-directories
 title: Rsync'ing Code Directories Between two computers
-date: 2020-12-04
 description: A script to attempt keeping my code folder in sync between my laptop and workstation.
 tags: technical
 ---

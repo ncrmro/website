@@ -1,7 +1,5 @@
 ---
-slug: multi-arch-docker-buildx-ci-cd
 title: Multi Arch Docker Buildx in CI/CD
-date: 2020-08-14
 description: Automated Multi Arch Docker Image Builds
 tags: technical,docker,devops,ci,cd
 ---
@@ -32,8 +30,8 @@ we can see it's building for `linux/arm64`, we can also see it
 
 - already has Pythom FFmpeg
 - Installing Pip packages
-    - `aionotify` does have a pre built wheel for this arch.
-    - `asyncpg` doesn't have a wheel to download for this arch
+  - `aionotify` does have a pre built wheel for this arch.
+  - `asyncpg` doesn't have a wheel to download for this arch
 
 The `asyncpg` not having a wheel is what takes so long for different
 distributions/architectures.
