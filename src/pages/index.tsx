@@ -7,7 +7,7 @@ import { Post } from "../types";
 function Home(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
     <PageLayout>
-      <Posts posts={props.posts.reverse()} />
+      <Posts posts={props.posts} />
     </PageLayout>
   );
 }
