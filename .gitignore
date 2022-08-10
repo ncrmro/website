@@ -32,8 +32,8 @@ yarn-error.log*
 
 # vercel
 .vercel
-/public/sitemap.xml
-/public/robots.txt
+/web/public/sitemap.xml
+/web/public/robots.txt
 
 out
 
@@ -42,3 +42,4 @@ out
 
 # Local Netlify folder
 .netlify
+tsconfig.tsbuildinfo
