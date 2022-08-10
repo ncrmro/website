@@ -15,8 +15,9 @@ function Home(props: PropsWithChildren<{ posts: Post[] }>) {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { getDocuments } = await import("@quiescent/server");
+  const posts = await getDocuments<Post>("posts", "dynamic");
   return {
-    props: { posts: await getDocuments("posts", "dynamic") },
+    props: { posts: posts.filter((p) => p.state === "published") },
   };
 };
 

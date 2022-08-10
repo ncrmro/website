@@ -2,6 +2,7 @@
 title: Scytale: Ansible Automated Private Key Infrastructure.
 description: Automated private key infrastructure (PKI), Ansible managed certificate authority, server and client certificates.
 tags: technical
+state: published
 ---
 
 > In cryptography, a scytale, is a tool used to perform a transposition cipher,

@@ -2,6 +2,7 @@
 title: Writing a gear torque calculator
 description: While utilizing a stepper motor and gears. I needed more torque and different sized gears. So I wrote a small gear torque calculator.
 tags: technical,python,opensource
+state: published
 ---
 
 Recently I ran into the problem of my stepper motor not able to produce enough

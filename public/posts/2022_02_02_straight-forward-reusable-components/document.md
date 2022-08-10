@@ -2,6 +2,7 @@
 title: Straight forward reusable React components
 description: Building clean reusable components and avoiding decision paralysis when choosing their props.
 tags: technical,react
+state: published
 ---
 
 ## Background

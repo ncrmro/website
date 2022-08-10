@@ -2,6 +2,7 @@
 title: Building a scheduled CI E2E test failure Slack notifier
 description: How to build a Slack notifier when scheduled E2E tests fail.
 tags: technical
+state: published
 ---
 
 ## Background

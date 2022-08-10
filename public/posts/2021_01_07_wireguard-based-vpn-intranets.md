@@ -2,6 +2,7 @@
 title: Wireguard Based VPN Intranets
 description: Understanding and Implementing Private Intranets
 tags: technical
+state: published
 ---
 
 In this post, we will discuss why you might want a private intranet. An intranet

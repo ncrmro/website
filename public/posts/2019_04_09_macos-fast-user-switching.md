@@ -2,6 +2,7 @@
 title: MacOS fast user switching.
 description: Use fast user switching for hygienic separation between personal and professional accounts on a single laptop.
 tags: technical
+state: published
 ---
 
 [Fast user switching](https://en.wikipedia.org/wiki/Fast_user_switching)

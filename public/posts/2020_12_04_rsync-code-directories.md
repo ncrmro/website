@@ -2,6 +2,7 @@
 title: Rsync'ing Code Directories Between two computers
 description: A script to attempt keeping my code folder in sync between my laptop and workstation.
 tags: technical
+state: published
 ---
 
 I often find myself trying to keep the folder called code in which I keep my

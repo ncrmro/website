@@ -2,6 +2,7 @@
 title: Docker Linux Workstation Development
 description: Making linux Docker more like Docker Desktop for macOS and Windows.
 tags: technical,docker,linux
+state: published
 ---
 
 Something that will become apparent at some point of your journey using a Linux

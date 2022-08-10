@@ -8,7 +8,7 @@
           "type": "string"
         },
         "state": {
-          "required": false,
+          "required": true,
           "type": "string"
         },
         "places": {

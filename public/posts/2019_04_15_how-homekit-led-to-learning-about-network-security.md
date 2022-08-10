@@ -2,6 +2,7 @@
 title: Learning network security with IoT/HomeKit.
 description: "How setting up IoT/HomeKit can teach you about network security."
 tags: technical
+state: published
 ---
 
 ## It started with [HomeKit](https://www.apple.com/ios/home/).

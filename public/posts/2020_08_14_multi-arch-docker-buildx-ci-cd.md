@@ -2,6 +2,7 @@
 title: Multi Arch Docker Buildx in CI/CD
 description: Automated Multi Arch Docker Image Builds
 tags: technical,docker,devops,ci,cd
+state: published
 ---
 
 I've recently been working on some projects with some heavy dependencies

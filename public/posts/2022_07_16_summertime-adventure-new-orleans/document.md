@@ -2,7 +2,7 @@
 title: Summertime Adventure in New Orleans
 places: ["New Orleans", "Louisiana"]
 start: 2022-07-19
-state: draft
+state: published
 description: Visiting New Orleans with my friend Andy
 tags: travel
 ---

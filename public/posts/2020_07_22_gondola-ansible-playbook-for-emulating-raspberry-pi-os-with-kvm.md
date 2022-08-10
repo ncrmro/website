@@ -1,7 +1,8 @@
 ---
 title: Gondola
 description: Ansible Playbook for Emulating Raspberry Pi OS with KVM
-tags: ["tech", "ansible", "kvm", "opensource", "raspberr pi"]
+tags: tech,ansible,kvm,opensource,raspberry pi
+state: published
 ---
 
 Recently I was working a project that is deployed on a raspberry pi zero. This

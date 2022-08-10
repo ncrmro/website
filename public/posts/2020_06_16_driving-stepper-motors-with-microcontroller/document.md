@@ -3,6 +3,7 @@ title: Driving a stepper motor with a microcontroller
 description: Controlling a stepper motor.
 featuredImage: header_image.jpeg
 tags: technical,embedded,esp32,microcontroller
+state: published
 ---
 
 I'm sitting here after accidentally destroying another ESP32 module and 3.3v

@@ -2,6 +2,7 @@
 title: New site stack
 description: We take a look at the process and technology behind this site.
 tags: technical
+state: published
 ---
 
 The new site was created using

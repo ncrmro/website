@@ -2,6 +2,7 @@
 title: Typescript React Grid Areas
 description: A Reusable Component Design Pattern for CSS Grid Areas in Typescript React.
 tags: technical,react,typescript,grid
+state: published
 ---
 
 While working on [JTX](https://jtronics.exchange/) I've started to design for

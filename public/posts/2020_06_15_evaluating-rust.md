@@ -2,6 +2,7 @@
 title: Evaluating Rust.
 description: A look at setting using Rust for REST APIs and Embedded development.
 tags: technical
+state: published
 ---
 
 # [Rust](https://www.rust-lang.org)

@@ -2,6 +2,7 @@
 title: Building a Enum Based Form Stepper In React Typescript
 description: We look at a streamlined form stepper design pattern.
 tags: technical
+state: published
 ---
 
 First, we are going to create our steps as enums. If we don't define values for

@@ -1,6 +1,6 @@
 ---
 title: India Part 1 - Arrival and PyCon India
-places: ["India", "Agra", "Kashmir", "Rajastan"]
+places: India,Agra,Kashmir,Rajastan
 start: 2017-11-03
 end: 2017-11-06
 state: draft
