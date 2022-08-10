@@ -1,8 +1,8 @@
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { Post, PostCategory } from "@utils/getPosts";
 import React, { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
+import { Post } from '../../types'
 
 function TechnologyPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
@@ -12,9 +12,9 @@ function TechnologyPosts(props: PropsWithChildren<{ posts: Post[] }>) {
   );
 }
 export const getStaticProps: GetStaticProps = async (context) => {
-  const { getDocuments } = await import("@quiescent/server");
   return {
-    props: { posts: [] },
+    props: { posts: [], }
   };
 };
+
 export default TechnologyPosts;
