@@ -175,10 +175,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@quiescent/server@^0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@quiescent/server/-/server-0.0.14.tgz#8ab5f4a91a7fcdec5221b4ffd53246f94db8fb23"
-  integrity sha512-lpKqdwZ56Et7jRoHiblBoiHfh2JSImdhbAWKfsktJPi4OJEAANV1RAZdscRMpl/r99X5RW3vEEArWSeDZgVcyg==
+"@quiescent/server@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@quiescent/server/-/server-0.0.15.tgz#d90ee5ac6a0f1fa854a62922a8816872d74ba819"
+  integrity sha512-mx9koF6360nwW+OcE3QhS9YN0U1u/tUM+GBLsw9UwxYwwwCtWs6kCBYG4ZvCVfXujRPrXLml5tizhcjL6ZPfBQ==
 
 "@types/acorn@^4.0.0":
   version "4.0.6"
