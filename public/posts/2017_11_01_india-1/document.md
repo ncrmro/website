@@ -43,9 +43,13 @@ Danish who politely informed me that the room I had reserved in was not in a
 great part of Delhi and promptly offered to let me stay with him and his friend
 Moosah.
 
+<Image src="IMG_0113.jpeg" />
+
 Danish then smoothly talked me into a tour of northern india, I hesitantly
 crossed the street to pull out a thousand or so dollars over a few transactions
 which my bank didn't mind at all.
+
+<Image src="IMG_0117.jpeg" />
 
 After paying Danish sent me with one of the company drivers and we set off
 accross the town while he finished up the work day.
@@ -56,11 +60,17 @@ After getting dropped off I met Mooshi, the apartments stay in help on the
 street carried my stuff up to the apartment for me. Moosah was also at work but
 I met Noel who was seeing Moosah at the time. We spoke for a bit, I think at
 this time its around 10:30 am IND or 9:30 PM CST. After shower I promptly
-crashed until 7:50 AM the next day (lot of this is based of the metadata in the
-pictures I took) where I was greated by what would become my standard breakfeast
-when staying at the apartment.
+crashed until 7:50 AM.
+
+<Image src="IMG_0118.jpeg" />
+
+The next day (lot of this is based of the metadata in the pictures I took) where
+I was greated by what would become my standard breakfeast when staying at the
+apartment.
 
 AN omlet with veg, naan and a chai.
+
+<Image src="IMG_0127.jpeg" />
 
 ## Party Time
 
@@ -73,7 +83,5 @@ friend over and we partaked in
 Ironically the catalyst for this journey PyCon India is really but a footnote in
 the larger picture. It was held in a small college and had a few interesting
 talks
-
-![Demonstrating the Mutation Updating the Apollo Cache](PyCon_India/)
 
 ## Dinner after words

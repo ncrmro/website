@@ -3,9 +3,14 @@ import PageLayout from "@components/PageLayout";
 import { MDXRemote } from "next-mdx-remote";
 import styles from "./Post.module.css";
 import { usePrettyDate } from "@routes/Posts/hooks";
-import React from "react";
+import React, { ReactElement } from "react";
+import Image from "next/image";
 
-const components = {};
+function getMediaPath(post: MDXPost, fileName) {
+  return `/posts/${post.date.replaceAll("-", "_")}_${
+    post.slug
+  }/media/${fileName}`;
+}
 
 export function PostRoute(props: { post: MDXPost }) {
   const date = usePrettyDate(props.post.date);
@@ -19,7 +24,23 @@ export function PostRoute(props: { post: MDXPost }) {
           </span>
           <span>{date}</span>
         </div>
-        <MDXRemote {...props.post.content} components={components} />
+        <MDXRemote
+          {...props.post.content}
+          components={{
+            Image: ({ height = "500px", width = "500px", ...imgProps }) => (
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Image
+                  {...props}
+                  height={height}
+                  width={width}
+                  // layout="fill"
+                  objectFit="contain"
+                  src={getMediaPath(props.post, imgProps.src)}
+                />
+              </div>
+            ),
+          }}
+        />
       </div>
     </PageLayout>
   );
