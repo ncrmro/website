@@ -1,15 +1,31 @@
 import { MDXPost } from "@routes/Posts/types";
 import PageLayout from "@components/PageLayout";
+import { Property } from "csstype";
 import { MDXRemote } from "next-mdx-remote";
 import styles from "./Post.module.css";
 import { usePrettyDate } from "@routes/Posts/hooks";
 import React, { ReactElement } from "react";
-import Image from "next/image";
+import { default as NextImage } from "next/image";
+import ObjectFit = Property.ObjectFit;
 
-function getMediaPath(post: MDXPost, fileName) {
-  return `/posts/${post.date.replaceAll("-", "_")}_${
-    post.slug
-  }/media/${fileName}`;
+function Image({
+  post,
+  height = "500px",
+  width = "500px",
+  objectFit = "contain",
+  ...props
+}): ReactElement {
+  return (
+    <NextImage
+      {...props}
+      height={height}
+      width={width}
+      objectFit={objectFit as ObjectFit}
+      src={`/posts/${post.date.replaceAll("-", "_")}_${post.slug}/media/${
+        props.src
+      }`}
+    />
+  );
 }
 
 export function PostRoute(props: { post: MDXPost }) {
@@ -27,16 +43,9 @@ export function PostRoute(props: { post: MDXPost }) {
         <MDXRemote
           {...props.post.content}
           components={{
-            Image: ({ height = "500px", width = "500px", ...imgProps }) => (
+            Image: (p) => (
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <Image
-                  {...props}
-                  height={height}
-                  width={width}
-                  // layout="fill"
-                  objectFit="contain"
-                  src={getMediaPath(props.post, imgProps.src)}
-                />
+                <Image {...p} post={props.post} />
               </div>
             ),
           }}
