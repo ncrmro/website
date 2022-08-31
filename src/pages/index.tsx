@@ -2,7 +2,8 @@ import { PropsWithChildren } from "react";
 import { GetStaticProps } from "next";
 import PageLayout from "@components/PageLayout";
 import Posts from "@components/Posts";
-import { orderedPostsArray, Post } from "@utils/getPosts";
+import { Post } from "../types";
+import { getDocuments } from "@quiescent/server";
 
 function Home(props: PropsWithChildren<{ posts: Post[] }>) {
   return (
@@ -13,12 +14,10 @@ function Home(props: PropsWithChildren<{ posts: Post[] }>) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const posts = await import("@utils/getPosts").then((p) =>
-    p.orderedPostsArray()
-  );
-
+  const { getDocuments } = await import("@quiescent/server");
+  const posts = await getDocuments<Post>("posts", "dynamic");
   return {
-    props: { posts: posts },
+    props: { posts: posts.filter((p) => p.state === "published") },
   };
 };
 

@@ -1,0 +1,66 @@
+{
+  "documentTypes": {
+    "posts": {
+      "directory": "public/posts",
+      "additionalKeys": {
+        "description": {
+          "required": false,
+          "type": "string"
+        },
+        "state": {
+          "required": true,
+          "type": "string"
+        },
+        "places": {
+          "required": false,
+          "type": "string"
+        },
+        "start": {
+          "required": false,
+          "type": "string"
+        },
+        "end": {
+          "required": false,
+          "type": "string"
+        },
+        "featuredImage": {
+          "required": false,
+          "type": "string"
+        }
+      }
+    },
+    "jobs": {
+      "directory": "public/jobs",
+      "additionalKeys": {
+        "url": {
+          "required": false,
+          "type": "string"
+        },
+        "favicon": {
+          "required": true,
+          "type": "string"
+        },
+        "role": {
+          "required": true,
+          "type": "string"
+        },
+        "type": {
+          "required": true,
+          "type": "string"
+        },
+        "start": {
+          "required": true,
+          "type": "string"
+        },
+        "end": {
+          "required": false,
+          "type": "string"
+        },
+        "tech": {
+          "required": true,
+          "type": "string"
+        }
+      }
+    }
+  }
+}

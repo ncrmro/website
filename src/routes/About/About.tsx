@@ -1,6 +1,6 @@
 import React from "react";
-import { JobDocument } from "@utils/documents";
 import History from "@routes/Resume/History";
+import { JobDocument } from '../../types'
 import styles from "./About.module.css";
 import Image from "next/image";
 

@@ -1,8 +1,9 @@
 import PageLayout from "@components/PageLayout";
+import { getDocuments } from "@quiescent/server";
 import AboutRoute from "@routes/About";
-import { DocumentType, JobDocument } from "@utils/documents";
 import { GetStaticProps } from "next";
 import React from "react";
+import { JobDocument } from '../types'
 
 const About: React.FC<{ jobs: JobDocument[] }> = (props) => (
   <PageLayout title="About">
@@ -11,13 +12,8 @@ const About: React.FC<{ jobs: JobDocument[] }> = (props) => (
 );
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const jobs = await import("@utils/documents").then((p) =>
-    p.getDocuments(DocumentType.jobs)
-  );
   return {
-    props: {
-      jobs,
-    },
+    props: { jobs: await getDocuments("jobs", "dynamic") },
   };
 };
 

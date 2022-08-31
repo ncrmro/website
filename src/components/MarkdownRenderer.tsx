@@ -1,4 +1,3 @@
-import { Post } from "@utils/getPosts";
 import React from "react";
 import remarkFrontmatter from "remark-frontmatter";
 import { unified } from "unified";
@@ -11,6 +10,7 @@ import rehypeReact from "rehype-react";
 import { visit } from "unist-util-visit";
 import dockerfile from "highlight.js/lib/languages/dockerfile";
 import styles from "./MarkdownRenderer.module.css";
+import {Document} from "@quiescent/server"
 
 const processor = (mediaPath: string) =>
   unified()
@@ -39,8 +39,8 @@ const processor = (mediaPath: string) =>
     )
     .use(rehypeReact, { createElement: React.createElement });
 
-const MarkdownRenderer: React.FC<Post> = (props) => {
-  const content = processor(props.mediaPath).processSync(props.markdown);
+const MarkdownRenderer: React.FC<Document> = (props) => {
+  const content = processor("").processSync(props.content);
   return content.result;
 };
 

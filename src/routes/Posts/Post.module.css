@@ -1,0 +1,50 @@
+.postItem {
+    width: 100%;
+}
+
+.postRoute {
+    max-width: 840px;
+}
+
+.postRouteHeader {
+    padding: 8px;
+}
+
+.postRouteHeader h1 {
+    margin-bottom: 8px;
+}
+
+.postRouteHeader span {
+    display: block;
+}
+
+.postRouteHeader span:nth-child(2) {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/*
+blockquote from
+https://css-tricks.com/snippets/css/simple-and-nice-blockquote-styling/
+*/
+.postRoute blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+.postRoute blockquote p {
+    display: inline;
+}
+
+.wrappedImage {
+    display: flex;
+    flex-direction: row;
+}
+
+@media (max-width: 800px) {
+    .wrappedImage {
+        flex-direction: column;
+    }
+}
