@@ -18,9 +18,13 @@ module.exports = {
         chromeFlags: "--disable-gpu --no-sandbox --disable-dev-shm-usage",
       },
     },
-    assert: {
-      preset: "lighthouse:no-pwa",
-    },
+    // assert: {
+    //   preset: "lighthouse:no-pwa",
+    //   assertions: {
+    //     "csp-xss": "off",
+    //     "heading-order": "off",
+    //   },
+    // },
     upload: {
       // token and server url are set from environment variables and .env file
       target: "lhci",
