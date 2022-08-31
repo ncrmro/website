@@ -12,6 +12,7 @@ module.exports = {
         "http://localhost:3300/resume",
         "http://localhost:3300/about",
         "http://localhost:3300/posts/apollo-cache-overview",
+        "http://localhost:3300/posts/summertime-adventure-new-orleans",
       ],
       settings: {
         chromeFlags: "--disable-gpu --no-sandbox --disable-dev-shm-usage",
