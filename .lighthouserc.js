@@ -19,7 +19,7 @@ module.exports = {
       },
     },
     assert: {
-      preset: "lighthouse:recommended",
+      preset: "lighthouse:no-pwa"
     },
     upload: {
       // token and server url are set from environment variables and .env file
