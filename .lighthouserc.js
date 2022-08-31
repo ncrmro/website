@@ -8,10 +8,10 @@ module.exports = {
       startServerCommand: "yarn start",
       startServerReadyPattern: "started server on",
       url: [
-        "http://localhost:3000/",
-        "http://localhost:3000/resume",
-        "http://localhost:3000/about",
-        "http://localhost:3000/posts/apollo-cache-overview",
+        "http://localhost:3300/",
+        "http://localhost:3300/resume",
+        "http://localhost:3300/about",
+        "http://localhost:3300/posts/apollo-cache-overview",
       ],
       settings: {
         chromeFlags: "--disable-gpu --no-sandbox --disable-dev-shm-usage",
