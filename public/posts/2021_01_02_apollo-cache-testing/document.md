@@ -271,7 +271,7 @@ To Demonstrate courtesy of [JTX](https://jtronics.exchange/account/parts).
 
 PS. apologies for the scaling of the video feel free to zoom in for now!
 
-![Demonstrating the Mutation Updating the Apollo Cache](mutation_example.gif)
+<Image src="mutation_example.gif" alt='Demonstrating the Mutation Updating the Apollo Cache'  />
 
 We can see the cache has a few items,
 

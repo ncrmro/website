@@ -24,7 +24,7 @@ Now days
 Let's take a `<hr/>` HTML tag for example. Rather than give any specific element
 a bottom border we can instead use an `<hr/>` reusable component.
 
-![Demonstrating the Mutation Updating the Apollo Cache](horizontal-rule-in-form.png)
+<Image src="horizontal-rule-in-form.png" alt='Demonstrating the Mutation Updating the Apollo Cache'  />
 
 Writing a reusable component can usually result in decision paralysis
 

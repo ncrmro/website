@@ -28,7 +28,7 @@ The cool thing about the previously mentioned gear models is they come with
 `.scad` files so they can be opened in OpenCAD to make larger/smaller or adjust
 tooth count.
 
-![Viewing the CAD files in OpenCAD](gear_in_opencad.png)
+<Image src="gear_in_opencad.png" alt='Viewing the CAD files in OpenCAD'  />
 
 The code for the large gear for example looks like this.
 

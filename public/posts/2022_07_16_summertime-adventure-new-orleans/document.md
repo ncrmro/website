@@ -25,7 +25,7 @@ the car, put on some fabcuer clothes and went on the hunt for dinner.
 
 ### Dinner at [Cafe Carmo](http://cafecarmo.com)
 
-![Plates of food a cafe carmo](IMG_0579.jpeg)
+<Image src="IMG_0579.jpeg" alt='Plates of food a cafe carmo'  />
 
 Cafe Carmo had a nice mix of vegan (Andy is vegan) and non-vegan options. The
 menu was comprised of all sorts of Latin American drinks and dishes.
@@ -56,7 +56,7 @@ stuff (and work) left to see and booked another day
 Sunday we started the day by getting lunch at [Ital Garden](italgardennola.com)
 which was proper vegan soul food. We ordered just about everything on the menu.
 
-![Plates of food a ITal](IMG_0586.jpeg)
+<Image src="IMG_0586.jpeg" alt='Plates of food a ITal'  />
 
 - Cajun Pasta
 - Quona Jumbala
@@ -67,9 +67,9 @@ which was proper vegan soul food. We ordered just about everything on the menu.
 
 ### French Quarter and Jackson Square
 
-![Andy taking a photo in the french quarter](IMG_0597.jpeg)
+<Image src="IMG_0597.jpeg" alt='Andy taking a photo in the french quarter'  />
 
-![The a street in the French Quarter](IMG_0599.jpeg)
+<Image src="IMG_0599.jpeg" alt='The a street in the French Quarter'  />
 
 After lunch, we were on the hunt for coffee and a place to work.
 [CC's coffee house](https://www.ccscoffee.com) on Royal street is where we had
@@ -119,9 +119,9 @@ Again we decide to stay in New Orleans and do some work.
 
 ### Breakfast at the [The Vintage](http://thevintagenola.com) in the [Garden District](https://www.neworleans.com/plan/neighborhoods/uptown-garden-district/)
 
-![The Bar at the Vintage](IMG_0619.jpeg)
+<Image src="IMG_0619.jpeg" alt='The Bar at the Vintage'  />
 
-![Beignets at the Vintage](IMG_0620.jpeg)
+<Image src="IMG_0620.jpeg" alt='Beignets at the Vintage'  />
 
 The local ladies we met previously recommended Beignets from the Vintage.
 
@@ -136,7 +136,7 @@ was an amazing protein snack.
 
 ### Lunch [Killer Po Boys](http://www.killerpoboys.com/)
 
-![Po Boys at Killers](IMG_0626.jpeg)
+<Image src="IMG_0626.jpeg" alt='Po Boys at Killers'  />
 
 After this Andy had not eaten and I had to make sure he had a Po Boy before
 leaving New Orleans. He had a Thai BBQ po boy and I had the beef which had
@@ -146,7 +146,7 @@ Then we had to get a Po Boy for Andy and Killer Poboys had three vegan options.
 
 ### Mid Afternoon - Working at the [Irish Cultural Museum](https://www.neworleans.com/listing/the-irish-cultural-museum-of-new-orleans/30407/)
 
-![A glass of Guiness, Powers Whisky Bottle and glass of Whisky](IMG_0639.jpeg)
+<Image src="IMG_0639.jpeg" alt='A glass of Guiness, Powers Whisky Bottle and glass of Whisky'  />
 
 Andy found a coffee shop inside the Irish Cultural Museum. Fun fact in 1800s New
 Orleans the Irish population was 1 in 5. The Irish coffees are said to be great,
@@ -184,7 +184,7 @@ shame.
 
 ### Evening [Frenchman Street](https://www.neworleans.com/plan/streets/frenchmen-street/)
 
-![Andy Pointing at the Frenchman Inn Sign](IMG_0654.jpeg)
+<Image src="IMG_0654.jpeg" alt='Andy Pointing at the Frenchman Inn Sign'  />
 
 At this point, Andy still wanted to see some Jazz. And to be honest, at this the
 point I don't think I've taken full advantage of the music scene in my previous

@@ -40,7 +40,7 @@ Also included
 - [12v Wall wart](https://smile.amazon.com/dp/B07DCPT1N7/ref=cm_sw_em_r_mt_dp_U_dz28EbW3A14S0)
 - [Barrel jack plugs](https://smile.amazon.com/dp/B074LK7G86/ref=cm_sw_em_r_mt_dp_U_Rz28Eb3CF0KZ4)
 
-![A drv8833 stepper motor in a breakout board format.](drv8833.jpeg)
+<Image src="drv8833.jpeg" alt='A drv8833 stepper motor in a breakout board format.'  />
 
 This drv8833 I had to solder the header's to it with the help of my friend
 Johhny.
@@ -58,7 +58,7 @@ mounting points around the shaft, you can typically get the same size motor in
 different lengths for more or less torque. The NEMA 17 for instance has 1.7"
 inch faceplates. Below is a bunch of different sized images.
 
-![Diffrent sized NEMA motors](nema-stepper-motors.jpg)
+<Image src="nema-stepper-motors.jpg" alt='Diffrent sized NEMA motors'  />
 
 ### Power
 
@@ -142,4 +142,4 @@ void loop() {
 
 ### It works!
 
-![spinning stepper motor](working-motor.gif)
+<Image src="working-motor.gif" alt='spinning stepper motor'  />
