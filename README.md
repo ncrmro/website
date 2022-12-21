@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+You will need to have [netlify CLI](https://docs.netlify.com/cli/get-started/#authentication) installed and have LFS set up as this is how
+media assets are saved to the repo. 
+
 First, run the development server:
 
 ```bash
