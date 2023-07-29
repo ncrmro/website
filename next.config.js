@@ -1,7 +1,9 @@
 module.exports = {
-  future: {
-    webpack5: true,
+  experimental: {
+    serverActions: true,
+    typedRoutes: true,
   },
+  output: "standalone",
   reactStrictMode: true,
   serverRuntimeConfig: {
     CONTACT_INFO_JSON:
