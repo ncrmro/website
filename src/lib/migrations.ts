@@ -35,6 +35,7 @@ function sha256(content: string) {
 }
 
 function log(message: TemplateStringsArray, ...values: any[]) {
+  console.log("MESSAGE", message.raw[0]);
   console.info(`MIG: ${message}`);
 }
 
@@ -66,6 +67,7 @@ async function runMigrations() {
       );
     } else if (!committedSHA) {
       uptoDate = false;
+      console.log(migrationFilename);
       log`Running migration ${migrationFilename}`;
       const query = `
         BEGIN TRANSACTION;
@@ -97,4 +99,4 @@ async function main() {
   await seed();
 }
 
-main().then(() => {});
+main().then(async () => await db.destroy());
