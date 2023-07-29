@@ -2,6 +2,10 @@
   "name": "ncrmro-static",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@8.6.3",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "yarn build-migrations && yarn migrations && next dev",
     "build": "yarn build-migrations && yarn migrations && next build",
