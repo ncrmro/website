@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "yarn migrations && next dev",
-    "build": "next build",
+    "dev": "yarn build-migrations && yarn migrations && next dev",
+    "build": "yarn build-migrations && yarn migrations && next build",
     "start": "next start",
     "lint": "next lint",
     "migrations": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
@@ -12,8 +12,7 @@
     "typegen": "DATABASE_URL=sqlite3.db kysely-codegen",
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
     "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",
-    "postbuild": "next-sitemap",
-    "postinstall": "yarn build-migrations"
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@types/node": "18.15.11",
