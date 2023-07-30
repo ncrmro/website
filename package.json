@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "yarn build-migrations && yarn migrations && next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "migrations": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
     "test": "playwright test",
