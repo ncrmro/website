@@ -2,7 +2,7 @@ name: Build Container Image and Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, refactor-nextjs-sqlite ]
   workflow_run:
     workflows: ["Playwright Tests"]
     branches: [main, refactor-nextjs-sqlite]
