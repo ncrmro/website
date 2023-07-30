@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "yarn build-migrations && yarn migrations && next dev",
-    "build": "yarn build-migrations && yarn migrations && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "migrations": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
