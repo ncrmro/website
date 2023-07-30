@@ -49,4 +49,4 @@ spec:
       volumes:
       - name: sqlite-database
         persistentVolumeClaim:
-          claimName: sqlite-database
+          claimName: {{.Release.Name }}-sqlite-database
