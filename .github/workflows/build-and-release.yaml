@@ -59,7 +59,7 @@ jobs:
         uses: WyriHaximus/github-action-helm3@v3
         with:
           exec: > 
-            helm --namespace=nextjs-sqlite upgrade --install nextjs-sqlite ./chart 
+            helm --namespace=ncrmro-com upgrade --install ncrmro-com ./chart 
             --wait --atomic --set image.tag=${{ needs.build-and-push-container-image.outputs.IMAGE_TAG }}
             --values values.production.yaml
           kubeconfig: '${{ secrets.KUBECONFIG }}'
