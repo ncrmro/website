@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sqlite-database
+  name: {{.Release.Name }}-sqlite-database
 spec:
   accessModes:
   # volume can be mounted as read-write by a single node
