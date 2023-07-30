@@ -45,7 +45,6 @@ jobs:
       run: |
         pnpm run build-migrations
         pnpm run migrations
-        pnpm run build
 
     - name: Run Playwright tests
       run: pnpm exec playwright test

@@ -7,9 +7,11 @@ import * as crypto from "crypto";
  */
 import { slugify } from "./utils";
 
-export const sqlite = new SQLiteDatabase(
-  process.env.DATABASE_PATH ?? `${process.env.PWD}/database/sqlite3.db`
-);
+const databasePath =
+  process.env.DATABASE_PATH ?? `${process.env.PWD}/database/sqlite3.db`;
+
+console.log(`Database path is ${databasePath}`);
+export const sqlite = new SQLiteDatabase(databasePath);
 sqlite.pragma("journal_mode = WAL");
 sqlite.function("regexp", { deterministic: true }, (regex, text) =>
   new RegExp(regex as string).test(text as string) ? 1 : 0
