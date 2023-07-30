@@ -61,5 +61,5 @@ jobs:
           exec: > 
             helm --namespace=ncrmro-com upgrade --install ncrmro-com ./chart 
             --wait --atomic --set image.tag=${{ needs.build-and-push-container-image.outputs.IMAGE_TAG }}
-            --values values.production.yaml
+            --values chart/values.production.yaml
           kubeconfig: '${{ secrets.KUBECONFIG }}'
