@@ -29,7 +29,7 @@ COPY --link  . .
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 # We run migrations here so that we can run kysely-codegen
-RUN node database/dist/migrations.js && yarn typegen && yarn build
+RUN yarn build-migrations && node database/dist/migrations.js && yarn typegen && yarn build
 
 
 # Production image, copy all the files and run next
