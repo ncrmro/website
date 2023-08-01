@@ -68,7 +68,7 @@ async function runMigrations() {
     } else if (!committedSHA) {
       uptoDate = false;
       console.log(migrationFilename);
-      log`Running migration ${migrationFilename}`;
+      console.log`Running migration ${migrationFilename}`;
       const query = `
         BEGIN TRANSACTION;
         ${migration}
