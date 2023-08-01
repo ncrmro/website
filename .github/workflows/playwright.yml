@@ -40,7 +40,9 @@ jobs:
 
     - name: Get installed Playwright version
       id: playwright-version
-      run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+#      run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+# If we update playwright we have to manually update here or parse the pnpm-lock.yaml version
+      run: echo "PLAYWRIGHT_VERSION=1.35.1" >> $GITHUB_ENV
 
     - name: Cache playwright binaries
       uses: actions/cache@v3
