@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS tags;
 CREATE TABLE tags
 (
     id         text                                NOT NULL PRIMARY KEY DEFAULT (uuid()),
-    value       text                                NOT NULL UNIQUE CHECK (value REGEXP '^[a-z0-9\s]+$'),
+    value      text                                NOT NULL UNIQUE CHECK (value REGEXP '^[a-z0-9\s]+$'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -17,7 +17,7 @@ CREATE TABLE posts
     user_id      int         NOT NULL REFERENCES users,
     title        text        NOT NULL UNIQUE,
     body         text        NOT NULL,
-    slug         text UNIQUE NOT NULL CHECK (slug REGEXP '^[\w-]*$'),
+    slug         text UNIQUE NOT NULL CHECK (slug REGEXP '^[a-z-]*$'),
     published    integer     NOT NULL             DEFAULT FALSE,
     publish_date TIMESTAMP,
     created_at   TIMESTAMP                        DEFAULT CURRENT_TIMESTAMP NOT NULL,
