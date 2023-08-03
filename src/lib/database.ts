@@ -13,6 +13,7 @@ const databasePath =
 console.log(`Database path is ${databasePath}`);
 export const sqlite = new SQLiteDatabase(databasePath);
 sqlite.pragma("journal_mode = WAL");
+sqlite.pragma("foreign_keys = ON;");
 sqlite.function("regexp", { deterministic: true }, (regex, text) =>
   new RegExp(regex as string).test(text as string) ? 1 : 0
 );
