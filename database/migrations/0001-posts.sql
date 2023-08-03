@@ -4,26 +4,25 @@ CREATE TABLE tags
 (
     id         text                                NOT NULL PRIMARY KEY DEFAULT (uuid()),
     value      text                                NOT NULL UNIQUE CHECK (value REGEXP '^[a-z0-9\s]+$'),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL
+) STRICT, WITHOUT ROWID;
 
 
 DROP TABLE IF EXISTS posts;
 CREATE TABLE posts
 (
     id           text        NOT NULL PRIMARY KEY DEFAULT (uuid()),
-    user_id      int         NOT NULL REFERENCES users,
+    user_id      text         NOT NULL REFERENCES users,
     title        text        NOT NULL UNIQUE,
     body         text        NOT NULL,
     slug         text UNIQUE NOT NULL CHECK (slug REGEXP '^[a-z0-9-]*$'),
     published    integer     NOT NULL             DEFAULT FALSE,
-    publish_date TIMESTAMP,
-    created_at   TIMESTAMP                        DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at   TIMESTAMP                        DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    publish_date TEXT,
+    created_at   TEXT                        DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at   TEXT                        DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)
-);
+) STRICT, WITHOUT ROWID;
 
 CREATE INDEX posts_user
     ON posts (user_id);
@@ -51,7 +50,7 @@ END;
 CREATE TABLE posts_tags
 (
     id      text NOT NULL PRIMARY KEY DEFAULT (uuid()),
-    post_id int  NOT NULL references posts,
-    tag_id  int  NOT NULL references tags,
+    post_id text  NOT NULL references posts,
+    tag_id  text  NOT NULL references tags,
     unique (post_id, tag_id)
-);
+) STRICT, WITHOUT ROWID;

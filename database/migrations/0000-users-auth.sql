@@ -9,9 +9,9 @@ CREATE TABLE users
     image      text,
     password   text    NOT NULL,
     admin      integer NOT NULL             DEFAULT FALSE,
-    created_at TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
+    created_at TEXT                    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT                    DEFAULT CURRENT_TIMESTAMP NOT NULL
+) STRICT, WITHOUT ROWID;
 
 CREATE TRIGGER users_insert_timestamp_trigger
     AFTER INSERT
@@ -38,11 +38,11 @@ CREATE TABLE sessions
 (
     id                 text                                NOT NULL PRIMARY KEY DEFAULT (uuid()),
     user_id            text                                NOT NULL,
-    last_authenticated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_authenticated TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at         TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at         TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)
-);
+) STRICT, WITHOUT ROWID;
 
 CREATE TRIGGER sessions_insert_timestamp_trigger
     AFTER INSERT
