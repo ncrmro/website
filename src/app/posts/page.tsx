@@ -5,6 +5,7 @@ export default async function Posts() {
   const posts = await db
     .selectFrom("posts")
     .select(["slug", "title", "body"])
+    .orderBy("publish_date", "desc")
     .execute();
   return (
     <div>
