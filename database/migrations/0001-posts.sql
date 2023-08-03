@@ -41,14 +41,6 @@ BEGIN
     WHERE id = new.id;
 END;
 
-CREATE TRIGGER posts_insert_slugify_title
-    BEFORE INSERT
-    ON posts
-BEGIN
-    UPDATE posts SET slug = slugify(title);
-END;
-
-
 CREATE TRIGGER posts_update_slugify_title
     BEFORE UPDATE
     ON posts
