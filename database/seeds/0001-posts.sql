@@ -1094,4 +1094,5 @@ a runner''s high.
 Final heart rate graph here
 
 <Image src="IMG_0524.jpeg" alt=''Apple watch heart rate zone screen showing red zone''  />
-', 'getting-your-heart-in-redzone', 0, null, '1', '2023-08-01 01:55:36');
+', 'getting-your-heart-in-redzone', 0, null, '1', '2023-08-01 01:55:36')
+ON CONFLICT DO NOTHING;

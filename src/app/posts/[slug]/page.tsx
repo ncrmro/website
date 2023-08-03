@@ -1,6 +1,9 @@
+import Post from "@/app/posts/[slug]/Post";
 import { db } from "@/lib/database";
+import { serialize } from "next-mdx-remote/serialize";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import React from "react";
 
 export default async function PostPage({
   params,
@@ -15,10 +18,12 @@ export default async function PostPage({
   if (!post) {
     notFound();
   }
+  const mdxSource = await serialize(post.body);
+
   return (
     <div>
       <h1>{post.title}</h1>
-      <div id="post-body">{post.body}</div>
+      <Post source={mdxSource} />
       <Link href={`/posts/${post.slug}/edit`}>Edit</Link>
     </div>
   );
