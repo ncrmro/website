@@ -17,7 +17,7 @@ CREATE TABLE posts
     user_id      int         NOT NULL REFERENCES users,
     title        text        NOT NULL UNIQUE,
     body         text        NOT NULL,
-    slug         text UNIQUE NOT NULL CHECK (slug REGEXP '^[a-z-]*$'),
+    slug         text UNIQUE NOT NULL CHECK (slug REGEXP '^[a-z0-9-]*$'),
     published    integer     NOT NULL             DEFAULT FALSE,
     publish_date TIMESTAMP,
     created_at   TIMESTAMP                        DEFAULT CURRENT_TIMESTAMP NOT NULL,
