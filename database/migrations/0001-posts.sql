@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS posts;
 CREATE TABLE posts
 (
     id           text        NOT NULL PRIMARY KEY DEFAULT (uuid()),
-    user_id      int         NOT NULL,
+    user_id      int         NOT NULL REFERENCES users,
     title        text        NOT NULL UNIQUE,
     body         text        NOT NULL,
     slug         text UNIQUE NOT NULL CHECK (slug REGEXP '^[\w-]*$'),
@@ -59,7 +59,7 @@ END;
 CREATE TABLE posts_tags
 (
     id      text NOT NULL PRIMARY KEY DEFAULT (uuid()),
-    post_id int  NOT NULL,
-    tag_id  int  NOT NULL,
+    post_id int  NOT NULL references posts,
+    tag_id  int  NOT NULL references tags,
     unique (post_id, tag_id)
 );
