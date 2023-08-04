@@ -17,6 +17,7 @@ async function createPost(data: FormData) {
     .insertInto("posts")
     .values({
       title: data.get("title") as string,
+      description: data.get("description") as string,
       body: data.get("body") as string,
       published: data.get("published") ? 1 : 0,
       user_id: viewer.id,

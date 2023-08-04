@@ -5,6 +5,7 @@ export default function PostForm(props: {
   action: (data: FormData) => Promise<void>;
   post?: {
     title: string;
+    description: string;
     body: string;
     published: number | null;
   };
@@ -31,6 +32,26 @@ export default function PostForm(props: {
               value={state?.title}
               onChange={(e) =>
                 state && setState({ ...state, title: e.target.value })
+              }
+            />
+          </div>
+        </div>
+        <div className="col-span-full">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
+            Description
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="description"
+              id="description"
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              value={state?.description}
+              onChange={(e) =>
+                state && setState({ ...state, description: e.target.value })
               }
             />
           </div>
