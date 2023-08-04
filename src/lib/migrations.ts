@@ -67,8 +67,7 @@ async function runMigrations() {
       );
     } else if (!committedSHA) {
       uptoDate = false;
-      console.log(migrationFilename);
-      console.log`Running migration ${migrationFilename}`;
+      console.log(`Running migration ${migrationFilename}`);
       const query = `
         BEGIN TRANSACTION;
         ${migration}
@@ -83,9 +82,10 @@ async function runMigrations() {
 
 async function seed() {
   if (process.argv.find((arg) => arg === "--seed")) {
-    log`Running seeds`;
+    console.log("Running seeds");
     const seeds = await fs.readdir("database/seeds");
     for (const filename of seeds.sort()) {
+      console.log(`Running seed ${filename}`);
       const seed = await fs.readFile(`database/seeds/${filename}`, "utf8");
       sqlite.exec(seed);
     }
