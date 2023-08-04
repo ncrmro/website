@@ -1,5 +1,8 @@
-insert into main.posts (id, user_id, title, body, description, slug, published, publish_date, created_at, updated_at)
-values  ('037068ff-0c16-459e-9c21-7038d8434c5f', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Docker Linux Workstation Development', '
+insert into main.posts (id, user_id, title, body, description, slug, published,
+                        publish_date, created_at, updated_at)
+values ('037068ff-0c16-459e-9c21-7038d8434c5f',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Docker Linux Workstation Development', '
 
 Something that will become apparent at some point of your journey using a Linux
 workstation as a development environment is that Docker runs as Root hence all
@@ -101,8 +104,12 @@ storage the VFS storage driver will use.
   "storage-opts": ["size=25G"],
 }
 ```
-', 'Making linux Docker more like Docker Desktop for macOS and Windows.', 'docker', 1, '2021-02-06', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('3aca3ac3-ddad-4571-9806-e713859fa0e7', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Straight forward reusable React components', '
+', 'Making linux Docker more like Docker Desktop for macOS and Windows.',
+        'docker', 1, '2021-02-06', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('3aca3ac3-ddad-4571-9806-e713859fa0e7',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Straight forward reusable React components', '
 
 ## Background
 
@@ -403,8 +410,12 @@ export default Form;
   float: right;
 }
 ```
-', 'Building clean reusable components and avoiding decision paralysis when choosing their props.', 'straight-forward-reusable-components', 1, '2022-02-02', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('3f0922ee-c2c7-4e7c-981c-ddedb74bc3f6', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Wireguard Based VPN Intranets', '
+',
+        'Building clean reusable components and avoiding decision paralysis when choosing their props.',
+        'straight-forward-reusable-components', 1, '2022-02-02',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('3f0922ee-c2c7-4e7c-981c-ddedb74bc3f6',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Wireguard Based VPN Intranets', '
 
 In this post, we will discuss why you might want a private intranet. An intranet
 is a private computer network, a subspace of the internet.
@@ -545,8 +556,12 @@ For PKI I also use an Ansible Playbook called
 [Scytale](https://github.com/ncrmro/scytale) that generates the Root CA and any
 other certificates you need. It then checks those certs into the Vault allow
 them to be committed as encrypted files.
-', 'Understanding and Implementing Private Intranets', 'wireguard-based-vpn-intranets', 1, '2021-01-07', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('3f5aba2f-8533-485b-b5e8-8dd98382d997', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Scytale: Ansible Automated Private Key Infrastructure.', '
+', 'Understanding and Implementing Private Intranets',
+        'wireguard-based-vpn-intranets', 1, '2021-01-07', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('3f5aba2f-8533-485b-b5e8-8dd98382d997',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Scytale: Ansible Automated Private Key Infrastructure.', '
 
 > In cryptography, a scytale, is a tool used to perform a transposition cipher,
 > consisting of a cylinder with a strip of parchment wound around it on which is
@@ -613,8 +628,13 @@ Whoot! now you have your private key infrastructure.
 
 If you check your `vars_vault.yml` it now contains all your private keys which
 can be checked into your git repo!
-', 'Automated private key infrastructure (PKI), Ansible managed certificate authority, server and client certificates.', 'scytale-automated-private-key-infrastructure', 1, '2020-08-23', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('48062de4-412e-4201-a1b0-06e335c67a52', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Rsync''ing Code Directories Between two computers', '
+',
+        'Automated private key infrastructure (PKI), Ansible managed certificate authority, server and client certificates.',
+        'scytale-automated-private-key-infrastructure', 1, '2020-08-23',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('48062de4-412e-4201-a1b0-06e335c67a52',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Rsync''ing Code Directories Between two computers', '
 
 I often find myself trying to keep the folder called code in which I keep my
 code, synced between my workstation and laptop. I''d also like to be able to sync
@@ -636,8 +656,13 @@ scode() {
     ncrmro@$HOST:/home/ncrmro/code /Users/ncrmro/code.ts
 }
 ```
-', 'A script to attempt keeping my code folder in sync between my laptop and workstation.', 'rsync-code-directories', 1, '2020-12-04', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('48dca6a6-81d3-4661-8642-2544e73f0615', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Writing a gear torque calculator', '
+',
+        'A script to attempt keeping my code folder in sync between my laptop and workstation.',
+        'rsync-code-directories', 1, '2020-12-04', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('48dca6a6-81d3-4661-8642-2544e73f0615',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Writing a gear torque calculator', '
 
 Recently I ran into the problem of my stepper motor not able to produce enough
 torque. This is even after adding some
@@ -722,8 +747,13 @@ This should give you the following output
 ```
 
 We can now see doubling the large gear doubles our torque.
-', 'While utilizing a stepper motor and gears. I needed more torque and different sized gears. So I wrote a small gear torque calculator.', 'writing-a-gear-torque-calculator', 1, '2020-07-02', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('4a737450-fd02-4fee-9676-6897fb52ae75', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Mount Kilimanjaro Part 1 - Getting ready', '
+',
+        'While utilizing a stepper motor and gears. I needed more torque and different sized gears. So I wrote a small gear torque calculator.',
+        'writing-a-gear-torque-calculator', 1, '2020-07-02',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('4a737450-fd02-4fee-9676-6897fb52ae75',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Mount Kilimanjaro Part 1 - Getting ready', '
 
 ## Overview
 
@@ -786,8 +816,13 @@ and gotten more altitude training in.
 I did some reading though on the world record holders and Kili has been (with
 acclimation and not carrying food) summited in 6 hours, this has giving me a
 large amount of hope that I won''t have problems summiting.
-', 'Origin''s of my Tanzania Africa trip to climb Kilimanjaro to raise funds for the Arizona Burn center.', 'kilimanjaro-1-two-weeks-before', 1, '2022-06-01', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('54599438-4a97-4beb-abcb-630399bdfa1a', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Compiling and Testing on a remote microcontroller', '
+',
+        'Origin''s of my Tanzania Africa trip to climb Kilimanjaro to raise funds for the Arizona Burn center.',
+        'kilimanjaro-1-two-weeks-before', 1, '2022-06-01',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('54599438-4a97-4beb-abcb-630399bdfa1a',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Compiling and Testing on a remote microcontroller', '
 
 Recently I''ve been doing a lot of microcontroller work. And I''ve wanted to
 offload compiling code as well as having the microcontroller hosted without
@@ -926,8 +961,13 @@ Stepper low!
 Stepper high!
 ...
 ```
-', 'We learn how we can develop microcontroller code using the Arduino CLI, compile it and the upload our code to the micrcontroller.', 'developing-on-remote-microcontroller', 1, '2020-06-24', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('550b88dd-9ed9-439b-ac0c-dce3f51b82a2', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Driving a stepper motor with a microcontroller', '
+',
+        'We learn how we can develop microcontroller code using the Arduino CLI, compile it and the upload our code to the micrcontroller.',
+        'developing-on-remote-microcontroller', 1, '2020-06-24',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('550b88dd-9ed9-439b-ac0c-dce3f51b82a2',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Driving a stepper motor with a microcontroller', '
 
 I''m sitting here after accidentally destroying another ESP32 module and 3.3v
 buck converter... Working with physical hardware can be a bit of a doozy coming
@@ -1066,8 +1106,12 @@ void loop() {
 ### It works!
 
 <Image src="working-motor.gif" alt=''spinning stepper motor''  />
-', 'Controlling a stepper motor.', 'driving-stepper-motors-with-microcontroller', 1, '2020-06-16', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('5687da3f-82bb-4710-827b-e108c5767ae8', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Alpine k3s based single node Kubernetes cluster.', '
+', 'Controlling a stepper motor.',
+        'driving-stepper-motors-with-microcontroller', 1, '2020-06-16',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('5687da3f-82bb-4710-827b-e108c5767ae8',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Alpine k3s based single node Kubernetes cluster.', '
 
 Setting up a Kubernetes cluster can be pretty straightforward, in this guide we
 are going to set up a Single Node Kubernetes cluster using
@@ -1183,10 +1227,16 @@ At this point, we can move this to the default kube config location
 ```bash
 mv k3s.yaml ~/.kube/config
 ```
-', 'This guide shows how to set up a Kubernetes node with Alpine', 'alpine-k3s', 1, '2021-02-07', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('6d480824-5797-42af-bf33-78c547bc794d', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Backing up ZFS snapshots remotely without root access', '
-', 'TODO', 'backing-up-zfs-snapshots-remotly-without-root', 0, '2022-08-10', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('72854b20-d2e1-425c-a712-f042cc6c130b', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Multi Arch Docker Buildx in CI/CD', '
+', 'This guide shows how to set up a Kubernetes node with Alpine', 'alpine-k3s',
+        1, '2021-02-07', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('6d480824-5797-42af-bf33-78c547bc794d',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Backing up ZFS snapshots remotely without root access', '
+', 'TODO', 'backing-up-zfs-snapshots-remotly-without-root', 0, '2022-08-10',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('72854b20-d2e1-425c-a712-f042cc6c130b',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Multi Arch Docker Buildx in CI/CD', '
 
 I''ve recently been working on some projects with some heavy dependencies
 (FFmpeg, scipy, NumPy, etc).
@@ -1358,8 +1408,10 @@ Also note we
 - created three image''s, `latest`, `python FFmpeg ver`, `git sha`
 
 Hope you enjoyed the post
-', 'Automated Multi Arch Docker Image Builds', 'multi-arch-docker-buildx-ci-cd', 1, '2020-08-14', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('75b9cb52-efe2-41e9-bc85-adbcf2bfed34', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Apollo Cache Overview', '
+', 'Automated Multi Arch Docker Image Builds', 'multi-arch-docker-buildx-ci-cd',
+        1, '2020-08-14', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('75b9cb52-efe2-41e9-bc85-adbcf2bfed34',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Apollo Cache Overview', '
 
 If your using [Apollo](https://www.apollographql.com/docs/)
 [GraphQL](https://graphql.org/) and you''ve not yet looked at the
@@ -1675,8 +1727,11 @@ const update = (cache, { data: { createOwnedPart } }) => {
 - [Cache Key Args](https://www.apollographql.com/docs/react/pagination/key-args/)
 - [@connection directive](https://www.apollographql.com/docs/react/caching/advanced-topics/#the-connection-directive)
 - [Resetting the cache](https://www.apollographql.com/docs/react/caching/advanced-topics/#resetting-the-store)
-', 'What is the Apollo cache, ensure correct usage and update post mutation.', 'apollo-cache-overview', 1, '2021-01-02', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('77e118f4-2a13-4f01-b054-e495782ab829', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Gondola', '
+', 'What is the Apollo cache, ensure correct usage and update post mutation.',
+        'apollo-cache-overview', 1, '2021-01-02', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('77e118f4-2a13-4f01-b054-e495782ab829',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Gondola', '
 
 Recently I was working a project that is deployed on a raspberry pi zero. This
 became problematic with trying to build stuff on the zero.
@@ -1696,8 +1751,12 @@ The project is available [here](https://github.com/ncrmro/gondola).
 
 Some limitations is its single threaded and limited to 256mb of ram and I
 haven''t had enough time to investigate.
-', 'Ansible Playbook for Emulating Raspberry Pi OS with KVM', 'gondola-ansible-playbook-for-emulating-raspberry-pi-os-with-kvm', 1, '2020-07-22', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('8dbc714d-89f7-4e05-919c-fcb13959375a', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Building a Enum Based Form Stepper In React Typescript', '
+', 'Ansible Playbook for Emulating Raspberry Pi OS with KVM',
+        'gondola-ansible-playbook-for-emulating-raspberry-pi-os-with-kvm', 1,
+        '2020-07-22', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('8dbc714d-89f7-4e05-919c-fcb13959375a',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Building a Enum Based Form Stepper In React Typescript', '
 
 First, we are going to create our steps as enums. If we don''t define values for
 our enums the will by default increment. This design pattern works best with at
@@ -1787,10 +1846,15 @@ const Form = () => {
   );
 };
 ```
-', 'We look at a streamlined form stepper design pattern.', 'typescript', 1, '2021-01-18', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('8f6e42cc-866d-4757-b946-30be6f51b365', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Last Vegas Evo 2022', '
-', 'TODO', 'las-vegas-evo-2022', 0, '2022-08-08', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('96141f1f-58e1-4390-b039-c911de72c686', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Summertime Adventure in New Orleans', '
+', 'We look at a streamlined form stepper design pattern.', 'typescript', 1,
+        '2021-01-18', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('8f6e42cc-866d-4757-b946-30be6f51b365',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Last Vegas Evo 2022', '
+', 'TODO', 'las-vegas-evo-2022', 0, '2022-08-08', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('96141f1f-58e1-4390-b039-c911de72c686',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Summertime Adventure in New Orleans', '
 
 ## Background - Friday, July 15, 2022
 
@@ -2012,8 +2076,11 @@ On the way we stopped for a quick bite at a Lousianin/Mexican restaurant called
 Mestizo. The Server recommended guac which had grilled peaches and feta, quite
 the odd combo but was pretty tasty. They mentioned that they also do it with
 pomegranate arils which I think would be quite visually stunning.
-', 'Visiting New Orleans with my friend Andy', 'summertime-adventure-new-orleans', 1, '2022-07-16', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('9d5ee3f7-b7f5-4729-9625-3bdf7dfbc41f', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Getting your Heart in Redzone', '
+', 'Visiting New Orleans with my friend Andy',
+        'summertime-adventure-new-orleans', 1, '2022-07-16',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('9d5ee3f7-b7f5-4729-9625-3bdf7dfbc41f',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Getting your Heart in Redzone', '
 
 # Why
 
@@ -2058,8 +2125,11 @@ a runner''s high.
 Final heart rate graph here
 
 <Image src="IMG_0524.jpeg" alt=''Apple watch heart rate zone screen showing red zone''  />
-', 'How to train for Vo2 max using the Apple Watch.', 'vo2-max-training-with-apple-watch', 1, '2022-11-20', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('a28ab496-58f7-4375-8f0f-cdc73890ee21', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'New site stack', '
+', 'How to train for Vo2 max using the Apple Watch.',
+        'vo2-max-training-with-apple-watch', 1, '2022-11-20',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('a28ab496-58f7-4375-8f0f-cdc73890ee21',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'New site stack', '
 
 The new site was created using
 [react-static](https://github.com/nozzle/react-static). It reads the contents of
@@ -2097,8 +2167,11 @@ maintenance.
 
 The source code for the site can be found on Github here
 [here](https://github.com/ncrmro/ncrmro-static).
-', 'We take a look at the process and technology behind this site.', 'new-site-stack', 1, '2019-03-10', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('a733da87-ed78-40ad-bd4d-66e707f9834e', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Contemplating Dunning-Kruger.', '
+', 'We take a look at the process and technology behind this site.',
+        'new-site-stack', 1, '2019-03-10', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('a733da87-ed78-40ad-bd4d-66e707f9834e',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Contemplating Dunning-Kruger.', '
 
 I''ve been contemplating
 the [Dunning-Kruger effect](https://en.wikipedia.org/wiki/Dunning–Kruger_effect)
@@ -2181,8 +2254,12 @@ our stage.
 Each idea is condensed to its most myopic form and then thrown
 into a blender for our consumption leading us to bounce between echo chamber rooms
 of thought without ever forming any novel ideas.
-', 'I''ve been contemplating the Dunning-Kruger effect and it''s caused a bit of anxiety. ', 'contemplating', 1, '2022-12-13', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('addde3a1-9765-43cb-8970-668d03c27ae8', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Typescript React Grid Areas', '
+',
+        'I''ve been contemplating the Dunning-Kruger effect and it''s caused a bit of anxiety. ',
+        'contemplating', 1, '2022-12-13', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('addde3a1-9765-43cb-8970-668d03c27ae8',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Typescript React Grid Areas', '
 
 While working on [JTX](https://jtronics.exchange/) I''ve started to design for
 mobile-first.
@@ -2325,8 +2402,12 @@ export default Grid;
 ```
 
 Hope you enjoyed!
-', 'A Reusable Component Design Pattern for CSS Grid Areas in Typescript React.', 'typescript-react-grid-areas', 1, '2020-12-17', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('bfec772e-e472-41fa-93e6-3d1d77c89f27', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Project Quiescent', '
+',
+        'A Reusable Component Design Pattern for CSS Grid Areas in Typescript React.',
+        'typescript-react-grid-areas', 1, '2020-12-17', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('bfec772e-e472-41fa-93e6-3d1d77c89f27',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Project Quiescent', '
 
 I''ve had this idea for awhile of a personal website where files exist first and
 foremost as documents committed to a repo rather than a database.
@@ -2382,8 +2463,13 @@ Eg how can we have the blog post show case conversations on twitter about it
 without knowing about it''s creation
 
 Using analytics and other services
-', 'A new project i''m working on to build better blogs that live inside of git.', 'quecent', 1, '2022-07-27', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('c46e5535-0aa9-4cfd-976e-be943c842882', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Choosing the best multi-OS setup with PCIe device passthrough', '
+',
+        'A new project i''m working on to build better blogs that live inside of git.',
+        'quecent', 1, '2022-07-27', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('c46e5535-0aa9-4cfd-976e-be943c842882',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Choosing the best multi-OS setup with PCIe device passthrough', '
 
 ## Why have bare-metal hypervisor Linux workstation
 
@@ -2501,8 +2587,13 @@ Unknowns
 
 - When shutting down the host what happens to VM''s that are suspended but still
   have a GPU is attached.
-', 'In this post I discuss my experience with my Linux workstations that use a technology called PCIe passthrough to use a dedicated GPU for gaming in a Windows Guest.', 'choosing-the-best-multi-os-setup', 1, '2022-12-21', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('c7841ff3-7c3b-43d0-938f-6663bb72c44f', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Learning network security with IoT/HomeKit.', '
+',
+        'In this post I discuss my experience with my Linux workstations that use a technology called PCIe passthrough to use a dedicated GPU for gaming in a Windows Guest.',
+        'choosing-the-best-multi-os-setup', 1, '2022-12-21',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('c7841ff3-7c3b-43d0-938f-6663bb72c44f',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Learning network security with IoT/HomeKit.', '
 
 ## It started with [HomeKit](https://www.apple.com/ios/home/).
 
@@ -2564,12 +2655,19 @@ Staticlly assigned IPs access. I followed
 [this](https://community.ubnt.com/t5/UniFi-Routing-Switching/HomeKit-on-Isolated-VLAN/m-p/2263456/highlight/true#M79654)
 post orginally which covers setting up homekit. I just made it where my phone,
 laptop, and desktop I remote into are admin devices which can access anything.
-', '"How setting up IoT/HomeKit can teach you about network security."', 'how-homekit-led-to-learning-about-network-security', 1, '2019-04-15', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('ca683406-9fbe-49c2-8260-cac9ab26c4aa', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Hello World - 2019', '
+', '"How setting up IoT/HomeKit can teach you about network security."',
+        'how-homekit-led-to-learning-about-network-security', 1, '2019-04-15',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('ca683406-9fbe-49c2-8260-cac9ab26c4aa',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Hello World - 2019', '
 
 A simple blog post to test the codebase this site is built on.
-', 'A simple blog post to test the codebase this site is built on.', 'hello-world-2019', 0, '2019-03-07', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('d40b8737-8558-40e3-97e8-298da7de7009', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Building a scheduled CI E2E test failure Slack notifier', '
+', 'A simple blog post to test the codebase this site is built on.',
+        'hello-world-2019', 0, '2019-03-07', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('d40b8737-8558-40e3-97e8-298da7de7009',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'Building a scheduled CI E2E test failure Slack notifier', '
 
 ## Background
 
@@ -2710,8 +2808,11 @@ async function notifier() {
 
 notifier();
 ```
-', 'How to build a Slack notifier when scheduled E2E tests fail.', 'scheduled-ci-e2e-test-failure-slack-notification', 1, '2021-03-24', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('eef3187f-27dd-4739-9696-e7162b7f212f', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'MacOS fast user switching.', '
+', 'How to build a Slack notifier when scheduled E2E tests fail.',
+        'scheduled-ci-e2e-test-failure-slack-notification', 1, '2021-03-24',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('eef3187f-27dd-4739-9696-e7162b7f212f',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'MacOS fast user switching.', '
 
 [Fast user switching](https://en.wikipedia.org/wiki/Fast_user_switching)
 
@@ -2729,8 +2830,13 @@ notifier();
   - eg email, contacts notes etc feel free to turn something on if it needs to
     be shared.
 - Sign into chrome with your GSutie email.
-', 'Use fast user switching for hygienic separation between personal and professional accounts on a single laptop.', 'macos-fast-user-switching', 1, '2019-04-09', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('f1dff5c7-e2d8-492e-89e2-3c55b0abddf3', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'India Part 1 - Arrival and PyCon India', '
+',
+        'Use fast user switching for hygienic separation between personal and professional accounts on a single laptop.',
+        'macos-fast-user-switching', 1, '2019-04-09', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13'),
+       ('f1dff5c7-e2d8-492e-89e2-3c55b0abddf3',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826',
+        'India Part 1 - Arrival and PyCon India', '
 
 ## How I got there
 
@@ -2809,8 +2915,10 @@ the larger picture. It was held in a small college and had a few interesting
 talks
 
 ## Dinner after words
-', 'The beginning of my trip to India.', 'india-1', 0, '2017-11-01', '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
-        ('fb01a5b9-c1c8-427f-9a35-94f31b0c1113', 'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Evaluating Rust.', '
+', 'The beginning of my trip to India.', 'india-1', 0, '2017-11-01',
+        '2023-08-04 14:16:13', '2023-08-04 14:16:13'),
+       ('fb01a5b9-c1c8-427f-9a35-94f31b0c1113',
+        'ca55d247-66e2-4346-b130-06c2d5a7c826', 'Evaluating Rust.', '
 
 # [Rust](https://www.rust-lang.org)
 
@@ -2951,4 +3059,7 @@ to [this](https://github.com/reitermarkus/esp32-hello) project by
 I''ve just scratched the surface. But I feel I''ve got a pretty good evaluation of
 what using Rust is like. As per usual when learning a new technology I''m trying
 to figure out when not to use as much as when to use it.
-', 'A look at setting using Rust for REST APIs and Embedded development.', 'evaluating-rust', 1, '2020-06-15', '2023-08-04 14:16:13', '2023-08-04 14:16:13');
+', 'A look at setting using Rust for REST APIs and Embedded development.',
+        'evaluating-rust', 1, '2020-06-15', '2023-08-04 14:16:13',
+        '2023-08-04 14:16:13')
+on conflict do nothing;
