@@ -12,7 +12,7 @@ export default async function PostPage({
 }) {
   const post = await db
     .selectFrom("posts")
-    .select(["title", "body", "slug"])
+    .select(["title", "body", "slug", "publish_date"])
     .where("slug", "=", params.slug)
     .executeTakeFirst();
   if (!post) {
@@ -23,7 +23,7 @@ export default async function PostPage({
   return (
     <div>
       <h1>{post.title}</h1>
-      <Post source={mdxSource} />
+      <Post post={post} source={mdxSource} />
       <Link href={`/posts/${post.slug}/edit`}>Edit</Link>
     </div>
   );
