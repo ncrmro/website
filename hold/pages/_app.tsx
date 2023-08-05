@@ -1,5 +1,5 @@
 import "../../src/styles/globals.css";
-import "../../src/styles/code-block.css";
+import "../../src/app/posts/[slug]/code-block.css";
 import SiteLayout from "@components/SiteLayout";
 import { Head } from "next/document";
 import React, { useEffect } from "react";
