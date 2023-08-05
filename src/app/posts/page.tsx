@@ -4,8 +4,9 @@ import Link from "next/link";
 export default async function Posts() {
   const posts = await db
     .selectFrom("posts")
-    .select(["slug", "title", "body"])
+    .select(["slug", "title", "description", "body"])
     .orderBy("publish_date", "desc")
+    .where("published", "=", 1)
     .execute();
   return (
     <div>
@@ -14,6 +15,7 @@ export default async function Posts() {
         {posts.map((post) => (
           <li key={post.slug}>
             <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+            <p>{post.description}</p>
           </li>
         ))}
       </ol>
