@@ -1,19 +1,14 @@
 import { db } from "@/lib/database";
 import React from "react";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 function PostItem(props: {
   post: {
     slug: string;
     title: string;
     description: string;
-    publish_date?: string;
+    publish_date: string | null;
   };
   evenRow: boolean;
-  index: string;
 }) {
   return (
     <li key={props.post.slug} className="flex">
