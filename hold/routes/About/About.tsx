@@ -1,5 +1,5 @@
 import React from "react";
-import History from "../Resume/History";
+import History from "../../../src/app/resume/History";
 import { JobDocument } from "../../types";
 import styles from "./About.module.css";
 import Image from "next/image";
