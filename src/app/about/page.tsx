@@ -1,20 +1,12 @@
-import PageLayout from "@components/PageLayout";
-import { getDocuments } from "@quiescent/server";
-import AboutRoute from "../../../hold/routes/About";
-import { GetStaticProps } from "next";
 import React from "react";
-import { JobDocument } from "../types";
 
-const Page: React.FC<{ jobs: JobDocument[] }> = (props) => (
-  <PageLayout title="About">
-    <AboutRoute jobs={props.jobs} />
-  </PageLayout>
-);
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  return {
-    props: { jobs: await getDocuments("jobs", "dynamic") },
-  };
-};
-
-export default Page;
+export default function AboutPage(props: any) {
+  // <PageLayout title="About">
+  //   <AboutRoute jobs={props.jobs} />
+  /*</PageLayout>*/
+}
+// export const getStaticProps: GetStaticProps = async (context) => {
+//   return {
+//     props: { jobs: await getDocuments("jobs", "dynamic") },
+//   };
+// };
