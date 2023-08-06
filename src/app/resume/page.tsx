@@ -1,18 +1,16 @@
-import fs from "fs/promises";
+import JobDocument from "@/app/resume/JobItem";
+import { parseJobFiles } from "@/app/resume/utils";
 import Link from "next/link";
-import routes from "@router";
-import History from "./History";
 import React from "react";
-import styles from "./Resume.module.css";
 
 interface InfoProps {
-  contactInfo: { phoneNumber: string; email: string };
+  contactInfo?: { phoneNumber: string; email: string };
 }
 
 const Info: React.FC<InfoProps> = (props) => (
-  <div className={styles.info}>
-    <Link {...routes.about}>
-      <a>Nicholas Romero</a>
+  <div className="flex flex-col">
+    <Link href="/about" className="text-blue-700">
+      Nicholas Romero
     </Link>
     <div>Houston, TX</div>
     {props.contactInfo && (
@@ -35,14 +33,14 @@ const Info: React.FC<InfoProps> = (props) => (
 );
 
 export default async function ResumePage() {
-  const jobFiles = await fs.readdir("public/jobs");
-  const contents = await Promise.all(
-    jobFiles.map((jobFile) => fs.readFile(`public/jobs/${jobFile}`, "utf8"))
-  );
+  const jobFiles = await parseJobFiles();
+  const jobs = jobFiles.reverse().map((job) => <JobDocument job={job} />);
   return (
-    <div className={styles.root}>
-      {/*<Info contactInfo={props.contactInfo} />*/}
-      {/*<History jobs={props.jobs} />*/}
+    <div className="flex flex-col items-center">
+      <div className="max-w-3xl flex flex-col gap-4">
+        <Info />
+        <ul className="flex flex-col gap-4">{jobs}</ul>
+      </div>
     </div>
   );
 }
