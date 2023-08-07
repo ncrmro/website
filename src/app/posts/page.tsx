@@ -1,7 +1,7 @@
 import { db } from "@/lib/database";
 import React from "react";
 
-function PostItem(props: {
+export function PostItem(props: {
   post: {
     slug: string;
     title: string;
