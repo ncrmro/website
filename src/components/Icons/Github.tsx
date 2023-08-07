@@ -1,4 +1,4 @@
-import { IconProps } from "@components/Icons/types";
+import { IconProps } from "./types";
 import React from "react";
 
 const GithubIcon: React.FC<IconProps> = (props) => (
