@@ -24,7 +24,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body>
         <nav id="navbar" className="flex flex-col gap-2 items-center">
-          <Link href="/" className="uppercase min-w-[10rem] border-b py-2	">
+          <Link
+            href="/"
+            className="uppercase min-w-[10rem] border-b py-2	text-center"
+          >
             {isHome ? "Nicholas Romero" : "Home"}
           </Link>
           {isHome && (

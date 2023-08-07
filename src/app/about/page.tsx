@@ -1,19 +1,21 @@
+import JobDocument from "@/app/resume/JobItem";
+import { parseJobFiles } from "@/app/resume/utils";
 import React from "react";
-// import History from "../../../src/app/resume/History";
-import styles from "../../../hold/routes/About/About.module.css";
 import Image from "next/image";
 
-export default function AboutPage(props: any) {
+export default async function AboutPage(props: any) {
+  const jobFiles = await parseJobFiles();
+  const jobs = jobFiles.reverse().map((job) => <JobDocument job={job} />);
   return (
-    <div className={styles.root}>
-      <div className={styles.info}>
+    <div className="flex flex-col md:flex-row">
+      <div className="">
         <Image
           src="/images/avatar.jpg"
           alt="Picture of the author"
           width={288}
           height={288}
-          layout="responsive"
-          className={styles.img}
+          // layout="responsive"
+          className="m-2"
         />
 
         <div>
@@ -25,9 +27,8 @@ export default function AboutPage(props: any) {
           </p>
         </div>
       </div>
-      <div className={styles.history}>
-        {/*@ts-ignore*/}
-        <History jobs={props.jobs} />
+      <div className="">
+        <ul className="flex flex-col gap-4">{jobs}</ul>
       </div>
     </div>
   );
