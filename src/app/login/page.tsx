@@ -42,32 +42,30 @@ export default async function LoginPage() {
 
   return (
     // @ts-ignore
-    <form action={loginUser}>
-      <div className="card">
-        <h1 className="card-header">Login</h1>
-        <div className="card-content flex-col gap-4">
-          <input
-            name="email"
-            placeholder="Email"
-            autoComplete="email"
-            type="email"
-            required
-          />
-          <input
-            name="password"
-            placeholder="Password"
-            autoComplete="current-password"
-            type="password"
-            required
-          />
-        </div>
-        <div className="card-actions flex-col gap-4">
-          <button type="submit" style={{ float: "right" }}>
-            Login
-          </button>
-          {/*<Link href="/reset-password">Reset Password</Link>*/}
-          <Link href="/signup">Create an account</Link>
-        </div>
+    <form action={loginUser} className="flex flex-col">
+      <h1>Login</h1>
+      <div className="flex flex-col gap-4">
+        <input
+          name="email"
+          placeholder="Email"
+          autoComplete="email"
+          type="email"
+          required
+        />
+        <input
+          name="password"
+          placeholder="Password"
+          autoComplete="current-password"
+          type="password"
+          required
+        />
+      </div>
+      <div className="flex-col gap-4">
+        <button type="submit" style={{ float: "right" }}>
+          Login
+        </button>
+        {/*<Link href="/reset-password">Reset Password</Link>*/}
+        <Link href="/signup">Create an account</Link>
       </div>
     </form>
   );
