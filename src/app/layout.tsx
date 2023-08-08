@@ -13,7 +13,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body>
         <Navbar />
-        <main className="w-full flex-col items-center p-4">
+        <main className="w-full flex flex-col items-center p-4">
           {props.children}
         </main>
       </body>

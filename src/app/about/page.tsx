@@ -7,7 +7,7 @@ export default async function AboutPage(props: any) {
   const jobFiles = await parseJobFiles();
   const jobs = jobFiles.reverse().map((job) => <JobDocument job={job} />);
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row md:max-w-4xl justify-center">
       <div className="">
         <Image
           src="/images/avatar.jpg"
