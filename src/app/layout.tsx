@@ -3,9 +3,8 @@ import Navbar from "@/components/Navbar";
 import React from "react";
 
 export const metadata = {
-  title: "Vercel Postgres Demo with Kysely",
-  description:
-    "A simple Next.js app with Vercel Postgres as the database and Kysely as the ORM",
+  title: "Nicholas Romero",
+  description: "Personal Site of Nicholas Romero",
 };
 
 export default async function RootLayout(props: { children: React.ReactNode }) {

@@ -45,7 +45,11 @@ export async function Posts() {
     <div className="flow-root">
       <ul role="list" className="-mb-8">
         {posts.map((post, index) => (
-          <PostItem post={post} evenRow={index !== posts.length - 1} />
+          <PostItem
+            key={post.slug}
+            post={post}
+            evenRow={index !== posts.length - 1}
+          />
         ))}
       </ul>
     </div>
