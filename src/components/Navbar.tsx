@@ -10,13 +10,15 @@ import React from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
-  console.log(pathname);
   const isHome = pathname === "/";
   return (
-    <nav id="navbar" className="flex flex-col gap-2 items-center">
+    <nav
+      id="navbar"
+      className="flex flex-col gap-2 items-center [&>*]:text-slate-500 mx-auto"
+    >
       <Link
         href="/"
-        className="uppercase min-w-[10rem] border-b py-2	text-center"
+        className="uppercase min-w-[10rem] border-b py-2 text-center"
       >
         {isHome ? "Nicholas Romero" : "Home"}
       </Link>
