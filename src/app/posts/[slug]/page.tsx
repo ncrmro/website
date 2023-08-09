@@ -1,4 +1,5 @@
 import Post from "@/app/posts/[slug]/Post";
+import { useViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { serialize } from "next-mdx-remote/serialize";
 import Link from "next/link";
@@ -10,14 +11,14 @@ export default async function PostPage({
 }: {
   params: { slug: string };
 }) {
+  const viewer = await useViewer();
   const post = await db
     .selectFrom("posts")
-    .select(["title", "body", "slug", "publish_date"])
+    .select(["title", "body", "slug", "publish_date", "published"])
     .where("slug", "=", params.slug)
     .executeTakeFirst();
-  if (!post) {
-    notFound();
-  }
+  // If viewer is not logged and and post is not published also not found
+  if (!post || (post.published === 0 && !viewer)) notFound();
   const mdxSource = await serialize(post.body);
 
   return (
