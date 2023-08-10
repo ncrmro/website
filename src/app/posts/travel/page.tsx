@@ -5,7 +5,14 @@ import React, { PropsWithChildren } from "react";
 export default async function TravelPosts() {
   const posts = await db
     .selectFrom("posts")
-    .select(["slug", "title", "description", "body", "publish_date"])
+    .select([
+      "slug",
+      "title",
+      "description",
+      "body",
+      "publish_date",
+      "published",
+    ])
     .innerJoin("posts_tags", "post_id", "posts.id")
     .innerJoin("tags", "tags.id", "posts_tags.tag_id")
     .orderBy("publish_date", "desc")
