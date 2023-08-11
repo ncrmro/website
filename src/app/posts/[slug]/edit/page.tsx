@@ -18,7 +18,14 @@ export default async function EditPostPage({
     );
   const post = await db
     .selectFrom("posts")
-    .select(["title", "description", "body", "slug", "published"])
+    .select([
+      "title",
+      "description",
+      "body",
+      "slug",
+      "published",
+      "publish_date",
+    ])
     .where("slug", "=", params.slug)
     .executeTakeFirstOrThrow();
 
@@ -37,7 +44,7 @@ export default async function EditPostPage({
         user_id: viewer.id,
       })
       .where("slug", "=", params.slug)
-      .returning(["title", "description", "slug", "published"])
+      .returning(["title", "description", "slug", "published", "publish_date"])
       .executeTakeFirstOrThrow();
 
     revalidatePath(`/posts/${post.slug}`);

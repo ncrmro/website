@@ -57,5 +57,7 @@ export async function selectSessionViewer() {
 }
 
 export async function useViewer() {
-  return selectSessionViewer();
+  if (typeof window === "undefined") {
+    return selectSessionViewer();
+  }
 }

@@ -1,8 +1,7 @@
-import Post from "@/app/posts/[slug]/Post";
+import Post, { PostHeader } from "@/app/posts/[slug]/Post";
+import { serializePost } from "@/app/posts/actions";
 import { useViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
-import { serialize } from "next-mdx-remote/serialize";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -14,18 +13,24 @@ export default async function PostPage({
   const viewer = await useViewer();
   const post = await db
     .selectFrom("posts")
-    .select(["title", "body", "slug", "publish_date", "published"])
+    .select([
+      "title",
+      "description",
+      "body",
+      "slug",
+      "publish_date",
+      "published",
+    ])
     .where("slug", "=", params.slug)
     .executeTakeFirst();
   // If viewer is not logged and and post is not published also not found
   if (!post || (post.published === 0 && !viewer)) notFound();
-  const mdxSource = await serialize(post.body);
+  const mdxSource = await serializePost(post);
 
   return (
-    <div>
-      <h1>{post.title}</h1>
+    <div className="w-full">
+      <PostHeader viewer={viewer} post={post} />
       <Post post={post} source={mdxSource} />
-      <Link href={`/posts/${post.slug}/edit`}>Edit</Link>
     </div>
   );
 }
