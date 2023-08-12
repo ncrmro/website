@@ -34,7 +34,7 @@ export default function PostForm(props: {
 
   return (
     // @ts-ignore
-    <form className="w-full" action={props.action}>
+    <form className="w-full md:max-w-4xl" action={props.action}>
       <Tab.Group
         onChange={async (index) => {
           if (index === 1 && state) {
@@ -70,7 +70,7 @@ export default function PostForm(props: {
           </Tab>
         </Tab.List>
         <Tab.Panels className="mt-2">
-          <Tab.Panel className="flex-col w-full space-y-12">
+          <Tab.Panel className="flex flex-col w-full gap-4">
             <div className="col-span-full">
               <label
                 htmlFor="title"
@@ -92,35 +92,56 @@ export default function PostForm(props: {
               </div>
             </div>
             <div className="col-span-full">
-              <label htmlFor="description" className="sr-only">
-                Description
+              <label
+                htmlFor="slug"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Slug
               </label>
-              <input
-                type="text"
-                name="description"
-                id="description"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={state?.description}
-                onChange={(e) =>
-                  state && setState({ ...state, description: e.target.value })
-                }
-              />
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="slug"
+                  id="slug"
+                  pattern={"/^[a-z0-9-]*/"}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={state?.slug}
+                  onChange={(e) =>
+                    state && setState({ ...state, slug: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="col-span-full">
+              <label htmlFor="description">Description</label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="description"
+                  id="description"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={state?.description}
+                  onChange={(e) =>
+                    state && setState({ ...state, description: e.target.value })
+                  }
+                />
+              </div>
             </div>
             <div>
-              <label htmlFor="body" className="sr-only">
-                Body
-              </label>
-              <textarea
-                rows={30}
-                name="body"
-                id="body"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Add your comment..."
-                value={state?.body}
-                onChange={(e) =>
-                  state && setState({ ...state, body: e.target.value })
-                }
-              />
+              <label htmlFor="body">Body</label>
+              <div className="mt-2">
+                <textarea
+                  rows={30}
+                  name="body"
+                  id="body"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  placeholder="Add your comment..."
+                  value={state?.body}
+                  onChange={(e) =>
+                    state && setState({ ...state, body: e.target.value })
+                  }
+                />
+              </div>
             </div>
           </Tab.Panel>
           <Tab.Panel className="-m-0.5 rounded-lg p-0.5">
