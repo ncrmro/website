@@ -122,7 +122,7 @@ export default function Post(props: {
   return (
     <>
       <PostHeader viewer={props.viewer} post={props.post} />
-      <div id="post-body">
+      <div id="post-body" className="py-3">
         <MDXRemote
           {...props.source}
           components={{
@@ -144,6 +144,7 @@ export default function Post(props: {
                 {...p}
               />
             ),
+            p: (p: any) => <p className="py-1" {...p} />,
             Image: (p: any) => {
               if (!props.post.publish_date) throw new Error("");
               return (
