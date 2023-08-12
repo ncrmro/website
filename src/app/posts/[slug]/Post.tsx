@@ -38,7 +38,10 @@ export function PostHeader(props: { viewer: any; post: PostType }) {
             )}
             <Menu as="div" className="relative ml-3 inline-block text-left">
               <div>
-                <Menu.Button className="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <Menu.Button
+                  id="menu-actions-button"
+                  className="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
                   <span className="sr-only">Open options</span>
                   <EllipsisVerticalIcon
                     className="h-5 w-5"

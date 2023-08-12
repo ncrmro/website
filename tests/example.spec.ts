@@ -42,6 +42,7 @@ test("create posts", async ({ page }) => {
   await page.locator("button", { hasText: "Submit" }).click();
   await page.waitForURL(/\/posts\/hello-world-\d*/);
   // Edit the post
+  await page.locator("#menu-actions-button").click();
   await page.locator("a", { hasText: "Edit" }).click();
   await page.waitForURL(/\/posts\/hello-world-\d*\/edit/);
   await page.getByLabel("Body").fill("Hello World Edit");
