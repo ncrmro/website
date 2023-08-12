@@ -33,7 +33,8 @@ export default function PostForm(props: {
     useState<MDXRemoteSerializeResult>();
 
   return (
-    <form className="w-full">
+    // @ts-ignore
+    <form className="w-full" action={props.action}>
       <Tab.Group
         onChange={async (index) => {
           if (index === 1 && state) {
@@ -90,14 +91,29 @@ export default function PostForm(props: {
                 />
               </div>
             </div>
-            <label htmlFor="comment" className="sr-only">
-              Comment
-            </label>
+            <div className="col-span-full">
+              <label htmlFor="description" className="sr-only">
+                Description
+              </label>
+              <input
+                type="text"
+                name="description"
+                id="description"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                value={state?.description}
+                onChange={(e) =>
+                  state && setState({ ...state, description: e.target.value })
+                }
+              />
+            </div>
             <div>
+              <label htmlFor="body" className="sr-only">
+                Body
+              </label>
               <textarea
-                rows={5}
-                name="comment"
-                id="comment"
+                rows={30}
+                name="body"
+                id="body"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="Add your comment..."
                 value={state?.body}
@@ -110,9 +126,8 @@ export default function PostForm(props: {
           <Tab.Panel className="-m-0.5 rounded-lg p-0.5">
             <div className="border-b">
               <div className="mx-px mt-px px-3 pb-12 pt-2 text-sm leading-5 text-gray-800">
-                <PostHeader viewer={null} post={state} />
                 {state && serializedBody && (
-                  <Post post={state} source={serializedBody} />
+                  <Post viewer={null} post={state} source={serializedBody} />
                 )}
               </div>
             </div>
@@ -126,78 +141,6 @@ export default function PostForm(props: {
         >
           Post
         </button>
-      </div>
-    </form>
-  );
-
-  return (
-    // @ts-ignore
-    <form action={props.action} className="flex-col w-full">
-      <div className="space-y-12">
-        <div className="col-span-full">
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Title
-          </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="title"
-              id="title"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              value={state?.title}
-              onChange={(e) =>
-                state && setState({ ...state, title: e.target.value })
-              }
-            />
-          </div>
-        </div>
-        <div className="col-span-full">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Description
-          </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="description"
-              id="description"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              value={state?.description}
-              onChange={(e) =>
-                state && setState({ ...state, description: e.target.value })
-              }
-            />
-          </div>
-        </div>
-        <div className="col-span-full">
-          <label
-            htmlFor="body"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Body
-          </label>
-          <div className="mt-2">
-            <textarea
-              id="body"
-              name="body"
-              rows={25}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              value={state?.body}
-              onChange={(e) =>
-                state && setState({ ...state, body: e.target.value })
-              }
-            />
-          </div>
-        </div>
-
-        <div className="float-right">
-          <button type="submit">Submit</button>
-        </div>
       </div>
     </form>
   );

@@ -28,9 +28,8 @@ export default async function PostPage({
   const mdxSource = await serializePost(post);
 
   return (
-    <div className="w-full">
-      <PostHeader viewer={viewer} post={post} />
-      <Post post={post} source={mdxSource} />
+    <div className="w-full md:max-w-4xl">
+      <Post viewer={viewer} post={post} source={mdxSource} />
     </div>
   );
 }

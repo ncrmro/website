@@ -114,34 +114,57 @@ export function PostHeader(props: { viewer: any; post: PostType }) {
   );
 }
 
-export default function Post(props: { source: any; post: PostType }) {
+export default function Post(props: {
+  viewer: any;
+  source: any;
+  post: PostType;
+}) {
   return (
-    <div id="post-body">
-      <MDXRemote
-        {...props.source}
-        components={{
-          code: (p: any) => (
-            <Highlight className={p.className}>{p.children}</Highlight>
-          ),
-          Image: (p: any) => {
-            if (!props.post.publish_date) throw new Error("");
-            return (
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                {/*// @ts-ignore/*/}
-                <NextImage
-                  {...props}
-                  width={500}
-                  height={500}
-                  src={`/posts/${props.post.publish_date.replaceAll(
-                    "-",
-                    "_"
-                  )}_${props.post.slug}/media/${p.src}`}
+    <>
+      <PostHeader viewer={props.viewer} post={props.post} />
+      <div id="post-body">
+        <MDXRemote
+          {...props.source}
+          components={{
+            ul: (p: any) => <ul className="list-disc px-4 py-2" {...p} />,
+            code: (p: any) => (
+              <Highlight className={p.className}>{p.children}</Highlight>
+            ),
+            h2: (p: any) => (
+              <div className="border-b border-gray-200 py-3">
+                <h2
+                  className="text-base font-semibold leading-6 text-gray-900"
+                  {...p}
                 />
               </div>
-            );
-          },
-        }}
-      />
-    </div>
+            ),
+            h3: (p: any) => (
+              <h3
+                className="text-base font-semibold leading-6 text-gray-900 py-2"
+                {...p}
+              />
+            ),
+            Image: (p: any) => {
+              if (!props.post.publish_date) throw new Error("");
+              return (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  {/*// @ts-ignore/*/}
+                  <NextImage
+                    {...props}
+                    width={500}
+                    height={500}
+                    src={`/posts/${props.post.publish_date.replaceAll(
+                      "-",
+                      "_"
+                    )}_${props.post.slug}/media/${p.src}`}
+                  />
+                </div>
+              );
+            },
+            a: (p: any) => <a className="text-blue-700" {...p} />,
+          }}
+        />
+      </div>
+    </>
   );
 }
