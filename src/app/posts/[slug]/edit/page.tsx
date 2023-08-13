@@ -41,6 +41,7 @@ export default async function EditPostPage({
         description: data.get("description") as string,
         body: data.get("body") as string,
         published: data.get("published") ? 1 : 0,
+        slug: data.get("slug") as string,
         user_id: viewer.id,
       })
       .where("slug", "=", params.slug)

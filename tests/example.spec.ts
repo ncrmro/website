@@ -46,9 +46,17 @@ test("create posts", async ({ page }) => {
   await page.locator("a", { hasText: "Edit" }).click();
   await page.waitForURL(/\/posts\/hello-world-\d*\/edit/);
   await page.getByLabel("Body").fill("Hello World Edit");
+  const slug = await page.locator("#slug").inputValue();
   await page.locator("button", { hasText: "Submit" }).click();
   await page.waitForURL(/\/posts\/hello-world-\d*/);
   await page.locator("#post-body", { hasText: "Hello World Edit" }).waitFor();
+
+  console.log(slug);
+  // Edit the post slug
+  await page.goto(`/posts/${slug}/edit`);
+  await page.locator("#slug").fill(`${slug}-edit`);
+  await page.locator("button", { hasText: "Submit" }).click();
+  await page.waitForURL(`/posts/${slug}-edit`);
 });
 
 test("draft posts are not viewable by anonymous users", async ({ page }) => {
