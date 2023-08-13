@@ -2,6 +2,12 @@
 import Post, { PostHeader } from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
 // import {
@@ -19,6 +25,10 @@ export default function PostForm(props: {
   action: (data: FormData) => Promise<void>;
   post?: PostType;
 }) {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const preview = searchParams.get("preview") === "1";
+  const router = useRouter();
   const [state, setState] = useState(
     props.post || {
       title: "",
@@ -32,15 +42,39 @@ export default function PostForm(props: {
   const [serializedBody, setSerializedBody] =
     useState<MDXRemoteSerializeResult>();
 
+  // Keyboard listener
+  React.useEffect(() => {
+    serializePost(state).then((serializedBody) =>
+      setSerializedBody(serializedBody)
+    );
+  }, []);
+
+  // Navigate to preview if viewer presses command + e
+  React.useEffect(() => {
+    const handleUserKeyPress = (e: KeyboardEvent) => {
+      if (e.metaKey && e.key === "e") {
+        if (preview) {
+          router.push(`/posts/${params.slug}/edit`);
+        } else {
+          router.push(`/posts/${params.slug}/edit?preview=1`);
+        }
+      }
+    };
+    document.addEventListener("keydown", handleUserKeyPress);
+    return () => document.removeEventListener("keydown", handleUserKeyPress);
+  }, [preview]);
+
   return (
     // @ts-ignore
     <form className="w-full md:max-w-4xl" action={props.action}>
       <Tab.Group
+        selectedIndex={preview ? 1 : 0}
         onChange={async (index) => {
           if (index === 1 && state) {
             const serializedBody = await serializePost(state);
             setSerializedBody(serializedBody);
-          }
+            router.push(`/posts/${params.slug}/edit?preview=1`);
+          } else router.push(`/posts/${params.slug}/edit`);
         }}
       >
         <Tab.List className="flex items-center">
@@ -68,6 +102,38 @@ export default function PostForm(props: {
           >
             Preview
           </Tab>
+          {/* These buttons are here simply as examples and don't actually do anything. */}
+          {/*{selectedIndex === 0 ? (*/}
+          {/*  <div className="ml-auto flex items-center space-x-5">*/}
+          {/*    <div className="flex items-center">*/}
+          {/*      <button*/}
+          {/*        type="button"*/}
+          {/*        className="-m-2.5 inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500"*/}
+          {/*      >*/}
+          {/*        <span className="sr-only">Insert link</span>*/}
+          {/*        <LinkIcon className="h-5 w-5" aria-hidden="true" />*/}
+          {/*      </button>*/}
+          {/*    </div>*/}
+          {/*    <div className="flex items-center">*/}
+          {/*      <button*/}
+          {/*        type="button"*/}
+          {/*        className="-m-2.5 inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500"*/}
+          {/*      >*/}
+          {/*        <span className="sr-only">Insert code</span>*/}
+          {/*        <CodeBracketIcon className="h-5 w-5" aria-hidden="true" />*/}
+          {/*      </button>*/}
+          {/*    </div>*/}
+          {/*    <div className="flex items-center">*/}
+          {/*      <button*/}
+          {/*        type="button"*/}
+          {/*        className="-m-2.5 inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500"*/}
+          {/*      >*/}
+          {/*        <span className="sr-only">Mention someone</span>*/}
+          {/*        <AtSymbolIcon className="h-5 w-5" aria-hidden="true" />*/}
+          {/*      </button>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*) : null}*/}
         </Tab.List>
         <Tab.Panels className="mt-2">
           <Tab.Panel className="flex flex-col w-full gap-4">

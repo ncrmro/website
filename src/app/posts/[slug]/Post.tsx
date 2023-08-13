@@ -3,6 +3,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { default as NextImage } from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { Fragment } from "react";
 import { MDXRemote } from "next-mdx-remote";
 import Highlight from "react-highlight";
@@ -14,6 +15,16 @@ function classNames(...classes: string[]) {
 }
 
 export function PostHeader(props: { viewer: any; post: PostType }) {
+  // If viewer is logged in and press command + e direct to edit page
+  const router = useRouter();
+  React.useEffect(() => {
+    const handleUserKeyPress = (e: KeyboardEvent) => {
+      if (e.metaKey && e.key === "e")
+        router.push(`/posts/${props.post.slug}/edit`);
+    };
+    document.addEventListener("keydown", handleUserKeyPress);
+    return () => document.removeEventListener("keydown", handleUserKeyPress);
+  }, []);
   return (
     <div className="border-b border-gray-200 pb-5">
       <div className="sm:flex sm:items-baseline sm:justify-between">

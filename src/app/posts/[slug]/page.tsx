@@ -1,4 +1,4 @@
-import Post, { PostHeader } from "@/app/posts/[slug]/Post";
+import Post from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
 import { useViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
