@@ -1,3 +1,7 @@
+// @ts-check
+/**
+ * @type {import("next").NextConfig}
+ **/
 module.exports = {
   experimental: {
     serverActions: true,
@@ -18,6 +22,8 @@ module.exports = {
     // RELEASE: process.env.RELEASE,
     GOOGLE_ANALYTICS_CODE: "UA-79226152-1",
     GOOGLE_ANALYTICS_ENABLED: process.env.GOOGLE_ANALYTICS_ENABLED,
+    DATABASE_PATH: process.env.DATABASE_PATH,
+    PWD: process.env.PWD,
     // SENTRY_ENABLED: process.env.SENTRY_ENABLED,
   },
   i18n: {

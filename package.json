@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@8.6.3",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "dev": "pnpm build-migrations && pnpm migrations && next dev",
