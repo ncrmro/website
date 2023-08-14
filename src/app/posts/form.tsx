@@ -21,6 +21,22 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+function PostMedia(props: { post: PostType }) {
+  const [files, setFiles] = useState([]);
+  fetch(`/api/posts/uploads?postId=${props.post.id}`).then(async (res) => {
+    const data = await res.json();
+    setFiles(data.files as []);
+  });
+  return (
+    <div>
+      {files.map((file) => (
+        <div key={file}>{file}</div>
+      ))}
+    </div>
+  );
+}
+
+const index = { write: 0, preview: 1, media: 2 };
 export default function PostForm(props: {
   action: (data: FormData) => Promise<void>;
   post?: PostType;
@@ -28,6 +44,7 @@ export default function PostForm(props: {
   const params = useParams();
   const searchParams = useSearchParams();
   const preview = searchParams.get("preview") === "1";
+  const media = searchParams.get("media") === "1";
   const router = useRouter();
   const [state, setState] = useState(
     props.post || {
@@ -69,9 +86,12 @@ export default function PostForm(props: {
     // @ts-ignore
     <form className="w-full md:max-w-4xl" action={props.action}>
       <Tab.Group
-        selectedIndex={preview ? 1 : 0}
+        selectedIndex={media ? 2 : preview ? 1 : 0}
         onChange={async (index) => {
-          if (index === 1 && state) {
+          if (index === 2) {
+            console.log("MEDIA");
+            router.push(`/posts/${params.slug}/edit?media=1`);
+          } else if (index === 1 && state) {
             const serializedBody = await serializePost(state);
             setSerializedBody(serializedBody);
             router.push(`/posts/${params.slug}/edit?preview=1`);
@@ -102,6 +122,18 @@ export default function PostForm(props: {
             }
           >
             Preview
+          </Tab>
+          <Tab
+            className={({ selected }) =>
+              classNames(
+                selected
+                  ? "bg-gray-100 text-gray-900 hover:bg-gray-200"
+                  : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-900",
+                "ml-2 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium"
+              )
+            }
+          >
+            Media
           </Tab>
           {/* These buttons are here simply as examples and don't actually do anything. */}
           {/*{selectedIndex === 0 ? (*/}
@@ -248,6 +280,9 @@ export default function PostForm(props: {
                 )}
               </div>
             </div>
+          </Tab.Panel>
+          <Tab.Panel>
+            <PostMedia post={props.post!} />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
