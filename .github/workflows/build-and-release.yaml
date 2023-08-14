@@ -1,8 +1,8 @@
 name: Build Container Image and Release
 
 on:
-  push:
-    branches: [ main, refactor-nextjs-sqlite ]
+#   push:
+#     branches: [ main, refactor-nextjs-sqlite ]
   workflow_run:
     workflows: ["Playwright Tests"]
     branches: [main, refactor-nextjs-sqlite]
@@ -15,7 +15,7 @@ env:
 jobs:
   build-and-push-container-image:
     runs-on: ubuntu-latest
-#    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+   if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     permissions:
       packages: write
