@@ -31,6 +31,7 @@ export default function PostForm(props: {
   const router = useRouter();
   const [state, setState] = useState(
     props.post || {
+      id: "",
       title: "",
       description: "",
       body: "",
@@ -137,6 +138,34 @@ export default function PostForm(props: {
         </Tab.List>
         <Tab.Panels className="mt-2">
           <Tab.Panel className="flex flex-col w-full gap-4">
+            <input
+              type="file"
+              id="myFile"
+              name="filename"
+              accept="image/*"
+              multiple
+              onChange={async (e) => {
+                if (!props.post?.id)
+                  throw new Error(
+                    "Post media uploads only work on existing post edits"
+                  );
+                if (!e.target.files) throw new Error("No files");
+
+                const body = new FormData();
+                body.set("postId", props.post.id);
+                for (let x = 0; x < e.target.files.length; x++) {
+                  const file = e.target.files[x];
+                  body.append("files", file);
+                }
+
+                await fetch("/api/posts/uploads", {
+                  method: "POST",
+                  body,
+                  credentials: "include",
+                });
+              }}
+            />
+
             <div className="col-span-full">
               <label
                 htmlFor="title"

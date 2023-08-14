@@ -19,6 +19,7 @@ export default async function EditPostPage({
   const post = await db
     .selectFrom("posts")
     .select([
+      "id",
       "title",
       "description",
       "body",
@@ -42,7 +43,7 @@ export default async function EditPostPage({
         body: data.get("body") as string,
         published: data.get("published") ? 1 : 0,
         slug: data.get("slug") as string,
-        user_id: viewer.id,
+        // user_id: viewer.id,
       })
       .where("slug", "=", params.slug)
       .returning(["title", "description", "slug", "published", "publish_date"])

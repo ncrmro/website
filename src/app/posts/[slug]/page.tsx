@@ -14,6 +14,7 @@ export default async function PostPage({
   const post = await db
     .selectFrom("posts")
     .select([
+      "id",
       "title",
       "description",
       "body",
