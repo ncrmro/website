@@ -46,7 +46,12 @@ spec:
           volumeMounts:
           - mountPath: /database
             name: sqlite-database
+          - mountPath: /public/uploads
+            name: public-uploads
       volumes:
       - name: sqlite-database
         persistentVolumeClaim:
           claimName: {{.Release.Name }}-sqlite-database
+      - name: public-uploads
+        persistentVolumeClaim:
+          claimName: {{.Release.Name }}-public-uploads
