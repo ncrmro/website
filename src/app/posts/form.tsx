@@ -282,9 +282,7 @@ export default function PostForm(props: {
               </div>
             </div>
           </Tab.Panel>
-          <Tab.Panel>
-            <PostMedia post={props.post!} />
-          </Tab.Panel>
+          <Tab.Panel>{/*<PostMedia post={props.post!} />*/}</Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
       <div className="mt-2 flex justify-end">
