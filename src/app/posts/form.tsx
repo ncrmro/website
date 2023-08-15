@@ -23,10 +23,12 @@ function classNames(...classes: string[]) {
 
 function PostMedia(props: { post: PostType }) {
   const [files, setFiles] = useState([]);
-  fetch(`/api/posts/uploads?postId=${props.post.id}`).then(async (res) => {
-    const data = await res.json();
-    setFiles(data.files as []);
-  });
+  React.useEffect(() => {
+    fetch(`/api/posts/uploads?postId=${props.post.id}`).then(async (res) => {
+      const data = await res.json();
+      setFiles(data.files as []);
+    });
+  }, []);
   return (
     <div>
       {files.map((file) => (
@@ -36,7 +38,6 @@ function PostMedia(props: { post: PostType }) {
   );
 }
 
-const index = { write: 0, preview: 1, media: 2 };
 export default function PostForm(props: {
   action: (data: FormData) => Promise<void>;
   post?: PostType;
