@@ -11,7 +11,7 @@ WORKDIR /app
 COPY --link package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 # We are stuck on node 19 as nextjs doesn't work well on 20 yet,
 # better-sqlite3 doesn't have a prebuilt binary in node 19 and needs python
-RUN apk add --no-cache python3 && \
+RUN apk add --no-cache python3 build-base && \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
   elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
