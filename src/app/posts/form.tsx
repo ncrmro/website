@@ -36,6 +36,7 @@ function PostMedia(props: { post: PostType }) {
         <div key={file}>
           {file}
           <NextImage
+            alt=""
             width={500}
             height={500}
             src={`/uploads/posts/${props.post.id}/${file}`}

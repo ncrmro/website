@@ -10,8 +10,6 @@ import { slugify } from "./utils";
 const databasePath =
   process.env.DATABASE_PATH ?? `${process.env.PWD}/database/sqlite3.db`;
 
-console.log(process.env);
-console.log(process.env.DATABASE_PATH);
 export const sqlite = new SQLiteDatabase(databasePath);
 sqlite.pragma("journal_mode = WAL");
 sqlite.pragma("foreign_keys = ON;");
