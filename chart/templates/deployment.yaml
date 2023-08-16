@@ -46,7 +46,7 @@ spec:
           volumeMounts:
           - mountPath: /database
             name: sqlite-database
-          - mountPath: /public/uploads
+          - mountPath: /app/public/uploads
             name: public-uploads
       volumes:
       - name: sqlite-database
