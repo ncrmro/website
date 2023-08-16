@@ -16,6 +16,7 @@ import { Tab } from "@headlessui/react";
 //   LinkIcon,
 // } from "@heroicons/react/20/solid";
 import type { PostType } from "./types";
+import { default as NextImage } from "next/image";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -32,7 +33,14 @@ function PostMedia(props: { post: PostType }) {
   return (
     <div>
       {files.map((file) => (
-        <div key={file}>{file}</div>
+        <div key={file}>
+          {file}
+          <NextImage
+            width={500}
+            height={500}
+            src={`/uploads/posts/${props.post.id}/${file}`}
+          />
+        </div>
       ))}
     </div>
   );
@@ -90,7 +98,6 @@ export default function PostForm(props: {
         selectedIndex={media ? 2 : preview ? 1 : 0}
         onChange={async (index) => {
           if (index === 2) {
-            console.log("MEDIA");
             router.push(`/posts/${params.slug}/edit?media=1`);
           } else if (index === 1 && state) {
             const serializedBody = await serializePost(state);

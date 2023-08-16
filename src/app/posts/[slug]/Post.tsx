@@ -168,10 +168,7 @@ export default function Post(props: {
                     {...props}
                     width={500}
                     height={500}
-                    src={`/posts/${props.post.publish_date.replaceAll(
-                      "-",
-                      "_"
-                    )}_${props.post.slug}/media/${p.src}`}
+                    src={`/uploads/posts/${props.post.id}/${p.src}`}
                   />
                 </div>
               );
