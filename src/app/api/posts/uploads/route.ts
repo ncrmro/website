@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     await db
       .selectFrom("posts")
       .select("id")
-      .where("id", "=", postId)
+      .where("id", "=", postId as string)
       .where("user_id", "=", viewer.id)
       .executeTakeFirstOrThrow();
   } catch (e) {
