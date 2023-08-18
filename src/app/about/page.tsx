@@ -10,7 +10,7 @@ export default async function AboutPage(props: any) {
     <div className="flex flex-col md:flex-row md:max-w-4xl justify-center">
       <div className="">
         <Image
-          src="/images/avatar.jpg"
+          src="/uploads/about/avatar.jpg"
           alt="Picture of the author"
           width={288}
           height={288}

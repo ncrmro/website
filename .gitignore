@@ -43,4 +43,4 @@ sqlite3.db*
 /playwright-report/
 /playwright/.cache/
 dist
-public/uploads
+public/uploads/posts
