@@ -25,10 +25,10 @@ export default function Navbar() {
       {isHome && (
         <div className="flex justify-center gap-4 uppercase">
           <Link href="/posts/tech">Tech</Link>
-          <Link href="/uploads/about">About</Link>
+          <Link href="/about">About</Link>
           <Link href="/posts/travel">Travel</Link>
           <Link href="/posts/food">Food</Link>
-          <Link href="/uploads/resume">Resume</Link>
+          <Link href="/resume">Resume</Link>
         </div>
       )}
       {isHome && (
