@@ -36,12 +36,13 @@ export default async function EditPostPage({
       .selectFrom("tags")
       .select(["tags.id", "tags.value"])
       .innerJoin("posts_tags", "posts_tags.tag_id", "tags.id")
-      .innerJoin("posts", "post_id", "posts_tags.post_id")
+      .innerJoin("posts", "posts.id", "posts_tags.post_id")
       .where("posts.slug", "=", params.slug)
       .distinct()
       .execute(),
   ]);
 
+  console.log(tags);
   async function editPost(data: FormData) {
     "use server";
     if (!viewer)
