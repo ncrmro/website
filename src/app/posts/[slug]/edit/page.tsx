@@ -16,19 +16,31 @@ export default async function EditPostPage({
         redirect: `/posts/${params.slug}/edit`,
       }).toString()}`
     );
-  const post = await db
-    .selectFrom("posts")
-    .select([
-      "id",
-      "title",
-      "description",
-      "body",
-      "slug",
-      "published",
-      "publish_date",
-    ])
-    .where("slug", "=", params.slug)
-    .executeTakeFirstOrThrow();
+  // Kysely has a better function to aggregate sub query but sqlite version wasn't exported?
+  // https://github.com/kysely-org/kysely/issues/628
+  const [post, tags] = await Promise.all([
+    db
+      .selectFrom("posts")
+      .select([
+        "id",
+        "title",
+        "description",
+        "body",
+        "slug",
+        "published",
+        "publish_date",
+      ])
+      .where("slug", "=", params.slug)
+      .executeTakeFirstOrThrow(),
+    db
+      .selectFrom("tags")
+      .select(["tags.id", "tags.value"])
+      .innerJoin("posts_tags", "posts_tags.tag_id", "tags.id")
+      .innerJoin("posts", "post_id", "posts_tags.post_id")
+      .where("posts.slug", "=", params.slug)
+      .distinct()
+      .execute(),
+  ]);
 
   async function editPost(data: FormData) {
     "use server";
@@ -53,5 +65,5 @@ export default async function EditPostPage({
     redirect(`/posts/${post.slug}`);
   }
 
-  return <PostForm action={editPost} post={post} />;
+  return <PostForm action={editPost} post={{ ...post, tags }} />;
 }

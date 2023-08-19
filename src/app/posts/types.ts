@@ -6,4 +6,5 @@ export interface PostType {
   slug: string;
   published: number;
   publish_date: string | null;
+  tags: { id: string; value: string }[];
 }

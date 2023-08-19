@@ -4,7 +4,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { default as NextImage } from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { Fragment } from "react";
+import React from "react";
 import { MDXRemote } from "next-mdx-remote";
 import Highlight from "react-highlight";
 import "./code-block.css";
@@ -62,7 +62,6 @@ export function PostHeader(props: { viewer: any; post: PostType }) {
               </div>
 
               <Transition
-                as={Fragment}
                 enter="transition ease-out duration-100"
                 enterFrom="transform opacity-0 scale-95"
                 enterTo="transform opacity-100 scale-100"
@@ -159,20 +158,18 @@ export default function Post(props: {
               />
             ),
             p: (p: any) => <p className="py-1" {...p} />,
-            Image: (p: any) => {
-              if (!props.post.publish_date) throw new Error("");
-              return (
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  {/*// @ts-ignore/*/}
-                  <NextImage
-                    {...props}
-                    width={500}
-                    height={500}
-                    src={`/uploads/posts/${props.post.id}/${p.src}`}
-                  />
-                </div>
-              );
-            },
+            Image: (p: any) => (
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                {/*// @ts-ignore/*/}
+                <NextImage
+                  {...props}
+                  alt={p.alt}
+                  width={500}
+                  height={500}
+                  src={`/uploads/posts/${props.post.id}/${p.src}`}
+                />
+              </div>
+            ),
             a: (p: any) => <a className="text-blue-700" {...p} />,
           }}
         />

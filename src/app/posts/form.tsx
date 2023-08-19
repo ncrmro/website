@@ -1,13 +1,9 @@
 "use client";
 import Post, { PostHeader } from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
+import SmallBadge from "@/components/SmallBadge";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
 // import {
@@ -65,6 +61,7 @@ export default function PostForm(props: {
       slug: "",
       published: 0,
       publish_date: "",
+      tags: [],
     }
   );
   const [serializedBody, setSerializedBody] =
@@ -212,6 +209,12 @@ export default function PostForm(props: {
                 });
               }}
             />
+
+            <div>
+              {props.post?.tags.map((tag) => (
+                <SmallBadge key={tag.id}>{tag.value}</SmallBadge>
+              ))}
+            </div>
 
             <div className="col-span-full">
               <label
