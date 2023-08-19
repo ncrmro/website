@@ -109,6 +109,7 @@ export default function PostForm(props: {
       >
         <Tab.List className="flex items-center">
           <Tab
+            id="post-edit-tab-write"
             className={({ selected }) =>
               classNames(
                 selected
@@ -121,6 +122,7 @@ export default function PostForm(props: {
             Write
           </Tab>
           <Tab
+            id="post-edit-tab-preview"
             className={({ selected }) =>
               classNames(
                 selected
@@ -133,6 +135,7 @@ export default function PostForm(props: {
             Preview
           </Tab>
           <Tab
+            id="post-edit-tab-media"
             className={({ selected }) =>
               classNames(
                 selected
@@ -178,7 +181,10 @@ export default function PostForm(props: {
           {/*) : null}*/}
         </Tab.List>
         <Tab.Panels className="mt-2">
-          <Tab.Panel className="flex flex-col w-full gap-4">
+          <Tab.Panel
+            id="post-edit-panel-edit"
+            className="flex flex-col w-full gap-4"
+          >
             <input
               type="file"
               id="myFile"
@@ -281,7 +287,10 @@ export default function PostForm(props: {
               </div>
             </div>
           </Tab.Panel>
-          <Tab.Panel className="-m-0.5 rounded-lg p-0.5">
+          <Tab.Panel
+            id="post-edit-panel-preview"
+            className="-m-0.5 rounded-lg p-0.5"
+          >
             <div className="border-b">
               <div className="mx-px mt-px px-3 pb-12 pt-2 text-sm leading-5 text-gray-800">
                 {state && serializedBody && (
@@ -290,7 +299,7 @@ export default function PostForm(props: {
               </div>
             </div>
           </Tab.Panel>
-          <Tab.Panel>
+          <Tab.Panel id="post-edit-panel-media">
             <PostMedia post={props.post!} />
           </Tab.Panel>
         </Tab.Panels>
