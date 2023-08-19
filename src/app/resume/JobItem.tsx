@@ -4,7 +4,7 @@ import { MDXRemote } from "next-mdx-remote";
 import Image from "next/image";
 import React from "react";
 
-export const TechUrls = {
+export const TechUrls: Record<string, string> = {
   React: "https://reactjs.org",
   "React Native": "https://reactnative.dev",
   "Next.JS": "https://nextjs.org",
@@ -72,9 +72,8 @@ export default function JobDocument({ job }: { job: any }) {
       </div>
       <div className="flex flex-wrap gap-2">
         {job.tech?.split(",").map((tech: string) => (
-          // @ts-ignore
-          <SmallBadge key={tech} link={TechUrls[tech]}>
-            {tech}
+          <SmallBadge key={tech}>
+            <a href={TechUrls[tech]}>{tech}</a>
           </SmallBadge>
         ))}
       </div>
