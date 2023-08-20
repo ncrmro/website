@@ -216,6 +216,23 @@ export default function PostForm(props: {
               ))}
             </div>
 
+            <label
+              htmlFor="published"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Published
+            </label>
+            <input
+              type="checkbox"
+              value={state.published}
+              onChange={(e) => {
+                setState({
+                  ...state,
+                  published: Number(e.target.value) === 1 ? 0 : 1,
+                });
+              }}
+            />
+
             <div className="col-span-full">
               <label
                 htmlFor="title"
