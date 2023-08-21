@@ -20,7 +20,6 @@ export const test = base.extend<{ post: { slug: string } }>({
   },
 });
 test("login page", async ({ page }) => {
-  page.on("console", console.log);
   const email = `jdoe@example.com`;
   await page.goto("/login");
   await page.getByPlaceholder("email").fill(email);
@@ -30,7 +29,6 @@ test("login page", async ({ page }) => {
 });
 
 test("sign up page", async ({ page }) => {
-  page.on("console", console.log);
   const time = Date.now();
   const username = `user${time}`;
   const email = `${username}@test.com`;
@@ -42,7 +40,6 @@ test("sign up page", async ({ page }) => {
 });
 
 test("create posts", async ({ page }) => {
-  page.on("console", console.log);
   await page.goto("/posts/new");
   await page.waitForURL((url) =>
     url.toString().includes("/login?redirect=%2Fposts%2Fnew")
@@ -61,11 +58,7 @@ test("create posts", async ({ page }) => {
   await page.locator("span", { hasText: "Draft" });
 });
 
-test("edit post body from post page", async ({ db, page, post, context }, {
-  workerIndex,
-}) => {
-  page.on("console", console.log);
-
+test("edit post body from post page", async ({ page, post }) => {
   await page.goto(`/posts/${post.slug}`);
   await page.locator("#menu-actions-button").click();
   await page.locator("a", { hasText: "Edit" }).click();
@@ -73,10 +66,13 @@ test("edit post body from post page", async ({ db, page, post, context }, {
   await page.getByLabel("Body").fill("Hello World Edit");
   await page.locator("button", { hasText: "Submit" }).click();
   await page.waitForURL(`/posts/${post.slug}`);
+  // TODO reload is only needed here because nextjs cache invalidation doesn't work right now
+  // https://github.com/vercel/next.js/issues/49387
+  await page.reload();
   await page.locator("#post-body", { hasText: "Hello World Edit" }).waitFor();
 });
 
-test("edit post slug", async ({ page, post }, { workerIndex }) => {
+test("edit post slug", async ({ page, post }) => {
   await page.goto(`/posts/${post.slug}/edit`);
   await page.locator("#slug").fill(`${post.slug}-edit`);
   await page.locator("button", { hasText: "Submit" }).click();
