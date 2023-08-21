@@ -42,13 +42,12 @@ export default async function EditPostPage({
       .execute(),
   ]);
 
-  console.log(tags);
   async function editPost(data: FormData) {
     "use server";
     if (!viewer)
       throw new Error("Viewer must not be null when creating a post");
 
-    const post = await db
+    const updatedPost = await db
       .updateTable("posts")
       .set({
         title: data.get("title") as string,
@@ -59,11 +58,12 @@ export default async function EditPostPage({
         // user_id: viewer.id,
       })
       .where("slug", "=", params.slug)
-      .returning(["title", "description", "slug", "published", "publish_date"])
+      .returning(["slug"])
       .executeTakeFirstOrThrow();
-
-    revalidatePath(`/posts/${post.slug}`);
-    redirect(`/posts/${post.slug}`);
+    // TODO this revalidate is not working
+    // https://github.com/vercel/next.js/issues/49387
+    revalidatePath(`/posts/[slug]`);
+    redirect(`/posts/${updatedPost.slug}`);
   }
 
   return <PostForm action={editPost} post={{ ...post, tags }} />;

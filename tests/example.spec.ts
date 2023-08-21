@@ -1,7 +1,24 @@
-import { db } from "../src/lib/database";
 import { slugify } from "../src/lib/utils";
-import { test } from "@playwright/test";
+import { test as base } from "../playwright.fixtures";
 
+export const test = base.extend<{ post: { slug: string } }>({
+  async post({ db, viewer }, use, { workerIndex }) {
+    const title = `Hello World Draft ${workerIndex} ${Date.now()}`;
+    const post = await db
+      .insertInto("posts")
+      .values({
+        title,
+        user_id: viewer.id,
+        slug: slugify(title),
+        body: "test",
+        description: "",
+      })
+      .returning(["id", "slug"])
+      .executeTakeFirstOrThrow();
+    await use(post);
+    await db.deleteFrom("posts").where("id", "=", post.id).execute();
+  },
+});
 test("login page", async ({ page }) => {
   page.on("console", console.log);
   const email = `jdoe@example.com`;
@@ -41,42 +58,38 @@ test("create posts", async ({ page }) => {
   await page.getByLabel("Body").fill("Hello World");
   await page.locator("button", { hasText: "Submit" }).click();
   await page.waitForURL(/\/posts\/hello-world-\d*/);
-  // Edit the post
-  await page.locator("#menu-actions-button").click();
-  await page.locator("a", { hasText: "Edit" }).click();
-  await page.waitForURL(/\/posts\/hello-world-\d*\/edit/);
-  await page.getByLabel("Body").fill("Hello World Edit");
-  const slug = await page.locator("#slug").inputValue();
-  await page.locator("button", { hasText: "Submit" }).click();
-  await page.waitForURL(/\/posts\/hello-world-\d*/);
-  await page.locator("#post-body", { hasText: "Hello World Edit" }).waitFor();
-
-  console.log(slug);
-  // Edit the post slug
-  await page.goto(`/posts/${slug}/edit`);
-  await page.locator("#slug").fill(`${slug}-edit`);
-  await page.locator("button", { hasText: "Submit" }).click();
-  await page.waitForURL(`/posts/${slug}-edit`);
+  await page.locator("span", { hasText: "Draft" });
 });
 
-test("draft posts are not viewable by anonymous users", async ({ page }) => {
-  const title = `Hello World Draft ${Date.now()}`;
-  const user = await db
-    .selectFrom("users")
-    .where("email", "=", "jdoe@example.com")
-    .select(["id"])
-    .executeTakeFirstOrThrow();
-  const post = await db
-    .insertInto("posts")
-    .values({
-      title,
-      user_id: user.id,
-      slug: slugify(title),
-      body: "test",
-      description: "",
-    })
-    .returning("slug")
-    .executeTakeFirstOrThrow();
+test("edit post body from post page", async ({ db, page, post, context }, {
+  workerIndex,
+}) => {
+  page.on("console", console.log);
+
+  await page.goto(`/posts/${post.slug}`);
+  await page.locator("#menu-actions-button").click();
+  await page.locator("a", { hasText: "Edit" }).click();
+  await page.waitForURL(`/posts/${post.slug}/edit`);
+  await page.getByLabel("Body").fill("Hello World Edit");
+  await page.locator("button", { hasText: "Submit" }).click();
+  await page.waitForURL(`/posts/${post.slug}`);
+  await page.locator("#post-body", { hasText: "Hello World Edit" }).waitFor();
+});
+
+test("edit post slug", async ({ page, post }, { workerIndex }) => {
+  await page.goto(`/posts/${post.slug}/edit`);
+  await page.locator("#slug").fill(`${post.slug}-edit`);
+  await page.locator("button", { hasText: "Submit" }).click();
+  await page.waitForURL(`/posts/${post.slug}-edit`);
+});
+
+test("draft posts are not viewable by anonymous users", async ({
+  page,
+  post,
+  context,
+}) => {
+  // Log user out
+  await context.clearCookies();
   await page.goto(`/posts/${post.slug}`);
   await page.locator("h1", { hasText: "404" }).waitFor();
 });

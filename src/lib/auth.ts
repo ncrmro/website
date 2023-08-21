@@ -1,6 +1,7 @@
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { db } from "@/lib/database";
+// Keep this as local import rather than alias as playwirght doesn't know about aliases
+import { db } from "./database";
 import { cookies } from "next/headers";
 
 export namespace Passwords {
