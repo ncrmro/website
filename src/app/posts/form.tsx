@@ -223,12 +223,30 @@ export default function PostForm(props: {
               Published
             </label>
             <input
+              id="published"
               type="checkbox"
               value={state.published}
               onChange={(e) => {
                 setState({
                   ...state,
                   published: Number(e.target.value) === 1 ? 0 : 1,
+                });
+              }}
+            />
+            <label
+              htmlFor="published-date"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Published
+            </label>
+            <input
+              id="published-date"
+              type="date"
+              value={state.publish_date || ""}
+              onChange={(e) => {
+                setState({
+                  ...state,
+                  publish_date: e.target.value,
                 });
               }}
             />
