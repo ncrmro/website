@@ -13,4 +13,3 @@ ingress:
   tls:
   - hosts:
       - sqlite.ncrmro.com
-    secretName: sqlite-tls
