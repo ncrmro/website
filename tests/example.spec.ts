@@ -78,3 +78,11 @@ test("draft posts are not viewable by anonymous users", async ({
   await page.goto(`/posts/${post.slug}`);
   await page.locator("h1", { hasText: "404" }).waitFor();
 });
+
+test("publish posts", async ({ page, post, context }) => {
+  await page.goto(`/posts/${post.slug}/edit`);
+  await page.getByLabel("Published", { exact: true }).click();
+  await page.locator("button", { hasText: "Submit" }).click();
+  await page.waitForURL(`/posts/${post.slug}`);
+  await page.locator("span", { hasText: "Published" }).waitFor();
+});

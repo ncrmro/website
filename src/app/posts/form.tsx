@@ -224,6 +224,7 @@ export default function PostForm(props: {
             </label>
             <input
               id="published"
+              name="published"
               type="checkbox"
               value={state.published}
               onChange={(e) => {
@@ -237,7 +238,7 @@ export default function PostForm(props: {
               htmlFor="published-date"
               className="block text-sm font-medium leading-6 text-gray-900"
             >
-              Published
+              Published Date
             </label>
             <input
               id="published-date"
