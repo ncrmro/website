@@ -1,4 +1,5 @@
 "use client";
+import formatDate from "@/app/posts/formatDate";
 import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { default as NextImage } from "next/image";
@@ -35,6 +36,9 @@ export function PostHeader(props: { viewer: any; post: PostType }) {
           >
             {props.post.title}
           </h1>
+          <div>
+            {props.post.publish_date && formatDate(props.post.publish_date)}
+          </div>
           <p className="mt-1 truncate text-sm text-gray-500">
             {props.post.description}
           </p>

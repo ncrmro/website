@@ -89,6 +89,7 @@ export default function PostForm(props: {
     return () => document.removeEventListener("keydown", handleUserKeyPress);
   }, [preview]);
 
+  console.log(String(state.published));
   return (
     // @ts-ignore
     <form className="w-full md:max-w-4xl" action={props.action}>
@@ -226,7 +227,7 @@ export default function PostForm(props: {
               id="published"
               name="published"
               type="checkbox"
-              value={state.published}
+              checked={state.published === 1}
               onChange={(e) => {
                 setState({
                   ...state,
@@ -242,6 +243,7 @@ export default function PostForm(props: {
             </label>
             <input
               id="published-date"
+              name="published_date"
               type="date"
               value={state.publish_date || ""}
               onChange={(e) => {
