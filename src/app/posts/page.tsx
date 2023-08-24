@@ -1,3 +1,4 @@
+import formatDate from "@/app/posts/formatDate";
 import { useViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import React from "react";
@@ -23,7 +24,7 @@ export function PostItem(props: {
           {props.post.title}
         </a>
         <p className="mt-0.5 text-sm text-gray-500">
-          {props.post.publish_date}
+          {props.post.publish_date && formatDate(props.post.publish_date)}
         </p>
       </div>
       <div className="mt-2 text-sm text-gray-700">
