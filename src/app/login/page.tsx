@@ -64,8 +64,6 @@ export default async function LoginPage() {
         <button type="submit" style={{ float: "right" }}>
           Login
         </button>
-        {/*<Link href="/reset-password">Reset Password</Link>*/}
-        <Link href="/signup">Create an account</Link>
       </div>
     </form>
   );
