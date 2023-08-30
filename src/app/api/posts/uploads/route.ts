@@ -34,7 +34,12 @@ export async function POST(req: NextRequest) {
   const postUploadsDirectory = `${uploadDirectory}/${postId}`;
   try {
     await fs.mkdir(postUploadsDirectory, { recursive: true });
-  } catch (e) {}
+  } catch (e) {
+    console.log(
+      `Error making post upload directory ${postUploadsDirectory}`,
+      e
+    );
+  }
 
   async function writeFile(value: FormDataEntryValue) {
     const isFile = typeof value == "object";
