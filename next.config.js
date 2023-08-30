@@ -15,16 +15,7 @@ module.exports = {
       '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
   },
   env: {
-    POSTS_DIR: `${__dirname}/posts`,
-    DOCUMENTS_DIR: `${__dirname}/documents`,
-    WEB_DEBUG: process.env.WEB_DEBUG,
-    ENVIRONMENT: process.env.ENVIRONMENT,
-    // RELEASE: process.env.RELEASE,
-    GOOGLE_ANALYTICS_CODE: "UA-79226152-1",
-    GOOGLE_ANALYTICS_ENABLED: process.env.GOOGLE_ANALYTICS_ENABLED,
-    DATABASE_PATH: process.env.DATABASE_PATH,
-    PWD: process.env.PWD,
-    // SENTRY_ENABLED: process.env.SENTRY_ENABLED,
+    GOOGLE_ANALYTICS_TRACKING_ID: "UA-79226152-1",
   },
   i18n: {
     locales: ["en"],

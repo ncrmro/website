@@ -43,8 +43,6 @@ spec:
           env:
             - name: DATABASE_PATH
               value: /database/sqlite3.db
-            - name: NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID
-              value: {{ .Values.GOOGLE_ANALYTICS_TRACKING_ID }}
           volumeMounts:
           - mountPath: /database
             name: sqlite-database

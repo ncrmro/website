@@ -5,12 +5,11 @@ import { useEffect } from "react";
 import * as gtag from "./GoogleAnalytics.gtag";
 
 export default function GoogleAnalytics() {
-  //You can show in the console the GA_TRACKING_ID to confirm
-  console.log("GA", gtag.GA_TRACKING_ID);
+  if (typeof gtag.GA_TRACKING_ID === "undefined")
+    throw new Error("Google analytics tracking ID is undefined");
   const pathname = usePathname();
-
   useEffect(() => {
-    console.log(pathname);
+    gtag.pageview(pathname);
   }, [pathname]);
 
   return (

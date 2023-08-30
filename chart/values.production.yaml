@@ -13,5 +13,3 @@ ingress:
   tls:
   - hosts:
       - sqlite.ncrmro.com
-
-GOOGLE_ANALYTICS_TRACKING_ID: UA-79226152-1
