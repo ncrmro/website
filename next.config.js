@@ -15,7 +15,7 @@ module.exports = {
       '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
   },
   env: {
-    GOOGLE_ANALYTICS_TRACKING_ID: "UA-79226152-1",
+    GOOGLE_ANALYTICS_TRACKING_ID: "G-6MYGCJZSVN",
   },
   i18n: {
     locales: ["en"],
