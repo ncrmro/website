@@ -39,7 +39,7 @@ export default function Navbar() {
           >
             <LinkedinIcon className="fill-current text-gray-300" />
           </a>
-          <a href="https://github.com/ncrmro" aria-label="Github profile">
+          <a href="https://github.com/ncrmro" aria-label="Github profile" rel="me">
             <GithubIcon className="fill-current text-gray-300" />
           </a>
           <a href="https://twitter.com/ncrmro" aria-label="Twitter profile">
