@@ -1,4 +1,4 @@
-import { scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { scrypt, randomBytes, timingSafeEqual, createHash } from "crypto";
 import { promisify } from "util";
 // Keep this as local import rather than alias as playwirght doesn't know about aliases
 import { db } from "./database";
@@ -65,8 +65,18 @@ export interface Viewer {
   last_name: string | null;
 }
 
-export async function useViewer() {
+export async function useViewer(): Promise<Viewer | undefined> {
   if (typeof window === "undefined") {
-    return selectSessionViewer();
+    const viewer = await selectSessionViewer();
+    if (viewer) {
+      if (!viewer.image) {
+        const hash = createHash("md5");
+        hash.update(viewer.email);
+        const md5 = hash.digest("hex");
+        viewer.image = `https://www.gravatar.com/avatar/${md5}`;
+      }
+
+      return viewer as Viewer;
+    }
   }
 }
