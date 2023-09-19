@@ -41,8 +41,7 @@ export function PostItem(props: {
 }
 
 export async function Posts() {
-  const viewer = await useViewer();
-  const postsQuery = db
+  const posts = await db
     .selectFrom("posts")
     .select([
       "slug",
@@ -52,10 +51,10 @@ export async function Posts() {
       "publish_date",
       "published",
     ])
-    .orderBy("publish_date", "desc");
-  // Viewers can only see published posts
-  if (!viewer) postsQuery.where("published", "=", 1);
-  const posts = await postsQuery.execute();
+    .where("published", "=", 1)
+    .orderBy("publish_date", "desc")
+    .execute();
+
   return (
     <ul role="list" className="-mb-8 md:max-w-3xl">
       {posts.map((post, index) => (
