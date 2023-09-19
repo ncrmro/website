@@ -90,7 +90,6 @@ function DashboardDesktopSidebar(props: { viewer: Viewer }) {
 export default function DashboardClientLayout(props: {
   viewer: Viewer;
   children: ReactNode;
-  teams: any;
 }) {
   return (
     <div className="h-full dark:bg-gray-900">
