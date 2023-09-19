@@ -57,6 +57,14 @@ export async function selectSessionViewer() {
   }
 }
 
+export interface Viewer {
+  id: string;
+  email: string;
+  image: string;
+  first_name: string | null;
+  last_name: string | null;
+}
+
 export async function useViewer() {
   if (typeof window === "undefined") {
     return selectSessionViewer();

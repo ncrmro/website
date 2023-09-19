@@ -1,6 +1,13 @@
 import { Posts } from "@/app/posts/page";
+import Navbar from "@/components/Navbar";
+import React from "react";
 
 export default async function Home() {
   const posts = await Posts();
-  return <>{posts}</>;
+  return (
+    <main className="w-full flex flex-col items-center p-4">
+      <Navbar />
+      {posts}
+    </main>
+  );
 }

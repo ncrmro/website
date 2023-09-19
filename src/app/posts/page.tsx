@@ -70,10 +70,5 @@ export async function Posts() {
 
 export default async function PostsPage() {
   const posts = await Posts();
-  return (
-    <div>
-      <h1>Posts</h1>
-      {posts}
-    </div>
-  );
+  return <>{posts}</>;
 }

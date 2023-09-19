@@ -1,5 +1,6 @@
 import JobDocument from "@/app/resume/JobItem";
 import { parseJobFiles } from "@/app/resume/utils";
+import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import React from "react";
 
@@ -36,11 +37,14 @@ export default async function ResumePage() {
   const jobFiles = await parseJobFiles();
   const jobs = jobFiles.reverse().map((job) => <JobDocument job={job} />);
   return (
-    <div className="flex flex-col items-center">
-      <div className="max-w-3xl flex flex-col gap-4">
-        <Info />
-        <ul className="flex flex-col gap-4">{jobs}</ul>
+    <>
+      <Navbar />
+      <div className="flex flex-col items-center">
+        <div className="max-w-3xl flex flex-col gap-4">
+          <Info />
+          <ul className="flex flex-col gap-4">{jobs}</ul>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

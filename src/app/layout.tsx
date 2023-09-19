@@ -14,10 +14,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body>
         {isProduction && <GoogleAnalytics />}
-        <Navbar />
-        <main className="w-full flex flex-col items-center p-4">
-          {props.children}
-        </main>
+        {props.children}
       </body>
     </html>
   );
