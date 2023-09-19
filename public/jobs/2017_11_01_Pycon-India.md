@@ -1,7 +1,7 @@
 ---
 title: Pycon India
 url: https://in.pycon.org
-favicon: /job_icons/pycon-india.jpg
+favicon: /uploads/resume/pycon-india.jpg
 role: Speaker
 type: Conference Presentation
 start: 2017-05

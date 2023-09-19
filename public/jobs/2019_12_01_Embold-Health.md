@@ -1,7 +1,7 @@
 ---
 title: Embold Health
 url: https://emboldhealth.com/
-favicon: /job_icons/embold.png
+favicon: /uploads/resume/embold.png
 role: Senior Backend Engineer
 type: Salaried
 start: 2019-12

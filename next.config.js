@@ -1,7 +1,13 @@
+// @ts-check
+/**
+ * @type {import("next").NextConfig}
+ **/
 module.exports = {
-  future: {
-    webpack5: true,
+  experimental: {
+    serverActions: true,
+    typedRoutes: true,
   },
+  output: "standalone",
   reactStrictMode: true,
   serverRuntimeConfig: {
     CONTACT_INFO_JSON:
@@ -9,14 +15,7 @@ module.exports = {
       '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
   },
   env: {
-    POSTS_DIR: `${__dirname}/posts`,
-    DOCUMENTS_DIR: `${__dirname}/documents`,
-    WEB_DEBUG: process.env.WEB_DEBUG,
-    ENVIRONMENT: process.env.ENVIRONMENT,
-    // RELEASE: process.env.RELEASE,
-    GOOGLE_ANALYTICS_CODE: "UA-79226152-1",
-    GOOGLE_ANALYTICS_ENABLED: process.env.GOOGLE_ANALYTICS_ENABLED,
-    // SENTRY_ENABLED: process.env.SENTRY_ENABLED,
+    GOOGLE_ANALYTICS_TRACKING_ID: "G-6MYGCJZSVN",
   },
   i18n: {
     locales: ["en"],

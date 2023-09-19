@@ -1,9 +1,0 @@
-name = "ncrmro-static"
-type = "javascript"
-#account_id = ""
-#workers_dev = false
-#route = "ncrmro.com/*"
-#zone_id = ""
-
-[site]
-bucket = "./out"

@@ -1,0 +1,1 @@
+DROP TRIGGER posts_update_slugify_title;
