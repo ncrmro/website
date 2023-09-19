@@ -51,7 +51,7 @@ export async function selectSessionViewer() {
     return await db
       .selectFrom("users")
       .innerJoin("sessions", "sessions.user_id", "users.id")
-      .select(["users.id", "users.email"])
+      .select(["users.id", "users.email", "first_name", "last_name", "image"])
       .where("sessions.id", "=", session)
       .executeTakeFirst();
   }
