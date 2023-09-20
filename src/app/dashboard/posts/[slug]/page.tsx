@@ -1,4 +1,4 @@
-import PostForm from "@/app/posts/form";
+import PostForm from "@/app/dashboard/posts/[slug]/form";
 import { selectSessionViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { redirect } from "next/navigation";

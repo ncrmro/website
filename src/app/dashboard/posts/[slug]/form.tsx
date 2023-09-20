@@ -11,7 +11,7 @@ import { Tab } from "@headlessui/react";
 //   CodeBracketIcon,
 //   LinkIcon,
 // } from "@heroicons/react/20/solid";
-import type { PostType } from "./types";
+import type { PostType } from "../../../posts/types";
 import { default as NextImage } from "next/image";
 
 function classNames(...classes: string[]) {
@@ -79,9 +79,9 @@ export default function PostForm(props: {
     const handleUserKeyPress = (e: KeyboardEvent) => {
       if (e.metaKey && e.key === "e") {
         if (preview) {
-          router.push(`/posts/${params.slug}/edit`);
+          router.push(`/dashboard/posts/${params.slug}`);
         } else {
-          router.push(`/posts/${params.slug}/edit?preview=1`);
+          router.push(`/dashboard/posts/${params.slug}?preview=1`);
         }
       }
     };
@@ -97,12 +97,12 @@ export default function PostForm(props: {
         selectedIndex={media ? 2 : preview ? 1 : 0}
         onChange={async (index) => {
           if (index === 2) {
-            router.push(`/posts/${params.slug}/edit?media=1`);
+            router.push(`/dashboard/posts/${params.slug}?media=1`);
           } else if (index === 1 && state) {
             const serializedBody = await serializePost(state);
             setSerializedBody(serializedBody);
-            router.push(`/posts/${params.slug}/edit?preview=1`);
-          } else router.push(`/posts/${params.slug}/edit`);
+            router.push(`/dashboard/posts/${params.slug}?preview=1`);
+          } else router.push(`/dashboard/posts/${params.slug}`);
         }}
       >
         <Tab.List className="flex items-center">

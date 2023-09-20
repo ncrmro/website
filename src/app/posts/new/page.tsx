@@ -2,7 +2,7 @@ import { db } from "@/lib/database";
 import { selectSessionViewer, useViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
-import PostForm from "@/app/posts/form";
+import PostForm from "@/app/dashboard/posts/[slug]/form";
 
 // Would be good to debounce and check the title for uniqueness
 
