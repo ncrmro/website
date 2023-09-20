@@ -21,6 +21,9 @@ module.exports = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    domains: ["www.gravatar.com"],
+  },
   async redirects() {
     return [
       {
