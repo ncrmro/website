@@ -72,7 +72,7 @@ export default function PostForm(props: {
     serializePost(state).then((serializedBody) =>
       setSerializedBody(serializedBody)
     );
-  }, []);
+  }, [state]);
 
   // Navigate to preview if viewer presses command + e
   React.useEffect(() => {
@@ -87,7 +87,7 @@ export default function PostForm(props: {
     };
     document.addEventListener("keydown", handleUserKeyPress);
     return () => document.removeEventListener("keydown", handleUserKeyPress);
-  }, [preview]);
+  }, [params.slug, preview, router]);
 
   console.log(String(state.published));
   return (

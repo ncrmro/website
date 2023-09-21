@@ -35,7 +35,9 @@ const Info: React.FC<InfoProps> = (props) => (
 
 export default async function ResumePage() {
   const jobFiles = await parseJobFiles();
-  const jobs = jobFiles.reverse().map((job) => <JobDocument job={job} />);
+  const jobs = jobFiles
+    .reverse()
+    .map((job, index) => <JobDocument key={index} job={job} />);
   return (
     <>
       <Navbar />

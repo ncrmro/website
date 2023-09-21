@@ -3,7 +3,7 @@ import { useViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import React from "react";
 
-export function PostItem(props: {
+function PostItem(props: {
   post: {
     slug: string;
     title: string;

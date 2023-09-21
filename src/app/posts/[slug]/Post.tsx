@@ -21,11 +21,11 @@ export function PostHeader(props: { viewer: any; post: PostType }) {
   React.useEffect(() => {
     const handleUserKeyPress = (e: KeyboardEvent) => {
       if (e.metaKey && e.key === "e")
-        router.push(`/posts/${props.post.slug}/edit`);
+        router.push(`/dashboard/posts/${props.post.slug}`);
     };
     document.addEventListener("keydown", handleUserKeyPress);
     return () => document.removeEventListener("keydown", handleUserKeyPress);
-  }, []);
+  }, [props.post.slug, router]);
   return (
     <div className="border-b border-gray-200 pb-5">
       <div className="sm:flex sm:items-baseline sm:justify-between">
