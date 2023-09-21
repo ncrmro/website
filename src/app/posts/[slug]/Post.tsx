@@ -82,7 +82,7 @@ export function PostHeader(props: { viewer: any; post: PostType }) {
                     <Menu.Item>
                       {({ active }) => (
                         <Link
-                          href={`/posts/${props.post.slug}/edit`}
+                          href={`/dashboard/posts/${props.post.slug}`}
                           className={classNames(
                             active
                               ? "bg-gray-100 text-gray-900"
