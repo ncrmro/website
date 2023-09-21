@@ -3,6 +3,7 @@ import { selectSessionViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+export const dynamicParams = true;
 
 export default async function EditPostPage({
   params,

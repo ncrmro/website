@@ -1,16 +1,11 @@
 "use client";
-import Post, { PostHeader } from "@/app/posts/[slug]/Post";
+import Post from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
 import SmallBadge from "@/components/SmallBadge";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
-// import {
-//   AtSymbolIcon,
-//   CodeBracketIcon,
-//   LinkIcon,
-// } from "@heroicons/react/20/solid";
 import type { PostType } from "../../../posts/types";
 import { default as NextImage } from "next/image";
 
