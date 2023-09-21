@@ -65,6 +65,7 @@ export default async function EditPostPage({
     // TODO this revalidate is not working
     // https://github.com/vercel/next.js/issues/49387
     revalidatePath(`/posts/[slug]`);
+    revalidatePath(`/dashboard/posts/[slug]`);
     revalidatePath(`/`);
     redirect(`/dashboard/posts/${updatedPost.slug}`);
   }

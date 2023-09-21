@@ -55,7 +55,7 @@ export default async function PostsPage() {
     .orderBy("publish_date", "desc")
     .execute();
   return (
-    <>
+    <main className="lg:pr-96">
       <ul role="list" className="-mb-8 md:max-w-3xl">
         {posts.map((post, index) => (
           <PostItem
@@ -65,6 +65,6 @@ export default async function PostsPage() {
           />
         ))}
       </ul>
-    </>
+    </main>
   );
 }

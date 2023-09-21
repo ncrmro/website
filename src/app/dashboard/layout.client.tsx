@@ -91,9 +91,7 @@ export default function DashboardClientLayout(props: {
       {/* Static sidebar for desktop */}
       <DashboardDesktopSidebar viewer={props.viewer} />
 
-      <div className="xl:pl-72">
-        <main className="lg:pr-96">{props.children}</main>
-      </div>
+      <div className="xl:pl-72">{props.children}</div>
     </div>
   );
 }
