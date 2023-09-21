@@ -2,7 +2,7 @@ import { db } from "@/lib/database";
 import { selectSessionViewer, useViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
-import PostForm from "@/app/dashboard/posts/[slug]/form";
+import PostForm from "@/app/dashboard/posts/form";
 
 // Would be good to debounce and check the title for uniqueness
 
@@ -25,7 +25,11 @@ async function createPost(data: FormData) {
     })
     .returning(["title", "slug", "published"])
     .executeTakeFirstOrThrow();
-  redirect(`/posts/${post.slug}`);
+  if (data.get("published")) {
+    redirect(`/posts/${post.slug}`);
+  } else {
+    redirect(`/dashboard/posts/${post.slug}`);
+  }
 }
 
 export default async function CreatePost() {

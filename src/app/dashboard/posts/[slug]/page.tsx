@@ -1,4 +1,4 @@
-import PostForm from "@/app/dashboard/posts/[slug]/form";
+import PostForm from "@/app/dashboard/posts/form";
 import { selectSessionViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { redirect } from "next/navigation";
@@ -66,7 +66,7 @@ export default async function EditPostPage({
     // https://github.com/vercel/next.js/issues/49387
     revalidatePath(`/posts/[slug]`);
     revalidatePath(`/`);
-    redirect(`/posts/${updatedPost.slug}`);
+    redirect(`/dashboard/posts/${updatedPost.slug}`);
   }
 
   return <PostForm action={editPost} post={{ ...post, tags }} />;

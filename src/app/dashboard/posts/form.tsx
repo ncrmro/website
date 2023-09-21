@@ -6,7 +6,7 @@ import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
-import type { PostType } from "../../../posts/types";
+import type { PostType } from "../../posts/types";
 import { default as NextImage } from "next/image";
 
 function classNames(...classes: string[]) {
