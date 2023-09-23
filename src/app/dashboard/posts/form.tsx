@@ -1,16 +1,42 @@
 "use client";
 import Post from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
-import SmallBadge from "@/components/SmallBadge";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
 import type { PostType } from "../../posts/types";
 import PostMedia from "./form_media";
+import { PostFormFields } from "@/app/dashboard/posts/form_fields";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+function postStateReducer(
+  state: PostType,
+  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) {
+  const { name, value } = event.target;
+  switch (name) {
+    case "slug":
+      state[name] = value;
+      break;
+    case "title":
+    case "description":
+    case "body":
+    case "publish_date":
+      state[name] = value;
+      // Save these fields to localstorage in case of error.
+      if (state.slug !== "")
+        localStorage.setItem(state.slug, JSON.stringify(state));
+      break;
+    case "published":
+      state[name] = Number(value) === 1 ? 0 : 1;
+    default:
+      throw new Error("Field was not expected");
+  }
+  return structuredClone(state);
 }
 
 export default function PostForm(props: {
@@ -22,7 +48,8 @@ export default function PostForm(props: {
   const preview = searchParams.get("preview") === "1";
   const media = searchParams.get("media") === "1";
   const router = useRouter();
-  const [state, setState] = useState(
+  const [state, setState] = React.useReducer(
+    postStateReducer,
     props.post || {
       id: "",
       title: "",
@@ -34,15 +61,20 @@ export default function PostForm(props: {
       tags: [],
     }
   );
+
+  React.useEffect(() => {
+    // Prevent overwriting existing stored value on page load
+    // Dont start saving until we have a body
+    if (
+      state.slug !== "" &&
+      state.body !== "" &&
+      !localStorage.getItem(state.slug)
+    )
+      localStorage.setItem(state.slug, JSON.stringify(state));
+  }, [state]);
+
   const [serializedBody, setSerializedBody] =
     useState<MDXRemoteSerializeResult>();
-
-  // Keyboard listener
-  React.useEffect(() => {
-    serializePost(state).then((serializedBody) =>
-      setSerializedBody(serializedBody)
-    );
-  }, [state]);
 
   // Navigate to preview if viewer presses command + e
   React.useEffect(() => {
@@ -72,7 +104,7 @@ export default function PostForm(props: {
             if (index === 2) {
               router.push(`/dashboard/posts/${params.slug}?media=1`);
             } else if (index === 1 && state) {
-              const serializedBody = await serializePost(state);
+              const serializedBody = await serializePost(state.body);
               setSerializedBody(serializedBody);
               router.push(`/dashboard/posts/${params.slug}?preview=1`);
             } else router.push(`/dashboard/posts/${params.slug}`);
@@ -136,9 +168,7 @@ export default function PostForm(props: {
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     placeholder="Add your comment..."
                     value={state?.body}
-                    onChange={(e) =>
-                      state && setState({ ...state, body: e.target.value })
-                    }
+                    onChange={setState}
                   />
                 </div>
               </div>
@@ -161,11 +191,7 @@ export default function PostForm(props: {
           </Tab.Panels>
         </Tab.Group>
 
-        <DashboardActivityFeed
-          post={props.post}
-          state={state}
-          setState={setState}
-        />
+        <PostFormFields post={props.post} state={state} setState={setState} />
       </form>
     </main>
   );
