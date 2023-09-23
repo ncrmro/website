@@ -10,6 +10,7 @@ import { MDXRemote } from "next-mdx-remote";
 import Highlight from "react-highlight";
 import "./code-block.css";
 import type { PostType } from "../types";
+import CopyCodeBlock from "@/components/CopyCodeBlock";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -179,6 +180,7 @@ export default function Post(props: {
               </div>
             ),
             a: (p: any) => <a className="text-blue-700" {...p} />,
+            CopyCodeBlock,
           }}
         />
       </div>
