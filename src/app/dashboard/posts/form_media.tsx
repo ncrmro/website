@@ -9,7 +9,7 @@ export default function PostMedia(props: { post: PostType }) {
       const data = await res.json();
       setFiles(data.files as []);
     });
-  }, []);
+  }, [props.post.id]);
   return (
     <div>
       {files.map((file) => (
