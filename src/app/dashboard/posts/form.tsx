@@ -35,7 +35,7 @@ function postStateReducer(
     case "published":
       state[name] = Number(value) === 1 ? 0 : 1;
     default:
-      throw new Error("Field was not expected");
+      throw new Error(`Field was not expected ${name}`);
   }
   return structuredClone(state);
 }

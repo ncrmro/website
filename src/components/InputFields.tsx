@@ -29,16 +29,7 @@ export function InputField({ label, ...props }: InputFieldProps) {
       <label htmlFor={props.id} className={InputFieldStyles.label}>
         {label}
       </label>
-      <input
-        type={props.type}
-        className={InputFieldStyles.input}
-        id={props.id}
-        name={props.id}
-        title={props.title}
-        pattern={props.pattern}
-        value={props.value}
-        onChange={props.onChange}
-      />
+      <input {...props} name={props.id} className={InputFieldStyles.input} />
     </>
   );
 }
@@ -60,7 +51,7 @@ export function TextAreaField({ label, ...props }: TextAreaProps) {
       <label htmlFor={props.id} className={InputFieldStyles.label}>
         {label}
       </label>
-      <textarea {...props} className={InputFieldStyles.input} />
+      <textarea {...props} name={props.id} className={InputFieldStyles.input} />
     </>
   );
 }
