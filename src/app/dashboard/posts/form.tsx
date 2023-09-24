@@ -34,6 +34,7 @@ function postStateReducer(
       break;
     case "published":
       state[name] = Number(value) === 1 ? 0 : 1;
+      break;
     default:
       throw new Error(`Field was not expected ${name}`);
   }
