@@ -7,10 +7,10 @@ module.exports = {
         default: ["var(--font-inter)"],
       },
     },
-    colors: {
-      background: "var(--background)",
-      "on-background": "var(--on-background)",
-    },
+    // colors: {
+    //   background: "var(--background)",
+    //   "on-background": "var(--on-background)",
+    // },
   },
   plugins: [require("@tailwindcss/forms")],
 };

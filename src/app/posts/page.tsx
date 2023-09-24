@@ -12,14 +12,19 @@ export function PostItem(props: {
     published: number;
   };
   evenRow: boolean;
+  dashboard?: boolean;
 }) {
   return (
     <li key={props.post.slug} className="p-2">
       <div>
         <div className="flex justify-between">
           <a
-            href={`/posts/${props.post.slug}`}
-            className="font-medium text-gray-900"
+            href={
+              props.dashboard
+                ? `/dashboard/posts/${props.post.slug}`
+                : `/posts/${props.post.slug}`
+            }
+            className="font-medium text-gray-900 dark:text-white"
           >
             {props.post.title}
           </a>
@@ -29,11 +34,11 @@ export function PostItem(props: {
             </span>
           )}
         </div>
-        <p className="mt-0.5 text-sm text-gray-500">
+        <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
           {props.post.publish_date && formatDate(props.post.publish_date)}
         </p>
       </div>
-      <div className="mt-2 text-sm text-gray-700">
+      <div className="mt-2 text-sm text-gray-700 dark:text-gray-400">
         <p>{props.post.description}</p>
       </div>
     </li>

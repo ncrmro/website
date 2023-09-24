@@ -14,11 +14,11 @@ export default function Navbar() {
   return (
     <nav
       id="navbar"
-      className="flex flex-col gap-2 items-center [&>*]:text-slate-500 mx-auto"
+      className="flex flex-col gap-2 items-center text-slate-500 dark:text-white mx-auto"
     >
       <Link
         href="/"
-        className="uppercase min-w-[10rem] border-b py-2 text-center"
+        className="uppercase min-w-[10rem] border-b py-2 text-center dark:text-white"
       >
         {isHome ? "Nicholas Romero" : "Home"}
       </Link>
@@ -39,7 +39,11 @@ export default function Navbar() {
           >
             <LinkedinIcon className="fill-current text-gray-300" />
           </a>
-          <a href="https://github.com/ncrmro" aria-label="Github profile" rel="me">
+          <a
+            href="https://github.com/ncrmro"
+            aria-label="Github profile"
+            rel="me"
+          >
             <GithubIcon className="fill-current text-gray-300" />
           </a>
           <a href="https://twitter.com/ncrmro" aria-label="Twitter profile">

@@ -1,6 +1,7 @@
 import React from "react";
 import SmallBadge from "../../../components/SmallBadge";
 import { PostType } from "../../posts/types";
+import { InputField } from "@/components/InputFields";
 
 export function PostFormFields({
   post,
@@ -14,61 +15,39 @@ export function PostFormFields({
   return (
     <div className="lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:overflow-y-auto lg:border-l lg:border-gray-200 p-2 flex flex-col gap-4 w-96">
       <div className="col-span-full">
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium leading-6 text-gray-900"
-        >
-          Title
-        </label>
-        <div className="mt-2">
-          <input
-            type="text"
-            name="title"
-            id="title"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            value={state?.title}
-            onChange={setState}
-          />
-        </div>
+        <InputField
+          id="title"
+          label="Title"
+          value={state?.title}
+          onChange={setState}
+        />
       </div>
+
       <div className="col-span-full">
-        <label htmlFor="description">Description</label>
-        <div className="mt-2">
-          <input
-            type="text"
-            name="description"
-            id="description"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            value={state?.description}
-            onChange={setState}
-          />
-        </div>
+        <InputField
+          id="description"
+          label="Description"
+          value={state?.description}
+          onChange={setState}
+        />
       </div>
+
       <div className="col-span-full">
-        <label
-          htmlFor="slug"
-          className="block text-sm font-medium leading-6 text-gray-900"
-        >
-          Slug
-        </label>
-        <div className="mt-2">
-          <input
-            type="text"
-            name="slug"
-            id="slug"
-            title="Slug can only include lower case letters, numbers and dashes."
-            pattern={"^[a-z0-9\\-]*$"}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            value={state?.slug}
-            onChange={setState}
-          />
-        </div>
+        <InputField
+          id="slug"
+          label="Slug"
+          title="Slug can only include lower case letters, numbers and dashes."
+          pattern={"^[a-z0-9\\-]*$"}
+          value={state?.slug}
+          onChange={setState}
+        />
       </div>
+
       <div className="w-full flex justify-between">
         <div>
           <label
             htmlFor="published"
-            className="block text-sm font-medium leading-6 text-gray-900"
+            className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
             Published
           </label>
@@ -81,19 +60,15 @@ export function PostFormFields({
           />
         </div>
         <div>
-          <label
-            htmlFor="published-date"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Published Date
-          </label>
-          <input
-            id="published-date"
-            name="published_date"
-            type="date"
-            value={state.publish_date || ""}
-            onChange={setState}
-          />
+          <div className="col-span-full">
+            <InputField
+              type="date"
+              id="published_date"
+              label="Date"
+              value={state?.publish_date}
+              onChange={setState}
+            />
+          </div>
         </div>
       </div>
       <input

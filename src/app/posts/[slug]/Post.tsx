@@ -15,7 +15,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function PostHeader(props: { viewer: any; post: PostType }) {
+function PostHeader(props: { viewer: any; post: PostType }) {
   // If viewer is logged in and press command + e direct to edit page
   const router = useRouter();
   React.useEffect(() => {
@@ -32,14 +32,14 @@ export function PostHeader(props: { viewer: any; post: PostType }) {
         <div className="sm:w-0 sm:flex-1">
           <h1
             id="message-heading"
-            className="text-base font-semibold leading-6 text-gray-900"
+            className="text-base font-semibold leading-6 text-gray-900 dark:text-white"
           >
             {props.post.title}
           </h1>
-          <div>
+          <div className="text-gray-500 dark:text-gray-400">
             {props.post.publish_date && formatDate(props.post.publish_date)}
           </div>
-          <p className="mt-1 truncate text-sm text-gray-500">
+          <p className="mt-1 truncate text-sm text-gray-500 dark:text-gray-400">
             {props.post.description}
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function Post(props: {
   return (
     <>
       <PostHeader viewer={props.viewer} post={props.post} />
-      <div id="post-body" className="py-3">
+      <div id="post-body" className="py-3 text-gray-500 dark:text-gray-400">
         <MDXRemote
           {...props.source}
           components={{

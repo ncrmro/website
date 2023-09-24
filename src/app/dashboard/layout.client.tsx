@@ -30,7 +30,9 @@ function DashboardDesktopSidebar(props: { viewer: Viewer }) {
     <div className="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col">
       {/* Sidebar component, swap this element with another sidebar if you like */}
       <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 ring-1 ring-white/5 border-r border-gray-200">
-        <div className="flex h-16 shrink-0 items-center">NCRMRO</div>
+        <div className="flex h-16 shrink-0 items-center dark:text-white">
+          NCRMRO
+        </div>
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <li>
@@ -71,7 +73,10 @@ function DashboardDesktopSidebar(props: { viewer: Viewer }) {
                   alt=""
                 />
                 <span className="sr-only">Your profile</span>
-                <span aria-hidden="true">{`${props.viewer.first_name} ${props.viewer.last_name}`}</span>
+                <span
+                  aria-hidden="true"
+                  className="dark:text-white"
+                >{`${props.viewer.first_name} ${props.viewer.last_name}`}</span>
               </a>
             </li>
           </ul>
@@ -86,7 +91,7 @@ export default function DashboardClientLayout(props: {
   children: ReactNode;
 }) {
   return (
-    <div className="h-full dark:bg-gray-900">
+    <div className="h-full">
       {/*<DashboardSidebar viewer={props.viewer} teams={props.teams} />*/}
       {/* Static sidebar for desktop */}
       <DashboardDesktopSidebar viewer={props.viewer} />

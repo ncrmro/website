@@ -1,6 +1,7 @@
 "use client";
 import Post from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
+import { InputField, TextAreaField } from "@/components/InputFields";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
@@ -157,20 +158,14 @@ export default function PostForm(props: {
               className="flex flex-col w-full gap-4"
             >
               <div>
-                <label htmlFor="body" className="sr-only">
-                  Body
-                </label>
-                <div className="mt-2">
-                  <textarea
-                    rows={30}
-                    name="body"
-                    id="body"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    placeholder="Add your comment..."
-                    value={state?.body}
-                    onChange={setState}
-                  />
-                </div>
+                <TextAreaField
+                  id="body"
+                  label="Body"
+                  rows={30}
+                  placeholder="Add your comment..."
+                  value={state?.body}
+                  onChange={setState}
+                />
               </div>
             </Tab.Panel>
             <Tab.Panel

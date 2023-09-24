@@ -39,7 +39,7 @@ export default async function PostPage({
   // If viewer is not logged and and post is not published also not found
   if (!post || (post.published === 0 && !viewer)) notFound();
   const p = { ...post, tags };
-  const mdxSource = await serializePost(p);
+  const mdxSource = await serializePost(p.body);
 
   return (
     <div className="w-full md:max-w-4xl">
