@@ -20,7 +20,7 @@ export const test = base.extend<{ post: { slug: string } }>({
   },
 });
 test("login page", async ({ page }) => {
-  const email = `jdoe@example.com`;
+  const email = `ncrmro@gmail.com`;
   await page.goto("/login");
   await page.getByPlaceholder("email").fill(email);
   await page.getByPlaceholder("password").fill("password");
@@ -29,16 +29,17 @@ test("login page", async ({ page }) => {
 });
 
 test("create posts", async ({ page }) => {
-  await page.goto("/posts/new");
+  await page.goto("/dashboard/posts/new");
   await page.waitForURL((url) =>
-    url.toString().includes("/login?redirect=%2Fposts%2Fnew")
+    url.toString().includes("/login?redirect=%2Fdashboard")
   );
-  const email = `jdoe@example.com`;
+  const email = `ncrmro@gmail.com`;
   await page.getByPlaceholder("email").fill(email);
   await page.getByPlaceholder("password").fill("password");
   await page.locator("button", { hasText: "Login" }).click();
   // Create a new post
-  await page.waitForURL("/posts/new");
+  await page.waitForURL("/dashboard");
+  await page.goto("/dashboard/posts/new");
   const postTitle = `Hello World ${Date.now()}`;
   await page.getByLabel("Title").fill(postTitle);
   await page.getByLabel("Body").fill("Hello World");
@@ -51,21 +52,21 @@ test("edit post body from post page", async ({ page, post }) => {
   await page.goto(`/posts/${post.slug}`);
   await page.locator("#menu-actions-button").click();
   await page.locator("a", { hasText: "Edit" }).click();
-  await page.waitForURL(`/posts/${post.slug}/edit`);
+  await page.waitForURL(`/dashboard/posts/${post.slug}`);
   await page.getByLabel("Body").fill("Hello World Edit");
   await page.locator("button", { hasText: "Submit" }).click();
-  await page.waitForURL(`/posts/${post.slug}`);
+  await page.waitForURL(`/dashboard/posts/${post.slug}`);
   // TODO reload is only needed here because nextjs cache invalidation doesn't work right now
   // https://github.com/vercel/next.js/issues/49387
   await page.reload();
-  await page.locator("#post-body", { hasText: "Hello World Edit" }).waitFor();
+  await page.locator("#body", { hasText: "Hello World Edit" }).waitFor();
 });
 
 test("edit post slug", async ({ page, post }) => {
-  await page.goto(`/posts/${post.slug}/edit`);
+  await page.goto(`/dashboard/posts/${post.slug}`);
   await page.locator("#slug").fill(`${post.slug}-edit`);
   await page.locator("button", { hasText: "Submit" }).click();
-  await page.waitForURL(`/posts/${post.slug}-edit`);
+  await page.waitForURL(`/dashboard/posts/${post.slug}-edit`);
 });
 
 test("draft posts are not viewable by anonymous users", async ({
@@ -80,9 +81,10 @@ test("draft posts are not viewable by anonymous users", async ({
 });
 
 test("publish posts", async ({ page, post, context }) => {
-  await page.goto(`/posts/${post.slug}/edit`);
+  await page.goto(`/dashboard/posts/${post.slug}`);
   await page.getByLabel("Published", { exact: true }).click();
   await page.locator("button", { hasText: "Submit" }).click();
-  await page.waitForURL(`/posts/${post.slug}`);
+  await page.waitForURL(`/dashboard/posts/${post.slug}`);
+  await page.goto(`/posts/${post.slug}`);
   await page.locator("span", { hasText: "Published" }).waitFor();
 });
