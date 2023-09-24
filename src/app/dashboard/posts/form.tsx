@@ -77,6 +77,12 @@ export default function PostForm(props: {
   const [serializedBody, setSerializedBody] =
     useState<MDXRemoteSerializeResult>();
 
+  React.useEffect(() => {
+    serializePost(state.body).then((serializedBody) =>
+      setSerializedBody(serializedBody)
+    );
+  }, [state]);
+
   // Navigate to preview if viewer presses command + e
   React.useEffect(() => {
     const handleUserKeyPress = (e: KeyboardEvent) => {
