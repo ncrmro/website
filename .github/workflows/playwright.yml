@@ -11,6 +11,11 @@ jobs:
     - uses: actions/checkout@v3
     - uses: ./.github/actions/node-pnpm-cached
 
+    - name: Run migrations to build database types
+      run: |
+        pnpm run build-migrations
+        pnpm run migrations
+
     - name: Typecheck
       run: pnpm tsc
 
