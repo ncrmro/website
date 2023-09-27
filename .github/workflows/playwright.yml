@@ -8,6 +8,7 @@ jobs:
   code-validate:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
     - uses: ./.github/actions/node-pnpm-cached
 
     - name: Typecheck
