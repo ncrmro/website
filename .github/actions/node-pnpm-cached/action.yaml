@@ -1,6 +1,7 @@
 name: 'Install node pnpm and cache node_modules'
 runs:
   using: "composite"
+  shell: bash
   steps:
     - uses: actions/setup-node@v3
       with:
