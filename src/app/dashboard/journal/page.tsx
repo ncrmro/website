@@ -1,0 +1,82 @@
+import JournalEntryForm from "@/app/dashboard/journal/form";
+import { selectSessionViewer, useViewer } from "@/lib/auth";
+import { db, sql } from "@/lib/database";
+import { redirect } from "next/navigation";
+
+async function submitForm(data: FormData) {
+  "use server";
+  const viewer = await selectSessionViewer();
+  if (!viewer) throw new Error("Viewer doesnt exist");
+  const existingPost = data.get("id");
+  console.log("Submit");
+  const body = data.get("body");
+  if (typeof body !== "string" || body === "")
+    throw new Error("Body was not string or was an empty value");
+  if (existingPost) {
+    const id = data.get("id");
+    if (typeof id !== "string" || id === "")
+      throw new Error("Body was not string or was an empty value");
+    console.log(id);
+    await db
+      .updateTable("journal_entries")
+      .set({ body })
+      .where("id", "=", id)
+      .execute();
+  } else {
+    await db
+      .insertInto("journal_entries")
+      .values({
+        user_id: viewer.id,
+        body,
+      })
+      .execute();
+  }
+}
+
+function currentDateString() {
+  const d = new Date();
+  let month = d.getMonth() + 1;
+  month = month < 10 ? Number(`0${month}`) : month;
+  return `${d.getFullYear()}-${
+    month < 10 ? `0${month}` : month
+  }-${d.getDate()}`;
+}
+
+export default async function JournalPage() {
+  const viewer = await useViewer();
+  if (!viewer)
+    redirect(
+      `/login?${new URLSearchParams({
+        redirect: "/dashboard",
+      }).toString()}`
+    );
+  const posts = await db
+    .selectFrom("journal_entries")
+    .select([
+      "id",
+      "body",
+      sql<string>`date(created_date, 'unixepoch', 'utc')`.as(
+        "created_date_str"
+      ),
+    ])
+    .orderBy("created_date", "desc")
+    .where("user_id", "=", viewer.id)
+    .execute();
+  const todayEntry =
+    posts[0]?.created_date_str === currentDateString() ? posts.shift() : null;
+  return (
+    <div>
+      <div className="py-4">
+        <JournalEntryForm entry={todayEntry} formAction={submitForm} />
+      </div>
+      <ul className="flex flex-col gap-3">
+        {posts.map((n) => (
+          <li key={n.id} className="dark:text-white">
+            <h2>{n.created_date_str}</h2>
+            <p>{n.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEventHandler } from "react";
 
 export const InputFieldStyles = {
   label: Object.values({
@@ -38,11 +38,11 @@ interface TextAreaProps {
   id: string;
   label: string;
   title?: string;
-  pattern?: string;
-  placeholder: string;
+  placeholder?: string;
   rows?: number;
   value?: string;
-  onChange: any;
+  defaultValue: string;
+  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
 }
 
 export function TextAreaField({ label, ...props }: TextAreaProps) {
