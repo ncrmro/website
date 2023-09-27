@@ -17,6 +17,18 @@ const navigation = [
     name: "Posts",
     href: "/dashboard/posts",
     icon: FolderIcon,
+    children: [{}],
+  },
+  {
+    name: "Journal",
+    href: "/dashboard/journal",
+    icon: FolderIcon,
+    children: [
+      {
+        name: "Current",
+        href: "/dashboard/journal/current",
+      },
+    ],
   },
 ];
 

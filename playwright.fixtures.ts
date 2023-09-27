@@ -3,6 +3,7 @@ import { Passwords } from "./src/lib/auth";
 import { test as base } from "@playwright/test";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
+
 export { expect } from "@playwright/test";
 
 type TestFixtures = {
@@ -40,6 +41,12 @@ export const test = base.extend<TestFixtures>({
     ]);
     await use(user);
     await db.deleteFrom("sessions").where("user_id", "=", user.id).execute();
+    // TODO don't nuke entire history, delete plus join didn't work
+    await db.deleteFrom("journal_entry_history").execute();
+    await db
+      .deleteFrom("journal_entries")
+      .where("user_id", "=", user.id)
+      .execute();
     await db.deleteFrom("users").where("id", "=", user.id).execute();
   },
 });
