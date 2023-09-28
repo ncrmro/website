@@ -3,6 +3,18 @@ import { selectSessionViewer, useViewer } from "@/lib/auth";
 import { db, sql } from "@/lib/database";
 import { redirect } from "next/navigation";
 
+/**
+ * This is the earliest point of a day
+ */
+export function currentTimezoneMidnightUnixTimestamp() {
+  const d = new Date();
+  d.setHours(0);
+  d.setMinutes(0);
+  d.setSeconds(0);
+
+  return Math.floor(d.getTime() / 1000);
+}
+
 async function submitForm(data: FormData) {
   "use server";
   const viewer = await selectSessionViewer();
@@ -16,7 +28,6 @@ async function submitForm(data: FormData) {
     const id = data.get("id");
     if (typeof id !== "string" || id === "")
       throw new Error("Body was not string or was an empty value");
-    console.log(id);
     await db
       .updateTable("journal_entries")
       .set({ body })
@@ -28,18 +39,10 @@ async function submitForm(data: FormData) {
       .values({
         user_id: viewer.id,
         body,
+        created_date: currentTimezoneMidnightUnixTimestamp(),
       })
       .execute();
   }
-}
-
-function currentDateString() {
-  const d = new Date();
-  let month = d.getMonth() + 1;
-  month = month < 10 ? Number(`0${month}`) : month;
-  return `${d.getFullYear()}-${
-    month < 10 ? `0${month}` : month
-  }-${d.getDate()}`;
 }
 
 export default async function JournalPage() {
@@ -55,6 +58,7 @@ export default async function JournalPage() {
     .select([
       "id",
       "body",
+      "created_date",
       sql<string>`date(created_date, 'unixepoch', 'utc')`.as(
         "created_date_str"
       ),
@@ -63,7 +67,9 @@ export default async function JournalPage() {
     .where("user_id", "=", viewer.id)
     .execute();
   const todayEntry =
-    posts[0]?.created_date_str === currentDateString() ? posts.shift() : null;
+    posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp()
+      ? posts.shift()
+      : null;
   return (
     <div>
       <div className="py-4">

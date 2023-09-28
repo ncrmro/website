@@ -21,3 +21,10 @@ root users (and must be removed with sudo for instance) as well.'),
        ('ca55d247-66e2-4346-b130-06c2d5a7c826', strftime('%s', '2023-07-01'),
         'First day learning to code, I learned about hello world.')
 on conflict do nothing;
+
+INSERT into journal_entries(user_id, created_date, body)
+values ('04e30f1c-b8f8-4099-a2e3-96e2f65df371', strftime('%s', '2023-09-26'),
+        'We can take this idea even further when implementing a dropdown selector in the
+code below we can now pass any props to the root/label/select/options tags.
+')
+on conflict do nothing;
