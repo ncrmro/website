@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
       <excludeFolder url="file://$MODULE_DIR$/.lighthouseci" />
+      <excludeFolder url="file://$MODULE_DIR$/database/dist" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (ncrmro-static)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
