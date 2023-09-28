@@ -41,7 +41,7 @@ interface TextAreaProps {
   placeholder?: string;
   rows?: number;
   value?: string;
-  defaultValue: string;
+  defaultValue?: string;
   onChange?: ChangeEventHandler<HTMLTextAreaElement>;
 }
 
