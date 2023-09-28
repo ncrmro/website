@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 /**
  * This is the earliest point of a day
  */
-export function currentTimezoneMidnightUnixTimestamp() {
+function currentTimezoneMidnightUnixTimestamp() {
   const d = new Date();
   d.setHours(0);
   d.setMinutes(0);
