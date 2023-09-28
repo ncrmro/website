@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: .github/actions/node-pnpm-cached
+    - uses: ./.github/actions/node-pnpm-cached
 
     - name: Run migrations to build database types
       run: |
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: .github/actions/node-pnpm-cached
+    - uses: ./.github/actions/node-pnpm-cached
 
     - name: Get installed Playwright version
       id: playwright-version
