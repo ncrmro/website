@@ -1,3 +1,4 @@
+import ClientTimezoneInput from "@/app/login/ClientTimezoneInput";
 import { handleSession, Passwords, useViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -10,7 +11,6 @@ async function loginUser(data: Map<string, string>) {
   const email = data.get("email")!;
   const password = data.get("password")!;
   const timezone = data.get("timezone")!;
-  console.log(timezone);
   try {
     const user = await db
       .selectFrom("users")
@@ -48,11 +48,7 @@ export default async function LoginPage() {
     <form action={loginUser} className="flex flex-col">
       <h1>Login</h1>
       <div className="flex flex-col gap-4">
-        <input
-          type="hidden"
-          name="timezone"
-          value={Intl.DateTimeFormat().resolvedOptions().timeZone}
-        />
+        <ClientTimezoneInput />
         <input
           name="email"
           placeholder="Email"
