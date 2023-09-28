@@ -3,11 +3,14 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/database";
 import { headers } from "next/headers";
+import React from "react";
 
 async function loginUser(data: Map<string, string>) {
   "use server";
   const email = data.get("email")!;
   const password = data.get("password")!;
+  const timezone = data.get("timezone")!;
+  console.log(timezone);
   try {
     const user = await db
       .selectFrom("users")
@@ -17,7 +20,7 @@ async function loginUser(data: Map<string, string>) {
     const match = await Passwords.compare(user.password, password);
     if (!match) {
       redirect("/login?error=AUTH_INVALID_PASSWORD");
-    } else await handleSession(user.id);
+    } else await handleSession(user.id, timezone);
   } catch (e) {
     redirect("/login?error=AUTH_INVALID_USER");
   }
@@ -45,6 +48,11 @@ export default async function LoginPage() {
     <form action={loginUser} className="flex flex-col">
       <h1>Login</h1>
       <div className="flex flex-col gap-4">
+        <input
+          type="hidden"
+          name="timezone"
+          value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+        />
         <input
           name="email"
           placeholder="Email"

@@ -33,7 +33,7 @@ export namespace Passwords {
   }
 }
 
-export async function handleSession(userId: string) {
+export async function handleSession(userId: string, timezone: string) {
   const session = await db
     .insertInto("sessions")
     .values({ user_id: userId })
@@ -43,6 +43,7 @@ export async function handleSession(userId: string) {
     name: "viewer_session",
     value: session.id,
   });
+  cookies().set({ name: "viewer_timezone", value: timezone });
 }
 
 export async function selectSessionViewer() {

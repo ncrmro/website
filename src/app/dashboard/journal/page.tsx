@@ -1,24 +1,26 @@
 import JournalEntryForm from "@/app/dashboard/journal/form";
 import { selectSessionViewer, useViewer } from "@/lib/auth";
 import { db, sql } from "@/lib/database";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 export const dynamicParams = true;
+import { DateTime } from "luxon";
 
 /**
  * This is the earliest point of a day
  */
-function currentTimezoneMidnightUnixTimestamp() {
-  const d = new Date();
-  d.setHours(0);
-  d.setMinutes(0);
-  d.setSeconds(0);
-
-  return Math.floor(d.getTime() / 1000);
+function currentTimezoneMidnightUnixTimestamp(timeZone: string) {
+  return DateTime.fromObject(
+    { hour: 0, minute: 0, second: 0, millisecond: 0 },
+    { zone: timeZone }
+  ).toUnixInteger();
 }
 
 async function submitForm(data: FormData) {
   "use server";
   const viewer = await selectSessionViewer();
+  const timezone = cookies().get("viewer_timezone")?.value;
+  if (!timezone) throw new Error("Timezone missing!");
   if (!viewer) throw new Error("Viewer doesnt exist");
   const existingPost = data.get("id");
   const body = data.get("body");
@@ -39,7 +41,7 @@ async function submitForm(data: FormData) {
       .values({
         user_id: viewer.id,
         body,
-        created_date: currentTimezoneMidnightUnixTimestamp(),
+        created_date: currentTimezoneMidnightUnixTimestamp(""),
       })
       .execute();
   }
@@ -47,12 +49,14 @@ async function submitForm(data: FormData) {
 
 export default async function JournalPage() {
   const viewer = await useViewer();
+  const timezone = cookies().get("viewer_timezone")?.value;
   if (!viewer)
     redirect(
       `/login?${new URLSearchParams({
         redirect: "/dashboard",
       }).toString()}`
     );
+  if (!timezone) throw new Error("Timezone missing!");
   const posts = await db
     .selectFrom("journal_entries")
     .select([
@@ -67,7 +71,7 @@ export default async function JournalPage() {
     .where("user_id", "=", viewer.id)
     .execute();
   const todayEntry =
-    posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp()
+    posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp(timezone)
       ? posts.shift()
       : null;
   return (
@@ -78,7 +82,7 @@ export default async function JournalPage() {
       </div>
       <div className="flex justify-between">
         <span>Current Reported Time</span>
-        <span>{currentTimezoneMidnightUnixTimestamp()}</span>
+        <span>{currentTimezoneMidnightUnixTimestamp(timezone)}</span>
       </div>
       <div className="py-4">
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
