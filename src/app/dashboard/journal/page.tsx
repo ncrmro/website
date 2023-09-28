@@ -2,6 +2,7 @@ import JournalEntryForm from "@/app/dashboard/journal/form";
 import { selectSessionViewer, useViewer } from "@/lib/auth";
 import { db, sql } from "@/lib/database";
 import { redirect } from "next/navigation";
+export const dynamicParams = true;
 
 /**
  * This is the earliest point of a day
@@ -20,7 +21,6 @@ async function submitForm(data: FormData) {
   const viewer = await selectSessionViewer();
   if (!viewer) throw new Error("Viewer doesnt exist");
   const existingPost = data.get("id");
-  console.log("Submit");
   const body = data.get("body");
   if (typeof body !== "string" || body === "")
     throw new Error("Body was not string or was an empty value");
