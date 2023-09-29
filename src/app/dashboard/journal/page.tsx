@@ -41,7 +41,7 @@ async function submitForm(data: FormData) {
       .values({
         user_id: viewer.id,
         body,
-        created_date: currentTimezoneMidnightUnixTimestamp(""),
+        created_date: currentTimezoneMidnightUnixTimestamp(timezone),
       })
       .execute();
   }
