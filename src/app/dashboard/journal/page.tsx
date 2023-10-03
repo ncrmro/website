@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 export const dynamicParams = true;
 import { DateTime } from "luxon";
+import React, { Suspense } from "react";
+import { MDXRemote } from "next-mdx-remote/rsc";
 
 /**
  * This is the earliest point of a day
@@ -74,6 +76,18 @@ export default async function JournalPage() {
     posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp(timezone)
       ? posts.shift()
       : null;
+
+  const postLists = [];
+  for (const p of posts) {
+    // @ts-ignore
+    const body =  await <MDXRemote source={p.body} />
+    postLists.push(
+      <li key={p.id} className="dark:text-white">
+        <h2>{p.created_date_str}</h2>
+        {body}
+      </li>
+    );
+  }
   return (
     <div className="max-w-2xl">
       <div className="flex justify-between">
@@ -88,12 +102,7 @@ export default async function JournalPage() {
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
       </div>
       <ul className="flex flex-col gap-3">
-        {posts.map((n) => (
-          <li key={n.id} className="dark:text-white">
-            <h2>{n.created_date_str}</h2>
-            <p>{n.body}</p>
-          </li>
-        ))}
+        {postLists}
       </ul>
     </div>
   );
