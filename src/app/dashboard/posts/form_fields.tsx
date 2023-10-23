@@ -63,7 +63,7 @@ export function PostFormFields({
           <div className="col-span-full">
             <InputField
               type="date"
-              id="published_date"
+              id="publish_date"
               label="Date"
               value={state?.publish_date}
               onChange={setState}

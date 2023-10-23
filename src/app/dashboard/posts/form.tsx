@@ -26,7 +26,7 @@ function postStateReducer(
     case "title":
     case "description":
     case "body":
-    case "published_date":
+    case "publish_date":
       state[name] = value;
       // Save these fields to localstorage in case of error.
       if (state.slug !== "")
