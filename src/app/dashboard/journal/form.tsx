@@ -13,7 +13,7 @@ export default function JournalEntryForm(props: {
 
   return (
     // @ts-ignore
-    <form action={props.formAction} className="max-w-2xl">
+    <form action={props.formAction} className="">
       <input type="hidden" name="id" value={props.entry?.id} />
 
       <TextAreaField

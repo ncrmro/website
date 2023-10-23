@@ -89,15 +89,15 @@ export default async function JournalPage() {
     );
   }
   return (
-    <div className="max-w-2xl">
-      <div className="flex justify-between">
-        <span>Todays Entry</span>
-        <span>{todayEntry?.created_date}</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Current Reported Time</span>
-        <span>{currentTimezoneMidnightUnixTimestamp(timezone)}</span>
-      </div>
+    <div className="">
+      {/*<div className="flex justify-between">*/}
+      {/*  <span>Todays Entry</span>*/}
+      {/*  <span>{todayEntry?.created_date}</span>*/}
+      {/*</div>*/}
+      {/*<div className="flex justify-between">*/}
+      {/*  <span>Current Reported Time</span>*/}
+      {/*  <span>{currentTimezoneMidnightUnixTimestamp(timezone)}</span>*/}
+      {/*</div>*/}
       <div className="py-4">
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
       </div>
