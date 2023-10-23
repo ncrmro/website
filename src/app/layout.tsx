@@ -5,6 +5,8 @@ import React from "react";
 export const metadata = {
   title: "Nicholas Romero",
   description: "Personal Site of Nicholas Romero",
+    manifest: "/manifest.json",
+    themeColor: "#ffffff",
 };
 const isProduction = process.env.NODE_ENV === "production";
 

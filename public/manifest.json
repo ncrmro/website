@@ -1,0 +1,13 @@
+{
+  "name": "NCRMRO",
+  "short_name": "NCRMRO",
+  "description": "NCRMRO SITE",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "id": "/",
+  "scope": "/",
+  "start_url": "/"
+
+}
