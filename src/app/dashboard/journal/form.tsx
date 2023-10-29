@@ -2,7 +2,8 @@ import { TextAreaField } from "@/components/InputFields";
 import React from "react";
 
 export default function JournalEntryForm(props: {
-  entry?: { id: string; body: string; created_date_str: string } | null;
+  // entry: { id: string; body: string; } | null;
+    entry: any
   formAction: any;
 }) {
   // const [state, setState] = React.useState(
