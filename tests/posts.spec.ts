@@ -84,3 +84,14 @@ test("publish posts", async ({ page, post, context }) => {
     await page.goto(`/posts/${post.slug}`);
     await page.locator("span", { hasText: "Published" }).waitFor();
 });
+
+test("set post date", async ({page, post}) => {
+    await page.goto(`/dashboard/posts/${post.slug}`);
+    const date = await page.getByLabel("Date", { exact: true })
+    test.expect(await date.inputValue()).toBe("")
+    await date.fill("2003-12-17")
+    await page.locator("button", { hasText: "Submit" }).click();
+    await page.waitForURL(`/dashboard/posts/${post.slug}`);
+    await page.goto(`/posts/${post.slug}`);
+    await page.locator("December 17, 2023")
+})

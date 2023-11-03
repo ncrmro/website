@@ -52,7 +52,7 @@ export default function PostForm(props: {
   const router = useRouter();
   const [state, setState] = React.useReducer(
     postStateReducer,
-    props.post || {
+     {
       id: "",
       title: "",
       description: "",
@@ -61,6 +61,7 @@ export default function PostForm(props: {
       published: 0,
       publish_date: "",
       tags: [],
+       ...props.post
     }
   );
 

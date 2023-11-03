@@ -48,6 +48,8 @@ export default async function EditPostPage({
     if (!viewer)
       throw new Error("Viewer must not be null when creating a post");
 
+    data.forEach(console.log)
+
     const updatedPost = await db
       .updateTable("posts")
       .set({
@@ -55,7 +57,7 @@ export default async function EditPostPage({
         description: data.get("description") as string,
         body: data.get("body") as string,
         published: data.get("published") ? 1 : 0,
-        publish_date: data.get("published_date") as string,
+        publish_date: data.get("publish_date") as string,
         slug: data.get("slug") as string,
         // user_id: viewer.id,
       })
