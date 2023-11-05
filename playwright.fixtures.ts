@@ -39,6 +39,14 @@ export const test = base.extend<TestFixtures>({
         path: "/",
       },
     ]);
+    await context.addCookies([
+      {
+        name: "viewer_timezone",
+        value: "America%2FChicago",
+        domain: "localhost",
+        path: "/",
+      },
+    ]);
     await use(user);
     await db.deleteFrom("sessions").where("user_id", "=", user.id).execute();
     // TODO don't nuke entire history, delete plus join didn't work

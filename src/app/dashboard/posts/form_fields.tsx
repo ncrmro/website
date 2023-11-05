@@ -12,6 +12,7 @@ export function PostFormFields({
   state: any;
   setState: any;
 }) {
+    console.log(state)
   return (
     <div className="lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:overflow-y-auto lg:border-l lg:border-gray-200 p-2 flex flex-col gap-4 w-96">
       <div className="col-span-full">
@@ -65,7 +66,7 @@ export function PostFormFields({
               type="date"
               id="publish_date"
               label="Date"
-              value={state?.publish_date}
+              value={state?.publish_date || ""}
               onChange={setState}
             />
           </div>
