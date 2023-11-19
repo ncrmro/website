@@ -11,11 +11,13 @@ import React from "react";
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  let sessionCookie: string | undefined
-  if (typeof window !== 'undefined') {
+  let sessionCookie: string | undefined;
+  if (typeof window !== "undefined") {
     const cookies = document.cookie;
-    console.log(cookies.split(';'))
-    sessionCookie = cookies.split(';').find(cookie => cookie.includes('viewer_session='));
+    console.log(cookies.split(";"));
+    sessionCookie = cookies
+      .split(";")
+      .find((cookie) => cookie.includes("viewer_session="));
   }
   return (
     <nav

@@ -30,6 +30,12 @@ const navigation = [
       },
     ],
   },
+  {
+    name: "Contacts",
+    href: "/dashboard/contacts",
+    icon: FolderIcon,
+    children: [],
+  },
 ];
 
 function classNames(...classes: string[]) {

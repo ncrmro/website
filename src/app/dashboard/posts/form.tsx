@@ -50,20 +50,17 @@ export default function PostForm(props: {
   const preview = searchParams.get("preview") === "1";
   const media = searchParams.get("media") === "1";
   const router = useRouter();
-  const [state, setState] = React.useReducer(
-    postStateReducer,
-     {
-      id: "",
-      title: "",
-      description: "",
-      body: "",
-      slug: "",
-      published: 0,
-      publish_date: "",
-      tags: [],
-       ...props.post
-    }
-  );
+  const [state, setState] = React.useReducer(postStateReducer, {
+    id: "",
+    title: "",
+    description: "",
+    body: "",
+    slug: "",
+    published: 0,
+    publish_date: "",
+    tags: [],
+    ...props.post,
+  });
 
   React.useEffect(() => {
     // Prevent overwriting existing stored value on page load
