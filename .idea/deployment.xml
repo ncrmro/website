@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="ncrmro@ufed:22 agent (4)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$/node_modules" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="parallels@ufed:22 agent">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$/node_modules" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="ubuntu@192.168.1.47:22 agent">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$/node_modules" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="ubuntu@192.168.1.47:22 agent (2)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$/node_modules" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="ubuntu@192.168.1.47:22 agent (3)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$/node_modules" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="ubuntu@3.86.236.24:22 key">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$/node_modules" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
