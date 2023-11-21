@@ -101,10 +101,17 @@ export default async function JournalPage() {
   let idx = 0
   const postLists = [];
   for (const p of posts) {
-      const created = DateTime.fromSeconds(p.created_date)
+    const created = DateTime.fromSeconds(p.created_date)
 
-    // @ts-ignore
-    const body =  await <MDXRemote source={p.body} components={components} />
+    let body;
+
+    try {
+      // @ts-ignore
+      body = await <MDXRemote source={p.body} components={components} />;
+    } catch (error) {
+      // This will assign a custom message with the error message to the 'body' variable
+      body = `An error occurred while rendering the content: ${error.message}`;
+    }
     postLists.push(
       <li key={p.id} className="relative flex gap-x-4 dark:text-white">
           <div
