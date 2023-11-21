@@ -110,6 +110,7 @@ export default async function JournalPage() {
       body = await <MDXRemote source={p.body} components={components} />;
     } catch (error) {
       // This will assign a custom message with the error message to the 'body' variable
+      // @ts-ignore
       body = `An error occurred while rendering the content: ${error.message}`;
     }
     postLists.push(
