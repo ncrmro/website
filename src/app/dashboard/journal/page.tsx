@@ -92,7 +92,7 @@ export default async function JournalPage() {
     ])
     .orderBy("created_date", "desc")
     .where("user_id", "=", viewer.id)
-      .where("id", "is not", "7096f4f6-ced7-4aa7-8a4a-14d1661fd3b3")
+      .where("id", "not in", ["7096f4f6-ced7-4aa7-8a4a-14d1661fd3b3", "86db5c72-bfac-4caa-9879-ce6a4faaecbe"])
     .execute();
   const todayEntry =
     posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp(timezone)
