@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export const dynamicParams = true;
 import { DateTime } from "luxon";
 import React from "react";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import Markdown from "react-markdown";
 
 /**
  * This is the earliest point of a day
@@ -50,24 +50,24 @@ async function submitForm(data: FormData) {
 }
 
 const components = {
-    ul: (p: any) => <ul className="list-disc px-4 py-2" {...p} />,
-    h1: (p: any) => <h3
-        className="text-xl font-semibold text-gray-900 dark:text-white"
-        {...p}
-    />,
-    h2: (p: any) => <h4
-        className="text-l font-semibold text-gray-900 dark:text-white"
-        {...p}
-    />,
-    h3: (p: any) => <h5
-        className="text-base font-semibold text-gray-900 py-2"
-        {...p}
-    />,
-    p: (p: any) => <p className="py-1" {...p} />,
-    hr: (p: any) => <hr className="my-3" {...p} />
-}
+  ul: (p: any) => <ul className="list-disc px-4 py-2" {...p} />,
+  h1: (p: any) => (
+    <h3
+      className="text-xl font-semibold text-gray-900 dark:text-white"
+      {...p}
+    />
+  ),
+  h2: (p: any) => (
+    <h4 className="text-l font-semibold text-gray-900 dark:text-white" {...p} />
+  ),
+  h3: (p: any) => (
+    <h5 className="text-base font-semibold text-gray-900 py-2" {...p} />
+  ),
+  p: (p: any) => <p className="py-1" {...p} />,
+  hr: (p: any) => <hr className="my-3" {...p} />,
+};
 function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default async function JournalPage() {
@@ -92,73 +92,56 @@ export default async function JournalPage() {
     ])
     .orderBy("created_date", "desc")
     .where("user_id", "=", viewer.id)
-      .where("id", "not in", ["7096f4f6-ced7-4aa7-8a4a-14d1661fd3b3", "7b5b4a6d-008b-4d11-9aaf-66f8acb41d29"])
+    // .where("id", "not in", [
+    //   "7096f4f6-ced7-4aa7-8a4a-14d1661fd3b3",
+    //   "7b5b4a6d-008b-4d11-9aaf-66f8acb41d29",
+    // ])
     .execute();
   const todayEntry =
     posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp(timezone)
       ? posts.shift()
       : null;
 
-  let idx = 0
-  const postLists = [];
-  for (const p of posts) {
-    const created = DateTime.fromSeconds(p.created_date)
-
-    let body;
-
-    try {
-      // @ts-ignore
-      body = await <MDXRemote source={p.body} components={components} />;
-    } catch (error) {
-      // This will assign a custom message with the error message to the 'body' variable
-      // @ts-ignore
-      body = `An error occurred while rendering the content: ${error.message}`;
-    }
-    postLists.push(
-      <li key={p.id} className="relative flex gap-x-4 dark:text-white">
-          <div
-              className={classNames(
-                  '-bottom-6',
-                  'absolute left-0 top-0 flex w-6 justify-center'
-              )}
-          >
-              <div className="w-px bg-gray-200" />
-          </div>
-          <>
-              <div className="relative flex h-6 w-6 pt-9 flex-none items-center justify-center bg-white dark:bg-gray-900">
-                  <div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
-              </div>
-              <div className="flex-auto rounded-md p-3">
-
-                  <div className="flex justify-between gap-x-4">
-                      <div className="py-3 leading-5 text-2xl">
-                          {created.weekdayLong} {created.monthLong} {created.day}
-                      </div>
-                      <time
-
-                          className="flex-none py-0.5 text-xs leading-5 text-gray-500">
-                          {created.year}
-                      </time>
-                  </div>
-                  <div>
-                      {body}
-                  </div>
-              </div>
-          </>
-
-
-      </li>
-    );
-      idx++
-  }
   return (
-    <div >
+    <div>
       <div className="py-4">
-
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
       </div>
       <ul role="list" className="space-y-6">
-        {postLists}
+        {posts.map((p) => {
+          const created = DateTime.fromSeconds(p.created_date);
+
+          return (
+            <li key={p.id} className="relative flex gap-x-4 dark:text-white">
+              <div
+                className={classNames(
+                  "-bottom-6",
+                  "absolute left-0 top-0 flex w-6 justify-center"
+                )}
+              >
+                <div className="w-px bg-gray-200" />
+              </div>
+              <>
+                <div className="relative flex h-6 w-6 pt-9 flex-none items-center justify-center bg-white dark:bg-gray-900">
+                  <div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
+                </div>
+                <div className="flex-auto rounded-md p-3">
+                  <div className="flex justify-between gap-x-4">
+                    <div className="py-3 leading-5 text-2xl">
+                      {created.weekdayLong} {created.monthLong} {created.day}
+                    </div>
+                    <time className="flex-none py-0.5 text-xs leading-5 text-gray-500">
+                      {created.year}
+                    </time>
+                  </div>
+                  <div>
+                    <Markdown>{p.body}</Markdown>
+                  </div>
+                </div>
+              </>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

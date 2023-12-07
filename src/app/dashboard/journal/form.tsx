@@ -3,7 +3,7 @@ import React from "react";
 
 export default function JournalEntryForm(props: {
   // entry: { id: string; body: string; } | null;
-    entry: any
+  entry: any;
   formAction: any;
 }) {
   // const [state, setState] = React.useState(

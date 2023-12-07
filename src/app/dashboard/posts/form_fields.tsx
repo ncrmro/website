@@ -12,7 +12,7 @@ export function PostFormFields({
   state: any;
   setState: any;
 }) {
-    console.log(state)
+  console.log(state);
   return (
     <div className="lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:overflow-y-auto lg:border-l lg:border-gray-200 p-2 flex flex-col gap-4 w-96">
       <div className="col-span-full">
