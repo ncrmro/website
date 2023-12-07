@@ -97,13 +97,23 @@ export default async function JournalPage() {
     //   "7b5b4a6d-008b-4d11-9aaf-66f8acb41d29",
     // ])
     .execute();
+  console.log(posts[0]);
+  console.log(
+    timezone,
+    currentTimezoneMidnightUnixTimestamp(timezone),
+    posts[0]?.created_date
+  );
   const todayEntry =
     posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp(timezone)
       ? posts.shift()
       : null;
 
+  // console.log(todayEntry);
   return (
     <div>
+      <span>
+        Current midnight {currentTimezoneMidnightUnixTimestamp(timezone)}{" "}
+      </span>
       <div className="py-4">
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
       </div>
