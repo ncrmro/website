@@ -12,7 +12,7 @@
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "mig": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
-    "test": "playwright test",
+    "e2e": "playwright test",
     "typegen": "DATABASE_URL=database/sqlite3.db kysely-codegen",
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
     "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",
