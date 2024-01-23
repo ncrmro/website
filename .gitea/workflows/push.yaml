@@ -75,6 +75,7 @@ jobs:
         id: short-sha
       - uses: docker/build-push-action@v5
         with:
+          context: .
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ env.CONTAINER_REPO }}:${{ steps.short-sha.outputs.SHA }},${{ env.CONTAINER_REPO }}:latest
           cache-from: type=local,src=/tmp/.buildx-cache
