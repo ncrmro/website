@@ -95,6 +95,6 @@ jobs:
         id: short-sha
       - run: helm dependency build ./chart
       - run: >
-          helm --namespace ncrmro-com upgrade --install --create-namespace
+          helm --namespace ncrmro-com upgrade --install
           --wait website ./chart
           --values ./chart/values.production.yaml
