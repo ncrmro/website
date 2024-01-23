@@ -1,0 +1,51 @@
+name: Validate
+on:
+  push:
+    paths:
+      - '**'
+
+env:
+  CONTAINER_REPO: harbor.ncrmro.com/kydra/website
+
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: npm list
+#      - run: npm install
+      - run: npm run mig
+
+      - name: Cache playwright binaries
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.35.1
+
+      - name: Install Playwright Browsers
+        run: npm exec playwright -- install chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - run: npm run e2e
+
+      - name: Upload Playwright Test Artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright
+          path: website/test-results/**
+          retention-days: 5
