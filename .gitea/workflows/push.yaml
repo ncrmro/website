@@ -80,3 +80,24 @@ jobs:
           tags: ${{ env.CONTAINER_REPO }}:${{ steps.short-sha.outputs.SHA }},${{ env.CONTAINER_REPO }}:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    defaults:
+      run:
+        working-directory: components/keystone-dashboard
+    steps:
+      - uses: actions/checkout@v3
+      - uses: azure/setup-helm@v3
+        with:
+          version: v3.11.2
+      - run: mkdir ~/.kube && echo "${{ secrets.OCEAN_KUBECONFIG }}" > ~/.kube/config
+      - run: echo "SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        id: short-sha
+      - run: helm dependency build ./chart
+      - run: >
+          helm --namespace ncrmro-com upgrade --install --create-namespace
+          --wait website ./chart
+          --values ./chart/values.production.com
