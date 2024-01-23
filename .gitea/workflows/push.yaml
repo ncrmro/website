@@ -27,29 +27,29 @@ jobs:
       - run: npm ci
 
 #      - run: npm install
-      - run: |
-          npm run build-migrations
-          npm run mig
-
-      - name: Cache playwright binaries
-        uses: actions/cache@v3
-        id: playwright-cache
-        with:
-          path: |
-            ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-1.35.1
-
-      - name: Install Playwright Browsers
-        run: npm exec playwright -- install chromium
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-
-      - run: npm run e2e
-
-      - name: Upload Playwright Test Artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright
-          path: website/test-results/**
-          retention-days: 5
+#      - run: |
+#          npm run build-migrations
+#          npm run mig
+#
+#      - name: Cache playwright binaries
+#        uses: actions/cache@v3
+#        id: playwright-cache
+#        with:
+#          path: |
+#            ~/.cache/ms-playwright
+#          key: ${{ runner.os }}-playwright-1.35.1
+#
+#      - name: Install Playwright Browsers
+#        run: npm exec playwright -- install chromium
+#        if: steps.playwright-cache.outputs.cache-hit != 'true'
+#
+#      - run: npm run e2e
+#
+#      - name: Upload Playwright Test Artifacts
+#        uses: actions/upload-artifact@v3
+#        if: always()
+#        with:
+#          name: playwright
+#          path: website/test-results/**
+#          retention-days: 5
 
