@@ -83,7 +83,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+#    if: github.ref == 'refs/heads/main'
     needs: [validate, build]
     steps:
       - uses: actions/checkout@v3
