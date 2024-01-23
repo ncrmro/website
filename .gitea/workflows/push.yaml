@@ -84,10 +84,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: build
-    defaults:
-      run:
-        working-directory: components/keystone-dashboard
+    needs: [validate, build]
     steps:
       - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
