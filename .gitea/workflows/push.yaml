@@ -97,4 +97,4 @@ jobs:
       - run: >
           helm --namespace ncrmro-com upgrade --install --create-namespace
           --wait website ./chart
-          --values ./chart/values.production.com
+          --values ./chart/values.production.yaml
