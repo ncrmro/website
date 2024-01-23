@@ -7,7 +7,7 @@
     "node": ">=19"
   },
   "scripts": {
-    "dev": "npm build-migrations && npm migrations && next dev",
+    "dev": "npm run build-migrations && npm run migrations && next run dev",
     "build": "next build",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",

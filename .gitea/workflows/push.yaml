@@ -27,7 +27,9 @@ jobs:
       - run: npm ci
 
 #      - run: npm install
-      - run: npm run mig
+      - run: |
+          npm run build-migrations
+          npm run mig
 
       - name: Cache playwright binaries
         uses: actions/cache@v3
