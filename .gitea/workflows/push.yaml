@@ -5,7 +5,7 @@ on:
       - '**'
 
 env:
-  CONTAINER_REPO: harbor.ncrmro.com/ncrmro-static/website
+  CONTAINER_REPO: harbor.ncrmro.com/ncrmro/website
 
 
 jobs:
