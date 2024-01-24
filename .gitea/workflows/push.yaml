@@ -5,7 +5,7 @@ on:
       - '**'
 
 env:
-  CONTAINER_REPO: harbor.ncrmro.com/ncrmro-static
+  CONTAINER_REPO: harbor.ncrmro.com/ncrmro-static/website
 
 
 jobs:
@@ -60,8 +60,8 @@ jobs:
       - uses: docker/login-action@v3
         with:
           registry: harbor.ncrmro.com
-          username: ${{ secrets.HARBOR_USERNAME }}
-          password: ${{ secrets.HARBOR_SECRET }}
+          username: ${{ vars.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
 
       - id: package-lock-docker-hash
         run: echo "HASH=$(git hash-object package-lock.json)-$(git hash-object Dockerfile)" >> "$GITHUB_OUTPUT"
