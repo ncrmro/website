@@ -12,7 +12,8 @@ image:
 
 imagePullSecrets: []
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 10001
 
 securityContext:
    capabilities:
