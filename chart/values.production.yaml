@@ -11,3 +11,6 @@ ingress:
   tls:
   - hosts:
       - ncrmro.com
+
+imagePullSecrets:
+  - name: regcred
