@@ -99,3 +99,4 @@ jobs:
           helm --namespace ncrmro-com upgrade --install
           --wait website ./chart
           --values ./chart/values.production.yaml
+          --set image.tag=${{ steps.short-sha.outputs.SHA }}
