@@ -86,8 +86,8 @@ export default async function JournalPage() {
       "id",
       "body",
       "created_date",
-      // sql<string>`date(created_date, 'unixepoch', 'utc')`.as(
       //   "created_date_str"
+      // sql<string>`date(created_date, 'unixepoch', 'utc')`.as(
       // ),
     ])
     .orderBy("created_date", "desc")

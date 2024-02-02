@@ -7,12 +7,12 @@
     "node": ">=19"
   },
   "scripts": {
-    "dev": "pnpm build-migrations && pnpm migrations && next dev",
+    "dev": "npm run build-migrations && npm run mig && next dev",
     "build": "next build",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
-    "migrations": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
-    "test": "playwright test",
+    "mig": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
+    "e2e": "playwright test",
     "typegen": "DATABASE_URL=database/sqlite3.db kysely-codegen",
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
     "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",

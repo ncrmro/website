@@ -5,14 +5,15 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/ncrmro/ncrmro-static
+  repository: harbor.ncrmro.com/ncrmro/website
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
 imagePullSecrets: []
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 10001
 
 securityContext:
    capabilities:
