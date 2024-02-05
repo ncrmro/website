@@ -1,5 +1,8 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+This is a mirror repository now, the source is on my personal Gitea instance
+
+
 ## Getting Started
 
 You will need to have [netlify CLI](https://docs.netlify.com/cli/get-started/#authentication) installed and have LFS set up as this is how
