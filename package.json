@@ -15,8 +15,7 @@
     "e2e": "playwright test",
     "typegen": "DATABASE_URL=database/sqlite3.db kysely-codegen",
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
-    "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",
-    "postbuild": "next-sitemap"
+    "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.16",
