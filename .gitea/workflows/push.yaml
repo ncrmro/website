@@ -82,21 +82,21 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
-  deploy:
-    runs-on: ubuntu-latest
-#    if: github.ref == 'refs/heads/main'
-    needs: [validate, build]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: azure/setup-helm@v3
-        with:
-          version: v3.11.2
-      - run: mkdir ~/.kube && echo "${{ secrets.OCEAN_KUBECONFIG }}" > ~/.kube/config
-      - run: echo "SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-        id: short-sha
-      - run: helm dependency build ./chart
-      - run: >
-          helm --namespace ncrmro-com upgrade --install
-          --wait website ./chart
-          --values ./chart/values.production.yaml
-          --set image.tag=${{ steps.short-sha.outputs.SHA }}
+#  deploy:
+#    runs-on: ubuntu-latest
+##    if: github.ref == 'refs/heads/main'
+#    needs: [validate, build]
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: azure/setup-helm@v3
+#        with:
+#          version: v3.11.2
+#      - run: mkdir ~/.kube && echo "${{ secrets.OCEAN_KUBECONFIG }}" > ~/.kube/config
+#      - run: echo "SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+#        id: short-sha
+#      - run: helm dependency build ./chart
+#      - run: >
+#          helm --namespace ncrmro-com upgrade --install
+#          --wait website ./chart
+#          --values ./chart/values.production.yaml
+#          --set image.tag=${{ steps.short-sha.outputs.SHA }}
