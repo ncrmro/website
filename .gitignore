@@ -44,3 +44,5 @@ sqlite3.db*
 /playwright/.cache/
 dist
 public/uploads/posts
+public/sw*
+public/workbox*
