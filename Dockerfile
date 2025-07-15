@@ -8,7 +8,7 @@ FROM base AS deps
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY --link package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 # We are stuck on node 19 as nextjs doesn't work well on 20 yet,
 # better-sqlite3 doesn't have a prebuilt binary in node 19 and needs python
 RUN apk add --no-cache python3 build-base && \
