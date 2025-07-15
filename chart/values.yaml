@@ -5,7 +5,7 @@
 replicaCount: 2
 
 image:
-  repository: harbor.ncrmro.com/ncrmro/website
+  repository: ghcr.io/ncrmro/website
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
