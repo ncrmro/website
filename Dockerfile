@@ -22,8 +22,8 @@ RUN apk add --no-cache python3 build-base && \
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps --link /app/node_modules ./node_modules
-COPY --link  . .
+COPY --from=deps /app/node_modules ./node_modules
+COPY  . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -53,16 +53,16 @@ RUN \
   addgroup --system --gid 10001 nodejs; \
   adduser --system --uid 10001 nextjs
 
-COPY --from=builder --link /app/public ./public
-COPY --from=builder --link --chown=10001:10001 /app/database ./database
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=10001:10001 /app/database ./database
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 
-COPY --from=builder --link --chown=10001:10001 /app/.next/standalone ./
+COPY --from=builder --chown=10001:10001 /app/.next/standalone ./
 # nextjs trace doesn't copy the kysely dependency which is needed during migrations
-COPY --from=builder --link --chown=10001:10001 /app/node_modules/kysely ./node_modules/kysely
-COPY --from=builder --link --chown=10001:10001 /app/.next/static ./.next/static
+COPY --from=builder --chown=10001:10001 /app/node_modules/kysely ./node_modules/kysely
+COPY --from=builder --chown=10001:10001 /app/.next/static ./.next/static
 
 USER nextjs
 
