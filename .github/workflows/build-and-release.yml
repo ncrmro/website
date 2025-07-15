@@ -22,13 +22,6 @@ jobs:
       id-token: write
       attestations: write
       
-    strategy:
-      matrix:
-        service:
-          - website
-          # Web won't build as its configured for cloudflare worker deployment
-          # - web
-        
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -51,7 +44,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -63,8 +56,8 @@ jobs:
       id: build
       uses: docker/build-push-action@v5
       with:
-        context: ./${{ matrix.service }}
-        file: ./${{ matrix.service }}/Dockerfile
+        context: .
+        file: ./Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -75,7 +68,7 @@ jobs:
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v1
       with:
-        subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+        subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         subject-digest: ${{ steps.build.outputs.digest }}
         push-to-registry: true
 
@@ -95,7 +88,7 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.MERCURY_KUBE_CONFIG }}
         with:
-          args: set image deployment/ncrmro-strapi-deployment strapi=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/strapi@${{ needs.build-and-push.outputs.digest }} -n default
+          args: set image deployment/ncrmro-strapi-deployment strapi=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build-and-push.outputs.digest }} -n default
 
   security-scan:
     runs-on: ubuntu-latest
@@ -110,14 +103,6 @@ jobs:
       # needed for trivy to read the image from the registry
       packages: read
 
-
-    strategy:
-      matrix:
-        service:
-          - strapi
-          # Web won't build as its configured for cloudflare worker deployment
-          # - web
-        
     steps:
     - name: Set lowercase image name
       run: |
@@ -133,15 +118,15 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}:latest
+        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         format: 'sarif'
-        output: 'trivy-results-${{ matrix.service }}.sarif'
+        output: 'trivy-results.sarif'
 
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v3
       with:
-        sarif_file: 'trivy-results-${{ matrix.service }}.sarif'
-        category: 'trivy-${{ matrix.service }}'
+        sarif_file: 'trivy-results.sarif'
+        category: 'trivy'
 
   deploy-notification:
     runs-on: ubuntu-latest
@@ -156,8 +141,7 @@ jobs:
     - name: Deployment summary
       run: |
         echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
-        echo "Successfully built and pushed images:" >> $GITHUB_STEP_SUMMARY
-        echo "- **Web**: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/web:latest\`" >> $GITHUB_STEP_SUMMARY
-        echo "- **Strapi**: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/strapi:latest\`" >> $GITHUB_STEP_SUMMARY
+        echo "Successfully built and pushed image:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Application**: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "Images are available at: https://github.com/${{ github.repository }}/pkgs/container" >> $GITHUB_STEP_SUMMARY 
