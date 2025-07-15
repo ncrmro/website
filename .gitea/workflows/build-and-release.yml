@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         service:
-          - strapi
+          - website
           # Web won't build as its configured for cloudflare worker deployment
           # - web
         
