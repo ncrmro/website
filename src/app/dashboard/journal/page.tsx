@@ -1,5 +1,5 @@
 import JournalEntryForm from "@/app/dashboard/journal/form";
-import { selectSessionViewer, useViewer } from "@/lib/auth";
+import { selectSessionViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -21,7 +21,8 @@ function currentTimezoneMidnightUnixTimestamp(timeZone: string) {
 async function submitForm(data: FormData) {
   "use server";
   const viewer = await selectSessionViewer();
-  const timezone = cookies().get("viewer_timezone")?.value;
+  const cookieStore = await cookies();
+  const timezone = cookieStore.get("viewer_timezone")?.value;
   if (!timezone) throw new Error("Timezone missing!");
   if (!viewer) throw new Error("Viewer doesnt exist");
   const existingPost = data.get("id");
@@ -71,8 +72,9 @@ function classNames(...classes: string[]) {
 }
 
 export default async function JournalPage() {
-  const viewer = await useViewer();
-  const timezone = cookies().get("viewer_timezone")?.value;
+  const viewer = await selectSessionViewer();
+  const cookieStore = await cookies();
+  const timezone = cookieStore.get("viewer_timezone")?.value;
   if (!viewer)
     redirect(
       `/login?${new URLSearchParams({

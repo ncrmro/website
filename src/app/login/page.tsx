@@ -1,5 +1,5 @@
 import ClientTimezoneInput from "@/app/login/ClientTimezoneInput";
-import { handleSession, Passwords, useViewer } from "@/lib/auth";
+import { handleSession, Passwords, selectSessionViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/database";
@@ -26,8 +26,9 @@ async function loginUser(data: Map<string, string>) {
   }
 }
 
-function parseRedirectParam() {
-  const referer = headers().get("referer");
+async function parseRedirectParam() {
+  const headersList = await headers();
+  const referer = headersList.get("referer");
   if (referer) {
     const url = new URL(referer);
     return url.searchParams.get("redirect");
@@ -35,8 +36,8 @@ function parseRedirectParam() {
 }
 
 export default async function LoginPage() {
-  const viewer = await useViewer();
-  const redirectPram = parseRedirectParam();
+  const viewer = await selectSessionViewer();
+  const redirectPram = await parseRedirectParam();
   if (viewer && redirectPram) {
     redirect(redirectPram);
   } else if (viewer) {

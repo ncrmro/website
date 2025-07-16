@@ -1,6 +1,6 @@
 import Post from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
-import { useViewer } from "@/lib/auth";
+import { selectSessionViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -8,9 +8,10 @@ import React from "react";
 export default async function PostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const viewer = await useViewer();
+  const { slug } = await params;
+  const viewer = await selectSessionViewer();
   // Kysely has a better function to aggregate sub query but sqlite version wasn't exported?
   // https://github.com/kysely-org/kysely/issues/628
   const [post, tags] = await Promise.all([
@@ -25,14 +26,14 @@ export default async function PostPage({
         "published",
         "publish_date",
       ])
-      .where("slug", "=", params.slug)
+      .where("slug", "=", slug)
       .executeTakeFirstOrThrow(),
     db
       .selectFrom("tags")
       .select(["tags.id", "tags.value"])
       .innerJoin("posts_tags", "posts_tags.tag_id", "tags.id")
       .innerJoin("posts", "posts.id", "posts_tags.post_id")
-      .where("posts.slug", "=", params.slug)
+      .where("posts.slug", "=", slug)
       .distinct()
       .execute(),
   ]);
