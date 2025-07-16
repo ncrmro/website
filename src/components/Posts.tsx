@@ -1,8 +1,8 @@
 import { PostItem } from "@/components/PostItem";
 import { db } from "@/lib/database";
-import React, { PropsWithChildren } from "react";
+import React from "react";
 
-export default async function TravelPosts() {
+export async function Posts() {
   const posts = await db
     .selectFrom("posts")
     .select([
@@ -13,14 +13,12 @@ export default async function TravelPosts() {
       "publish_date",
       "published",
     ])
-    .innerJoin("posts_tags", "post_id", "posts.id")
-    .innerJoin("tags", "tags.id", "posts_tags.tag_id")
-    .orderBy("publish_date", "desc")
     .where("published", "=", 1)
-    .where("tags.value", "=", "travel")
+    .orderBy("publish_date", "desc")
     .execute();
+
   return (
-    <ul role="list" className="-mb-8">
+    <ul role="list" className="-mb-8 md:max-w-3xl">
       {posts.map((post, index) => (
         <PostItem
           key={post.slug}

@@ -1,4 +1,4 @@
-import { PostItem } from "@/app/posts/page";
+import { PostItem } from "@/components/PostItem";
 import { db } from "@/lib/database";
 import React from "react";
 
