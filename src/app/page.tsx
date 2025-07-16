@@ -1,4 +1,4 @@
-import { Posts } from "@/app/posts/page";
+import { Posts } from "@/components/Posts";
 import Navbar from "@/components/Navbar";
 import React from "react";
 

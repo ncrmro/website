@@ -1,6 +1,6 @@
 import { Kysely, SqliteDialect } from "kysely";
 import { default as SQLiteDatabase } from "better-sqlite3";
-import { DB } from "kysely-codegen";
+import { DB } from "./database-types";
 import * as crypto from "crypto";
 /*
   slugify needs to be a relative import here
