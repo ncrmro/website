@@ -7,7 +7,7 @@ import * as crypto from "crypto";
  */
 import { slugify } from "./utils";
 
-const databasePath = "./database/sqlite.db";
+const databasePath = "./database/sqlite3.db";
 
 export const sqlite = new SQLiteDatabase(databasePath);
 sqlite.pragma("journal_mode = WAL");
