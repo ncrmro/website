@@ -3,6 +3,9 @@ ingress:
   className: "nginx"
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 100m
+    cert-manager.io/issuer: letsencrypt-dns-cloudflare
+    cert-manager.io/issuer-kind: ClusterIssuer
+    cert-manager.io/issuer-group: cert-manager.io
   hosts:
     - host: ncrmro.com
       paths:

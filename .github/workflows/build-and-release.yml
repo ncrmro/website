@@ -99,7 +99,7 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config.mercury
-          helm --kubeconfig ~/.kube/config.mercury upgrade --install ncrmro-website ./chart --values chart/values.production.yaml
+          helm --kubeconfig ~/.kube/config.mercury upgrade --install ncrmro-website ./chart --values chart/values.production.yaml --set image.tag="${{ needs.build-and-push.outputs.digest }}"
 
   security-scan:
     runs-on: ubuntu-latest
