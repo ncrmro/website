@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "nextjs-sqlite.fullname" . }}-migrations-{{ .Values.image.tag }}
+  name: {{ include "nextjs-sqlite.fullname" . }}-migrations-{{ .Values.image.tag | trunc 12 }}
   labels:
     {{- include "nextjs-sqlite.labels" . | nindent 4 }}
   annotations:
