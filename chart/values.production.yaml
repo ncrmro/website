@@ -11,9 +11,15 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+    - host: next.ncrmro.com
+      paths:
+        - path: /
+          pathType: Prefix
   tls:
   - hosts:
       - ncrmro.com
+      - next.ncrmro.com
+    secretName: ncrmro-website-com-tls
 
 imagePullSecrets:
   - name: regcred
