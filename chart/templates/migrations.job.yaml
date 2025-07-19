@@ -25,7 +25,7 @@ spec:
         - name: migrations
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}@{{ .Values.image.tag }}"
           command: ['node']
           args: ["/app/database/dist/migrations"]
           env:
