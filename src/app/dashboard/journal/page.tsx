@@ -21,7 +21,7 @@ function currentTimezoneMidnightUnixTimestamp(timeZone: string) {
 async function submitForm(data: FormData) {
   "use server";
   const viewer = await selectSessionViewer();
-  const timezone = cookies().get("viewer_timezone")?.value;
+  const timezone = (await cookies()).get("viewer_timezone")?.value;
   if (!timezone) throw new Error("Timezone missing!");
   if (!viewer) throw new Error("Viewer doesnt exist");
   const existingPost = data.get("id");
@@ -72,7 +72,7 @@ function classNames(...classes: string[]) {
 
 export default async function JournalPage() {
   const viewer = await selectViewer();
-  const timezone = cookies().get("viewer_timezone")?.value;
+  const timezone = (await cookies()).get("viewer_timezone")?.value;
   if (!viewer)
     redirect(
       `/login?${new URLSearchParams({
@@ -118,7 +118,7 @@ export default async function JournalPage() {
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
       </div>
       <ul role="list" className="space-y-6">
-        {posts.map((p) => {
+        {posts.map((p: any) => {
           const created = DateTime.fromSeconds(p.created_date);
 
           return (

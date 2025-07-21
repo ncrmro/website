@@ -1,4 +1,4 @@
-import { PostItem } from "@/app/posts/page";
+import { PostItem } from "@/app/posts/PostItem";
 import { db } from "@/lib/database";
 import React, { PropsWithChildren } from "react";
 
@@ -21,7 +21,7 @@ export default async function TravelPosts() {
     .execute();
   return (
     <ul role="list" className="-mb-8">
-      {posts.map((post, index) => (
+      {posts.map((post: any, index: number) => (
         <PostItem
           key={post.slug}
           post={post}

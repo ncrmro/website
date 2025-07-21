@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       </url>
       ${posts
         .map(
-          (p) => `<url>
+          (p: any) => `<url>
         <loc>${rootURL}/posts/${p.slug}</loc>
         <lastmod>${p.updated_at.split(" ")[0]}</lastmod>
       </url>`

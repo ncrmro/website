@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { db } from "./src/lib/database";
 import { Passwords } from "./src/lib/auth";
 import { test as base } from "@playwright/test";

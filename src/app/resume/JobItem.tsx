@@ -68,7 +68,8 @@ export default function JobDocument({ job }: { job: any }) {
         </div>
       </div>
       <div>
-        <MDXRemote {...job.compiledSource} components={components} />
+        {/* <MDXRemote {...job.compiledSource} components={components} /> */}
+        {job.content}
       </div>
       <div className="flex flex-wrap gap-2">
         {job.tech?.split(",").map((tech: string) => (

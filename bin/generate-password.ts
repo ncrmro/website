@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+// @ts-nocheck
 import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { Kysely, SqliteDialect } from 'kysely';

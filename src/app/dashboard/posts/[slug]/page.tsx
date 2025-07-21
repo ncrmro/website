@@ -32,14 +32,14 @@ export default async function EditPostPage({
         "published",
         "publish_date",
       ])
-      .where("slug", "=", params.slug)
+      .where("slug", "=", slug)
       .executeTakeFirstOrThrow(),
     db
       .selectFrom("tags")
       .select(["tags.id", "tags.value"])
       .innerJoin("posts_tags", "posts_tags.tag_id", "tags.id")
       .innerJoin("posts", "posts.id", "posts_tags.post_id")
-      .where("posts.slug", "=", params.slug)
+      .where("posts.slug", "=", slug)
       .distinct()
       .execute(),
   ]);
@@ -62,7 +62,7 @@ export default async function EditPostPage({
         slug: data.get("slug") as string,
         // user_id: viewer.id,
       })
-      .where("slug", "=", params.slug)
+      .where("slug", "=", slug)
       .returning(["slug"])
       .executeTakeFirstOrThrow();
     // TODO this revalidate is not working

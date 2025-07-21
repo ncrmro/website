@@ -19,7 +19,7 @@ export async function Posts() {
 
   return (
     <ul role="list" className="-mb-8 md:max-w-3xl">
-      {posts.map((post, index: number) => (
+      {posts.map((post: any, index: number) => (
         <PostItem
           key={post.slug}
           post={post}
