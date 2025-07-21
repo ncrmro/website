@@ -39,15 +39,15 @@ export async function handleSession(userId: string, timezone: string) {
     .values({ user_id: userId })
     .returning("id")
     .executeTakeFirstOrThrow();
-  cookies().set({
+  (await cookies()).set({
     name: "viewer_session",
     value: session.id,
   });
-  cookies().set({ name: "viewer_timezone", value: timezone });
+  (await cookies()).set({ name: "viewer_timezone", value: timezone });
 }
 
 export async function selectSessionViewer() {
-  const session = cookies().get("viewer_session")?.value;
+  const session = (await cookies()  ).get("viewer_session")?.value;
   if (session) {
     return await db
       .selectFrom("users")

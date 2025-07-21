@@ -26,8 +26,8 @@ async function loginUser(data: Map<string, string>) {
   }
 }
 
-function parseRedirectParam() {
-  const referer = headers().get("referer");
+async function parseRedirectParam() {
+  const referer = (await headers()).get("referer");
   if (referer) {
     const url = new URL(referer);
     return url.searchParams.get("redirect");
@@ -36,7 +36,7 @@ function parseRedirectParam() {
 
 export default async function LoginPage() {
   const viewer = await useViewer();
-  const redirectPram = parseRedirectParam();
+  const redirectPram = await parseRedirectParam();
   if (viewer && redirectPram) {
     redirect(redirectPram);
   } else if (viewer) {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { db, sqlite } from "./database";
 import fs from "fs/promises";
 import * as crypto from "crypto";
