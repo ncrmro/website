@@ -9,7 +9,7 @@ const withPWA = withPWAInit({
 });
 
 const generateAppDirEntry = (entry) => {
-  const packagePath = require.resolve('next-pwa');
+  const packagePath = require.resolve("next-pwa");
   const packageDirectory = path.dirname(packagePath);
   const registerJs = path.join(packageDirectory, "register.js");
 
@@ -36,8 +36,8 @@ const nextConfig = {
   reactStrictMode: true,
   serverRuntimeConfig: {
     CONTACT_INFO_JSON:
-        process.env.CONTACT_INFO_JSON ||
-        '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
+      process.env.CONTACT_INFO_JSON ||
+      '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
   },
   env: {
     GOOGLE_ANALYTICS_TRACKING_ID: "G-6MYGCJZSVN",
@@ -63,8 +63,24 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+      {
+        source: "/ingest/decide",
+        destination: "https://us.i.posthog.com/decide",
+      },
+    ];
+  },
+  // This is required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 module.exports = withPWA(nextConfig);
-
-;
