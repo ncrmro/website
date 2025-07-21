@@ -1,12 +1,12 @@
 import React from "react";
 import DashboardClientLayout from "@/app/dashboard/layout.client";
 import { redirect } from "next/navigation";
-import { useViewer } from "@/lib/auth";
+import { selectViewer } from "@/lib/auth";
 
 export default async function DashboardLayout(props: {
   children: React.ReactNode;
 }) {
-  const viewer = await useViewer();
+  const viewer = await selectViewer();
   if (!viewer)
     redirect(
       `/login?${new URLSearchParams({

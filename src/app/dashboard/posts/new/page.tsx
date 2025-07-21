@@ -1,5 +1,5 @@
 import { db } from "@/lib/database";
-import { selectSessionViewer, useViewer } from "@/lib/auth";
+import { selectSessionViewer, selectViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
 import PostForm from "@/app/dashboard/posts/form";
@@ -33,7 +33,7 @@ async function createPost(data: FormData) {
 }
 
 export default async function CreatePost() {
-  const viewer = await useViewer();
+  const viewer = await selectViewer();
   if (!viewer)
     redirect(
       `/login?${new URLSearchParams({

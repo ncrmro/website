@@ -1,4 +1,4 @@
-import { useViewer } from "@/lib/auth";
+import { selectViewer } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import { db } from "@/lib/database";
@@ -8,7 +8,7 @@ const uploadDirectory = `${process.env.PWD}/public/uploads/posts`;
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const postId = url.searchParams.get("postId");
-  const viewer = await useViewer(); //
+  const viewer = await selectViewer(); //
   if (!viewer || !postId) throw new Error("Viewer and postId must be defined");
   const postUploadsDirectory = `${uploadDirectory}/${postId}`;
   const fileNames = await fs.readdir(postUploadsDirectory);
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const viewer = await useViewer();
+  const viewer = await selectViewer();
   const formData = await req.formData();
   const postId = formData.get("postId");
   if (!viewer || !postId) throw new Error("Viewer and postId must be defined");

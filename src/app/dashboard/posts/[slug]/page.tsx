@@ -8,13 +8,14 @@ export const dynamicParams = true;
 export default async function EditPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   const viewer = await selectSessionViewer();
   if (!viewer)
     redirect(
       `/login?${new URLSearchParams({
-        redirect: `/posts/${params.slug}/edit`,
+        redirect: `/posts/${slug}/edit`,
       }).toString()}`
     );
   // Kysely has a better function to aggregate sub query but sqlite version wasn't exported?

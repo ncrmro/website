@@ -1,5 +1,5 @@
 import formatDate from "@/app/posts/formatDate";
-import { useViewer } from "@/lib/auth";
+import { selectViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import React from "react";
 

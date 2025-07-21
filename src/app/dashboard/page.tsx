@@ -1,8 +1,8 @@
-import { useViewer } from "@/lib/auth";
+import { selectViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function Dashboard() {
-  const viewer = await useViewer();
+  const viewer = await selectViewer();
   if (!viewer)
     redirect(
       `/login?${new URLSearchParams({

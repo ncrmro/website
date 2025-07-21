@@ -117,7 +117,7 @@ export interface Viewer {
   last_name: string | null;
 }
 
-export async function useViewer(): Promise<Viewer | undefined> {
+export async function selectViewer(): Promise<Viewer | undefined> {
   if (typeof window === "undefined") {
     const viewer = await selectSessionViewer();
     if (viewer) {

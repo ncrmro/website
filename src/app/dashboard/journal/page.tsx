@@ -1,5 +1,5 @@
 import JournalEntryForm from "@/app/dashboard/journal/form";
-import { selectSessionViewer, useViewer } from "@/lib/auth";
+import { selectSessionViewer, selectViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -71,7 +71,7 @@ function classNames(...classes: string[]) {
 }
 
 export default async function JournalPage() {
-  const viewer = await useViewer();
+  const viewer = await selectViewer();
   const timezone = cookies().get("viewer_timezone")?.value;
   if (!viewer)
     redirect(

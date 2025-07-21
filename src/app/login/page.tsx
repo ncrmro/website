@@ -1,5 +1,5 @@
 import ClientTimezoneInput from "@/app/login/ClientTimezoneInput";
-import { handleSession, Passwords, useViewer } from "@/lib/auth";
+import { handleSession, Passwords, selectViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/database";
@@ -35,7 +35,7 @@ async function parseRedirectParam() {
 }
 
 export default async function LoginPage() {
-  const viewer = await useViewer();
+  const viewer = await selectViewer();
   const redirectPram = await parseRedirectParam();
   if (viewer && redirectPram) {
     redirect(redirectPram);
