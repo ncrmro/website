@@ -41,7 +41,7 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: HOST
+            - name: HOSTNAME
               value: 0.0.0.0
             - name: DATABASE_PATH
               value: /database/sqlite3.db
