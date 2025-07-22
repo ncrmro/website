@@ -18,16 +18,18 @@ export default async function PostsPage() {
     .execute();
   return (
     <main className="lg:pr-96">
-      <ul role="list" className="-mb-8 md:max-w-3xl">
-        {posts.map((post: any, index: number) => (
-          <PostItem
-            key={post.slug}
-            post={post}
-            evenRow={index !== posts.length - 1}
-            dashboard
-          />
-        ))}
-      </ul>
+      <div className="px-2 sm:px-0">
+        <ul role="list" className="-mb-8 w-full max-w-none sm:max-w-3xl">
+          {posts.map((post: any, index: number) => (
+            <PostItem
+              key={post.slug}
+              post={post}
+              evenRow={index !== posts.length - 1}
+              dashboard
+            />
+          ))}
+        </ul>
+      </div>
     </main>
   );
 }

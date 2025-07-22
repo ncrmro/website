@@ -110,42 +110,42 @@ export default async function JournalPage() {
 
   // console.log(todayEntry);
   return (
-    <div>
-      <span>
-        Current midnight {currentTimezoneMidnightUnixTimestamp(timezone)}{" "}
-      </span>
+    <div className="px-2 sm:px-0">
+      <div className="text-sm text-gray-500 mb-4">
+        Current midnight {currentTimezoneMidnightUnixTimestamp(timezone)}
+      </div>
       <div className="py-4">
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
       </div>
-      <ul role="list" className="space-y-6">
+      <ul role="list" className="space-y-4 sm:space-y-6">
         {posts.map((p: any) => {
           const created = DateTime.fromSeconds(p.created_date);
 
           return (
-            <li key={p.id} className="relative flex gap-x-4 dark:text-white">
+            <li key={p.id} className="relative flex gap-x-2 sm:gap-x-4 dark:text-white">
               <div
                 className={classNames(
                   "-bottom-6",
-                  "absolute left-0 top-0 flex w-6 justify-center"
+                  "absolute left-0 top-0 flex w-4 sm:w-6 justify-center"
                 )}
               >
                 <div className="w-px bg-gray-200" />
               </div>
               <>
-                <div className="relative flex h-6 w-6 pt-9 flex-none items-center justify-center bg-white dark:bg-gray-900">
-                  <div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
+                <div className="relative flex h-4 w-4 sm:h-6 sm:w-6 pt-6 sm:pt-9 flex-none items-center justify-center bg-white dark:bg-gray-900">
+                  <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
                 </div>
-                <div className="flex-auto rounded-md p-3">
-                  <div className="flex justify-between gap-x-4">
-                    <div className="py-3 leading-5 text-2xl">
+                <div className="flex-auto rounded-md p-2 sm:p-3">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-x-4">
+                    <div className="py-2 sm:py-3 leading-5 text-lg sm:text-2xl font-medium">
                       {created.weekdayLong} {created.monthLong} {created.day}
                     </div>
                     <time className="flex-none py-0.5 text-xs leading-5 text-gray-500">
                       {created.year}
                     </time>
                   </div>
-                  <div>
-                    <Markdown>{p.body}</Markdown>
+                  <div className="prose prose-sm sm:prose max-w-none">
+                    <Markdown components={components}>{p.body}</Markdown>
                   </div>
                 </div>
               </>

@@ -14,7 +14,7 @@ export default function JournalEntryForm(props: {
 
   return (
     // @ts-ignore
-    <form action={props.formAction} className="">
+    <form action={props.formAction} className="w-full">
       <input type="hidden" name="id" value={props.entry?.id} />
 
       <TextAreaField
@@ -24,8 +24,11 @@ export default function JournalEntryForm(props: {
         defaultValue={props.entry?.body || ""}
         // onChange={(e) => setState({ ...state, body: e.target.value })}
       />
-      <div className="float-right">
-        <button type="submit" className="dark:text-white">
+      <div className="flex justify-end mt-4">
+        <button 
+          type="submit" 
+          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
+        >
           Submit
         </button>
       </div>
