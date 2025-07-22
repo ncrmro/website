@@ -2,6 +2,9 @@ import { PostItem } from "@/app/posts/PostItem";
 import { db } from "@/lib/database";
 import React from "react";
 
+export const revalidate = 60;
+export const dynamic = "force-dynamic";
+
 export default async function PostsPage() {
   const posts = await db
     .selectFrom("posts")
