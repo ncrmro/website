@@ -23,3 +23,6 @@ ingress:
 
 imagePullSecrets:
   - name: regcred
+
+posthog:
+  key: phc_7PhIDB0fx9Wp0RoUMwkYv37loT9AEWagfhw4zNLsik8

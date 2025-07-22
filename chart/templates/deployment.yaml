@@ -45,6 +45,8 @@ spec:
               value: 0.0.0.0
             - name: DATABASE_PATH
               value: /database/sqlite3.db
+            - name: NEXT_PUBLIC_POSTHOG_KEY
+              value: {{ .Values.posthog.key }}
           volumeMounts:
           - mountPath: /database
             name: sqlite-database
