@@ -38,6 +38,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# CLI build artifacts
+bin/dist/
+
 sqlite3.db*
 /test-results/
 /playwright-report/
