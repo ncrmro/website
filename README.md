@@ -2,6 +2,19 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 This is a mirror repository now, the source is on my personal Gitea instance
 
+## Blog Post Sync
+
+This project includes a blog post sync feature that allows you to sync blog posts between your local Obsidian directory and the website database. See [BLOG_SYNC.md](./BLOG_SYNC.md) for detailed usage instructions.
+
+Quick start:
+```bash
+# Download all posts as Obsidian markdown files
+npm run sync-posts
+
+# Push local Obsidian posts to the server
+npm run sync-posts -- --push
+```
+
 
 ## Getting Started
 
