@@ -2,9 +2,42 @@ import { selectViewer } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/database";
 import { sql } from "kysely";
+import { createHash } from "crypto";
+
+async function authenticateRequest(req: NextRequest) {
+  // Check for Bearer token authentication
+  const authHeader = req.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.substring(7);
+    const expectedToken = process.env.SYNC_AUTH_TOKEN;
+    
+    if (expectedToken && token === expectedToken) {
+      // For token auth, we'll use a specific user (you may want to configure this)
+      // For now, let's get the first user as the viewer
+      const user = await db
+        .selectFrom("users")
+        .select(["id", "email", "first_name", "last_name", "image"])
+        .executeTakeFirst();
+      
+      if (user) {
+        // Add gravatar if no image
+        if (!user.image) {
+          const hash = createHash("md5");
+          hash.update(user.email);
+          const md5 = hash.digest("hex");
+          user.image = `https://www.gravatar.com/avatar/${md5}`;
+        }
+        return user;
+      }
+    }
+  }
+  
+  // Fall back to session-based authentication
+  return await selectViewer();
+}
 
 export async function GET(req: NextRequest) {
-  const viewer = await selectViewer();
+  const viewer = await authenticateRequest(req);
   if (!viewer) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -56,7 +89,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const viewer = await selectViewer();
+  const viewer = await authenticateRequest(req);
   if (!viewer) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

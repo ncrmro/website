@@ -51,18 +51,13 @@ npm run sync-posts -- -d ./obsidian-vault/blog-posts --push
 
 ## Authentication
 
-For both download and push operations, you need to set the `AUTH_COOKIE` environment variable with your authentication cookie from the website.
-
-To get your auth cookie:
-1. Log into the website
-2. Open browser developer tools (F12)
-3. Go to Application/Storage tab > Cookies
-4. Copy the session cookie value
-5. Set it as an environment variable:
+For both download and push operations, you need to set the `AUTH_TOKEN` environment variable with a shared secret token.
 
 ```bash
-export AUTH_COOKIE="your-cookie-value"
+export AUTH_TOKEN="your-secret-token"
 ```
+
+The server must also have the same token configured as the `SYNC_AUTH_TOKEN` environment variable.
 
 ## File Format
 
@@ -111,7 +106,7 @@ Each file contains:
 ## How It Works
 
 ### Download Process
-1. Authenticates with the server using your cookie
+1. Authenticates with the server using Bearer token
 2. Fetches all posts via `/api/posts/sync` endpoint
 3. Converts each post to Obsidian markdown format
 4. Saves files to the specified directory

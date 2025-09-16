@@ -2,8 +2,14 @@
 // @ts-nocheck
 import fs from 'fs/promises';
 import path from 'path';
-import { parse as parseYAML, stringify as stringifyYAML } from 'yaml';
-import { slugify } from '../src/lib/utils';
+import pkg from 'yaml';
+const { parse: parseYAML, stringify: stringifyYAML } = pkg;
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/ /g, "-")
+    .replace(/[^\w-]+/g, "");
+}
 
 interface CLIOptions {
   directory: string;
@@ -55,7 +61,7 @@ Examples:
   npm run sync-posts -- --push                         # Push local posts to server
   npm run sync-posts -- -d ./posts --push -s https://mysite.com  # Push from directory to remote server
 
-Note: For push operations, you need to set AUTH_COOKIE environment variable
+Note: For push operations, you need to set AUTH_TOKEN environment variable
 `);
 }
 
@@ -124,15 +130,15 @@ async function downloadPosts(options: CLIOptions): Promise<void> {
   try {
     console.log(`📥 Downloading posts from ${options.serverUrl}...`);
     
-    const authCookie = process.env.AUTH_COOKIE;
-    if (!authCookie) {
-      console.error('Error: AUTH_COOKIE environment variable is required');
+    const authToken = process.env.AUTH_TOKEN;
+    if (!authToken) {
+      console.error('Error: AUTH_TOKEN environment variable is required');
       process.exit(1);
     }
 
     const response = await fetch(`${options.serverUrl}/api/posts/sync`, {
       headers: {
-        'Cookie': authCookie,
+        'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -228,9 +234,9 @@ async function pushPosts(options: CLIOptions): Promise<void> {
   try {
     console.log(`📤 Pushing posts from ${options.directory} to ${options.serverUrl}...`);
     
-    const authCookie = process.env.AUTH_COOKIE;
-    if (!authCookie) {
-      console.error('Error: AUTH_COOKIE environment variable is required');
+    const authToken = process.env.AUTH_TOKEN;
+    if (!authToken) {
+      console.error('Error: AUTH_TOKEN environment variable is required');
       process.exit(1);
     }
     
@@ -292,7 +298,7 @@ async function pushPosts(options: CLIOptions): Promise<void> {
     const response = await fetch(`${options.serverUrl}/api/posts/sync`, {
       method: 'POST',
       headers: {
-        'Cookie': authCookie,
+        'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ posts }),
@@ -359,6 +365,4 @@ async function main(): Promise<void> {
   }
 }
 
-if (require.main === module) {
-  main();
-}
+main();
