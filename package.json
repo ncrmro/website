@@ -17,7 +17,9 @@
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
     "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",
     "build-cli": "tsc --module nodenext bin/generate-password.ts --outDir bin/dist",
-    "generate-password": "npm run build-cli && node bin/dist/generate-password.js"
+    "generate-password": "npm run build-cli && node bin/dist/generate-password.js",
+    "build-sync-cli": "tsc --module nodenext bin/sync-posts.ts --outDir bin/dist",
+    "sync-posts": "npm run build-sync-cli && node bin/dist/bin/sync-posts.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.0.0",

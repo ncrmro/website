@@ -48,3 +48,14 @@ resources:
      memory: 256Mi
 
 GOOGLE_ANALYTICS_TRACKING_ID: ""
+
+# PostHog analytics configuration
+posthog:
+  key: ""
+
+# Secrets configuration
+# Leave empty for auto-generation
+secrets:
+  # Blog post sync authentication token
+  # If not specified, a random 32-character token will be generated
+  syncAuthToken: ""

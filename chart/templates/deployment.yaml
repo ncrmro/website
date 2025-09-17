@@ -47,6 +47,11 @@ spec:
               value: /database/sqlite3.db
             - name: NEXT_PUBLIC_POSTHOG_KEY
               value: {{ .Values.posthog.key }}
+            - name: SYNC_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "nextjs-sqlite.fullname" . }}-secrets
+                  key: sync-auth-token
           volumeMounts:
           - mountPath: /database
             name: sqlite-database
