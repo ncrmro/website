@@ -86,12 +86,12 @@ jobs:
           echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       
       - name: Setup Tailscale
-        uses: tailscale/github-action@v2
+        uses: tailscale/github-action@v3
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-          hostname: github-runner-${{ github.run_id }}
           # Connect to the mercur.ncrmro.com network with route acceptance
-          args: --accept-routes --exit-node-allow-lan-access
+          args: --login-server https://mercury.ncrmro.com
+          tags: tag:github-actions
       
       - name: Setup Helm
         uses: azure/setup-helm@v4
