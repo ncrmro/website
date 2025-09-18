@@ -100,7 +100,7 @@ jobs:
 
       - name: Deploy with Helm
         env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         run: |
           helm upgrade --install ncrmro-website ./chart --values chart/values.production.yaml --set image.tag="${{ needs.build-and-push.outputs.digest }}"
 
