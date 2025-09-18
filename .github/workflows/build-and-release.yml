@@ -84,11 +84,14 @@ jobs:
       - name: Set lowercase image name
         run: |
           echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-      - run: sudo apt install wireguard
-      - run: sudo bash -c "echo '${{ secrets.MERCURY_WG_CONFIG }}' > /etc/wireguard/wg0.conf"
-      - run: sudo wg-quick up wg0
-      - run: sudo apt install wireguard-tools
-      - run: sudo wg show
+      
+      - name: Setup Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          hostname: github-runner-${{ github.run_id }}
+          # Connect to the mercur.ncrmro.com network with route acceptance
+          args: --accept-routes --exit-node-allow-lan-access
       
       - name: Setup Helm
         uses: azure/setup-helm@v4
@@ -97,11 +100,9 @@ jobs:
 
       - name: Deploy with Helm
         env:
-          KUBE_CONFIG: ${{ secrets.MERCURY_KUBE_CONFIG }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
-          mkdir -p ~/.kube
-          echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config.mercury
-          helm --kubeconfig ~/.kube/config.mercury upgrade --install ncrmro-website ./chart --values chart/values.production.yaml --set image.tag="${{ needs.build-and-push.outputs.digest }}"
+          helm upgrade --install ncrmro-website ./chart --values chart/values.production.yaml --set image.tag="${{ needs.build-and-push.outputs.digest }}"
 
   security-scan:
     runs-on: ubuntu-latest

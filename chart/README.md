@@ -7,7 +7,7 @@ This Helm chart deploys the NCRMRO website with automatic secret management for 
 ### From GitHub Action
 
 ```shell
-helm --kubeconfig ~/.kube/config.mercury upgrade --install ncrmro-website ./chart --values chart/values.production.yaml
+helm upgrade --install ncrmro-website ./chart --values chart/values.production.yaml
 ```
 
 ## Features
