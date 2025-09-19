@@ -99,9 +99,10 @@ jobs:
           version: 'latest'
 
       - name: Deploy with Helm
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          export KUBECONFIG=~/.kube/config
           helm upgrade --install ncrmro-website ./chart --values chart/values.production.yaml --set image.tag="${{ needs.build-and-push.outputs.digest }}"
 
   security-scan:
