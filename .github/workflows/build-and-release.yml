@@ -23,6 +23,18 @@ jobs:
       attestations: write
       
     steps:
+    - name: Validate KUBECONFIG secret
+      run: |
+        if [ -z "${{ secrets.KUBECONFIG }}" ]; then
+          echo "Error: KUBECONFIG secret is empty or not set"
+          exit 1
+        fi
+        echo -n "${{ secrets.KUBECONFIG }}" | base64 -d > /dev/null
+        if [ $? -ne 0 ]; then
+          echo "Error: Failed to decode KUBECONFIG secret - invalid base64 data"
+          exit 1
+        fi
+        
     - name: Checkout repository
       uses: actions/checkout@v4
 
