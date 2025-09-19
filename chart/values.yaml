@@ -53,6 +53,16 @@ GOOGLE_ANALYTICS_TRACKING_ID: ""
 posthog:
   key: ""
 
+# Persistent Volume configuration
+persistence:
+  # Storage class for both database and uploads PVCs
+  # Leave empty to use default storage class
+  storageClass: ""
+  database:
+    size: 1Gi
+  uploads:
+    size: 1Gi
+
 # Secrets configuration
 # Leave empty for auto-generation
 secrets:

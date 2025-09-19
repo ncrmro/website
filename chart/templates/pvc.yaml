@@ -8,9 +8,12 @@ spec:
   accessModes:
     # volume can be mounted as read-write by a single node
     - ReadWriteOnce
+  {{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+  {{- end }}
   resources:
     requests:
-      storage: 1Gi
+      storage: {{ .Values.persistence.database.size }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -22,6 +25,9 @@ spec:
   accessModes:
     # volume can be mounted as read-write by a single node
     - ReadWriteOnce
+  {{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+  {{- end }}
   resources:
     requests:
-      storage: 1Gi
+      storage: {{ .Values.persistence.uploads.size }}
