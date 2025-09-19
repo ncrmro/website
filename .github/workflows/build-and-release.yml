@@ -100,8 +100,16 @@ jobs:
 
       - name: Deploy with Helm
         run: |
+          if [ -z "${{ secrets.KUBECONFIG }}" ]; then
+            echo "Error: KUBECONFIG secret is empty or not set"
+            exit 1
+          fi
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          if [ $? -ne 0 ]; then
+            echo "Error: Failed to decode KUBECONFIG secret - invalid base64 data"
+            exit 1
+          fi
           export KUBECONFIG=~/.kube/config
           helm upgrade --install ncrmro-website ./chart --values chart/values.production.yaml --set image.tag="${{ needs.build-and-push.outputs.digest }}"
 
