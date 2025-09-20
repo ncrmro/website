@@ -6,8 +6,8 @@ metadata:
     "helm.sh/resource-policy": keep
 spec:
   accessModes:
-    # volume can be mounted as read-write by a single node
-    - ReadWriteOnce
+    # volume can be mounted as read-write by multiple nodes simultaneously
+    - ReadWriteMany
   {{- if .Values.persistence.storageClass }}
   storageClassName: {{ .Values.persistence.storageClass }}
   {{- end }}
@@ -23,8 +23,8 @@ metadata:
     "helm.sh/resource-policy": keep
 spec:
   accessModes:
-    # volume can be mounted as read-write by a single node
-    - ReadWriteOnce
+    # volume can be mounted as read-write by multiple nodes simultaneously
+    - ReadWriteMany
   {{- if .Values.persistence.storageClass }}
   storageClassName: {{ .Values.persistence.storageClass }}
   {{- end }}
