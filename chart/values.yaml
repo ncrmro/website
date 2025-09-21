@@ -58,7 +58,7 @@ persistence:
   # Storage class for both database and uploads PVCs
   # Use "ceph-filesystem" for multi-node read-write access in production
   # Leave empty to use default storage class
-  storageClass: ""
+  storageClass: "ceph-filesystem"
   database:
     size: 1Gi
   uploads:
