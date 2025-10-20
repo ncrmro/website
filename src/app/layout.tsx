@@ -7,6 +7,9 @@ export const metadata = {
   title: "Nicholas Romero",
   description: "Personal Site of Nicholas Romero",
   manifest: "/manifest.json",
+};
+
+export const viewport = {
   themeColor: "#ffffff",
 };
 const isProduction = process.env.NODE_ENV === "production";
