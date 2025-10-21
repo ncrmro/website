@@ -44,31 +44,35 @@ export default async function LoginPage() {
   }
 
   return (
-    // @ts-ignore
-    <form action={loginUser} className="flex flex-col">
-      <h1>Login</h1>
-      <div className="flex flex-col gap-4">
-        <ClientTimezoneInput />
-        <input
-          name="email"
-          placeholder="Email"
-          autoComplete="email"
-          type="email"
-          required
-        />
-        <input
-          name="password"
-          placeholder="Password"
-          autoComplete="current-password"
-          type="password"
-          required
-        />
-      </div>
-      <div className="flex-col gap-4">
-        <button type="submit" style={{ float: "right" }}>
-          Login
-        </button>
-      </div>
-    </form>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+      {/* @ts-ignore */}
+      <form action={loginUser} className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Login</h1>
+        <div className="flex flex-col gap-4 mb-6">
+          <ClientTimezoneInput />
+          <input
+            name="email"
+            placeholder="Email"
+            autoComplete="email"
+            type="email"
+            required
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          />
+          <input
+            name="password"
+            placeholder="Password"
+            autoComplete="current-password"
+            type="password"
+            required
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          />
+        </div>
+        <div className="flex justify-end">
+          <button type="submit" className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors">
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
