@@ -7,9 +7,9 @@
     "node": ">=19"
   },
   "scripts": {
-    "dev": "npm run build-migrations && npm run mig && next dev",
+    "dev": "npm run build-migrations && npm run mig && next dev -p ${WEB_PORT:-3000}",
     "build": "next build",
-    "start": "node .next/standalone/server.js",
+    "start": "PORT=${WEB_PORT:-3000} node .next/standalone/server.js",
     "lint": "next lint",
     "mig": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
     "e2e": "playwright test",
