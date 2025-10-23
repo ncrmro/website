@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Get the project root directory (parent of bin/)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# MCP server configuration with dynamic workspace path
+MCP_SERVER_CONFIG=$(cat <<EOF
+{
+  "mcpServers": {
+    "typescript-lsp": {
+      "command": "mcp-language-server",
+      "args": [
+        "--workspace",
+        "$PROJECT_ROOT",
+        "--lsp",
+        "typescript-language-server",
+        "--",
+        "--stdio"
+      ]
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "env": {
+        "PLAYWRIGHT_BROWSERS_PATH": "",
+        "PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS": "true"
+      },
+      "args": [
+        "@playwright/mcp@latest",
+        "--browser=chromium",
+        "--executable-path=/nix/store/ciwl3hnki3yvx36vjsagx2yhrcy8jb1k-playwright-browsers/chromium-1181/chrome-linux/chrome"
+      ]
+    },
+    "docker": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "docker-mcp"
+      ],
+      "env": {}
+    }
+  }
+}
+EOF
+)
+
+# Run Claude with MCP server configuration
+claude --mcp-config "$MCP_SERVER_CONFIG" "$@"
