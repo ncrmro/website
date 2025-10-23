@@ -27,10 +27,10 @@ export default async function PostsPage({
   ]);
 
   return (
-    <main className="lg:pr-96">
-      <div className="px-2 sm:px-0">
+    <main className="px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-5xl">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Posts</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Posts</h1>
           <Link
             href="/dashboard/posts/new"
             className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -41,12 +41,12 @@ export default async function PostsPage({
 
         <PostsFilters tags={tags} />
 
-        <div className="mt-4 mb-4 text-sm text-gray-600">
+        <div className="mt-4 mb-4 text-sm text-gray-600 dark:text-gray-400">
           Showing {posts.length} of {pagination.total} posts (Page{" "}
           {pagination.page} of {pagination.totalPages})
         </div>
 
-        <ul role="list" className="-mb-8 w-full max-w-none sm:max-w-3xl">
+        <ul role="list" className="-mb-8 w-full">
           {posts.map((post: any, index: number) => (
             <PostItem
               key={post.slug}
@@ -67,12 +67,12 @@ export default async function PostsPage({
                   ...(tagId && { tagId }),
                   page: String(pagination.page - 1),
                 }).toString()}`}
-                className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700 dark:hover:bg-gray-700"
               >
                 Previous
               </Link>
             )}
-            <span className="flex items-center px-4 py-2 text-sm text-gray-700">
+            <span className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
               Page {pagination.page} of {pagination.totalPages}
             </span>
             {pagination.page < pagination.totalPages && (
@@ -83,7 +83,7 @@ export default async function PostsPage({
                   ...(tagId && { tagId }),
                   page: String(pagination.page + 1),
                 }).toString()}`}
-                className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700 dark:hover:bg-gray-700"
               >
                 Next
               </Link>
