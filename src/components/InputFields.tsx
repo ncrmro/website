@@ -48,10 +48,12 @@ interface TextAreaProps {
 export function TextAreaField({ label, ...props }: TextAreaProps) {
   return (
     <>
-      <label htmlFor={props.id} className={InputFieldStyles.label}>
-        {label}
-      </label>
-      <textarea {...props} name={props.id} className={InputFieldStyles.input} />
+      {label && (
+        <label htmlFor={props.id} className={InputFieldStyles.label}>
+          {label}
+        </label>
+      )}
+      <textarea {...props} name={props.id} className={`${InputFieldStyles.input} ${!props.rows ? 'flex-1 resize-none' : ''}`} />
     </>
   );
 }

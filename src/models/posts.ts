@@ -109,3 +109,30 @@ export async function getAllTags() {
     .orderBy("value", "asc")
     .execute();
 }
+
+export async function getRecentPosts(limit: number = 3) {
+  return await db
+    .selectFrom("posts")
+    .select([
+      "id",
+      "slug",
+      "title",
+      "description",
+      "publish_date",
+      "published",
+      "updated_at",
+    ])
+    .orderBy("updated_at", "desc")
+    .limit(limit)
+    .execute();
+}
+
+export async function getRecentJournalEntries(userId: string, limit: number = 3) {
+  return await db
+    .selectFrom("journal_entries")
+    .select(["id", "body", "created_date"])
+    .where("user_id", "=", userId)
+    .orderBy("created_date", "desc")
+    .limit(limit)
+    .execute();
+}
