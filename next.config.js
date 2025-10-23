@@ -30,7 +30,6 @@ const generateAppDirEntry = (entry) => {
 const nextConfig = {
   experimental: {
     serverActions: true,
-    typedRoutes: true,
   },
   output: "standalone",
   reactStrictMode: true,
