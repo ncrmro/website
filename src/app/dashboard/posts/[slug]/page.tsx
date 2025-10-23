@@ -44,33 +44,35 @@ export default async function EditPostPage({
       .execute(),
   ]);
 
-  async function editPost(data: FormData) {
+  async function editPost(prevState: any, data: FormData) {
     "use server";
     if (!viewer)
-      throw new Error("Viewer must not be null when creating a post");
+      return { success: false, error: "Viewer must not be null when creating a post" };
 
-    data.forEach(console.log);
+    try {
+      await db
+        .updateTable("posts")
+        .set({
+          title: data.get("title") as string,
+          description: data.get("description") as string,
+          body: data.get("body") as string,
+          published: Number(data.get("published")) || 0,
+          publish_date: (data.get("publish_date") as string) || null,
+          slug: data.get("slug") as string,
+          // user_id: viewer.id,
+        })
+        .where("slug", "=", slug)
+        .executeTakeFirstOrThrow();
 
-    const updatedPost = await db
-      .updateTable("posts")
-      .set({
-        title: data.get("title") as string,
-        description: data.get("description") as string,
-        body: data.get("body") as string,
-        published: data.get("published") ? 1 : 0,
-        publish_date: data.get("publish_date") as string,
-        slug: data.get("slug") as string,
-        // user_id: viewer.id,
-      })
-      .where("slug", "=", slug)
-      .returning(["slug"])
-      .executeTakeFirstOrThrow();
-    // TODO this revalidate is not working
-    // https://github.com/vercel/next.js/issues/49387
-    revalidatePath(`/posts/[slug]`);
-    revalidatePath(`/dashboard/posts/[slug]`);
-    revalidatePath(`/`);
-    redirect(`/dashboard/posts/${updatedPost.slug}`);
+      revalidatePath(`/posts/${slug}`);
+      revalidatePath(`/dashboard/posts/${slug}`);
+      revalidatePath(`/`);
+
+      return { success: true };
+    } catch (error) {
+      console.error("Failed to update post:", error);
+      return { success: false, error: "Failed to update post" };
+    }
   }
 
   return <PostForm action={editPost} post={{ ...post, tags }} />;

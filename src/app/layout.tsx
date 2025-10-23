@@ -1,6 +1,7 @@
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UmamiAnalytics from "@/components/UmamiAnalytics";
+import { Toaster } from "sonner";
 import React from "react";
 
 export const metadata = {
@@ -24,6 +25,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           websiteId="8b476bdf-8835-4f55-8afc-9a4d78d16b13"
           domains={["ncrmro.com", "www.ncrmro.com"]}
         />
+        <Toaster position="bottom-center" />
         {props.children}
       </body>
     </html>

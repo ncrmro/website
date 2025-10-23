@@ -11,6 +11,8 @@ import PostMedia from "./form_media";
 import Link from "next/link";
 import SmallBadge from "../../../components/SmallBadge";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import { toast } from "sonner";
+import { useActionState } from "react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -44,7 +46,7 @@ function postStateReducer(
 }
 
 export default function PostForm(props: {
-  action: (data: FormData) => Promise<void>;
+  action: (prevState: any, data: FormData) => Promise<{ success: boolean; error?: string }>;
   post?: PostType;
 }) {
   const params = useParams();
@@ -64,6 +66,8 @@ export default function PostForm(props: {
     tags: [],
     ...props.post,
   });
+
+  const [actionState, formAction] = useActionState(props.action, null);
 
   React.useEffect(() => {
     // Prevent overwriting existing stored value on page load
@@ -110,9 +114,20 @@ export default function PostForm(props: {
     return () => document.removeEventListener("keydown", handleUserKeyPress);
   }, [params.slug, preview, router]);
 
+  // Show toast notifications based on action result
+  React.useEffect(() => {
+    if (actionState) {
+      if (actionState.success) {
+        toast.success("Post saved!");
+      } else {
+        toast.error(actionState.error || "Failed to save post");
+      }
+    }
+  }, [actionState]);
+
   return (
     <main className="min-h-screen bg-[var(--background)]">
-      <form id="post-form" action={props.action}>
+      <form id="post-form" action={formAction}>
         {/* Compact Header - Sticky Full Width */}
         <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
           <div className="py-4 px-4 sm:px-6 lg:px-8">
@@ -215,61 +230,59 @@ export default function PostForm(props: {
             </button>
 
             {/* Collapsible Metadata Form */}
-            {showMetadata && (
-              <div className="mt-4 bg-white dark:bg-gray-800 rounded-lg p-4 space-y-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <InputField
-                      id="title"
-                      label="Title"
-                      value={state?.title}
-                      onChange={setState}
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <InputField
-                      id="description"
-                      label="Description"
-                      value={state?.description}
-                      onChange={setState}
-                    />
-                  </div>
-                  <div>
-                    <InputField
-                      id="slug"
-                      label="Slug"
-                      title="Slug can only include lower case letters, numbers and dashes."
-                      pattern={"^[a-z0-9\\-]*$"}
-                      value={state?.slug}
-                      onChange={setState}
-                    />
-                  </div>
-                  <div>
-                    <InputField
-                      type="date"
-                      id="publish_date"
-                      label="Publish Date"
-                      value={state?.publish_date || ""}
-                      onChange={setState}
-                    />
+            <div className={`mt-4 bg-white dark:bg-gray-800 rounded-lg p-4 space-y-4 ${showMetadata ? "" : "hidden"}`}>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <InputField
+                    id="title"
+                    label="Title"
+                    value={state?.title}
+                    onChange={setState}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <InputField
+                    id="description"
+                    label="Description"
+                    value={state?.description}
+                    onChange={setState}
+                  />
+                </div>
+                <div>
+                  <InputField
+                    id="slug"
+                    label="Slug"
+                    title="Slug can only include lower case letters, numbers and dashes."
+                    pattern={"^[a-z0-9\\-]*$"}
+                    value={state?.slug}
+                    onChange={setState}
+                  />
+                </div>
+                <div>
+                  <InputField
+                    type="date"
+                    id="publish_date"
+                    label="Publish Date"
+                    value={state?.publish_date || ""}
+                    onChange={setState}
+                  />
+                </div>
+              </div>
+
+              {/* Tags */}
+              {props.post?.tags && props.post.tags.length > 0 && (
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                    Tags
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {props.post.tags.map((tag) => (
+                      <SmallBadge key={tag.id}>{tag.value}</SmallBadge>
+                    ))}
                   </div>
                 </div>
-
-                {/* Tags */}
-                {props.post?.tags && props.post.tags.length > 0 && (
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                      Tags
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {props.post.tags.map((tag) => (
-                        <SmallBadge key={tag.id}>{tag.value}</SmallBadge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Tabs - Part of Sticky Header - Full Width */}
