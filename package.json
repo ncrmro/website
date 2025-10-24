@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "PORT=${WEB_PORT:-3000} node .next/standalone/server.js",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "mig": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
     "e2e": "playwright test",
     "typegen": "DATABASE_URL=database/sqlite3.db kysely-codegen",
