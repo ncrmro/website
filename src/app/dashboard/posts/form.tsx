@@ -13,6 +13,9 @@ import SmallBadge from "../../../components/SmallBadge";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import { toast } from "sonner";
 import { useActionState } from "react";
+import { slugify } from "@/lib/utils";
+
+const NEW_POST_DRAFT_KEY = "new-post-draft";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -20,7 +23,8 @@ function classNames(...classes: string[]) {
 
 function postStateReducer(
   state: PostType,
-  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  isNewPost: boolean = false
 ) {
   const { name, value } = event.target;
   switch (name) {
@@ -32,9 +36,14 @@ function postStateReducer(
     case "body":
     case "publish_date":
       state[name] = value;
-      // Save these fields to localstorage in case of error.
-      if (state.slug !== "")
+      // Save to localStorage
+      if (isNewPost) {
+        // For new posts, save using the draft key
+        localStorage.setItem(NEW_POST_DRAFT_KEY, JSON.stringify(state));
+      } else if (state.slug !== "") {
+        // For existing posts, save using the slug as key
         localStorage.setItem(state.slug, JSON.stringify(state));
+      }
       break;
     case "published":
       state[name] = Number(value) === 1 ? 0 : 1;
@@ -54,20 +63,59 @@ export default function PostForm(props: {
   const preview = searchParams.get("preview") === "1";
   const media = searchParams.get("media") === "1";
   const router = useRouter();
-  const [showMetadata, setShowMetadata] = useState(false);
-  const [state, setState] = React.useReducer(postStateReducer, {
-    id: "",
-    title: "",
-    description: "",
-    body: "",
-    slug: "",
-    published: 0,
-    publish_date: "",
-    tags: [],
-    ...props.post,
-  });
+  const isNewPost = !props.post;
+  const [showMetadata, setShowMetadata] = useState(isNewPost);
+
+  // Load draft from localStorage for new posts
+  const getInitialState = () => {
+    const baseState = {
+      id: "",
+      title: "",
+      description: "",
+      body: "",
+      slug: "",
+      published: 0,
+      publish_date: "",
+      tags: [],
+      ...props.post,
+    };
+
+    if (isNewPost && typeof window !== "undefined") {
+      const draft = localStorage.getItem(NEW_POST_DRAFT_KEY);
+      if (draft) {
+        try {
+          return { ...baseState, ...JSON.parse(draft) };
+        } catch (e) {
+          console.error("Failed to load draft from localStorage", e);
+        }
+      }
+    }
+    return baseState;
+  };
+
+  const [state, setState] = React.useReducer(
+    (state: PostType, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      postStateReducer(state, event, isNewPost),
+    getInitialState()
+  );
 
   const [actionState, formAction] = useActionState(props.action, null);
+
+  // Track last saved state for unsaved changes indicator
+  const [lastSavedState, setLastSavedState] = React.useState<string>(
+    JSON.stringify(getInitialState())
+  );
+
+  // Derive unsaved changes status
+  const hasUnsavedChanges = React.useMemo(() => {
+    const currentStateStr = JSON.stringify(state);
+    return currentStateStr !== lastSavedState;
+  }, [state, lastSavedState]);
+
+  // Compute slug preview from title
+  const previewSlug = React.useMemo(() => {
+    return state.title ? slugify(state.title) : "";
+  }, [state.title]);
 
   React.useEffect(() => {
     // Prevent overwriting existing stored value on page load
@@ -119,15 +167,37 @@ export default function PostForm(props: {
     if (actionState) {
       if (actionState.success) {
         toast.success("Post saved!");
+        // Update last saved state
+        setLastSavedState(JSON.stringify(state));
+        // Clear localStorage draft for new posts
+        if (isNewPost) {
+          localStorage.removeItem(NEW_POST_DRAFT_KEY);
+        }
       } else {
         toast.error(actionState.error || "Failed to save post");
       }
     }
-  }, [actionState]);
+  }, [actionState, state, isNewPost]);
+
+  // Validate form before submission
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (isNewPost) {
+      if (!state.title.trim()) {
+        e.preventDefault();
+        toast.error("Title is required");
+        return;
+      }
+      if (!state.description.trim()) {
+        e.preventDefault();
+        toast.error("Description is required");
+        return;
+      }
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[var(--background)]">
-      <form id="post-form" action={formAction}>
+      <form id="post-form" action={formAction} onSubmit={handleFormSubmit}>
         {/* Compact Header - Sticky Full Width */}
         <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
           <div className="py-4 px-4 sm:px-6 lg:px-8">
@@ -179,6 +249,24 @@ export default function PostForm(props: {
                 </div>
               </div>
               <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                {/* Unsaved changes indicator */}
+                {hasUnsavedChanges ? (
+                  <div className="flex items-center gap-1.5 text-xs text-orange-600 dark:text-orange-400">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
+                    <span className="font-medium">Unsaved</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">Saved</span>
+                  </div>
+                )}
+
                 <button
                   type="button"
                   onClick={() =>
@@ -216,18 +304,25 @@ export default function PostForm(props: {
             </div>
 
             {/* Edit Details Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowMetadata(!showMetadata)}
-              className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mt-2"
-            >
-              {showMetadata ? (
-                <ChevronUpIcon className="w-4 h-4" />
-              ) : (
-                <ChevronDownIcon className="w-4 h-4" />
-              )}
-              Edit Details
-            </button>
+            {!isNewPost && (
+              <button
+                type="button"
+                onClick={() => setShowMetadata(!showMetadata)}
+                className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mt-2"
+              >
+                {showMetadata ? (
+                  <ChevronUpIcon className="w-4 h-4" />
+                ) : (
+                  <ChevronDownIcon className="w-4 h-4" />
+                )}
+                Edit Details
+              </button>
+            )}
+            {isNewPost && (
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-2 font-medium">
+                Post Details (Required)
+              </div>
+            )}
 
             {/* Collapsible Metadata Form */}
             <div className={`mt-4 bg-white dark:bg-gray-800 rounded-lg p-4 space-y-4 ${showMetadata ? "" : "hidden"}`}>
@@ -238,6 +333,8 @@ export default function PostForm(props: {
                     label="Title"
                     value={state?.title}
                     onChange={setState}
+                    required={isNewPost}
+                    placeholder=""
                   />
                 </div>
                 <div className="sm:col-span-2">
@@ -246,6 +343,8 @@ export default function PostForm(props: {
                     label="Description"
                     value={state?.description}
                     onChange={setState}
+                    required={isNewPost}
+                    placeholder=""
                   />
                 </div>
                 <div>
@@ -256,7 +355,13 @@ export default function PostForm(props: {
                     pattern={"^[a-z0-9\\-]*$"}
                     value={state?.slug}
                     onChange={setState}
+                    placeholder={state.slug ? "" : previewSlug}
                   />
+                  {!state.slug && previewSlug && (
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Auto-generated from title: <span className="font-mono">{previewSlug}</span>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <InputField
@@ -352,31 +457,64 @@ export default function PostForm(props: {
           selectedIndex={media ? 2 : preview ? 1 : 0}
         >
           <Tab.Panels>
-            <Tab.Panel id="post-edit-panel-edit" className="w-full">
+            <Tab.Panel id="post-edit-panel-edit" className="w-full relative">
+              {isNewPost && (
+                <div className="absolute inset-0 flex items-center justify-center min-h-screen text-gray-500 dark:text-gray-400 bg-[var(--background)] z-10 pointer-events-auto">
+                  <div className="text-center max-w-md px-4">
+                    <p className="text-lg font-medium mb-2">Save Post Details First</p>
+                    <p className="text-sm">
+                      Please fill out the title, description, and tags in the Edit Details section above, then save the post before editing the body content.
+                    </p>
+                  </div>
+                </div>
+              )}
               <textarea
                 id="body"
                 name="body"
                 placeholder="Write your post content here using Markdown..."
                 value={state?.body}
                 onChange={setState}
-                className="block w-full border-0 outline-none focus:outline-none resize-none text-base leading-relaxed text-gray-900 placeholder:text-gray-400 dark:text-white dark:bg-[var(--background)] bg-[var(--background)] py-4 min-h-screen overflow-hidden"
+                disabled={isNewPost}
+                className={`block w-full border-0 outline-none focus:outline-none resize-none text-base leading-relaxed text-gray-900 placeholder:text-gray-400 dark:text-white dark:bg-[var(--background)] bg-[var(--background)] py-4 min-h-screen overflow-hidden ${isNewPost ? "pointer-events-none" : ""}`}
               />
             </Tab.Panel>
             <Tab.Panel id="post-edit-panel-preview" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-              <div className="prose prose-sm sm:prose lg:prose-lg max-w-none dark:prose-invert">
-                {state && serializedBody && (
-                  <Post
-                    viewer={null}
-                    post={state}
-                    source={serializedBody}
-                  />
-                )}
-              </div>
+              {isNewPost ? (
+                <div className="flex items-center justify-center min-h-screen text-gray-500 dark:text-gray-400">
+                  <div className="text-center max-w-md px-4">
+                    <p className="text-lg font-medium mb-2">Save Post Details First</p>
+                    <p className="text-sm">
+                      Preview will be available after you save the post with title and description.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="prose prose-sm sm:prose lg:prose-lg max-w-none dark:prose-invert">
+                  {state && serializedBody && (
+                    <Post
+                      viewer={null}
+                      post={state}
+                      source={serializedBody}
+                    />
+                  )}
+                </div>
+              )}
             </Tab.Panel>
             <Tab.Panel id="post-edit-panel-media" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                <PostMedia post={props.post!} />
-              </div>
+              {isNewPost ? (
+                <div className="flex items-center justify-center min-h-screen text-gray-500 dark:text-gray-400">
+                  <div className="text-center max-w-md px-4">
+                    <p className="text-lg font-medium mb-2">Save Post Details First</p>
+                    <p className="text-sm">
+                      Media uploads will be available after you save the post with title and description.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                  <PostMedia post={props.post!} />
+                </div>
+              )}
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

@@ -14,30 +14,42 @@ async function createPost(prevState: any, data: FormData) {
   }
 
   const title = data.get("title");
-  if (typeof title !== "string" || !title) {
+  if (typeof title !== "string" || !title.trim()) {
     return { success: false, error: "Title is required" };
   }
 
+  const description = data.get("description");
+  if (typeof description !== "string" || !description.trim()) {
+    return { success: false, error: "Description is required" };
+  }
+
   try {
+    const slugValue = data.get("slug");
+    const finalSlug = (slugValue && typeof slugValue === "string" && slugValue.trim())
+      ? slugValue.trim()
+      : slugify(title);
+
     const post = await db
       .insertInto("posts")
       .values({
-        title: data.get("title") as string,
-        description: data.get("description") as string,
-        body: data.get("body") as string,
+        title: title.trim(),
+        description: description.trim(),
+        body: (data.get("body") as string) || "",
         published: Number(data.get("published")) || 0,
         user_id: viewer.id,
-        slug: slugify(title),
+        slug: finalSlug,
       })
       .returning(["title", "slug", "published"])
       .executeTakeFirstOrThrow();
 
-    if (data.get("published")) {
-      redirect(`/posts/${post.slug}`);
-    } else {
-      redirect(`/dashboard/posts/${post.slug}`);
-    }
+    redirect(`/dashboard/posts/${post.slug}`);
   } catch (error) {
+    // Re-throw redirect errors - they're not actual errors
+    // Next.js redirects work by throwing errors with a special digest
+    if (error && typeof error === "object" && "digest" in error &&
+        typeof error.digest === "string" && error.digest.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
     console.error("Failed to create post:", error);
     return { success: false, error: "Failed to create post" };
   }

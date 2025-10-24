@@ -3,6 +3,7 @@ import { selectSessionViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { slugify } from "@/lib/utils";
 export const dynamicParams = true;
 
 export default async function EditPostPage({
@@ -50,15 +51,21 @@ export default async function EditPostPage({
       return { success: false, error: "Viewer must not be null when creating a post" };
 
     try {
+      const title = data.get("title") as string;
+      const slugValue = data.get("slug");
+      const finalSlug = (slugValue && typeof slugValue === "string" && slugValue.trim())
+        ? slugValue.trim()
+        : slugify(title);
+
       await db
         .updateTable("posts")
         .set({
-          title: data.get("title") as string,
+          title: title,
           description: data.get("description") as string,
-          body: data.get("body") as string,
+          body: (data.get("body") as string) || "",
           published: Number(data.get("published")) || 0,
           publish_date: (data.get("publish_date") as string) || null,
-          slug: data.get("slug") as string,
+          slug: finalSlug,
           // user_id: viewer.id,
         })
         .where("slug", "=", slug)

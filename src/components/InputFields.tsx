@@ -21,6 +21,8 @@ interface InputFieldProps {
   pattern?: string;
   value?: string;
   onChange: any;
+  required?: boolean;
+  placeholder?: string;
 }
 
 export function InputField({ label, ...props }: InputFieldProps) {
