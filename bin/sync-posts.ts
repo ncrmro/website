@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // @ts-nocheck
+import 'dotenv/config';
 import fs from 'fs/promises';
 import path from 'path';
 import pkg from 'yaml';
@@ -61,15 +62,16 @@ Examples:
   npm run sync-posts -- --push                         # Push local posts to server
   npm run sync-posts -- -d ./posts --push -s https://mysite.com  # Push from directory to remote server
 
-Note: For push operations, you need to set AUTH_TOKEN environment variable
+Note: AUTH_TOKEN is loaded from .env file. For remote servers, set AUTH_TOKEN environment variable.
 `);
 }
 
 function parseArgs(args: string[]): CLIOptions {
+  const port = process.env.WEB_PORT || '3000';
   const options: CLIOptions = {
     directory: './obsidian-posts',
     push: false,
-    serverUrl: 'http://localhost:3000',
+    serverUrl: `http://localhost:${port}`,
     help: false,
   };
 
