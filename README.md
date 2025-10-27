@@ -2,7 +2,29 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 This is a mirror repository now, the source is on my personal Gitea instance
 
-## Blog Post Sync
+## Blog Post Management
+
+### Interactive Post Editor
+
+Edit blog posts directly in your terminal using your preferred editor:
+
+```bash
+# Edit posts using default editor (vim)
+npm run edit-posts
+
+# Use a different editor
+EDITOR=nano npm run edit-posts
+EDITOR=emacs npm run edit-posts
+```
+
+Features:
+- Interactive post selection with arrow keys
+- Visual indicators for published (✓) and unpublished (○) posts
+- Edit posts in your native terminal editor (defined by `EDITOR` environment variable)
+- Frontmatter-based metadata editing
+- Automatic database updates on save
+
+### Blog Post Sync
 
 This project includes a blog post sync feature that allows you to sync blog posts between your local Obsidian directory and the website database. See [BLOG_SYNC.md](./BLOG_SYNC.md) for detailed usage instructions.
 
