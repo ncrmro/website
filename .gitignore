@@ -49,3 +49,4 @@ dist
 public/uploads/posts
 public/sw*
 public/workbox*
+.playwright-mcp
