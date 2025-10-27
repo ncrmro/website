@@ -54,10 +54,10 @@ More content here.`;
   
   // Parse frontmatter
   const frontmatterLines = frontmatterText.split('\n');
-  const parsedData: any = {};
+  const parsedData: Record<string, string | number | null> = {};
   
   for (const line of frontmatterLines) {
-    const match = line.match(/^(\w+):\s*(.+)$/);
+    const match = line.match(/^(\w+):\s*(.*)$/);
     if (match) {
       const [, key, value] = match;
       if (key === 'published') {
@@ -75,6 +75,44 @@ More content here.`;
   expect(parsedData.slug).toBe('test-post');
   expect(parsedData.published).toBe(1);
   expect(parsedData.publish_date).toBe('2024-01-01');
+});
+
+// Test frontmatter parsing with empty values
+test('frontmatter parsing with empty values', () => {
+  const testContent = `---
+title: Test Post
+description:
+slug: test-post
+published: false
+publish_date:
+---
+
+Body content`;
+
+  const parts = testContent.split(/^---$/m);
+  const frontmatterText = parts[1].trim();
+  const frontmatterLines = frontmatterText.split('\n');
+  const parsedData: Record<string, string | number | null> = {};
+  
+  for (const line of frontmatterLines) {
+    const match = line.match(/^(\w+):\s*(.*)$/);
+    if (match) {
+      const [, key, value] = match;
+      if (key === 'published') {
+        parsedData[key] = value === 'true' ? 1 : 0;
+      } else if (key === 'publish_date') {
+        parsedData[key] = value || null;
+      } else {
+        parsedData[key] = value;
+      }
+    }
+  }
+  
+  expect(parsedData.title).toBe('Test Post');
+  expect(parsedData.description).toBe(''); // Empty string
+  expect(parsedData.slug).toBe('test-post');
+  expect(parsedData.published).toBe(0); // false -> 0
+  expect(parsedData.publish_date).toBeNull(); // Empty -> null
 });
 
 // Test that the CLI can be built successfully

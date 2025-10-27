@@ -154,10 +154,10 @@ const App: React.FC = () => {
       
       // Parse frontmatter
       const frontmatterLines = frontmatterText.split('\n');
-      const updatedData: any = {};
+      const updatedData: Record<string, string | number | null> = {};
       
       for (const line of frontmatterLines) {
-        const match = line.match(/^(\w+):\s*(.+)$/);
+        const match = line.match(/^(\w+):\s*(.*)$/);
         if (match) {
           const [, key, value] = match;
           if (key === 'published') {
