@@ -27,7 +27,7 @@ function PostHeader(props: { viewer: any; post: PostType }) {
     return () => document.removeEventListener("keydown", handleUserKeyPress);
   }, [props.post.slug, router]);
   return (
-    <div className="border-b border-gray-200 pb-5">
+    <div className="pt-6 pb-5">
       <div className="sm:flex sm:items-baseline sm:justify-between">
         <div className="sm:w-0 sm:flex-1">
           <h1
@@ -143,7 +143,7 @@ export default function Post(props: {
   return (
     <>
       <PostHeader viewer={props.viewer} post={props.post} />
-      <div id="post-body" className="py-3 text-gray-500 dark:text-gray-400">
+      <div id="post-body" className="pt-6 pb-3 text-gray-500 dark:text-gray-400">
         <MDXRemote
           {...props.source}
           components={{
@@ -169,12 +169,10 @@ export default function Post(props: {
               );
             },
             h2: (p: any) => (
-              <div className="border-b border-gray-200 py-3">
-                <h2
-                  className="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-                  {...p}
-                />
-              </div>
+              <h2
+                className="text-base font-semibold leading-6 text-gray-900 dark:text-white py-3"
+                {...p}
+              />
             ),
             h3: (p: any) => (
               <h3

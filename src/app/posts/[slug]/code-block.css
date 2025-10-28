@@ -6,6 +6,28 @@ pre code.hljs {
 code.hljs {
   padding: 3px 5px;
 }
+
+/* Custom scrollbar styling for code blocks */
+pre code.hljs::-webkit-scrollbar {
+  height: 8px;
+}
+pre code.hljs::-webkit-scrollbar-track {
+  background: #1e2227;
+  border-radius: 4px;
+}
+pre code.hljs::-webkit-scrollbar-thumb {
+  background: #4a4e57;
+  border-radius: 4px;
+}
+pre code.hljs::-webkit-scrollbar-thumb:hover {
+  background: #5a5e67;
+}
+
+/* Firefox scrollbar styling */
+pre code.hljs {
+  scrollbar-width: thin;
+  scrollbar-color: #4a4e57 #1e2227;
+}
 .hljs {
   color: #abb2bf;
   background: #282c34;
