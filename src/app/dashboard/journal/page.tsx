@@ -51,6 +51,26 @@ async function submitForm(data: FormData) {
 
 const components = {
   ul: (p: any) => <ul className="list-disc px-4 py-2" {...p} />,
+  code: (p: any) => {
+    // Check if this is a code block (has language class) or inline code
+    const isCodeBlock = p.className && p.className.startsWith('language-');
+
+    if (isCodeBlock) {
+      // For code blocks in journal, use a simple pre-formatted style with vertical spacing
+      return (
+        <div className="my-4">
+          <code className={p.className}>{p.children}</code>
+        </div>
+      );
+    }
+
+    // Style inline code with subtle background
+    return (
+      <code className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono">
+        {p.children}
+      </code>
+    );
+  },
   h1: (p: any) => (
     <h3
       className="text-xl font-semibold text-gray-900 dark:text-white"
@@ -61,7 +81,7 @@ const components = {
     <h4 className="text-l font-semibold text-gray-900 dark:text-white" {...p} />
   ),
   h3: (p: any) => (
-    <h5 className="text-base font-semibold text-gray-900 py-2" {...p} />
+    <h5 className="text-base font-semibold text-gray-900 dark:text-white py-2" {...p} />
   ),
   p: (p: any) => <p className="py-1" {...p} />,
   hr: (p: any) => <hr className="my-3" {...p} />,

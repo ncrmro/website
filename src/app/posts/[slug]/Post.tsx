@@ -59,7 +59,7 @@ function PostHeader(props: { viewer: any; post: PostType }) {
               <div>
                 <Menu.Button
                   id="menu-actions-button"
-                  className="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="-my-2 flex items-center rounded-full bg-white dark:bg-gray-800 p-2 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <span className="sr-only">Open options</span>
                   <EllipsisVerticalIcon
@@ -148,20 +148,37 @@ export default function Post(props: {
           {...props.source}
           components={{
             ul: (p: any) => <ul className="list-disc px-4 py-2" {...p} />,
-            code: (p: any) => (
-              <Highlight className={p.className}>{p.children}</Highlight>
-            ),
+            code: (p: any) => {
+              // Check if this is a code block (has language class) or inline code
+              const isCodeBlock = p.className && p.className.startsWith('language-');
+
+              if (isCodeBlock) {
+                // Use Highlight for syntax-highlighted code blocks with vertical spacing
+                return (
+                  <div className="my-4">
+                    <Highlight className={p.className}>{p.children}</Highlight>
+                  </div>
+                );
+              }
+
+              // Style inline code with subtle background
+              return (
+                <code className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono">
+                  {p.children}
+                </code>
+              );
+            },
             h2: (p: any) => (
               <div className="border-b border-gray-200 py-3">
                 <h2
-                  className="text-base font-semibold leading-6 text-gray-900"
+                  className="text-base font-semibold leading-6 text-gray-900 dark:text-white"
                   {...p}
                 />
               </div>
             ),
             h3: (p: any) => (
               <h3
-                className="text-base font-semibold leading-6 text-gray-900 py-2"
+                className="text-base font-semibold leading-6 text-gray-900 dark:text-white py-2"
                 {...p}
               />
             ),
