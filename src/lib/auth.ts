@@ -1,8 +1,10 @@
 import { scrypt, randomBytes, timingSafeEqual, createHash } from "crypto";
 import { promisify } from "util";
-// Keep this as local import rather than alias as playwirght doesn't know about aliases
-import { db } from "./database";
-import { cookies } from "next/headers";
+
+/**
+ * Password utility functions for hashing and validation
+ * Note: Session management is now handled by NextAuth (see src/app/auth.ts)
+ */
 
 export namespace Passwords {
   // scrypt is callback based so with promisify we can await it
@@ -28,7 +30,7 @@ export namespace Passwords {
     } = options;
 
     let chars = "";
-    
+
     if (includeUppercase) {
       chars += excludeSimilar ? "ABCDEFGHJKLMNPQRSTUVWXYZ" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
@@ -48,7 +50,7 @@ export namespace Passwords {
 
     let password = "";
     const bytes = randomBytes(length);
-    
+
     for (let i = 0; i < length; i++) {
       password += chars[bytes[i] % chars.length];
     }
@@ -78,57 +80,18 @@ export namespace Passwords {
     )) as Buffer;
     // compare the new supplied password with the stored hashed password
     return timingSafeEqual(
-      new Uint8Array(hashedPasswordBuf), 
+      new Uint8Array(hashedPasswordBuf),
       new Uint8Array(suppliedPasswordBuf)
     );
   }
 }
 
-export async function handleSession(userId: string, timezone: string) {
-  const session = await db
-    .insertInto("sessions")
-    .values({ user_id: userId })
-    .returning("id")
-    .executeTakeFirstOrThrow();
-  (await cookies()).set({
-    name: "viewer_session",
-    value: session.id,
-  });
-  (await cookies()).set({ name: "viewer_timezone", value: timezone });
-}
-
-export async function selectSessionViewer() {
-  const session = (await cookies()  ).get("viewer_session")?.value;
-  if (session) {
-    return await db
-      .selectFrom("users")
-      .innerJoin("sessions", "sessions.user_id", "users.id")
-      .select(["users.id", "users.email", "first_name", "last_name", "image"])
-      .where("sessions.id", "=", session)
-      .executeTakeFirst();
-  }
-}
-
-export interface Viewer {
-  id: string;
-  email: string;
-  image: string;
-  first_name: string | null;
-  last_name: string | null;
-}
-
-export async function selectViewer(): Promise<Viewer | undefined> {
-  if (typeof window === "undefined") {
-    const viewer = await selectSessionViewer();
-    if (viewer) {
-      if (!viewer.image) {
-        const hash = createHash("md5");
-        hash.update(viewer.email);
-        const md5 = hash.digest("hex");
-        viewer.image = `https://www.gravatar.com/avatar/${md5}`;
-      }
-
-      return viewer as Viewer;
-    }
-  }
+/**
+ * Generate Gravatar URL from email
+ */
+export function getGravatarUrl(email: string): string {
+  const hash = createHash("md5");
+  hash.update(email.trim().toLowerCase());
+  const md5 = hash.digest("hex");
+  return `https://www.gravatar.com/avatar/${md5}`;
 }

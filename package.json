@@ -7,22 +7,25 @@
     "node": ">=19"
   },
   "scripts": {
-    "dev": "npm run build-migrations && npm run mig && next dev -p ${WEB_PORT:-3000}",
+    "dev": "npm run db:migrate && next dev -p ${WEB_PORT:-3000}",
     "build": "next build",
     "start": "PORT=${WEB_PORT:-3000} node .next/standalone/server.js",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "mig": "node database/dist/migrations.js --seed && DATABASE_URL=database/sqlite3.db kysely-codegen",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/lib/db/migrate.ts",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx src/lib/db/seed.ts",
     "e2e": "playwright test",
-    "typegen": "DATABASE_URL=database/sqlite3.db kysely-codegen",
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
-    "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",
     "build-cli": "tsc --module nodenext bin/generate-password.ts --outDir bin/dist",
     "generate-password": "npm run build-cli && node bin/dist/generate-password.js",
     "build-sync-cli": "tsc --module nodenext bin/sync-posts.ts --outDir bin/dist",
     "sync-posts": "npm run build-sync-cli && node bin/dist/sync-posts.js"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.10.0",
     "@headlessui/react": "^2.0.0",
     "@heroicons/react": "^2.0.18",
     "@tailwindcss/forms": "^0.5.4",
@@ -32,9 +35,11 @@
     "autoprefixer": "10.4.14",
     "better-sqlite3": "^12",
     "dotenv": "^17.2.3",
-    "kysely": "^0.28.3",
+    "drizzle-orm": "^0.44.3",
+    "drizzle-zod": "^0.8.3",
     "luxon": "^3.4.3",
     "next": "15.4.2",
+    "next-auth": "5.0.0-beta.29",
     "next-mdx-remote": "^5.0.0",
     "next-pwa": "^5.6.0",
     "postcss": "8.4.22",
@@ -51,14 +56,15 @@
     "yaml": "^1.10.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.35.1",
+    "@playwright/test": "^1.52.0",
     "@types/better-sqlite3": "^7.6.4",
     "@types/luxon": "^3.3.2",
     "@types/react-highlight": "^0.12.5",
+    "drizzle-kit": "^0.31.4",
     "eslint": "8.49.0",
     "eslint-config-next": "13.5.2",
-    "kysely-codegen": "^0.10.1",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "tsx": "^4.19.2"
   },
   "prettier": {
     "proseWrap": "always"
