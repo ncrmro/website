@@ -14,6 +14,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import { toast } from "sonner";
 import { useActionState } from "react";
 import { slugify } from "@/lib/utils";
+import { useCompletion } from "@ai-sdk/react";
 
 const NEW_POST_DRAFT_KEY = "new-post-draft";
 
@@ -105,6 +106,32 @@ export default function PostForm(props: {
   const [lastSavedState, setLastSavedState] = React.useState<string>(
     JSON.stringify(getInitialState())
   );
+
+  // AI Completion state and hook
+  const [completionMode, setCompletionMode] = React.useState<'title' | 'description' | null>(null);
+  const {
+    completion,
+    input,
+    handleInputChange,
+    handleSubmit: handleCompletionSubmit,
+    isLoading: isCompletionLoading,
+    stop: stopCompletion,
+  } = useCompletion({
+    api: '/api/completion',
+    onFinish: (prompt: string, completion: string) => {
+      // When completion finishes, update the field
+      if (completionMode) {
+        setState({
+          target: { name: completionMode, value: completion },
+        } as any);
+        setCompletionMode(null);
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(`Completion error: ${error.message}`);
+      setCompletionMode(null);
+    },
+  });
 
   // Derive unsaved changes status
   const hasUnsavedChanges = React.useMemo(() => {
@@ -328,24 +355,164 @@ export default function PostForm(props: {
             <div className={`mt-4 bg-white dark:bg-gray-800 rounded-lg p-4 space-y-4 ${showMetadata ? "" : "hidden"}`}>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <InputField
-                    id="title"
-                    label="Title"
-                    value={state?.title}
-                    onChange={setState}
-                    required={isNewPost}
-                    placeholder=""
-                  />
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
+                      Title {isNewPost && <span className="text-red-500">*</span>}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-600 dark:text-gray-400">
+                        AI Completion
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (completionMode === 'title') {
+                            stopCompletion();
+                            setCompletionMode(null);
+                          } else {
+                            setCompletionMode('title');
+                          }
+                        }}
+                        className={`${
+                          completionMode === 'title' ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'
+                        } relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2`}
+                      >
+                        <span
+                          className={`${
+                            completionMode === 'title' ? 'translate-x-4' : 'translate-x-0'
+                          } pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                  {completionMode === 'title' ? (
+                    <div className="space-y-2">
+                      <textarea
+                        value={input}
+                        onChange={handleInputChange}
+                        placeholder="Describe the title you want to generate..."
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700"
+                        rows={2}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleCompletionSubmit(e as any);
+                          }}
+                          disabled={isCompletionLoading || !input.trim()}
+                          className="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        >
+                          {isCompletionLoading ? 'Generating...' : 'Generate'}
+                        </button>
+                        {isCompletionLoading && (
+                          <button
+                            type="button"
+                            onClick={stopCompletion}
+                            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                          >
+                            Stop
+                          </button>
+                        )}
+                      </div>
+                      {completion && (
+                        <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{completion}</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      value={state?.title}
+                      onChange={setState}
+                      required={isNewPost}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700"
+                    />
+                  )}
                 </div>
                 <div className="sm:col-span-2">
-                  <InputField
-                    id="description"
-                    label="Description"
-                    value={state?.description}
-                    onChange={setState}
-                    required={isNewPost}
-                    placeholder=""
-                  />
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
+                      Description {isNewPost && <span className="text-red-500">*</span>}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-600 dark:text-gray-400">
+                        AI Completion
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (completionMode === 'description') {
+                            stopCompletion();
+                            setCompletionMode(null);
+                          } else {
+                            setCompletionMode('description');
+                          }
+                        }}
+                        className={`${
+                          completionMode === 'description' ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'
+                        } relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2`}
+                      >
+                        <span
+                          className={`${
+                            completionMode === 'description' ? 'translate-x-4' : 'translate-x-0'
+                          } pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                  {completionMode === 'description' ? (
+                    <div className="space-y-2">
+                      <textarea
+                        value={input}
+                        onChange={handleInputChange}
+                        placeholder="Describe the description you want to generate..."
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700"
+                        rows={2}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleCompletionSubmit(e as any);
+                          }}
+                          disabled={isCompletionLoading || !input.trim()}
+                          className="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        >
+                          {isCompletionLoading ? 'Generating...' : 'Generate'}
+                        </button>
+                        {isCompletionLoading && (
+                          <button
+                            type="button"
+                            onClick={stopCompletion}
+                            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                          >
+                            Stop
+                          </button>
+                        )}
+                      </div>
+                      {completion && (
+                        <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{completion}</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      id="description"
+                      name="description"
+                      value={state?.description}
+                      onChange={setState}
+                      required={isNewPost}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700"
+                    />
+                  )}
                 </div>
                 <div>
                   <InputField
