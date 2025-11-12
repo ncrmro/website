@@ -23,12 +23,15 @@
     "sync-posts": "npm run build-sync-cli && node bin/dist/sync-posts.js"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.65",
+    "@ai-sdk/react": "^2.0.92",
     "@headlessui/react": "^2.0.0",
     "@heroicons/react": "^2.0.18",
     "@tailwindcss/forms": "^0.5.4",
     "@types/node": "^18.15.11",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
+    "ai": "^5.0.92",
     "autoprefixer": "10.4.14",
     "better-sqlite3": "^12",
     "dotenv": "^17.2.3",
