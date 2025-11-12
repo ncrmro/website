@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "outDir": "bin/dist"
+  },
+  "include": ["bin/generate-password.ts", "bin/sync-posts.ts"]
+}

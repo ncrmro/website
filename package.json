@@ -16,10 +16,10 @@
     "e2e": "playwright test",
     "typegen": "DATABASE_URL=database/sqlite3.db kysely-codegen",
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
-    "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",
-    "build-cli": "tsc --module nodenext bin/generate-password.ts --outDir bin/dist",
+    "build-migrations": "tsc --project tsconfig.migrations.json",
+    "build-cli": "tsc --project tsconfig.bin.json bin/generate-password.ts",
     "generate-password": "npm run build-cli && node bin/dist/generate-password.js",
-    "build-sync-cli": "tsc --module nodenext bin/sync-posts.ts --outDir bin/dist",
+    "build-sync-cli": "tsc --project tsconfig.bin.json bin/sync-posts.ts",
     "sync-posts": "npm run build-sync-cli && node bin/dist/sync-posts.js"
   },
   "dependencies": {
