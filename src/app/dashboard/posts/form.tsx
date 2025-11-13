@@ -14,6 +14,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import { toast } from "sonner";
 import { useActionState } from "react";
 import { slugify } from "@/lib/utils";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const NEW_POST_DRAFT_KEY = "new-post-draft";
 
@@ -23,8 +24,7 @@ function classNames(...classes: string[]) {
 
 function postStateReducer(
   state: PostType,
-  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  isNewPost: boolean = false
+  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) {
   const { name, value } = event.target;
   switch (name) {
@@ -36,14 +36,6 @@ function postStateReducer(
     case "body":
     case "publish_date":
       state[name] = value;
-      // Save to localStorage
-      if (isNewPost) {
-        // For new posts, save using the draft key
-        localStorage.setItem(NEW_POST_DRAFT_KEY, JSON.stringify(state));
-      } else if (state.slug !== "") {
-        // For existing posts, save using the slug as key
-        localStorage.setItem(state.slug, JSON.stringify(state));
-      }
       break;
     case "published":
       state[name] = Number(value) === 1 ? 0 : 1;
@@ -95,11 +87,14 @@ export default function PostForm(props: {
 
   const [state, setState] = React.useReducer(
     (state: PostType, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      postStateReducer(state, event, isNewPost),
+      postStateReducer(state, event),
     getInitialState()
   );
 
   const [actionState, formAction] = useActionState(props.action, null);
+
+  // Debounce the state to avoid excessive localStorage saves and MDX serialization
+  const debouncedState = useDebounce(state, 3000);
 
   // Track last saved state for unsaved changes indicator
   const [lastSavedState, setLastSavedState] = React.useState<string>(
@@ -117,25 +112,30 @@ export default function PostForm(props: {
     return state.title ? slugify(state.title) : "";
   }, [state.title]);
 
+  // Save to localStorage after debounce delay (3 seconds)
   React.useEffect(() => {
-    // Prevent overwriting existing stored value on page load
-    // Dont start saving until we have a body
-    if (
-      state.slug !== "" &&
-      state.body !== "" &&
-      !localStorage.getItem(state.slug)
-    )
-      localStorage.setItem(state.slug, JSON.stringify(state));
-  }, [state]);
+    // Skip if this is the initial state
+    if (debouncedState.body === "" && debouncedState.title === "") return;
+    
+    // Save to localStorage
+    if (isNewPost) {
+      // For new posts, save using the draft key
+      localStorage.setItem(NEW_POST_DRAFT_KEY, JSON.stringify(debouncedState));
+    } else if (debouncedState.slug !== "") {
+      // For existing posts, save using the slug as key
+      localStorage.setItem(debouncedState.slug, JSON.stringify(debouncedState));
+    }
+  }, [debouncedState, isNewPost]);
 
   const [serializedBody, setSerializedBody] =
     useState<MDXRemoteSerializeResult>();
 
+  // Serialize post body after debounce delay (3 seconds)
   React.useEffect(() => {
-    serializePost(state.body).then((serializedBody) =>
+    serializePost(debouncedState.body).then((serializedBody) =>
       setSerializedBody(serializedBody)
     );
-  }, [state]);
+  }, [debouncedState.body]);
 
   // Navigate to preview if viewer presses command + e
   // Submit form if viewer presses command/ctrl + enter
