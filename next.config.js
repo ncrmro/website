@@ -28,25 +28,19 @@ const generateAppDirEntry = (entry) => {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-  },
   output: "standalone",
   reactStrictMode: true,
-  serverRuntimeConfig: {
-    CONTACT_INFO_JSON:
-      process.env.CONTACT_INFO_JSON ||
-      '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
-  },
+  turbopack: {}, // Silence Turbopack warning for webpack config from next-pwa
   env: {
     GOOGLE_ANALYTICS_TRACKING_ID: "G-6MYGCJZSVN",
   },
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
   images: {
-    domains: ["www.gravatar.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+      },
+    ],
   },
   async redirects() {
     return [
