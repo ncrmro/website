@@ -35,7 +35,7 @@ ENV NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 # We run migrations here so that we can run kysely-codegen
-RUN yarn build-migrations && node database/dist/migrations.js && yarn typegen && yarn build
+RUN npm run build-migrations && node database/dist/migrations.js && npm run typegen && npm run build
 
 
 # Production image, copy all the files and run next
