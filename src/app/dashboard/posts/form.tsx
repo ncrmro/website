@@ -38,7 +38,7 @@ function postStateReducer(
       state[name] = value;
       break;
     case "published":
-      state[name] = Number(value) === 1 ? 0 : 1;
+      state[name] = !state[name];
       break;
     default:
       throw new Error(`Field was not expected ${name}`);
@@ -228,12 +228,12 @@ export default function PostForm(props: {
                   <div className="flex items-center gap-2 mt-1">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        state.published === 1
+                        state.published
                           ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                           : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                       }`}
                     >
-                      {state.published === 1 ? "Published" : "Draft"}
+                      {state.published ? "Published" : "Draft"}
                     </span>
                     {state.publish_date && (
                       <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -275,19 +275,19 @@ export default function PostForm(props: {
                     } as any)
                   }
                   className={`${
-                    state.published === 1 ? "bg-indigo-600" : "bg-gray-200"
+                    state.published ? "bg-indigo-600" : "bg-gray-200"
                   } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2`}
                   title={
-                    state.published === 1 ? "Published" : "Draft"
+                    state.published ? "Published" : "Draft"
                   }
                 >
                   <span
                     className={`${
-                      state.published === 1 ? "translate-x-5" : "translate-x-0"
+                      state.published ? "translate-x-5" : "translate-x-0"
                     } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
                   />
                 </button>
-                <input type="hidden" name="published" value={state.published} />
+                <input type="hidden" name="published" value={state.published ? 1 : 0} />
                 <Link
                   href="/dashboard/posts"
                   className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
@@ -298,7 +298,7 @@ export default function PostForm(props: {
                   type="submit"
                   className="px-3 py-1.5 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
-                  {state.published === 1 ? "Update" : "Save"}
+                  {state.published ? "Update" : "Save"}
                 </button>
               </div>
             </div>

@@ -1,5 +1,5 @@
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
 import * as schema from "./schema";
 import * as crypto from "crypto";
 /*
@@ -8,15 +8,27 @@ import * as crypto from "crypto";
 import { slugify } from "./utils";
 
 const databasePath = process.env.DATABASE_PATH || "./database/sqlite3.db";
-const databaseUrl = process.env.DATABASE_URL || `file:${databasePath}`;
 
-// Create libSQL client
-export const client = createClient({
-  url: databaseUrl,
+// Create better-sqlite3 connection with WAL mode
+const sqlite = new Database(databasePath);
+sqlite.pragma("journal_mode = WAL");
+sqlite.pragma("foreign_keys = ON;");
+
+// Register custom SQL functions for compatibility
+sqlite.function("regexp", { deterministic: true }, (regex, text) =>
+  new RegExp(regex as string).test(text as string) ? 1 : 0
+);
+sqlite.function("uuid", () => crypto.randomUUID());
+sqlite.function("slugify", { deterministic: true }, (text) => {
+  if (typeof text !== "string") throw new Error("Argument was not a string");
+  return slugify(text);
 });
 
-// Create Drizzle ORM instance
-export const db = drizzle(client, { schema });
+// Create Drizzle ORM instance with better-sqlite3
+export const db = drizzle(sqlite, { schema });
+
+// Export the raw sqlite client for migrations
+export const client = sqlite;
 
 // Helper functions that were previously SQL functions
 export function regexpMatch(regex: string, text: string): boolean {

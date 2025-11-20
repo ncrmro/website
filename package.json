@@ -15,7 +15,7 @@
     "mig": "node database/dist/migrations.js --seed",
     "e2e": "playwright test",
     "db": "litecli ${DATABASE_PATH:-database/sqlite3.db}",
-    "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist",
+    "build-migrations": "tsc --module nodenext src/lib/migrations.ts --outDir database/dist --skipLibCheck",
     "build-cli": "tsc --module nodenext bin/generate-password.ts --outDir bin/dist",
     "generate-password": "npm run build-cli && node bin/dist/generate-password.js",
     "build-sync-cli": "tsc --module nodenext bin/sync-posts.ts --outDir bin/dist",

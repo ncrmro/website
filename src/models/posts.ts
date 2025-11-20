@@ -17,7 +17,7 @@ export interface PaginatedPosts {
     description: string;
     body: string;
     publish_date: string | null;
-    published: number;
+    published: boolean;
     created_at: string;
     updated_at: string;
   }>;
@@ -58,58 +58,91 @@ export async function getPaginatedPosts(
     conditions.push(eq(schema.posts.published, published));
   }
 
-  // Base query builder
-  let queryBuilder = db
-    .select({
-      id: schema.posts.id,
-      slug: schema.posts.slug,
-      title: schema.posts.title,
-      description: schema.posts.description,
-      body: schema.posts.body,
-      publish_date: schema.posts.publish_date,
-      published: schema.posts.published,
-      created_at: schema.posts.created_at,
-      updated_at: schema.posts.updated_at,
-    })
-    .from(schema.posts);
-
-  // Add tag filter if needed
+  // Get posts with tag filtering
+  let posts;
   if (tagId) {
-    queryBuilder = queryBuilder
+    posts = await db
+      .select({
+        id: schema.posts.id,
+        slug: schema.posts.slug,
+        title: schema.posts.title,
+        description: schema.posts.description,
+        body: schema.posts.body,
+        publish_date: schema.posts.publish_date,
+        published: schema.posts.published,
+        created_at: schema.posts.created_at,
+        updated_at: schema.posts.updated_at,
+      })
+      .from(schema.posts)
       .innerJoin(schema.posts_tags, eq(schema.posts.id, schema.posts_tags.post_id))
       .where(and(
         eq(schema.posts_tags.tag_id, tagId),
         ...(conditions.length > 0 ? [and(...conditions)!] : [])
-      ));
-  } else if (conditions.length > 0) {
-    queryBuilder = queryBuilder.where(and(...conditions)!);
+      ))
+      .orderBy(desc(schema.posts.publish_date))
+      .limit(POSTS_PER_PAGE)
+      .offset((page - 1) * POSTS_PER_PAGE);
+  } else {
+    const queryWithConditions = conditions.length > 0
+      ? db
+          .select({
+            id: schema.posts.id,
+            slug: schema.posts.slug,
+            title: schema.posts.title,
+            description: schema.posts.description,
+            body: schema.posts.body,
+            publish_date: schema.posts.publish_date,
+            published: schema.posts.published,
+            created_at: schema.posts.created_at,
+            updated_at: schema.posts.updated_at,
+          })
+          .from(schema.posts)
+          .where(and(...conditions)!)
+      : db
+          .select({
+            id: schema.posts.id,
+            slug: schema.posts.slug,
+            title: schema.posts.title,
+            description: schema.posts.description,
+            body: schema.posts.body,
+            publish_date: schema.posts.publish_date,
+            published: schema.posts.published,
+            created_at: schema.posts.created_at,
+            updated_at: schema.posts.updated_at,
+          })
+          .from(schema.posts);
+    
+    posts = await queryWithConditions
+      .orderBy(desc(schema.posts.publish_date))
+      .limit(POSTS_PER_PAGE)
+      .offset((page - 1) * POSTS_PER_PAGE);
   }
 
   // Get total count
-  const countQuery = db
-    .select({ count: count() })
-    .from(schema.posts);
-  
+  let total;
   if (tagId) {
-    countQuery
+    const countResult = await db
+      .select({ count: count() })
+      .from(schema.posts)
       .innerJoin(schema.posts_tags, eq(schema.posts.id, schema.posts_tags.post_id))
       .where(and(
         eq(schema.posts_tags.tag_id, tagId),
         ...(conditions.length > 0 ? [and(...conditions)!] : [])
       ));
-  } else if (conditions.length > 0) {
-    countQuery.where(and(...conditions)!);
+    total = countResult[0]?.count ?? 0;
+  } else {
+    const countQuery = conditions.length > 0
+      ? db
+          .select({ count: count() })
+          .from(schema.posts)
+          .where(and(...conditions)!)
+      : db
+          .select({ count: count() })
+          .from(schema.posts);
+    
+    const countResult = await countQuery;
+    total = countResult[0]?.count ?? 0;
   }
-  
-  const [countResult] = await countQuery;
-  const total = countResult?.count ?? 0;
-
-  // Apply pagination and ordering
-  const offset = (page - 1) * POSTS_PER_PAGE;
-  const posts = await queryBuilder
-    .orderBy(desc(schema.posts.publish_date))
-    .limit(POSTS_PER_PAGE)
-    .offset(offset);
 
   return {
     posts,
@@ -120,7 +153,6 @@ export async function getPaginatedPosts(
       totalPages: Math.ceil(total / POSTS_PER_PAGE),
     },
   };
-}
 }
 
 export async function getAllTags() {
