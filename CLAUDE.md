@@ -6,9 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Database Operations
 - `npm run build-migrations` - Build TypeScript migrations from src/lib/migrations.ts
-- `npm run mig` - Run migrations and seed data, then generate Kysely types
-- `npm run typegen` - Generate Kysely types from database schema
+- `npm run mig` - Run migrations and seed data
 - `npm run db` - Open litecli database browser for SQLite database
+- `npm run drizzle:generate` - Generate Drizzle migrations from schema
+- `npm run drizzle:push` - Push schema changes to database
+- `npm run drizzle:studio` - Open Drizzle Studio for database browsing
 
 ### Development Server
 - `npm run dev` - Start development server (builds migrations, runs migrations, starts Next.js dev server on port 3000)
@@ -31,7 +33,7 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
 
 ### Core Technologies
 - **Framework**: Next.js 15 with App Router, TypeScript, React 18
-- **Database**: SQLite with Kysely query builder and better-sqlite3
+- **Database**: SQLite with Drizzle ORM and better-sqlite3
 - **Styling**: Tailwind CSS with @tailwindcss/forms plugin
 - **Content**: next-mdx-remote for MDX serialization, react-markdown for rendering
 - **Testing**: Playwright for E2E testing
@@ -42,15 +44,16 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
 - SQLite database with WAL mode enabled
 - Custom SQL functions: `regexp()`, `uuid()`, `slugify()`
 - Migration system in `database/migrations/` with seed data
-- Kysely ORM with auto-generated types via kysely-codegen
+- Drizzle ORM with schema defined in `src/lib/schema.ts`
+- Type-safe database queries with Drizzle's query builder
 - Database path: `DATABASE_PATH` env var or `./database/sqlite3.db`
-- All tables use STRICT mode + WITHOUT ROWID for performance
+- All tables use STRICT mode + WITHOUT ROWID for performance (defined in migrations)
 - Automatic timestamp triggers on all tables
 
 ### Key Database Tables
 - **users**: Authentication with scrypt password hashing, admin flag, Gravatar integration
 - **sessions**: Session-based authentication with cookie storage
-- **posts**: Blog posts with markdown body, slug auto-generation, published flag, publish_date
+- **posts**: Blog posts with markdown body, slug auto-generation, published flag (boolean), publish_date
 - **tags**: Post categorization (tech, travel, food, etc.)
 - **posts_tags**: Many-to-many relationship between posts and tags
 - **journal_entries**: One entry per user per day, Unix timestamps
@@ -67,9 +70,8 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
 
 ### Content Management
 - **Posts**: Stored in SQLite database (NOT filesystem)
-- Posts table includes: title, body (markdown), description, slug, published, publish_date
+- Posts table includes: title, body (markdown), description, slug, published (boolean), publish_date
 - Automatic slug generation from title using custom SQLite `slugify()` function
-- BEFORE UPDATE trigger regenerates slug when title changes
 - Dashboard interface for creating/editing posts at `/dashboard/posts/`
 - Rich editor with tabs: Write, Preview, Media
 - LocalStorage auto-save during editing to prevent data loss
