@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { db, sqlite } from "./database";
+import { client, db } from "./database";
 import fs from "fs/promises";
 import * as crypto from "crypto";
 
@@ -43,14 +43,15 @@ function log(message: TemplateStringsArray, ...values: any[]) {
 let uptoDate = true;
 
 async function runMigrations() {
-  sqlite.exec(migrationsTable);
-  const [committedMigrations, migrationFilenames] = await Promise.all([
-    // @ts-ignore
-    db.selectFrom("migrations").select(["id", "filename", "sha"]).execute(),
+  client.exec(migrationsTable);
+  
+  const [migrationFilenames] = await Promise.all([
     fs.readdir("database/migrations"),
   ]);
+  
+  const committedMigrationsResult = client.prepare("SELECT id, filename, sha FROM migrations").all();
   const migrations = new Map(
-    committedMigrations.map((row) => [row.filename, row])
+    committedMigrationsResult.map((row) => [row.filename, row])
   );
 
   for (const migrationFilename of migrationFilenames.sort()) {
@@ -69,14 +70,15 @@ async function runMigrations() {
     } else if (!committedSHA) {
       uptoDate = false;
       console.log(`Running migration ${migrationFilename}`);
+      
       const query = `
         BEGIN TRANSACTION;
         ${migration}
         INSERT INTO migrations (filename, sha)
         VALUES ('${migrationFilename}', '${sha}');
-        END TRANSACTION;
+        COMMIT;
       `;
-      sqlite.exec(query);
+      client.exec(query);
     }
   }
 }
@@ -88,7 +90,7 @@ async function seed() {
     for (const filename of seeds.sort()) {
       console.log(`Running seed ${filename}`);
       const seed = await fs.readFile(`database/seeds/${filename}`, "utf8");
-      sqlite.exec(seed);
+      client.exec(seed);
     }
   }
 }
@@ -100,4 +102,4 @@ async function main() {
   await seed();
 }
 
-main().then(async () => await db.destroy());
+main().then(() => client.close());

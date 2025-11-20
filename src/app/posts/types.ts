@@ -4,7 +4,7 @@ export interface PostType {
   description: string;
   body: string;
   slug: string;
-  published: number;
+  published: boolean;
   publish_date: string | null;
   tags: { id: string; value: string }[];
 }

@@ -1,4 +1,5 @@
 import { db } from "@/lib/database";
+import * as schema from "@/lib/schema";
 import { selectSessionViewer, selectViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
@@ -29,18 +30,25 @@ async function createPost(prevState: any, data: FormData) {
       ? slugValue.trim()
       : slugify(title);
 
-    const post = await db
-      .insertInto("posts")
+    const [post] = await db
+      .insert(schema.posts)
       .values({
         title: title.trim(),
         description: description.trim(),
         body: (data.get("body") as string) || "",
-        published: Number(data.get("published")) || 0,
+        published: Number(data.get("published")) === 1,
         user_id: viewer.id,
         slug: finalSlug,
       })
-      .returning(["title", "slug", "published"])
-      .executeTakeFirstOrThrow();
+      .returning({
+        title: schema.posts.title,
+        slug: schema.posts.slug,
+        published: schema.posts.published,
+      });
+
+    if (!post) {
+      return { success: false, error: "Failed to create post" };
+    }
 
     redirect(`/dashboard/posts/${post.slug}`);
   } catch (error) {

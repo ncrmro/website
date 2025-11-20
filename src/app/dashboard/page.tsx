@@ -62,12 +62,12 @@ export default async function Dashboard() {
                           </div>
                           <span
                             className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
-                              post.published === 1
+                              post.published
                                 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                                 : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                             }`}
                           >
-                            {post.published === 1 ? "Published" : "Draft"}
+                            {post.published ? "Published" : "Draft"}
                           </span>
                         </div>
                         <div className="mt-1 text-xs text-gray-400 dark:text-gray-500">
