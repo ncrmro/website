@@ -1,9 +1,11 @@
 import PostForm from "@/app/dashboard/posts/form";
 import { selectSessionViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
+import * as schema from "@/lib/schema";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
+import { eq } from "drizzle-orm";
 export const dynamicParams = true;
 
 export default async function EditPostPage({
@@ -19,31 +21,36 @@ export default async function EditPostPage({
         redirect: `/posts/${slug}/edit`,
       }).toString()}`
     );
-  // Kysely has a better function to aggregate sub query but sqlite version wasn't exported?
-  // https://github.com/kysely-org/kysely/issues/628
-  const [post, tags] = await Promise.all([
+
+  const [postResult, tags] = await Promise.all([
     db
-      .selectFrom("posts")
-      .select([
-        "id",
-        "title",
-        "description",
-        "body",
-        "slug",
-        "published",
-        "publish_date",
-      ])
-      .where("slug", "=", slug)
-      .executeTakeFirstOrThrow(),
+      .select({
+        id: schema.posts.id,
+        title: schema.posts.title,
+        description: schema.posts.description,
+        body: schema.posts.body,
+        slug: schema.posts.slug,
+        published: schema.posts.published,
+        publish_date: schema.posts.publish_date,
+      })
+      .from(schema.posts)
+      .where(eq(schema.posts.slug, slug))
+      .limit(1),
     db
-      .selectFrom("tags")
-      .select(["tags.id", "tags.value"])
-      .innerJoin("posts_tags", "posts_tags.tag_id", "tags.id")
-      .innerJoin("posts", "posts.id", "posts_tags.post_id")
-      .where("posts.slug", "=", slug)
-      .distinct()
-      .execute(),
+      .select({
+        id: schema.tags.id,
+        value: schema.tags.value,
+      })
+      .from(schema.tags)
+      .innerJoin(schema.posts_tags, eq(schema.posts_tags.tag_id, schema.tags.id))
+      .innerJoin(schema.posts, eq(schema.posts.id, schema.posts_tags.post_id))
+      .where(eq(schema.posts.slug, slug)),
   ]);
+
+  const post = postResult[0];
+  if (!post) {
+    redirect("/dashboard/posts");
+  }
 
   async function editPost(prevState: any, data: FormData) {
     "use server";
@@ -58,18 +65,16 @@ export default async function EditPostPage({
         : slugify(title);
 
       await db
-        .updateTable("posts")
+        .update(schema.posts)
         .set({
           title: title,
           description: data.get("description") as string,
           body: (data.get("body") as string) || "",
-          published: Number(data.get("published")) || 0,
+          published: Number(data.get("published")) === 1,
           publish_date: (data.get("publish_date") as string) || null,
           slug: finalSlug,
-          // user_id: viewer.id,
         })
-        .where("slug", "=", slug)
-        .executeTakeFirstOrThrow();
+        .where(eq(schema.posts.slug, slug));
 
       revalidatePath(`/posts/${slug}`);
       revalidatePath(`/dashboard/posts/${slug}`);

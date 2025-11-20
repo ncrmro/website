@@ -1,5 +1,6 @@
 import { db } from "@/lib/database";
-import { DB } from "kysely-codegen";
+import * as schema from "@/lib/schema";
+import { eq, and, or, like, desc, sql, count } from "drizzle-orm";
 
 export interface PostFilters {
   search?: string;
@@ -40,56 +41,75 @@ export async function getPaginatedPosts(
     page = 1,
   } = filters;
 
-  // Base query
-  let query = db
-    .selectFrom("posts")
-    .select([
-      "posts.id",
-      "posts.slug",
-      "posts.title",
-      "posts.description",
-      "posts.body",
-      "posts.publish_date",
-      "posts.published",
-      "posts.created_at",
-      "posts.updated_at",
-    ]);
-
-  // Apply filters
+  // Build WHERE conditions
+  const conditions = [];
+  
   if (search) {
-    query = query.where((eb) =>
-      eb.or([
-        eb("posts.title", "like", `%${search}%`),
-        eb("posts.description", "like", `%${search}%`),
-        eb("posts.body", "like", `%${search}%`),
-      ])
+    conditions.push(
+      or(
+        like(schema.posts.title, `%${search}%`),
+        like(schema.posts.description, `%${search}%`),
+        like(schema.posts.body, `%${search}%`)
+      )
     );
   }
 
   if (published !== "all") {
-    query = query.where("posts.published", "=", published ? 1 : 0);
+    conditions.push(eq(schema.posts.published, published));
   }
 
+  // Base query builder
+  let queryBuilder = db
+    .select({
+      id: schema.posts.id,
+      slug: schema.posts.slug,
+      title: schema.posts.title,
+      description: schema.posts.description,
+      body: schema.posts.body,
+      publish_date: schema.posts.publish_date,
+      published: schema.posts.published,
+      created_at: schema.posts.created_at,
+      updated_at: schema.posts.updated_at,
+    })
+    .from(schema.posts);
+
+  // Add tag filter if needed
   if (tagId) {
-    query = query
-      .innerJoin("posts_tags", "posts.id", "posts_tags.post_id")
-      .where("posts_tags.tag_id", "=", tagId);
+    queryBuilder = queryBuilder
+      .innerJoin(schema.posts_tags, eq(schema.posts.id, schema.posts_tags.post_id))
+      .where(and(
+        eq(schema.posts_tags.tag_id, tagId),
+        ...(conditions.length > 0 ? [and(...conditions)!] : [])
+      ));
+  } else if (conditions.length > 0) {
+    queryBuilder = queryBuilder.where(and(...conditions)!);
   }
 
   // Get total count
-  const countQuery = query.select((eb) =>
-    eb.fn.countAll<number>().as("count")
-  );
-  const countResult = await countQuery.executeTakeFirst();
+  const countQuery = db
+    .select({ count: count() })
+    .from(schema.posts);
+  
+  if (tagId) {
+    countQuery
+      .innerJoin(schema.posts_tags, eq(schema.posts.id, schema.posts_tags.post_id))
+      .where(and(
+        eq(schema.posts_tags.tag_id, tagId),
+        ...(conditions.length > 0 ? [and(...conditions)!] : [])
+      ));
+  } else if (conditions.length > 0) {
+    countQuery.where(and(...conditions)!);
+  }
+  
+  const [countResult] = await countQuery;
   const total = countResult?.count ?? 0;
 
-  // Apply pagination
+  // Apply pagination and ordering
   const offset = (page - 1) * POSTS_PER_PAGE;
-  const posts = await query
-    .orderBy("posts.publish_date", "desc")
+  const posts = await queryBuilder
+    .orderBy(desc(schema.posts.publish_date))
     .limit(POSTS_PER_PAGE)
-    .offset(offset)
-    .execute();
+    .offset(offset);
 
   return {
     posts,
@@ -101,38 +121,43 @@ export async function getPaginatedPosts(
     },
   };
 }
+}
 
 export async function getAllTags() {
   return await db
-    .selectFrom("tags")
-    .select(["id", "value"])
-    .orderBy("value", "asc")
-    .execute();
+    .select({
+      id: schema.tags.id,
+      value: schema.tags.value,
+    })
+    .from(schema.tags)
+    .orderBy(schema.tags.value);
 }
 
 export async function getRecentPosts(limit: number = 3) {
   return await db
-    .selectFrom("posts")
-    .select([
-      "id",
-      "slug",
-      "title",
-      "description",
-      "publish_date",
-      "published",
-      "updated_at",
-    ])
-    .orderBy("updated_at", "desc")
-    .limit(limit)
-    .execute();
+    .select({
+      id: schema.posts.id,
+      slug: schema.posts.slug,
+      title: schema.posts.title,
+      description: schema.posts.description,
+      publish_date: schema.posts.publish_date,
+      published: schema.posts.published,
+      updated_at: schema.posts.updated_at,
+    })
+    .from(schema.posts)
+    .orderBy(desc(schema.posts.updated_at))
+    .limit(limit);
 }
 
 export async function getRecentJournalEntries(userId: string, limit: number = 3) {
   return await db
-    .selectFrom("journal_entries")
-    .select(["id", "body", "created_date"])
-    .where("user_id", "=", userId)
-    .orderBy("created_date", "desc")
-    .limit(limit)
-    .execute();
+    .select({
+      id: schema.journal_entries.id,
+      body: schema.journal_entries.body,
+      created_date: schema.journal_entries.created_date,
+    })
+    .from(schema.journal_entries)
+    .where(eq(schema.journal_entries.user_id, userId))
+    .orderBy(desc(schema.journal_entries.created_date))
+    .limit(limit);
 }

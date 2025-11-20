@@ -2,6 +2,8 @@ import { selectViewer } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import { db } from "@/lib/database";
+import * as schema from "@/lib/schema";
+import { eq, and } from "drizzle-orm";
 
 const uploadDirectory = `${process.env.PWD}/public/uploads/posts`;
 
@@ -21,12 +23,18 @@ export async function POST(req: NextRequest) {
   const postId = formData.get("postId");
   if (!viewer || !postId) throw new Error("Viewer and postId must be defined");
   try {
-    await db
-      .selectFrom("posts")
-      .select("id")
-      .where("id", "=", postId as string)
-      .where("user_id", "=", viewer.id)
-      .executeTakeFirstOrThrow();
+    const result = await db
+      .select({ id: schema.posts.id })
+      .from(schema.posts)
+      .where(and(
+        eq(schema.posts.id, postId as string),
+        eq(schema.posts.user_id, viewer.id)
+      ))
+      .limit(1);
+    
+    if (result.length === 0) {
+      throw new Error("Only owners of the post can upload media.");
+    }
   } catch (e) {
     throw new Error("Only owners of the post can upload media.");
   }

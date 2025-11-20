@@ -1,8 +1,9 @@
 import { selectViewer } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/database";
-import { sql } from "kysely";
+import { db, sql } from "@/lib/database";
+import * as schema from "@/lib/schema";
 import { createHash } from "crypto";
+import { eq, and } from "drizzle-orm";
 
 async function authenticateRequest(req: NextRequest) {
   // Check for Bearer token authentication
@@ -14,11 +15,18 @@ async function authenticateRequest(req: NextRequest) {
     if (expectedToken && token === expectedToken) {
       // For token auth, we'll use a specific user (you may want to configure this)
       // For now, let's get the first user as the viewer
-      const user = await db
-        .selectFrom("users")
-        .select(["id", "email", "first_name", "last_name", "image"])
-        .executeTakeFirst();
+      const users = await db
+        .select({
+          id: schema.users.id,
+          email: schema.users.email,
+          first_name: schema.users.first_name,
+          last_name: schema.users.last_name,
+          image: schema.users.image,
+        })
+        .from(schema.users)
+        .limit(1);
       
+      const user = users[0];
       if (user) {
         // Add gravatar if no image
         if (!user.image) {
@@ -45,24 +53,23 @@ export async function GET(req: NextRequest) {
   try {
     // Get all posts with their tags
     const posts = await db
-      .selectFrom("posts")
-      .leftJoin("posts_tags", "posts.id", "posts_tags.post_id")
-      .leftJoin("tags", "posts_tags.tag_id", "tags.id")
-      .select([
-        "posts.id",
-        "posts.title",
-        "posts.description",
-        "posts.body",
-        "posts.slug",
-        "posts.published",
-        "posts.publish_date",
-        "posts.created_at",
-        "posts.updated_at",
-        sql<string>`GROUP_CONCAT(tags.value)`.as("tags")
-      ])
-      .where("posts.user_id", "=", viewer.id)
-      .groupBy("posts.id")
-      .execute();
+      .select({
+        id: schema.posts.id,
+        title: schema.posts.title,
+        description: schema.posts.description,
+        body: schema.posts.body,
+        slug: schema.posts.slug,
+        published: schema.posts.published,
+        publish_date: schema.posts.publish_date,
+        created_at: schema.posts.created_at,
+        updated_at: schema.posts.updated_at,
+        tags: sql<string>`GROUP_CONCAT(${schema.tags.value})`,
+      })
+      .from(schema.posts)
+      .leftJoin(schema.posts_tags, eq(schema.posts.id, schema.posts_tags.post_id))
+      .leftJoin(schema.tags, eq(schema.posts_tags.tag_id, schema.tags.id))
+      .where(eq(schema.posts.user_id, viewer.id))
+      .groupBy(schema.posts.id);
 
     // Format posts for sync
     const formattedPosts = posts.map(post => ({
@@ -121,48 +128,54 @@ export async function POST(req: NextRequest) {
 
       try {
         // Check if post exists by slug
-        const existingPost = await db
-          .selectFrom("posts")
-          .select("id")
-          .where("slug", "=", slug)
-          .where("user_id", "=", viewer.id)
-          .executeTakeFirst();
+        const existingPosts = await db
+          .select({ id: schema.posts.id })
+          .from(schema.posts)
+          .where(and(
+            eq(schema.posts.slug, slug),
+            eq(schema.posts.user_id, viewer.id)
+          ))
+          .limit(1);
 
+        const existingPost = existingPosts[0];
         let postId: string;
 
         if (existingPost) {
           // Update existing post
           await db
-            .updateTable("posts")
+            .update(schema.posts)
             .set({
               title,
               description: description || "",
               body,
-              published: published ? 1 : 0,
+              published: published ? true : false,
               publish_date: publish_date || null,
               updated_at: new Date().toISOString()
             })
-            .where("id", "=", existingPost.id)
-            .where("user_id", "=", viewer.id)
-            .execute();
+            .where(and(
+              eq(schema.posts.id, existingPost.id),
+              eq(schema.posts.user_id, viewer.id)
+            ));
 
           postId = existingPost.id;
         } else {
           // Create new post
-          const newPost = await db
-            .insertInto("posts")
+          const [newPost] = await db
+            .insert(schema.posts)
             .values({
               title,
               description: description || "",
               body,
               slug,
               user_id: viewer.id,
-              published: published ? 1 : 0,
+              published: published ? true : false,
               publish_date: publish_date || null
             })
-            .returning("id")
-            .executeTakeFirstOrThrow();
+            .returning({ id: schema.posts.id });
 
+          if (!newPost) {
+            throw new Error("Failed to create post");
+          }
           postId = newPost.id;
         }
 
@@ -170,35 +183,37 @@ export async function POST(req: NextRequest) {
         if (tags && Array.isArray(tags)) {
           // Remove existing tags
           await db
-            .deleteFrom("posts_tags")
-            .where("post_id", "=", postId)
-            .execute();
+            .delete(schema.posts_tags)
+            .where(eq(schema.posts_tags.post_id, postId));
 
           // Add new tags
           for (const tagValue of tags) {
-            // Create tag if it doesn't exist
+            // Create tag if it doesn't exist (using INSERT OR IGNORE pattern)
             await db
-              .insertInto("tags")
+              .insert(schema.tags)
               .values({ value: tagValue })
-              .onConflict((oc) => oc.column("value").doNothing())
-              .execute();
+              .onConflictDoNothing();
 
             // Get tag id
-            const tag = await db
-              .selectFrom("tags")
-              .select("id")
-              .where("value", "=", tagValue)
-              .executeTakeFirstOrThrow();
+            const tagResult = await db
+              .select({ id: schema.tags.id })
+              .from(schema.tags)
+              .where(eq(schema.tags.value, tagValue))
+              .limit(1);
 
-            // Link post to tag
+            const tag = tagResult[0];
+            if (!tag) {
+              throw new Error(`Failed to get tag: ${tagValue}`);
+            }
+
+            // Link post to tag (using INSERT OR IGNORE pattern)
             await db
-              .insertInto("posts_tags")
+              .insert(schema.posts_tags)
               .values({
                 post_id: postId,
                 tag_id: tag.id
               })
-              .onConflict((oc) => oc.columns(["post_id", "tag_id"]).doNothing())
-              .execute();
+              .onConflictDoNothing();
           }
         }
 

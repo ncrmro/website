@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
-import { db, sql } from "@/lib/database";
+import { db } from "@/lib/database";
+import * as schema from "@/lib/schema";
+import { eq, desc } from "drizzle-orm";
 
 export async function GET(request: Request) {
   const rootURL = "https://ncrmro.com";
   const posts = await db
-    .selectFrom("posts")
-    .select([
-      "slug",
-      "updated_at",
-      // sql<string>`date(updated_at, 'unixepoch', 'utc')`.as("updated_at"),
-    ])
-    .where("published", "=", 1)
-    .orderBy("publish_date", "desc")
-    .execute();
+    .select({
+      slug: schema.posts.slug,
+      updated_at: schema.posts.updated_at,
+    })
+    .from(schema.posts)
+    .where(eq(schema.posts.published, true))
+    .orderBy(desc(schema.posts.publish_date));
+    
   const content = `
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>

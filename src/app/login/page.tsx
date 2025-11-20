@@ -3,8 +3,10 @@ import { handleSession, Passwords, selectViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/database";
+import * as schema from "@/lib/schema";
 import { headers } from "next/headers";
 import React from "react";
+import { eq } from "drizzle-orm";
 
 async function loginUser(data: Map<string, string>) {
   "use server";
@@ -12,11 +14,21 @@ async function loginUser(data: Map<string, string>) {
   const password = data.get("password")!;
   const timezone = data.get("timezone")!;
   try {
-    const user = await db
-      .selectFrom("users")
-      .select(["id", "email", "password"])
-      .where("email", "=", email)
-      .executeTakeFirstOrThrow();
+    const users = await db
+      .select({
+        id: schema.users.id,
+        email: schema.users.email,
+        password: schema.users.password,
+      })
+      .from(schema.users)
+      .where(eq(schema.users.email, email))
+      .limit(1);
+    
+    const user = users[0];
+    if (!user) {
+      redirect("/login?error=AUTH_INVALID_USER");
+    }
+    
     const match = await Passwords.compare(user.password, password);
     if (!match) {
       redirect("/login?error=AUTH_INVALID_PASSWORD");

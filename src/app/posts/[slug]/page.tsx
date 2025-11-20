@@ -2,8 +2,10 @@ import Post from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
 import { selectViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
+import * as schema from "@/lib/schema";
 import { notFound } from "next/navigation";
 import React from "react";
+import { eq } from "drizzle-orm";
 
 export default async function PostPage({
   params,
@@ -12,33 +14,37 @@ export default async function PostPage({
 }) {
   const { slug } = await params;
   const viewer = await selectViewer();
-  // Kysely has a better function to aggregate sub query but sqlite version wasn't exported?
-  // https://github.com/kysely-org/kysely/issues/628
-  const [post, tags] = await Promise.all([
+  
+  const [postResult, tags] = await Promise.all([
     db
-      .selectFrom("posts")
-      .select([
-        "id",
-        "title",
-        "description",
-        "body",
-        "slug",
-        "published",
-        "publish_date",
-      ])
-      .where("slug", "=", slug)
-      .executeTakeFirstOrThrow(),
+      .select({
+        id: schema.posts.id,
+        title: schema.posts.title,
+        description: schema.posts.description,
+        body: schema.posts.body,
+        slug: schema.posts.slug,
+        published: schema.posts.published,
+        publish_date: schema.posts.publish_date,
+      })
+      .from(schema.posts)
+      .where(eq(schema.posts.slug, slug))
+      .limit(1),
     db
-      .selectFrom("tags")
-      .select(["tags.id", "tags.value"])
-      .innerJoin("posts_tags", "posts_tags.tag_id", "tags.id")
-      .innerJoin("posts", "posts.id", "posts_tags.post_id")
-      .where("posts.slug", "=", slug)
-      .distinct()
-      .execute(),
+      .select({
+        id: schema.tags.id,
+        value: schema.tags.value,
+      })
+      .from(schema.tags)
+      .innerJoin(schema.posts_tags, eq(schema.posts_tags.tag_id, schema.tags.id))
+      .innerJoin(schema.posts, eq(schema.posts.id, schema.posts_tags.post_id))
+      .where(eq(schema.posts.slug, slug)),
   ]);
+  
+  const post = postResult[0];
+  if (!post) notFound();
+  
   // If viewer is not logged and and post is not published also not found
-  if (!post || (post.published === 0 && !viewer)) notFound();
+  if (post.published === false && !viewer) notFound();
   const p = { ...post, tags };
   const mdxSource = await serializePost(p.body);
 

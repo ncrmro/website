@@ -1,12 +1,14 @@
 import JournalEntryForm from "@/app/dashboard/journal/form";
 import { selectSessionViewer, selectViewer } from "@/lib/auth";
 import { db } from "@/lib/database";
+import * as schema from "@/lib/schema";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 export const dynamicParams = true;
 import { DateTime } from "luxon";
 import React from "react";
 import Markdown from "react-markdown";
+import { eq, desc } from "drizzle-orm";
 
 /**
  * This is the earliest point of a day
@@ -33,19 +35,17 @@ async function submitForm(data: FormData) {
     if (typeof id !== "string" || id === "")
       throw new Error("Body was not string or was an empty value");
     await db
-      .updateTable("journal_entries")
+      .update(schema.journal_entries)
       .set({ body })
-      .where("id", "=", id)
-      .execute();
+      .where(eq(schema.journal_entries.id, id));
   } else {
     await db
-      .insertInto("journal_entries")
+      .insert(schema.journal_entries)
       .values({
         user_id: viewer.id,
         body,
         created_date: currentTimezoneMidnightUnixTimestamp(timezone),
-      })
-      .execute();
+      });
   }
 }
 
@@ -101,22 +101,14 @@ export default async function JournalPage() {
     );
   if (!timezone) throw new Error("Timezone missing!");
   const posts = await db
-    .selectFrom("journal_entries")
-    .select([
-      "id",
-      "body",
-      "created_date",
-      //   "created_date_str"
-      // sql<string>`date(created_date, 'unixepoch', 'utc')`.as(
-      // ),
-    ])
-    .orderBy("created_date", "desc")
-    .where("user_id", "=", viewer.id)
-    // .where("id", "not in", [
-    //   "7096f4f6-ced7-4aa7-8a4a-14d1661fd3b3",
-    //   "7b5b4a6d-008b-4d11-9aaf-66f8acb41d29",
-    // ])
-    .execute();
+    .select({
+      id: schema.journal_entries.id,
+      body: schema.journal_entries.body,
+      created_date: schema.journal_entries.created_date,
+    })
+    .from(schema.journal_entries)
+    .where(eq(schema.journal_entries.user_id, viewer.id))
+    .orderBy(desc(schema.journal_entries.created_date));
   console.log(posts[0]);
   console.log(
     timezone,

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { db, sqlite } from "./database";
+import { client } from "./database";
 import fs from "fs/promises";
 import * as crypto from "crypto";
 
@@ -43,14 +43,15 @@ function log(message: TemplateStringsArray, ...values: any[]) {
 let uptoDate = true;
 
 async function runMigrations() {
-  sqlite.exec(migrationsTable);
-  const [committedMigrations, migrationFilenames] = await Promise.all([
-    // @ts-ignore
-    db.selectFrom("migrations").select(["id", "filename", "sha"]).execute(),
+  await client.execute(migrationsTable);
+  
+  const [committedMigrationsResult, migrationFilenames] = await Promise.all([
+    client.execute("SELECT id, filename, sha FROM migrations"),
     fs.readdir("database/migrations"),
   ]);
+  
   const migrations = new Map(
-    committedMigrations.map((row) => [row.filename, row])
+    committedMigrationsResult.rows.map((row) => [row.filename as string, row])
   );
 
   for (const migrationFilename of migrationFilenames.sort()) {
@@ -76,7 +77,7 @@ async function runMigrations() {
         VALUES ('${migrationFilename}', '${sha}');
         END TRANSACTION;
       `;
-      sqlite.exec(query);
+      await client.execute(query);
     }
   }
 }
@@ -88,7 +89,7 @@ async function seed() {
     for (const filename of seeds.sort()) {
       console.log(`Running seed ${filename}`);
       const seed = await fs.readFile(`database/seeds/${filename}`, "utf8");
-      sqlite.exec(seed);
+      await client.execute(seed);
     }
   }
 }
@@ -100,4 +101,4 @@ async function main() {
   await seed();
 }
 
-main().then(async () => await db.destroy());
+main().then(() => client.close());

@@ -2,7 +2,9 @@ import { scrypt, randomBytes, timingSafeEqual, createHash } from "crypto";
 import { promisify } from "util";
 // Keep this as local import rather than alias as playwirght doesn't know about aliases
 import { db } from "./database";
+import * as schema from "./schema";
 import { cookies } from "next/headers";
+import { eq } from "drizzle-orm";
 
 export namespace Passwords {
   // scrypt is callback based so with promisify we can await it
@@ -85,11 +87,15 @@ export namespace Passwords {
 }
 
 export async function handleSession(userId: string, timezone: string) {
-  const session = await db
-    .insertInto("sessions")
+  const [session] = await db
+    .insert(schema.sessions)
     .values({ user_id: userId })
-    .returning("id")
-    .executeTakeFirstOrThrow();
+    .returning({ id: schema.sessions.id });
+  
+  if (!session) {
+    throw new Error("Failed to create session");
+  }
+  
   (await cookies()).set({
     name: "viewer_session",
     value: session.id,
@@ -98,14 +104,22 @@ export async function handleSession(userId: string, timezone: string) {
 }
 
 export async function selectSessionViewer() {
-  const session = (await cookies()  ).get("viewer_session")?.value;
+  const session = (await cookies()).get("viewer_session")?.value;
   if (session) {
-    return await db
-      .selectFrom("users")
-      .innerJoin("sessions", "sessions.user_id", "users.id")
-      .select(["users.id", "users.email", "first_name", "last_name", "image"])
-      .where("sessions.id", "=", session)
-      .executeTakeFirst();
+    const result = await db
+      .select({
+        id: schema.users.id,
+        email: schema.users.email,
+        first_name: schema.users.first_name,
+        last_name: schema.users.last_name,
+        image: schema.users.image,
+      })
+      .from(schema.users)
+      .innerJoin(schema.sessions, eq(schema.sessions.user_id, schema.users.id))
+      .where(eq(schema.sessions.id, session))
+      .limit(1);
+    
+    return result[0];
   }
 }
 
