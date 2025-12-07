@@ -29,5 +29,5 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "hold", "playwright.fixtures.ts"]
+  "exclude": ["node_modules", "hold", "playwright.fixtures.ts", "_archived"]
 }

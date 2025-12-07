@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ncrmro-website",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "vars": {
+    "NEXT_PUBLIC_R2_DOMAIN": "r2.ncrmro.com"
+  },
+  "r2_buckets": [
+    {
+      "binding": "UPLOADS",
+      "bucket_name": "ncrmro-website-uploads"
+    }
+  ]
+  // Note: Sensitive variables like TURSO_DATABASE_URL, TURSO_AUTH_TOKEN,
+  // and SYNC_AUTH_TOKEN should be set via wrangler secret or GitHub Actions
+}

@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
-import { db, sql } from "@/lib/database";
+import { db, posts } from "@/database";
+import { eq, desc } from "drizzle-orm";
 
 export async function GET(request: Request) {
   const rootURL = "https://ncrmro.com";
-  const posts = await db
-    .selectFrom("posts")
-    .select([
-      "slug",
-      "updated_at",
-      // sql<string>`date(updated_at, 'unixepoch', 'utc')`.as("updated_at"),
-    ])
-    .where("published", "=", 1)
-    .orderBy("publish_date", "desc")
-    .execute();
+  const postsList = await db
+    .select({
+      slug: posts.slug,
+      updatedAt: posts.updatedAt,
+    })
+    .from(posts)
+    .where(eq(posts.published, true))
+    .orderBy(desc(posts.publishDate));
+
   const content = `
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
@@ -33,11 +33,11 @@ export async function GET(request: Request) {
       <url>
         <loc>${rootURL}/posts/food</loc>
       </url>
-      ${posts
+      ${postsList
         .map(
-          (p: any) => `<url>
+          (p) => `<url>
         <loc>${rootURL}/posts/${p.slug}</loc>
-        <lastmod>${p.updated_at.split(" ")[0]}</lastmod>
+        <lastmod>${p.updatedAt.split(" ")[0]}</lastmod>
       </url>`
         )
         .join("\n")}

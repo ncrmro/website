@@ -62,16 +62,16 @@ export default async function Dashboard() {
                           </div>
                           <span
                             className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
-                              post.published === 1
+                              post.published
                                 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                                 : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                             }`}
                           >
-                            {post.published === 1 ? "Published" : "Draft"}
+                            {post.published ? "Published" : "Draft"}
                           </span>
                         </div>
                         <div className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                          Updated {new Date(post.updated_at).toLocaleDateString()}
+                          Updated {new Date(post.updatedAt).toLocaleDateString()}
                         </div>
                       </Link>
                     </li>
@@ -113,7 +113,7 @@ export default async function Dashboard() {
               {recentJournalEntries.length > 0 ? (
                 <ul className="space-y-3">
                   {recentJournalEntries.map((entry) => {
-                    const date = DateTime.fromSeconds(entry.created_date);
+                    const date = DateTime.fromSeconds(entry.createdDate);
                     const preview = entry.body.slice(0, 100);
 
                     return (

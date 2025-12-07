@@ -28,10 +28,6 @@ const generateAppDirEntry = (entry) => {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-  },
-  output: "standalone",
   reactStrictMode: true,
   serverRuntimeConfig: {
     CONTACT_INFO_JSON:
@@ -41,12 +37,11 @@ const nextConfig = {
   env: {
     GOOGLE_ANALYTICS_TRACKING_ID: "G-6MYGCJZSVN",
   },
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
   images: {
-    domains: ["www.gravatar.com"],
+    remotePatterns: [
+      { hostname: "www.gravatar.com" },
+      { hostname: "r2.ncrmro.com" },
+    ],
   },
   async redirects() {
     return [

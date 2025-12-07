@@ -6,8 +6,8 @@ export function PostItem(props: {
     slug: string;
     title: string;
     description: string;
-    publish_date: string | null;
-    published: number;
+    publishDate: string | null;
+    published: boolean;
   };
   evenRow: boolean;
   dashboard?: boolean;
@@ -33,7 +33,7 @@ export function PostItem(props: {
           )}
         </div>
         <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-          {props.post.publish_date && formatDate(props.post.publish_date)}
+          {props.post.publishDate && formatDate(props.post.publishDate)}
         </p>
       </div>
       <div className="mt-2 text-sm text-gray-700 dark:text-gray-400">

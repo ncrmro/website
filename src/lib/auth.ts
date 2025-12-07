@@ -1,7 +1,7 @@
 import { scrypt, randomBytes, timingSafeEqual, createHash } from "crypto";
 import { promisify } from "util";
-// Keep this as local import rather than alias as playwirght doesn't know about aliases
-import { db } from "./database";
+import { db, sessions, users, getResultArray } from "@/database";
+import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 export namespace Passwords {
@@ -85,11 +85,13 @@ export namespace Passwords {
 }
 
 export async function handleSession(userId: string, timezone: string) {
-  const session = await db
-    .insertInto("sessions")
-    .values({ user_id: userId })
-    .returning("id")
-    .executeTakeFirstOrThrow();
+  const result = await db
+    .insert(sessions)
+    .values({ userId })
+    .returning({ id: sessions.id });
+  const sessionRows = getResultArray(result);
+  const session = sessionRows[0];
+  if (!session) throw new Error("Failed to create session");
   (await cookies()).set({
     name: "viewer_session",
     value: session.id,
@@ -98,37 +100,50 @@ export async function handleSession(userId: string, timezone: string) {
 }
 
 export async function selectSessionViewer() {
-  const session = (await cookies()  ).get("viewer_session")?.value;
-  if (session) {
-    return await db
-      .selectFrom("users")
-      .innerJoin("sessions", "sessions.user_id", "users.id")
-      .select(["users.id", "users.email", "first_name", "last_name", "image"])
-      .where("sessions.id", "=", session)
-      .executeTakeFirst();
+  const sessionId = (await cookies()).get("viewer_session")?.value;
+  if (sessionId) {
+    const result = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        image: users.image,
+      })
+      .from(users)
+      .innerJoin(sessions, eq(sessions.userId, users.id))
+      .where(eq(sessions.id, sessionId));
+    return result[0];
   }
 }
 
 export interface Viewer {
   id: string;
   email: string;
-  image: string;
-  first_name: string | null;
-  last_name: string | null;
+  image: string | null;
+  firstName: string | null;
+  lastName: string | null;
 }
 
 export async function selectViewer(): Promise<Viewer | undefined> {
   if (typeof window === "undefined") {
     const viewer = await selectSessionViewer();
     if (viewer) {
-      if (!viewer.image) {
+      let image = viewer.image;
+      if (!image) {
         const hash = createHash("md5");
         hash.update(viewer.email);
         const md5 = hash.digest("hex");
-        viewer.image = `https://www.gravatar.com/avatar/${md5}`;
+        image = `https://www.gravatar.com/avatar/${md5}`;
       }
 
-      return viewer as Viewer;
+      return {
+        id: viewer.id,
+        email: viewer.email,
+        image,
+        firstName: viewer.firstName,
+        lastName: viewer.lastName,
+      };
     }
   }
 }

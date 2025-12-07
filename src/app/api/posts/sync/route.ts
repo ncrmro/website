@@ -1,7 +1,7 @@
 import { selectViewer } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/database";
-import { sql } from "kysely";
+import { db, users, posts, tags, postsTags, getResultArray } from "@/database";
+import { eq, and, sql } from "drizzle-orm";
 import { createHash } from "crypto";
 
 async function authenticateRequest(req: NextRequest) {
@@ -10,28 +10,36 @@ async function authenticateRequest(req: NextRequest) {
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.substring(7);
     const expectedToken = process.env.SYNC_AUTH_TOKEN;
-    
+
     if (expectedToken && token === expectedToken) {
       // For token auth, we'll use a specific user (you may want to configure this)
       // For now, let's get the first user as the viewer
-      const user = await db
-        .selectFrom("users")
-        .select(["id", "email", "first_name", "last_name", "image"])
-        .executeTakeFirst();
-      
+      const result = await db
+        .select({
+          id: users.id,
+          email: users.email,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          image: users.image,
+        })
+        .from(users)
+        .limit(1);
+
+      const user = result[0];
       if (user) {
         // Add gravatar if no image
-        if (!user.image) {
+        let image = user.image;
+        if (!image) {
           const hash = createHash("md5");
           hash.update(user.email);
           const md5 = hash.digest("hex");
-          user.image = `https://www.gravatar.com/avatar/${md5}`;
+          image = `https://www.gravatar.com/avatar/${md5}`;
         }
-        return user;
+        return { ...user, image };
       }
     }
   }
-  
+
   // Fall back to session-based authentication
   return await selectViewer();
 }
@@ -43,39 +51,38 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Get all posts with their tags
-    const posts = await db
-      .selectFrom("posts")
-      .leftJoin("posts_tags", "posts.id", "posts_tags.post_id")
-      .leftJoin("tags", "posts_tags.tag_id", "tags.id")
-      .select([
-        "posts.id",
-        "posts.title",
-        "posts.description",
-        "posts.body",
-        "posts.slug",
-        "posts.published",
-        "posts.publish_date",
-        "posts.created_at",
-        "posts.updated_at",
-        sql<string>`GROUP_CONCAT(tags.value)`.as("tags")
-      ])
-      .where("posts.user_id", "=", viewer.id)
-      .groupBy("posts.id")
-      .execute();
+    // Get all posts with their tags using GROUP_CONCAT
+    const postsResult = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        description: posts.description,
+        body: posts.body,
+        slug: posts.slug,
+        published: posts.published,
+        publishDate: posts.publishDate,
+        createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt,
+        tags: sql<string>`GROUP_CONCAT(${tags.value})`.as("tags"),
+      })
+      .from(posts)
+      .leftJoin(postsTags, eq(posts.id, postsTags.postId))
+      .leftJoin(tags, eq(postsTags.tagId, tags.id))
+      .where(eq(posts.userId, viewer.id))
+      .groupBy(posts.id);
 
     // Format posts for sync
-    const formattedPosts = posts.map(post => ({
+    const formattedPosts = postsResult.map((post) => ({
       id: post.id,
       title: post.title,
       description: post.description,
       body: post.body,
       slug: post.slug,
-      published: Boolean(post.published),
-      publish_date: post.publish_date,
-      created_at: post.created_at,
-      updated_at: post.updated_at,
-      tags: post.tags ? post.tags.split(',').filter(Boolean) : []
+      published: post.published,
+      publish_date: post.publishDate,
+      created_at: post.createdAt,
+      updated_at: post.updatedAt,
+      tags: post.tags ? post.tags.split(",").filter(Boolean) : [],
     }));
 
     return NextResponse.json({ posts: formattedPosts });
@@ -95,9 +102,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { posts } = await req.json();
+    const { posts: postsData } = await req.json();
 
-    if (!Array.isArray(posts)) {
+    if (!Array.isArray(postsData)) {
       return NextResponse.json(
         { error: "Posts must be an array" },
         { status: 400 }
@@ -106,99 +113,103 @@ export async function POST(req: NextRequest) {
 
     const results = [];
 
-    for (const postData of posts) {
-      const { title, description, body, slug, published, publish_date, tags } = postData;
+    for (const postData of postsData) {
+      const {
+        title,
+        description,
+        body,
+        slug,
+        published,
+        publish_date,
+        tags: tagValues,
+      } = postData;
 
       // Validate required fields
       if (!title || !body) {
         results.push({
           status: "error",
           message: "Title and body are required",
-          data: postData
+          data: postData,
         });
         continue;
       }
 
       try {
         // Check if post exists by slug
-        const existingPost = await db
-          .selectFrom("posts")
-          .select("id")
-          .where("slug", "=", slug)
-          .where("user_id", "=", viewer.id)
-          .executeTakeFirst();
+        const existingPostResult = await db
+          .select({ id: posts.id })
+          .from(posts)
+          .where(and(eq(posts.slug, slug), eq(posts.userId, viewer.id)));
 
+        const existingPost = existingPostResult[0];
         let postId: string;
 
         if (existingPost) {
           // Update existing post
           await db
-            .updateTable("posts")
+            .update(posts)
             .set({
               title,
               description: description || "",
               body,
-              published: published ? 1 : 0,
-              publish_date: publish_date || null,
-              updated_at: new Date().toISOString()
+              published: Boolean(published),
+              publishDate: publish_date || null,
+              updatedAt: new Date().toISOString(),
             })
-            .where("id", "=", existingPost.id)
-            .where("user_id", "=", viewer.id)
-            .execute();
+            .where(and(eq(posts.id, existingPost.id), eq(posts.userId, viewer.id)));
 
           postId = existingPost.id;
         } else {
           // Create new post
-          const newPost = await db
-            .insertInto("posts")
+          const newPostResult = await db
+            .insert(posts)
             .values({
               title,
               description: description || "",
               body,
               slug,
-              user_id: viewer.id,
-              published: published ? 1 : 0,
-              publish_date: publish_date || null
+              userId: viewer.id,
+              published: Boolean(published),
+              publishDate: publish_date || null,
             })
-            .returning("id")
-            .executeTakeFirstOrThrow();
+            .returning({ id: posts.id });
 
+          const newPostRows = getResultArray(newPostResult);
+          const newPost = newPostRows[0];
+          if (!newPost) throw new Error("Failed to create post");
           postId = newPost.id;
         }
 
         // Handle tags
-        if (tags && Array.isArray(tags)) {
+        if (tagValues && Array.isArray(tagValues)) {
           // Remove existing tags
-          await db
-            .deleteFrom("posts_tags")
-            .where("post_id", "=", postId)
-            .execute();
+          await db.delete(postsTags).where(eq(postsTags.postId, postId));
 
           // Add new tags
-          for (const tagValue of tags) {
-            // Create tag if it doesn't exist
+          for (const tagValue of tagValues) {
+            // Create tag if it doesn't exist (using INSERT OR IGNORE pattern)
             await db
-              .insertInto("tags")
+              .insert(tags)
               .values({ value: tagValue })
-              .onConflict((oc) => oc.column("value").doNothing())
-              .execute();
+              .onConflictDoNothing();
 
             // Get tag id
-            const tag = await db
-              .selectFrom("tags")
-              .select("id")
-              .where("value", "=", tagValue)
-              .executeTakeFirstOrThrow();
+            const tagResult = await db
+              .select({ id: tags.id })
+              .from(tags)
+              .where(eq(tags.value, tagValue));
 
-            // Link post to tag
-            await db
-              .insertInto("posts_tags")
-              .values({
-                post_id: postId,
-                tag_id: tag.id
-              })
-              .onConflict((oc) => oc.columns(["post_id", "tag_id"]).doNothing())
-              .execute();
+            const tag = tagResult[0];
+            if (tag) {
+              // Link post to tag (using INSERT OR IGNORE pattern)
+              await db
+                .insert(postsTags)
+                .values({
+                  postId: postId,
+                  tagId: tag.id,
+                })
+                .onConflictDoNothing();
+            }
           }
         }
 
@@ -206,20 +217,18 @@ export async function POST(req: NextRequest) {
           status: "success",
           message: existingPost ? "Updated" : "Created",
           postId,
-          slug
+          slug,
         });
-
       } catch (error) {
         results.push({
           status: "error",
           message: (error as Error).message,
-          data: postData
+          data: postData,
         });
       }
     }
 
     return NextResponse.json({ results });
-
   } catch (error) {
     console.error("Error syncing posts:", error);
     return NextResponse.json(

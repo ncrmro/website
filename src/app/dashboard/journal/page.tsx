@@ -1,6 +1,7 @@
 import JournalEntryForm from "@/app/dashboard/journal/form";
 import { selectSessionViewer, selectViewer } from "@/lib/auth";
-import { db } from "@/lib/database";
+import { db, journalEntries } from "@/database";
+import { eq, desc } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 export const dynamicParams = true;
@@ -33,19 +34,15 @@ async function submitForm(data: FormData) {
     if (typeof id !== "string" || id === "")
       throw new Error("Body was not string or was an empty value");
     await db
-      .updateTable("journal_entries")
+      .update(journalEntries)
       .set({ body })
-      .where("id", "=", id)
-      .execute();
+      .where(eq(journalEntries.id, id));
   } else {
-    await db
-      .insertInto("journal_entries")
-      .values({
-        user_id: viewer.id,
-        body,
-        created_date: currentTimezoneMidnightUnixTimestamp(timezone),
-      })
-      .execute();
+    await db.insert(journalEntries).values({
+      userId: viewer.id,
+      body,
+      createdDate: currentTimezoneMidnightUnixTimestamp(timezone),
+    });
   }
 }
 
@@ -53,7 +50,7 @@ const components = {
   ul: (p: any) => <ul className="list-disc px-4 py-2" {...p} />,
   code: (p: any) => {
     // Check if this is a code block (has language class) or inline code
-    const isCodeBlock = p.className && p.className.startsWith('language-');
+    const isCodeBlock = p.className && p.className.startsWith("language-");
 
     if (isCodeBlock) {
       // For code blocks in journal, use a simple pre-formatted style with vertical spacing
@@ -81,7 +78,10 @@ const components = {
     <h4 className="text-l font-semibold text-gray-900 dark:text-white" {...p} />
   ),
   h3: (p: any) => (
-    <h5 className="text-base font-semibold text-gray-900 dark:text-white py-2" {...p} />
+    <h5
+      className="text-base font-semibold text-gray-900 dark:text-white py-2"
+      {...p}
+    />
   ),
   p: (p: any) => <p className="py-1" {...p} />,
   hr: (p: any) => <hr className="my-3" {...p} />,
@@ -100,35 +100,29 @@ export default async function JournalPage() {
       }).toString()}`
     );
   if (!timezone) throw new Error("Timezone missing!");
-  const posts = await db
-    .selectFrom("journal_entries")
-    .select([
-      "id",
-      "body",
-      "created_date",
-      //   "created_date_str"
-      // sql<string>`date(created_date, 'unixepoch', 'utc')`.as(
-      // ),
-    ])
-    .orderBy("created_date", "desc")
-    .where("user_id", "=", viewer.id)
-    // .where("id", "not in", [
-    //   "7096f4f6-ced7-4aa7-8a4a-14d1661fd3b3",
-    //   "7b5b4a6d-008b-4d11-9aaf-66f8acb41d29",
-    // ])
-    .execute();
-  console.log(posts[0]);
+
+  const entries = await db
+    .select({
+      id: journalEntries.id,
+      body: journalEntries.body,
+      createdDate: journalEntries.createdDate,
+    })
+    .from(journalEntries)
+    .where(eq(journalEntries.userId, viewer.id))
+    .orderBy(desc(journalEntries.createdDate));
+
+  console.log(entries[0]);
   console.log(
     timezone,
     currentTimezoneMidnightUnixTimestamp(timezone),
-    posts[0]?.created_date
+    entries[0]?.createdDate
   );
+
   const todayEntry =
-    posts[0]?.created_date === currentTimezoneMidnightUnixTimestamp(timezone)
-      ? posts.shift()
+    entries[0]?.createdDate === currentTimezoneMidnightUnixTimestamp(timezone)
+      ? entries.shift()
       : null;
 
-  // console.log(todayEntry);
   return (
     <div className="px-2 sm:px-0">
       <div className="text-sm text-gray-500 mb-4">
@@ -138,11 +132,14 @@ export default async function JournalPage() {
         <JournalEntryForm entry={todayEntry} formAction={submitForm} />
       </div>
       <ul role="list" className="space-y-4 sm:space-y-6">
-        {posts.map((p: any) => {
-          const created = DateTime.fromSeconds(p.created_date);
+        {entries.map((p) => {
+          const created = DateTime.fromSeconds(p.createdDate);
 
           return (
-            <li key={p.id} className="relative flex gap-x-2 sm:gap-x-4 dark:text-white">
+            <li
+              key={p.id}
+              className="relative flex gap-x-2 sm:gap-x-4 dark:text-white"
+            >
               <div
                 className={classNames(
                   "-bottom-6",

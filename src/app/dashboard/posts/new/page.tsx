@@ -1,4 +1,4 @@
-import { db } from "@/lib/database";
+import { db, posts, getResultArray } from "@/database";
 import { selectSessionViewer, selectViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
@@ -29,18 +29,25 @@ async function createPost(prevState: any, data: FormData) {
       ? slugValue.trim()
       : slugify(title);
 
-    const post = await db
-      .insertInto("posts")
+    const result = await db
+      .insert(posts)
       .values({
         title: title.trim(),
         description: description.trim(),
         body: (data.get("body") as string) || "",
-        published: Number(data.get("published")) || 0,
-        user_id: viewer.id,
+        published: Boolean(Number(data.get("published"))),
+        userId: viewer.id,
         slug: finalSlug,
       })
-      .returning(["title", "slug", "published"])
-      .executeTakeFirstOrThrow();
+      .returning({
+        title: posts.title,
+        slug: posts.slug,
+        published: posts.published,
+      });
+
+    const postRows = getResultArray(result);
+    const post = postRows[0];
+    if (!post) throw new Error("Failed to create post");
 
     redirect(`/dashboard/posts/${post.slug}`);
   } catch (error) {

@@ -1,5 +1,5 @@
-import { db } from "@/lib/database";
-import { DB } from "kysely-codegen";
+import { db, posts, tags, postsTags, journalEntries } from "@/database";
+import { eq, like, or, desc, count, and, sql } from "drizzle-orm";
 
 export interface PostFilters {
   search?: string;
@@ -15,10 +15,10 @@ export interface PaginatedPosts {
     title: string;
     description: string;
     body: string;
-    publish_date: string | null;
-    published: number;
-    created_at: string;
-    updated_at: string;
+    publishDate: string | null;
+    published: boolean;
+    createdAt: string;
+    updatedAt: string;
   }>;
   pagination: {
     page: number;
@@ -33,66 +33,97 @@ const POSTS_PER_PAGE = 100;
 export async function getPaginatedPosts(
   filters: PostFilters = {}
 ): Promise<PaginatedPosts> {
-  const {
-    search,
-    published = "all",
-    tagId,
-    page = 1,
-  } = filters;
+  const { search, published = "all", tagId, page = 1 } = filters;
 
-  // Base query
-  let query = db
-    .selectFrom("posts")
-    .select([
-      "posts.id",
-      "posts.slug",
-      "posts.title",
-      "posts.description",
-      "posts.body",
-      "posts.publish_date",
-      "posts.published",
-      "posts.created_at",
-      "posts.updated_at",
-    ]);
+  // Build conditions array
+  const conditions = [];
 
-  // Apply filters
   if (search) {
-    query = query.where((eb) =>
-      eb.or([
-        eb("posts.title", "like", `%${search}%`),
-        eb("posts.description", "like", `%${search}%`),
-        eb("posts.body", "like", `%${search}%`),
-      ])
+    conditions.push(
+      or(
+        like(posts.title, `%${search}%`),
+        like(posts.description, `%${search}%`),
+        like(posts.body, `%${search}%`)
+      )
     );
   }
 
   if (published !== "all") {
-    query = query.where("posts.published", "=", published ? 1 : 0);
+    conditions.push(eq(posts.published, published));
   }
 
+  // Get total count using a simpler approach
+  let total = 0;
   if (tagId) {
-    query = query
-      .innerJoin("posts_tags", "posts.id", "posts_tags.post_id")
-      .where("posts_tags.tag_id", "=", tagId);
+    const countResult = await db
+      .select({ count: count() })
+      .from(posts)
+      .innerJoin(postsTags, eq(posts.id, postsTags.postId))
+      .where(
+        conditions.length > 0
+          ? and(eq(postsTags.tagId, tagId), ...conditions)
+          : eq(postsTags.tagId, tagId)
+      );
+    total = countResult[0]?.count ?? 0;
+  } else if (conditions.length > 0) {
+    const countResult = await db
+      .select({ count: count() })
+      .from(posts)
+      .where(and(...conditions));
+    total = countResult[0]?.count ?? 0;
+  } else {
+    const countResult = await db.select({ count: count() }).from(posts);
+    total = countResult[0]?.count ?? 0;
   }
 
-  // Get total count
-  const countQuery = query.select((eb) =>
-    eb.fn.countAll<number>().as("count")
-  );
-  const countResult = await countQuery.executeTakeFirst();
-  const total = countResult?.count ?? 0;
-
-  // Apply pagination
+  // Get posts with pagination
   const offset = (page - 1) * POSTS_PER_PAGE;
-  const posts = await query
-    .orderBy("posts.publish_date", "desc")
-    .limit(POSTS_PER_PAGE)
-    .offset(offset)
-    .execute();
+
+  const selectFields = {
+    id: posts.id,
+    slug: posts.slug,
+    title: posts.title,
+    description: posts.description,
+    body: posts.body,
+    publishDate: posts.publishDate,
+    published: posts.published,
+    createdAt: posts.createdAt,
+    updatedAt: posts.updatedAt,
+  };
+
+  let postsResult;
+  if (tagId) {
+    postsResult = await db
+      .select(selectFields)
+      .from(posts)
+      .innerJoin(postsTags, eq(posts.id, postsTags.postId))
+      .where(
+        conditions.length > 0
+          ? and(eq(postsTags.tagId, tagId), ...conditions)
+          : eq(postsTags.tagId, tagId)
+      )
+      .orderBy(desc(posts.publishDate))
+      .limit(POSTS_PER_PAGE)
+      .offset(offset);
+  } else if (conditions.length > 0) {
+    postsResult = await db
+      .select(selectFields)
+      .from(posts)
+      .where(and(...conditions))
+      .orderBy(desc(posts.publishDate))
+      .limit(POSTS_PER_PAGE)
+      .offset(offset);
+  } else {
+    postsResult = await db
+      .select(selectFields)
+      .from(posts)
+      .orderBy(desc(posts.publishDate))
+      .limit(POSTS_PER_PAGE)
+      .offset(offset);
+  }
 
   return {
-    posts,
+    posts: postsResult,
     pagination: {
       page,
       perPage: POSTS_PER_PAGE,
@@ -104,35 +135,36 @@ export async function getPaginatedPosts(
 
 export async function getAllTags() {
   return await db
-    .selectFrom("tags")
-    .select(["id", "value"])
-    .orderBy("value", "asc")
-    .execute();
+    .select({ id: tags.id, value: tags.value })
+    .from(tags)
+    .orderBy(tags.value);
 }
 
 export async function getRecentPosts(limit: number = 3) {
   return await db
-    .selectFrom("posts")
-    .select([
-      "id",
-      "slug",
-      "title",
-      "description",
-      "publish_date",
-      "published",
-      "updated_at",
-    ])
-    .orderBy("updated_at", "desc")
-    .limit(limit)
-    .execute();
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      description: posts.description,
+      publishDate: posts.publishDate,
+      published: posts.published,
+      updatedAt: posts.updatedAt,
+    })
+    .from(posts)
+    .orderBy(desc(posts.updatedAt))
+    .limit(limit);
 }
 
 export async function getRecentJournalEntries(userId: string, limit: number = 3) {
   return await db
-    .selectFrom("journal_entries")
-    .select(["id", "body", "created_date"])
-    .where("user_id", "=", userId)
-    .orderBy("created_date", "desc")
-    .limit(limit)
-    .execute();
+    .select({
+      id: journalEntries.id,
+      body: journalEntries.body,
+      createdDate: journalEntries.createdDate,
+    })
+    .from(journalEntries)
+    .where(eq(journalEntries.userId, userId))
+    .orderBy(desc(journalEntries.createdDate))
+    .limit(limit);
 }

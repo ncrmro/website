@@ -2,7 +2,8 @@ import ClientTimezoneInput from "@/app/login/ClientTimezoneInput";
 import { handleSession, Passwords, selectViewer } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { db } from "@/lib/database";
+import { db, users } from "@/database";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import React from "react";
 
@@ -12,11 +13,14 @@ async function loginUser(data: Map<string, string>) {
   const password = data.get("password")!;
   const timezone = data.get("timezone")!;
   try {
-    const user = await db
-      .selectFrom("users")
-      .select(["id", "email", "password"])
-      .where("email", "=", email)
-      .executeTakeFirstOrThrow();
+    const result = await db
+      .select({ id: users.id, email: users.email, password: users.password })
+      .from(users)
+      .where(eq(users.email, email));
+    const user = result[0];
+    if (!user) {
+      redirect("/login?error=AUTH_INVALID_USER");
+    }
     const match = await Passwords.compare(user.password, password);
     if (!match) {
       redirect("/login?error=AUTH_INVALID_PASSWORD");
