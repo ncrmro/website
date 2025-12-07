@@ -29,6 +29,7 @@ const generateAppDirEntry = (entry) => {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ['@libsql/isomorphic-ws'],
   serverRuntimeConfig: {
     CONTACT_INFO_JSON:
       process.env.CONTACT_INFO_JSON ||
