@@ -33,7 +33,6 @@ export const db = createDatabaseClient();
 export type Database = typeof db;
 
 // Utility function to handle both array and ResultSet return types from .returning()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getResultArray(result: any[] | { rows: any[] }): any[] {
+export function getResultArray<T>(result: T[] | { rows: T[] }): T[] {
   return Array.isArray(result) ? result : result.rows;
 }

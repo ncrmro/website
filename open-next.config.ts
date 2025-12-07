@@ -1,6 +1,5 @@
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 
 export default defineCloudflareConfig({
-  // Enable cache interception for better performance
-  enableCacheInterception: true,
+  // Simplified config - no ISR or SSG caching for now
 });
