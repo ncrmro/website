@@ -2,7 +2,6 @@ import { Posts } from "@/app/posts/Posts";
 import Navbar from "@/components/Navbar";
 import React from "react";
 
-export const revalidate = 60;
 export const dynamic = "force-dynamic";
 
 export default async function Home() {

@@ -3,6 +3,8 @@ import DashboardClientLayout from "@/app/dashboard/layout.client";
 import { redirect } from "next/navigation";
 import { selectViewer } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout(props: {
   children: React.ReactNode;
 }) {

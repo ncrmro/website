@@ -3,6 +3,8 @@ import { db, posts, postsTags, tags } from "@/database";
 import { eq, desc, and } from "drizzle-orm";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 export default async function TravelPosts() {
   const postsList = await db
     .select({
