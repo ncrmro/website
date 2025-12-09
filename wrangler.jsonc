@@ -13,6 +13,7 @@
     "run_worker_first": ["/ingest/*"]
   },
   "vars": {
+    "TURSO_DATABASE_URL": "libsql://ncrmro-website-production-ncrmro.aws-us-east-2.turso.io",
     "NEXT_PUBLIC_R2_DOMAIN": "r2.ncrmro.com"
   },
   "r2_buckets": [
