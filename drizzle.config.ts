@@ -1,9 +1,7 @@
 import { defineConfig } from "drizzle-kit";
 import { config } from "dotenv";
 
-// Load environment files (.env.local takes priority, then .env.production)
 config({ path: ".env.local", quiet: true });
-config({ path: ".env.production", quiet: true });
 
 export default defineConfig({
   schema: "./src/database/schema.ts",
