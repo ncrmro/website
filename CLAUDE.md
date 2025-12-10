@@ -5,18 +5,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Database Operations
-- `npm run build-migrations` - Build TypeScript migrations from src/lib/migrations.ts
-- `npm run mig` - Run migrations and seed data, then generate Kysely types
-- `npm run typegen` - Generate Kysely types from database schema
-- `npm run db` - Open litecli database browser for SQLite database
+- `npm run db:generate` - Generate Drizzle migrations from schema changes
+- `npm run db:migrate` - Apply migrations to database
+- `npm run db:push` - Push schema changes directly (development)
+- `npm run db:studio` - Open Drizzle Studio for database inspection
 
 ### Development Server
-- `npm run dev` - Start development server (builds migrations, runs migrations, starts Next.js dev server on port 3000)
+- `npm run dev` - Start development server with Turbopack (port 3000)
 - `npm run build` - Build production application
-- `npm run start` - Start production server from standalone build
+- `npm run start` - Start production server
+
+### Cloudflare Deployment
+- `npm run deploy` - Build and deploy to Cloudflare Workers
+- `npm run preview` - Build and preview locally with Cloudflare
+- `npm run cf-typegen` - Generate Cloudflare environment types
 
 ### Testing & Quality
 - `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript type checking
 - `npm run e2e` - Run Playwright end-to-end tests
 
 ### Utility Commands
@@ -27,11 +33,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This is a Next.js 15 personal website/blog with the App Router architecture, featuring:
+This is a Next.js 15 personal website/blog deployed on Cloudflare Workers, featuring:
 
 ### Core Technologies
 - **Framework**: Next.js 15 with App Router, TypeScript, React 18
-- **Database**: SQLite with Kysely query builder and better-sqlite3
+- **Database**: Turso (managed SQLite/libsql) with Drizzle ORM
+- **Deployment**: Cloudflare Workers (via OpenNext)
+- **Storage**: Cloudflare R2 for uploads
 - **Styling**: Tailwind CSS with @tailwindcss/forms plugin
 - **Content**: next-mdx-remote for MDX serialization, react-markdown for rendering
 - **Testing**: Playwright for E2E testing
@@ -39,22 +47,21 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
 - **Analytics**: Google Analytics, Umami Analytics, and PostHog
 
 ### Database Architecture
-- SQLite database with WAL mode enabled
-- Custom SQL functions: `regexp()`, `uuid()`, `slugify()`
-- Migration system in `database/migrations/` with seed data
-- Kysely ORM with auto-generated types via kysely-codegen
-- Database path: `DATABASE_PATH` env var or `./database/sqlite3.db`
-- All tables use STRICT mode + WITHOUT ROWID for performance
-- Automatic timestamp triggers on all tables
+- Drizzle ORM with TypeScript schema definitions
+- Turso (libsql) for production, local SQLite for development
+- Schema files in `src/database/schema.*.ts`
+- Migrations generated to `drizzle/` directory via Drizzle Kit
+- Type-safe queries with auto-inferred TypeScript types
+- Dual-mode database client (production Turso / local SQLite)
 
 ### Key Database Tables
-- **users**: Authentication with scrypt password hashing, admin flag, Gravatar integration
+- **users**: Authentication with scrypt password hashing, admin flag
 - **sessions**: Session-based authentication with cookie storage
-- **posts**: Blog posts with markdown body, slug auto-generation, published flag, publish_date
-- **tags**: Post categorization (tech, travel, food, etc.)
+- **posts**: Blog posts with markdown body, slug, published flag, publish_date
+- **tags**: Post categorization
 - **posts_tags**: Many-to-many relationship between posts and tags
 - **journal_entries**: One entry per user per day, Unix timestamps
-- **journal_entry_history**: Immutable history tracking for all journal edits
+- **journal_entry_history**: Immutable history tracking for journal edits
 
 ### Authentication System
 - Custom session-based authentication using cookies
@@ -66,16 +73,22 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
 - Auth utilities: `selectSessionViewer()`, `selectViewer()` in src/lib/auth.ts
 
 ### Content Management
-- **Posts**: Stored in SQLite database (NOT filesystem)
+- **Posts**: Stored in database (NOT filesystem)
 - Posts table includes: title, body (markdown), description, slug, published, publish_date
-- Automatic slug generation from title using custom SQLite `slugify()` function
-- BEFORE UPDATE trigger regenerates slug when title changes
 - Dashboard interface for creating/editing posts at `/dashboard/posts/`
 - Rich editor with tabs: Write, Preview, Media
 - LocalStorage auto-save during editing to prevent data loss
 - MDX serialization server-side using next-mdx-remote
-- Post categorization by tags rather than filesystem structure
+- Post categorization by tags
 - Unpublished posts visible only to authenticated users
+
+### File Upload System
+- **Storage**: Cloudflare R2 bucket for media uploads
+- **Public domain**: r2.ncrmro.com
+- **Production**: Uses R2 native binding via `getCloudflareContext()`
+- **Development**: Falls back to S3-compatible API with credentials
+- **Upload path**: `uploads/posts/{postId}/{filename}`
+- **API endpoint**: `/api/posts/uploads/`
 
 ### Blog Post Sync Feature
 - CLI tool: `bin/sync-posts.ts` compiled to JavaScript
@@ -84,7 +97,6 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
 - Authentication via `AUTH_TOKEN` environment variable (client) and `SYNC_AUTH_TOKEN` (server)
 - Supports custom directory via `-d` flag
 - Posts matched by slug for updates
-- See BLOG_SYNC.md for detailed usage
 
 ### Key Directories
 - `src/app/` - Next.js App Router pages and layouts
@@ -92,54 +104,71 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
   - `src/app/dashboard/posts/` - Post CRUD interface
   - `src/app/dashboard/journal/` - Journal entry interface
   - `src/app/login/` - Authentication page
+  - `src/app/api/posts/uploads/` - R2 upload API
 - `src/components/` - Reusable React components
-- `src/lib/` - Core utilities (database, auth, migrations)
-  - `src/lib/database.ts` - Kysely setup, custom SQL functions (regexp, uuid, slugify)
+- `src/database/` - Drizzle ORM schema and connection
+  - `src/database/index.ts` - Database client setup
+  - `src/database/schema.ts` - Schema re-exports
+  - `src/database/schema.users.ts` - Users and sessions tables
+  - `src/database/schema.posts.ts` - Posts, tags, and posts_tags tables
+  - `src/database/schema.journal.ts` - Journal entries and history tables
+- `src/lib/` - Core utilities (auth, R2)
   - `src/lib/auth.ts` - Authentication and session logic
-  - `src/lib/migrations.ts` - Database migration runner
-- `database/` - SQLite database, migrations, and seeds
-  - `database/migrations/` - SQL migration files (numbered 0000-*, 0001-*, etc.)
-  - `database/seeds/` - SQL seed files for development data
-  - `database/dist/` - Compiled migrations (build artifact)
+  - `src/lib/r2/upload.ts` - R2 upload utilities
+- `src/models/` - Database query functions
+- `drizzle/` - Generated SQL migrations
 - `bin/` - CLI tools
   - `bin/sync-posts.ts` - Blog post sync with Obsidian
   - `bin/generate-password.ts` - Password generation utility
 - `tests/` - Playwright E2E tests
 - `public/` - Static assets
-  - `public/uploads/` - User-uploaded media (mounted as Kubernetes PVC in production)
-  - `public/posts/` - Legacy markdown files (posts now in database)
-- `chart/` - Kubernetes Helm chart for deployment
+
+### Configuration Files
+- `wrangler.jsonc` - Cloudflare Workers configuration
+- `open-next.config.ts` - OpenNext configuration for Cloudflare
+- `drizzle.config.ts` - Drizzle ORM configuration
 
 ### Development Workflow
-1. Start dev server: `npm run dev` (builds migrations, runs them, starts Next.js)
-2. Database inspection: `npm run db` (opens litecli SQL browser)
+1. Start dev server: `npm run dev`
+2. Database inspection: `npm run db:studio` (opens Drizzle Studio)
 3. Making schema changes:
-   - Add SQL to `database/migrations/XXXX-name.sql`
-   - Run `npm run mig` to apply migrations and regenerate Kysely types
+   - Modify TypeScript schema in `src/database/schema.*.ts`
+   - Run `npm run db:generate` to create migration
+   - Run `npm run db:migrate` to apply migration
 4. Testing: `npm run e2e` for Playwright tests
 
 ### Deployment
-- **Container**: Multi-stage Dockerfile with standalone Next.js output
-- **Kubernetes**: Helm chart in `chart/` directory
-  - Deployment with configurable replicas (default: 2)
-  - PersistentVolumeClaim for database (`/database/sqlite3.db`)
-  - PersistentVolumeClaim for uploads (`/app/public/uploads`)
-  - Pre-deployment Job for running migrations
-  - Ingress for HTTPS routing
-  - Secret for `SYNC_AUTH_TOKEN` (auto-generated if empty)
-- **CI/CD**: GitHub Actions workflow (`.github/workflows/build-and-release.yml`)
-  - Multi-stage build and push to GitHub Container Registry
-  - Trivy security scanning
-  - Helm deployment via Tailscale VPN to private cluster
+- **Platform**: Cloudflare Workers (serverless edge)
+- **Compiler**: OpenNext (@opennextjs/cloudflare) compiles Next.js for Workers
+- **Database**: Turso (managed libsql) in AWS us-east-2
+- **Storage**: Cloudflare R2 bucket (`ncrmro-website-uploads`)
+- **CI/CD**: GitHub Actions (`.github/workflows/deploy-cloudflare.yml`)
+  - Triggered on push to main branch
+  - Runs database migrations via Drizzle Kit
+  - Deploys to Cloudflare Workers
+- **Configuration**: `wrangler.jsonc` defines bindings and environment
 
 ### Environment Variables
-- `DATABASE_PATH` - SQLite database file path (default: `./database/sqlite3.db`)
+
+**Production (Cloudflare Workers):**
+- `TURSO_DATABASE_URL` - Turso database connection URL
+- `TURSO_AUTH_TOKEN` - Turso authentication token (secret)
+- `NEXT_PUBLIC_R2_DOMAIN` - Public R2 domain for uploads (r2.ncrmro.com)
+- `SYNC_AUTH_TOKEN` - Server-side auth token for blog sync API
+
+**Development:**
+- `DATABASE_URL` or `DB_PORT` - Local SQLite/libsql connection
+- `R2_ACCOUNT_ID` - Cloudflare account ID for R2
+- `R2_ACCESS_KEY_ID` - R2 S3-compatible access key
+- `R2_SECRET_ACCESS_KEY` - R2 S3-compatible secret key
+- `R2_BUCKET_NAME` - R2 bucket name
+
+**General:**
 - `WEB_PORT` - Web server port (default: 3000)
 - `NODE_ENV` - Environment mode (analytics only load in production)
 - `CONTACT_INFO_JSON` - Contact information configuration
 - `NEXT_PUBLIC_POSTHOG_KEY` - PostHog analytics key
 - `GOOGLE_ANALYTICS_TRACKING_ID` - Google Analytics tracking ID
-- `SYNC_AUTH_TOKEN` - Server-side auth token for blog sync API
 - `AUTH_TOKEN` - Client-side auth token for blog sync CLI
 
 ### TypeScript Configuration
@@ -149,12 +178,9 @@ This is a Next.js 15 personal website/blog with the App Router architecture, fea
 - Target: ES2015, module: ESNext
 
 ### Special Features
-- **Custom SQLite Functions**:
-  - `regexp(regex, text)` - Full regex support in SQL queries
-  - `uuid()` - Generate UUIDs in database
-  - `slugify(text)` - Convert titles to URL-safe slugs
+- **R2 Storage**: Media uploads stored in Cloudflare R2 with public access via r2.ncrmro.com
 - **PWA**: Service worker registration via next-pwa, manifest at `/public/manifest.json`
 - **Analytics Stack**: Google Analytics, Umami (self-hosted), PostHog with proxy rewrites
 - **Server Components**: Most pages use React Server Components by default
 - **Server Actions**: Form submissions use Next.js Server Actions
-- **Image Optimization**: Sharp for image processing
+- **Edge Deployment**: Runs on Cloudflare Workers at the edge for low latency
