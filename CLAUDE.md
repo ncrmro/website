@@ -142,10 +142,9 @@ This is a Next.js 15 personal website/blog deployed on Cloudflare Workers, featu
 - **Compiler**: OpenNext (@opennextjs/cloudflare) compiles Next.js for Workers
 - **Database**: Turso (managed libsql) in AWS us-east-2
 - **Storage**: Cloudflare R2 bucket (`ncrmro-website-uploads`)
-- **CI/CD**: GitHub Actions (`.github/workflows/deploy-cloudflare.yml`)
-  - Triggered on push to main branch
-  - Runs database migrations via Drizzle Kit
-  - Deploys to Cloudflare Workers
+- **CI/CD**:
+  - GitHub Actions (`.github/workflows/deploy-cloudflare.yml`) only runs database migrations on push to main
+  - Cloudflare Pages automatically builds and deploys the Worker (connected to GitHub repo)
 - **Configuration**: `wrangler.jsonc` defines bindings and environment
 
 ### Environment Variables

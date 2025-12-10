@@ -19,6 +19,8 @@ export function createDatabaseClient(options?: {
   // Determine auth token from options or env var
   const authToken = options?.authToken || process.env.TURSO_AUTH_TOKEN;
 
+  console.log("[Database] Creating client:", { url, hasAuthToken: !!authToken });
+
   // Create client with auth token if available
   const client = authToken
     ? createClient({ url, authToken })
