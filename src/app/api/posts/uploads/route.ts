@@ -1,4 +1,4 @@
-import { selectViewer } from "@/lib/auth";
+import { auth } from "@/app/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db, posts } from "@/database";
 import { eq, and } from "drizzle-orm";
@@ -8,9 +8,9 @@ import { listR2Files } from "@/lib/r2/check";
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const postId = url.searchParams.get("postId");
-  const viewer = await selectViewer();
+  const session = await auth();
 
-  if (!viewer || !postId) {
+  if (!session?.user || !postId) {
     return NextResponse.json(
       { error: "Viewer and postId must be defined" },
       { status: 400 }
@@ -28,11 +28,11 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const viewer = await selectViewer();
+  const session = await auth();
   const formData = await req.formData();
   const postId = formData.get("postId");
 
-  if (!viewer || !postId) {
+  if (!session?.user || !postId) {
     return NextResponse.json(
       { error: "Viewer and postId must be defined" },
       { status: 400 }
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     const result = await db
       .select({ id: posts.id })
       .from(posts)
-      .where(and(eq(posts.id, postId as string), eq(posts.userId, viewer.id)));
+      .where(and(eq(posts.id, postId as string), eq(posts.userId, session.user.id)));
 
     if (result.length === 0) {
       return NextResponse.json(

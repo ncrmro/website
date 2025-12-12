@@ -1,8 +1,5 @@
 import { scrypt, randomBytes, timingSafeEqual, createHash } from "crypto";
 import { promisify } from "util";
-import { db, sessions, users, getResultArray } from "@/database";
-import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export namespace Passwords {
   // scrypt is callback based so with promisify we can await it
@@ -84,66 +81,19 @@ export namespace Passwords {
   }
 }
 
-export async function handleSession(userId: string, timezone: string) {
-  const result = await db
-    .insert(sessions)
-    .values({ userId })
-    .returning({ id: sessions.id });
-  const sessionRows = getResultArray(result);
-  const session = sessionRows[0];
-  if (!session) throw new Error("Failed to create session");
-  (await cookies()).set({
-    name: "viewer_session",
-    value: session.id,
-  });
-  (await cookies()).set({ name: "viewer_timezone", value: timezone });
+// Gravatar helper for generating profile image URLs
+export function getGravatarUrl(email: string): string {
+  const hash = createHash("md5");
+  hash.update(email.toLowerCase().trim());
+  const md5 = hash.digest("hex");
+  return `https://www.gravatar.com/avatar/${md5}`;
 }
 
-export async function selectSessionViewer() {
-  const sessionId = (await cookies()).get("viewer_session")?.value;
-  if (sessionId) {
-    const result = await db
-      .select({
-        id: users.id,
-        email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        image: users.image,
-      })
-      .from(users)
-      .innerJoin(sessions, eq(sessions.userId, users.id))
-      .where(eq(sessions.id, sessionId));
-    return result[0];
-  }
-}
-
+// Viewer type for dashboard components
 export interface Viewer {
   id: string;
   email: string;
   image: string | null;
   firstName: string | null;
   lastName: string | null;
-}
-
-export async function selectViewer(): Promise<Viewer | undefined> {
-  if (typeof window === "undefined") {
-    const viewer = await selectSessionViewer();
-    if (viewer) {
-      let image = viewer.image;
-      if (!image) {
-        const hash = createHash("md5");
-        hash.update(viewer.email);
-        const md5 = hash.digest("hex");
-        image = `https://www.gravatar.com/avatar/${md5}`;
-      }
-
-      return {
-        id: viewer.id,
-        email: viewer.email,
-        image,
-        firstName: viewer.firstName,
-        lastName: viewer.lastName,
-      };
-    }
-  }
 }

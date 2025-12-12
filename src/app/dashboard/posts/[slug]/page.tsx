@@ -1,5 +1,5 @@
 import PostForm from "@/app/dashboard/posts/form";
-import { selectSessionViewer } from "@/lib/auth";
+import { auth } from "@/app/auth";
 import { db, posts, tags, postsTags } from "@/database";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
@@ -13,13 +13,10 @@ export default async function EditPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const viewer = await selectSessionViewer();
-  if (!viewer)
-    redirect(
-      `/login?${new URLSearchParams({
-        redirect: `/posts/${slug}/edit`,
-      }).toString()}`
-    );
+  const session = await auth();
+  if (!session?.user) {
+    redirect(`/api/auth/signin?callbackUrl=/dashboard/posts/${slug}`);
+  }
 
   const [postResult, tagsResult] = await Promise.all([
     db
@@ -52,7 +49,8 @@ export default async function EditPostPage({
 
   async function editPost(prevState: any, data: FormData) {
     "use server";
-    if (!viewer)
+    const currentSession = await auth();
+    if (!currentSession?.user)
       return { success: false, error: "Viewer must not be null when creating a post" };
 
     try {

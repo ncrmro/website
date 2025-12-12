@@ -1,6 +1,7 @@
 import Post from "@/app/posts/[slug]/Post";
 import { serializePost } from "@/app/posts/actions";
-import { selectViewer } from "@/lib/auth";
+import { auth } from "@/app/auth";
+import { getGravatarUrl, Viewer } from "@/lib/auth";
 import { db, posts, tags, postsTags } from "@/database";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
@@ -14,7 +15,19 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const viewer = await selectViewer();
+  const session = await auth();
+
+  // Map NextAuth session to Viewer type if logged in
+  let viewer: Viewer | undefined;
+  if (session?.user) {
+    viewer = {
+      id: session.user.id,
+      email: session.user.email!,
+      image: session.user.image || getGravatarUrl(session.user.email!),
+      firstName: session.user.name?.split(" ")[0] || null,
+      lastName: session.user.name?.split(" ").slice(1).join(" ") || null,
+    };
+  }
 
   const [postResult, tagsResult] = await Promise.all([
     db

@@ -1,5 +1,5 @@
 import JournalEntryForm from "@/app/dashboard/journal/form";
-import { selectSessionViewer, selectViewer } from "@/lib/auth";
+import { auth } from "@/app/auth";
 import { db, journalEntries } from "@/database";
 import { eq, desc } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -21,10 +21,10 @@ function currentTimezoneMidnightUnixTimestamp(timeZone: string) {
 
 async function submitForm(data: FormData) {
   "use server";
-  const viewer = await selectSessionViewer();
+  const session = await auth();
   const timezone = (await cookies()).get("viewer_timezone")?.value;
   if (!timezone) throw new Error("Timezone missing!");
-  if (!viewer) throw new Error("Viewer doesnt exist");
+  if (!session?.user) throw new Error("Viewer doesnt exist");
   const existingPost = data.get("id");
   const body = data.get("body");
   if (typeof body !== "string" || body === "")
@@ -39,7 +39,7 @@ async function submitForm(data: FormData) {
       .where(eq(journalEntries.id, id));
   } else {
     await db.insert(journalEntries).values({
-      userId: viewer.id,
+      userId: session.user.id,
       body,
       createdDate: currentTimezoneMidnightUnixTimestamp(timezone),
     });
@@ -91,14 +91,11 @@ function classNames(...classes: string[]) {
 }
 
 export default async function JournalPage() {
-  const viewer = await selectViewer();
+  const session = await auth();
   const timezone = (await cookies()).get("viewer_timezone")?.value;
-  if (!viewer)
-    redirect(
-      `/login?${new URLSearchParams({
-        redirect: "/dashboard",
-      }).toString()}`
-    );
+  if (!session?.user) {
+    redirect(`/api/auth/signin?callbackUrl=/dashboard/journal`);
+  }
   if (!timezone) throw new Error("Timezone missing!");
 
   const entries = await db
@@ -108,7 +105,7 @@ export default async function JournalPage() {
       createdDate: journalEntries.createdDate,
     })
     .from(journalEntries)
-    .where(eq(journalEntries.userId, viewer.id))
+    .where(eq(journalEntries.userId, session.user.id))
     .orderBy(desc(journalEntries.createdDate));
 
   console.log(entries[0]);

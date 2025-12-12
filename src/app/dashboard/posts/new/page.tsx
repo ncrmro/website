@@ -1,5 +1,5 @@
 import { db, posts, getResultArray } from "@/database";
-import { selectSessionViewer, selectViewer } from "@/lib/auth";
+import { auth } from "@/app/auth";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
 import PostForm from "@/app/dashboard/posts/form";
@@ -8,8 +8,8 @@ import PostForm from "@/app/dashboard/posts/form";
 
 async function createPost(prevState: any, data: FormData) {
   "use server";
-  const viewer = await selectSessionViewer();
-  if (!viewer) {
+  const session = await auth();
+  if (!session?.user) {
     return { success: false, error: "Viewer must not be null when creating a post" };
   }
 
@@ -36,7 +36,7 @@ async function createPost(prevState: any, data: FormData) {
         description: description.trim(),
         body: (data.get("body") as string) || "",
         published: Boolean(Number(data.get("published"))),
-        userId: viewer.id,
+        userId: session.user.id,
         slug: finalSlug,
       })
       .returning({
@@ -63,12 +63,9 @@ async function createPost(prevState: any, data: FormData) {
 }
 
 export default async function CreatePost() {
-  const viewer = await selectViewer();
-  if (!viewer)
-    redirect(
-      `/login?${new URLSearchParams({
-        redirect: "/posts/new",
-      }).toString()}`
-    );
+  const session = await auth();
+  if (!session?.user) {
+    redirect(`/api/auth/signin?callbackUrl=/dashboard/posts/new`);
+  }
   return <PostForm action={createPost} />;
 }

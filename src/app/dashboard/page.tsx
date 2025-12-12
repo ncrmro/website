@@ -1,21 +1,18 @@
-import { selectViewer } from "@/lib/auth";
+import { auth } from "@/app/auth";
 import { redirect } from "next/navigation";
 import { getRecentPosts, getRecentJournalEntries } from "@/models/posts";
 import Link from "next/link";
 import { DateTime } from "luxon";
 
 export default async function Dashboard() {
-  const viewer = await selectViewer();
-  if (!viewer)
-    redirect(
-      `/login?${new URLSearchParams({
-        redirect: "/dashboard",
-      }).toString()}`
-    );
+  const session = await auth();
+  if (!session?.user) {
+    redirect(`/api/auth/signin?callbackUrl=/dashboard`);
+  }
 
   const [recentPosts, recentJournalEntries] = await Promise.all([
     getRecentPosts(3),
-    getRecentJournalEntries(viewer.id, 3),
+    getRecentJournalEntries(session.user.id, 3),
   ]);
 
   return (

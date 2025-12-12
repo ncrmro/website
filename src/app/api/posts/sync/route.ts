@@ -1,8 +1,8 @@
-import { selectViewer } from "@/lib/auth";
+import { auth } from "@/app/auth";
+import { getGravatarUrl } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db, users, posts, tags, postsTags, getResultArray } from "@/database";
 import { eq, and, sql } from "drizzle-orm";
-import { createHash } from "crypto";
 
 async function authenticateRequest(req: NextRequest) {
   // Check for Bearer token authentication
@@ -28,20 +28,25 @@ async function authenticateRequest(req: NextRequest) {
       const user = result[0];
       if (user) {
         // Add gravatar if no image
-        let image = user.image;
-        if (!image) {
-          const hash = createHash("md5");
-          hash.update(user.email);
-          const md5 = hash.digest("hex");
-          image = `https://www.gravatar.com/avatar/${md5}`;
-        }
+        const image = user.image || getGravatarUrl(user.email);
         return { ...user, image };
       }
     }
   }
 
-  // Fall back to session-based authentication
-  return await selectViewer();
+  // Fall back to session-based authentication via NextAuth
+  const session = await auth();
+  if (session?.user) {
+    return {
+      id: session.user.id,
+      email: session.user.email!,
+      image: session.user.image || getGravatarUrl(session.user.email!),
+      firstName: session.user.name?.split(" ")[0] || null,
+      lastName: session.user.name?.split(" ").slice(1).join(" ") || null,
+    };
+  }
+
+  return null;
 }
 
 export async function GET(req: NextRequest) {
