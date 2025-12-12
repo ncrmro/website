@@ -2,7 +2,8 @@ import { selectViewer } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db, posts } from "@/database";
 import { eq, and } from "drizzle-orm";
-import { uploadToR2, listR2Files, getR2Url } from "@/lib/r2/upload";
+import { uploadToR2 } from "@/lib/r2/upload";
+import { listR2Files } from "@/lib/r2/check";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);

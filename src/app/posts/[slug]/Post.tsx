@@ -189,7 +189,7 @@ export default function Post(props: {
                   alt={p.alt}
                   width={500}
                   height={500}
-                  src={`/uploads/posts/${props.post.id}/${p.src}`}
+                  src={`https://r2.ncrmro.com/uploads/posts/${props.post.id}/${p.src}`}
                 />
               </div>
             ),
