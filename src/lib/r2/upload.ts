@@ -153,7 +153,6 @@ async function uploadViaBinding(
 
   const key = `uploads/${entityType}s/${entityId}/${filename}`;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const binding = uploadsBinding as any;
   try {
     await binding.put(key, imageBuffer, {
@@ -282,8 +281,7 @@ export async function uploadToR2(file: File, path: string): Promise<string> {
   try {
     const context = getCloudflareContext();
     if (context?.env?.UPLOADS) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const binding = context.env.UPLOADS as any;
+          const binding = context.env.UPLOADS as any;
       await binding.put(path, await file.arrayBuffer(), {
         httpMetadata: { contentType: file.type },
       });

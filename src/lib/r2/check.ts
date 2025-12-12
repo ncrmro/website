@@ -34,7 +34,6 @@ async function checkViaBinding(
   uploadsBinding: R2BucketBinding,
   options?: CheckImageOptions
 ): Promise<ImageExistsResult> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const binding = uploadsBinding as any;
   const prefix = `uploads/${entityType}s/${slug}/`;
 
@@ -214,7 +213,6 @@ async function listViaBinding(
   entityType: EntityType,
   uploadsBinding: R2BucketBinding
 ): Promise<Map<string, R2ImageInfo>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const binding = uploadsBinding as any;
   const prefix = `uploads/${entityType}s/`;
   const images = new Map<string, R2ImageInfo>();
@@ -341,8 +339,7 @@ export async function listR2Files(prefix: string): Promise<string[]> {
   try {
     const context = getCloudflareContext();
     if (context?.env?.UPLOADS) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const binding = context.env.UPLOADS as any;
+          const binding = context.env.UPLOADS as any;
       const result = await binding.list({ prefix });
       return result.objects.map((obj: { key: string }) =>
         obj.key.replace(prefix, "")
