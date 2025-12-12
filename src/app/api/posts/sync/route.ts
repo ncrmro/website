@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { posts: postsData } = await req.json();
+    const { posts: postsData } = (await req.json()) as { posts: unknown };
 
     if (!Array.isArray(postsData)) {
       return NextResponse.json(
