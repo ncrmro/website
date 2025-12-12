@@ -14,7 +14,8 @@
   },
   "vars": {
     "TURSO_DATABASE_URL": "libsql://ncrmro-website-production-ncrmro.aws-us-east-2.turso.io",
-    "NEXT_PUBLIC_R2_DOMAIN": "r2.ncrmro.com"
+    "NEXT_PUBLIC_R2_DOMAIN": "r2.ncrmro.com",
+    "AUTH_TRUST_HOST": "true"
   },
   "r2_buckets": [
     {
