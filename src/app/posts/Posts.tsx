@@ -1,5 +1,5 @@
 import { db, posts } from "@/database";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import React from "react";
 import { PostItem } from "./PostItem";
 
@@ -15,7 +15,7 @@ export async function Posts() {
     })
     .from(posts)
     .where(eq(posts.published, true))
-    .orderBy(desc(posts.publishDate));
+    .orderBy(asc(posts.published), desc(posts.publishDate));
 
   return (
     <ul role="list" className="-mb-8 md:max-w-3xl">

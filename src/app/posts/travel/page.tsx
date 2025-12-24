@@ -1,6 +1,6 @@
 import { PostItem } from "@/app/posts/PostItem";
 import { db, posts, postsTags, tags } from "@/database";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, asc, and } from "drizzle-orm";
 import React from "react";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default async function TravelPosts() {
     .innerJoin(postsTags, eq(postsTags.postId, posts.id))
     .innerJoin(tags, eq(tags.id, postsTags.tagId))
     .where(and(eq(posts.published, true), eq(tags.value, "travel")))
-    .orderBy(desc(posts.publishDate));
+    .orderBy(asc(posts.published), desc(posts.publishDate));
 
   return (
     <ul role="list" className="-mb-8">
