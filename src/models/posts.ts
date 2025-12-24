@@ -1,5 +1,5 @@
 import { db, posts, tags, postsTags, journalEntries } from "@/database";
-import { eq, like, or, desc, count, and, sql } from "drizzle-orm";
+import { eq, like, or, desc, asc, count, and, sql } from "drizzle-orm";
 
 export interface PostFilters {
   search?: string;
@@ -102,7 +102,7 @@ export async function getPaginatedPosts(
           ? and(eq(postsTags.tagId, tagId), ...conditions)
           : eq(postsTags.tagId, tagId)
       )
-      .orderBy(desc(posts.publishDate))
+      .orderBy(asc(posts.published), desc(posts.publishDate))
       .limit(POSTS_PER_PAGE)
       .offset(offset);
   } else if (conditions.length > 0) {
@@ -110,14 +110,14 @@ export async function getPaginatedPosts(
       .select(selectFields)
       .from(posts)
       .where(and(...conditions))
-      .orderBy(desc(posts.publishDate))
+      .orderBy(asc(posts.published), desc(posts.publishDate))
       .limit(POSTS_PER_PAGE)
       .offset(offset);
   } else {
     postsResult = await db
       .select(selectFields)
       .from(posts)
-      .orderBy(desc(posts.publishDate))
+      .orderBy(asc(posts.published), desc(posts.publishDate))
       .limit(POSTS_PER_PAGE)
       .offset(offset);
   }
