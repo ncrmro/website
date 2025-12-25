@@ -35,7 +35,6 @@ export default function Navbar() {
           <Link href="/posts">Posts</Link>
           <Link href="/projects">Projects</Link>
           <Link href="/about">About</Link>
-          <Link href="/resume">Resume</Link>
           {sessionCookie && <Link href="/dashboard">Dashboard</Link>}
         </div>
       )}
