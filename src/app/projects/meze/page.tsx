@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Meze - Nicholas Romero",
-  description: "Meze project",
+  description:
+    "Meal planning, nutrition tracking, and grocery shopping assistant",
 };
 
 export default function MezePage() {
@@ -14,7 +15,14 @@ export default function MezePage() {
       url="https://meze.fyi"
     >
       <p className="py-1">
-        {/* Add project details here */}
+        Meze is a meal planning, nutrition tracking, and grocery shopping
+        assistant designed to help users save time and dial in their nutrition
+        to achieve their desired physique.
+      </p>
+      <p className="py-1">
+        The app streamlines the entire food workflow—from planning meals and
+        tracking macros to generating optimized grocery lists—so users can focus
+        on their health goals without the overhead.
       </p>
     </ProjectLayout>
   );
