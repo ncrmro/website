@@ -1,14 +1,13 @@
-// @ts-nocheck
 import { db } from "./src/lib/database";
 import { Passwords } from "./src/lib/auth";
 import { test as base } from "@playwright/test";
-import { Kysely } from "kysely";
-import { DB } from "kysely-codegen";
+import { Database, users, sessions, journalEntries, journalEntryHistory, posts } from "@/database";
+import { eq } from "drizzle-orm";
 
 export { expect } from "@playwright/test";
 
 type TestFixtures = {
-  db: Kysely<DB>;
+  db: Database;
   viewer: { id: string; email: string; username: string | null };
 };
 
@@ -16,46 +15,48 @@ export const test = base.extend<TestFixtures>({
   async db({}, use) {
     await use(db);
   },
-  viewer: async ({ db, context }, use, testInfo) => {
+  viewer: async ({ db, context, page }, use, testInfo) => {
     const time = Date.now();
     const username = `user${testInfo.workerIndex}${time}`;
     const email = `${username}@test.com`;
     const password = "password";
-    const user = await db
-      .insertInto("users")
-      .values({ email, password: await Passwords.hash(password) })
-      .returning(["id", "email", "username"])
-      .executeTakeFirstOrThrow();
-    const session = await db
-      .insertInto("sessions")
-      .values({ user_id: user.id })
-      .returning("id")
-      .executeTakeFirstOrThrow();
-    // TODO look at how supabase issues cookies...
-    await context.addCookies([
-      {
-        name: "viewer_session",
-        value: session.id,
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
-    await context.addCookies([
-      {
-        name: "viewer_timezone",
-        value: "America%2FChicago",
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
+    
+    // Generate UUID manually because the libsql client in tests doesn't have a uuid() SQL function registered
+    const { randomUUID } = await import("crypto");
+    const userId = randomUUID();
+    
+    // Create user in database
+    const [user] = await db
+      .insert(users)
+      .values({ id: userId, email, password: await Passwords.hash(password) })
+      .returning({ id: users.id, email: users.email, username: users.username });
+    
+    // Sign in through NextAuth UI with callback URL to dashboard
+    await page.goto("/api/auth/signin?callbackUrl=/dashboard");
+    await page.getByLabel("Email").fill(email);
+    await page.getByLabel("Password").fill(password);
+    await page.getByRole("button", { name: "Sign in with Password" }).click();
+    
+    // Wait for sign-in to complete and verify we landed on the dashboard
+    await page.waitForURL((url) => url.pathname === "/dashboard", { timeout: 10000 });
+    
     await use(user);
-    await db.deleteFrom("sessions").where("user_id", "=", user.id).execute();
-    // TODO don't nuke entire history, delete plus join didn't work
-    await db.deleteFrom("journal_entry_history").execute();
-    await db
-      .deleteFrom("journal_entries")
-      .where("user_id", "=", user.id)
-      .execute();
-    await db.deleteFrom("users").where("id", "=", user.id).execute();
+    
+    // Cleanup - delete in order to respect foreign key constraints
+    await db.delete(sessions).where(eq(sessions.userId, user.id));
+    
+    // Delete journal entry history for this user's entries
+    const userJournalEntries = await db
+      .select({ id: journalEntries.id })
+      .from(journalEntries)
+      .where(eq(journalEntries.userId, user.id));
+    
+    for (const entry of userJournalEntries) {
+      await db.delete(journalEntryHistory).where(eq(journalEntryHistory.journalEntryId, entry.id));
+    }
+    
+    await db.delete(journalEntries).where(eq(journalEntries.userId, user.id));
+    await db.delete(posts).where(eq(posts.userId, user.id));
+    await db.delete(users).where(eq(users.id, user.id));
   },
 });
