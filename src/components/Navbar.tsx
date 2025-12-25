@@ -32,11 +32,9 @@ export default function Navbar() {
       </Link>
       {isHome && (
         <div className="flex justify-center gap-4 uppercase">
-          <Link href="/posts/tech">Tech</Link>
+          <Link href="/posts">Posts</Link>
+          <Link href="/projects">Projects</Link>
           <Link href="/about">About</Link>
-          <Link href="/posts/travel">Travel</Link>
-          <Link href="/posts/food">Food</Link>
-          <Link href="/resume">Resume</Link>
           {sessionCookie && <Link href="/dashboard">Dashboard</Link>}
         </div>
       )}
