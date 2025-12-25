@@ -1,11 +1,11 @@
 import { slugify } from '../src/lib/utils'
 import { test as base } from '../playwright.fixtures'
-import { posts } from '../src/database'
+import { posts } from '@/database'
 import { eq } from 'drizzle-orm'
 
 export const test = base.extend<{ post: { slug: string; id: string } }>({
     async post({ db, viewer }, use, { workerIndex }) {
-        // Generate UUID manually since libsql doesn't have uuid() function by default
+        // Generate UUID manually because the libsql client in tests doesn't have a uuid() SQL function registered
         const { randomUUID } = await import("crypto");
         const postId = randomUUID();
         const title = `Hello World Draft ${workerIndex} ${Date.now()}`;
@@ -17,7 +17,7 @@ export const test = base.extend<{ post: { slug: string; id: string } }>({
                 userId: viewer.id,
                 slug: slugify(title),
                 body: "test",
-                description: "",
+                description: "test description",
             })
             .returning({ id: posts.id, slug: posts.slug });
         await use(post);
@@ -30,12 +30,11 @@ test("create posts", async ({ page, viewer }) => {
     await page.goto("/dashboard/posts/new");
     const postTitle = `Hello World ${Date.now()}`;
     await page.getByLabel("Title").fill(postTitle);
+    await page.getByLabel("Description").fill("Test description");
     
-    // Click the Write tab to ensure the textarea is active
-    await page.locator("button", { hasText: "Write" }).click();
-    
-    // Fill the body - use force to bypass the disabled state if needed
-    await page.getByPlaceholder("Write your post content here using Markdown...").fill("Hello World", { force: true });
+    // Wait for the textarea to become enabled, then fill the body
+    await page.waitForSelector('textarea[placeholder="Write your post content here using Markdown..."]:not([disabled])');
+    await page.getByPlaceholder("Write your post content here using Markdown...").fill("Hello World");
     
     await page.locator("button", { hasText: "Save" }).click();
     

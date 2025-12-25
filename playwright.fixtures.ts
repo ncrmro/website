@@ -1,7 +1,7 @@
 import { db } from "./src/lib/database";
 import { Passwords } from "./src/lib/auth";
 import { test as base } from "@playwright/test";
-import { Database, users, sessions, journalEntries, journalEntryHistory } from "./src/database";
+import { Database, users, sessions, journalEntries, journalEntryHistory, posts } from "@/database";
 import { eq } from "drizzle-orm";
 
 export { expect } from "@playwright/test";
@@ -21,7 +21,7 @@ export const test = base.extend<TestFixtures>({
     const email = `${username}@test.com`;
     const password = "password";
     
-    // Generate UUIDs manually since libsql doesn't have uuid() function by default
+    // Generate UUID manually because the libsql client in tests doesn't have a uuid() SQL function registered
     const { randomUUID } = await import("crypto");
     const userId = randomUUID();
     
@@ -37,15 +37,26 @@ export const test = base.extend<TestFixtures>({
     await page.getByLabel("Password").fill(password);
     await page.getByRole("button", { name: "Sign in with Password" }).click();
     
-    // Wait for sign-in to complete (either dashboard or home page is fine)
-    await page.waitForURL((url) => url.pathname === "/dashboard" || url.pathname === "/", { timeout: 10000 });
+    // Wait for sign-in to complete and verify we landed on the dashboard
+    await page.waitForURL((url) => url.pathname === "/dashboard", { timeout: 10000 });
     
     await use(user);
     
-    // Cleanup
+    // Cleanup - delete in order to respect foreign key constraints
     await db.delete(sessions).where(eq(sessions.userId, user.id));
-    await db.delete(journalEntryHistory);
+    
+    // Delete journal entry history for this user's entries
+    const userJournalEntries = await db
+      .select({ id: journalEntries.id })
+      .from(journalEntries)
+      .where(eq(journalEntries.userId, user.id));
+    
+    for (const entry of userJournalEntries) {
+      await db.delete(journalEntryHistory).where(eq(journalEntryHistory.journalEntryId, entry.id));
+    }
+    
     await db.delete(journalEntries).where(eq(journalEntries.userId, user.id));
+    await db.delete(posts).where(eq(posts.userId, user.id));
     await db.delete(users).where(eq(users.id, user.id));
   },
 });
