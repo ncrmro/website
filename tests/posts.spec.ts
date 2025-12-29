@@ -95,3 +95,68 @@ test("set post date", async ({page, post}) => {
     await page.goto(`/posts/${post.slug}`);
     await page.locator("December 17, 2023")
 })
+
+test("draft posts appear before published posts", async ({ page, db, viewer }) => {
+    // Create a published post with an older date
+    const publishedTitle = `Published Post ${Date.now()}`;
+    const publishedPost = await db
+        .insertInto("posts")
+        .values({
+            title: publishedTitle,
+            user_id: viewer.id,
+            slug: slugify(publishedTitle),
+            body: "published",
+            description: "published post",
+            published: true,
+            publish_date: "2024-01-01",
+        })
+        .returning(["id", "slug"])
+        .executeTakeFirstOrThrow();
+
+    // Create a draft post with a newer date
+    const draftTitle = `Draft Post ${Date.now()}`;
+    const draftPost = await db
+        .insertInto("posts")
+        .values({
+            title: draftTitle,
+            user_id: viewer.id,
+            slug: slugify(draftTitle),
+            body: "draft",
+            description: "draft post",
+            published: false,
+            publish_date: "2024-12-01",
+        })
+        .returning(["id", "slug"])
+        .executeTakeFirstOrThrow();
+
+    // Go to dashboard posts page
+    await page.goto("/dashboard/posts");
+
+    // Get all post items
+    const postItems = page.locator("ul[role='list'] li");
+    const count = await postItems.count();
+    
+    // Find positions of our test posts
+    let draftIndex = -1;
+    let publishedIndex = -1;
+    
+    for (let i = 0; i < count; i++) {
+        const item = postItems.nth(i);
+        const text = await item.textContent();
+        if (text?.includes(draftTitle)) {
+            draftIndex = i;
+        }
+        if (text?.includes(publishedTitle)) {
+            publishedIndex = i;
+        }
+    }
+    
+    // Verify draft appears before published
+    test.expect(draftIndex).toBeGreaterThanOrEqual(0);
+    test.expect(publishedIndex).toBeGreaterThanOrEqual(0);
+    test.expect(draftIndex).toBeLessThan(publishedIndex);
+
+    // Cleanup
+    await db.deleteFrom("posts").where("id", "=", publishedPost.id).execute();
+    await db.deleteFrom("posts").where("id", "=", draftPost.id).execute();
+})
