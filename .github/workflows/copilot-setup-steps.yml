@@ -1,0 +1,124 @@
+name: 'Copilot Setup Steps'
+
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    # LibSQL database service - used instead of Docker Compose in CI
+    services:
+      libsql:
+        image: ghcr.io/tursodatabase/libsql-server:latest
+        ports:
+          - 8080:8080
+        options: --platform linux/amd64
+
+    # Note: Environment variables defined here are only available during the setup steps.
+    # They do NOT automatically transfer to the Copilot environment.
+    # To make them available to Copilot, append them to .env file in the steps below.
+    #
+    # GitHub Actions context variable (automatically set by GitHub Actions):
+    # - github.job = "copilot-setup-steps" when running via PR or workflow_dispatch
+    # - github.job = "copilot" when running during Copilot agent execution
+    #
+    # We use github.job in conditionals to control execution:
+    # - Setup mode (github.job=copilot-setup-steps): Run lint + e2e tests
+    #   to verify the environment is working correctly before Copilot uses it
+    # - Copilot mode (github.job=copilot): Skip setup/verification since the
+    #   environment was already verified during setup steps
+    env:
+      DATABASE_URL: 'http://localhost:8080'
+      AUTH_SECRET: test-secret-for-copilot-setup
+      CI: true
+
+    # Set the permissions to the lowest permissions possible needed for your steps.
+    # Copilot will be given its own token for its operations.
+    permissions:
+      # If you want to clone the repository as part of your setup steps, for example to install dependencies, you'll need the `contents: read` permission. If you don't clone the repository in your setup steps, Copilot will do this for you automatically after the steps complete.
+      contents: read
+
+    # You can define any steps you want, and they will run before the agent starts.
+    # If you do not check out your code, Copilot will do this for you.
+    steps:
+      - name: Validate GITHUB_JOB
+        run: |
+          echo "GITHUB_JOB=$GITHUB_JOB"
+          echo "github.job=${{ github.job }}"
+          echo "github.event_name=${{ github.event_name }}"
+
+          # Validate GITHUB_JOB value
+          if [[ "$GITHUB_JOB" != "copilot-setup-steps" && "$GITHUB_JOB" != "copilot" ]]; then
+            echo "ERROR: Unexpected GITHUB_JOB value: $GITHUB_JOB"
+            echo "Expected: 'copilot-setup-steps' or 'copilot'"
+            exit 1
+          fi
+
+          echo "✓ GITHUB_JOB validation passed: $GITHUB_JOB"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js (for npm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        run: npm ci
+        # Note: Always cache npm dependencies since both setup and copilot modes
+        # will use the cached node_modules
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(node -p "require('./package.json').devDependencies['@playwright/test'].replace('^', '')")" >> $GITHUB_OUTPUT
+
+      - name: Cache playwright binaries
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      # The following steps only run during setup verification (github.job=copilot-setup-steps)
+      # They are skipped in Copilot mode since the environment is already verified.
+      - name: Run database migrations (setup mode only)
+        run: |
+          if [[ "$GITHUB_JOB" == "copilot-setup-steps" ]]; then
+            npm run db:push
+          else
+            echo "Skipping migrations - not in setup mode (GITHUB_JOB=$GITHUB_JOB)"
+          fi
+        # Runs migrations against the libsql service (no Docker Compose needed).
+        # Runs when github.job=copilot-setup-steps (PR validation or workflow_dispatch).
+        # Skipped when github.job=copilot (Copilot agent execution).
+
+      - name: Verify environment (setup mode only - run lint and tests)
+        run: |
+          if [[ "$GITHUB_JOB" == "copilot-setup-steps" ]]; then
+            npm run lint
+            npm run typecheck
+            npm run e2e
+          else
+            echo "Skipping verification - not in setup mode (GITHUB_JOB=$GITHUB_JOB)"
+          fi
+        # Runs lint + typecheck + e2e tests to ensure environment is working.
+        # Runs when github.job=copilot-setup-steps (PR validation or workflow_dispatch).
+        # Skipped when github.job=copilot (Copilot agent execution).
