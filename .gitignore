@@ -43,6 +43,7 @@ yarn-error.log*
 bin/dist/
 
 sqlite3.db*
+local.db*
 /test-results/
 /playwright-report/
 /playwright/.cache/
