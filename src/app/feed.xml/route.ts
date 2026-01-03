@@ -14,7 +14,7 @@ function escapeXml(unsafe: string): string {
 }
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ncrmro.com';
+  const baseUrl = escapeXml(process.env.NEXT_PUBLIC_BASE_URL || 'https://ncrmro.com');
 
   try {
     const postsList = await db
@@ -41,10 +41,10 @@ export async function GET() {
           ? new Date(post.publishDate).toUTCString()
           : new Date(post.updatedAt).toUTCString();
         
-        const postUrl = `${baseUrl}/posts/${post.slug}`;
+        const postUrl = `${baseUrl}/posts/${escapeXml(post.slug)}`;
         
         // Use description if available, otherwise use truncated body
-        const description = post.description || post.body.substring(0, 200) + '...';
+        const description = post.description || (post.body ? post.body.substring(0, 200) + '...' : '');
         
         return `    <item>
       <title>${escapeXml(post.title)}</title>
