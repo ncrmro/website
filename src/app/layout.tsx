@@ -8,6 +8,11 @@ export const metadata = {
   title: "Nicholas Romero",
   description: "Personal Site of Nicholas Romero",
   manifest: "/manifest.json",
+  alternates: {
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
 };
 
 export const viewport = {
