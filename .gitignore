@@ -42,6 +42,10 @@ yarn-error.log*
 # CLI build artifacts
 bin/dist/
 
+# Test database and helpers
+local.db*
+test-db-server.js
+
 sqlite3.db*
 /test-results/
 /playwright-report/
