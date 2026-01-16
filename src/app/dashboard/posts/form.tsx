@@ -34,8 +34,12 @@ function postStateReducer(
     case "title":
     case "description":
     case "body":
-    case "publishDate":
       state[name] = value;
+      break;
+    case "publishDate":
+    case "publish_date":
+      // Handle both camelCase (state) and snake_case (form field)
+      state["publishDate"] = value;
       break;
     case "published":
       // Toggle the published state (value comes from current state)
@@ -367,7 +371,7 @@ export default function PostForm(props: {
                 <div>
                   <InputField
                     type="date"
-                    id="publishDate"
+                    id="publish_date"
                     label="Publish Date"
                     value={state?.publishDate || ""}
                     onChange={setState}

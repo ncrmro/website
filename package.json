@@ -63,6 +63,7 @@
     "eslint": "8.49.0",
     "eslint-config-next": "13.5.2",
     "prettier": "^2.4.1",
+    "sqld": "^0.24.1-pre.42",
     "wrangler": "^4.25.1"
   },
   "prettier": {

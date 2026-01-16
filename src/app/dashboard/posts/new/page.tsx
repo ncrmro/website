@@ -36,6 +36,7 @@ async function createPost(prevState: any, data: FormData) {
         description: description.trim(),
         body: (data.get("body") as string) || "",
         published: Boolean(Number(data.get("published"))),
+        publishDate: (data.get("publish_date") as string) || null,
         userId: session.user.id,
         slug: finalSlug,
       })
