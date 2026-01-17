@@ -47,6 +47,7 @@ local.db*
 test-db-server.js
 
 sqlite3.db*
+local.db*
 /test-results/
 /playwright-report/
 /playwright/.cache/
