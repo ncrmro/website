@@ -15,6 +15,13 @@
       "when": 1765520395150,
       "tag": "0001_demonic_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1737242400000,
+      "tag": "0002_make_body_optional",
+      "breakpoints": true
     }
   ]
 }
