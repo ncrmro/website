@@ -51,7 +51,7 @@ export default async function EditPostPage({
     "use server";
     const currentSession = await auth();
     if (!currentSession?.user)
-      return { success: false, error: "Viewer must not be null when creating a post" };
+      return { success: false, error: "Viewer must not be null when editing a post" };
 
     // Check if user has admin privileges
     if (!currentSession.user.admin) {
