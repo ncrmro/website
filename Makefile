@@ -1,4 +1,4 @@
-.PHONY: up dev db db-studio lint typecheck e2e
+.PHONY: up dev db db-studio lint typecheck e2e migration-reconcile
 
 # Start libsql and Next.js dev server together
 up:
@@ -29,3 +29,9 @@ typecheck:
 # Run Playwright e2e tests
 e2e:
 	npm run e2e
+
+migration-reconcile: ## Reset drizzle folder from main branch and regenerate migrations
+	rm -rf ./drizzle
+	git fetch
+	git checkout origin/main -- drizzle
+	npm run db:generate

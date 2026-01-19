@@ -13,6 +13,11 @@ async function createPost(prevState: any, data: FormData) {
     return { success: false, error: "Viewer must not be null when creating a post" };
   }
 
+  // Check if user has admin privileges
+  if (!session.user.admin) {
+    return { success: false, error: "Only admin users can create posts" };
+  }
+
   const title = data.get("title");
   if (typeof title !== "string" || !title.trim()) {
     return { success: false, error: "Title is required" };

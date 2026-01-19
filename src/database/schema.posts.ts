@@ -31,7 +31,7 @@ export const posts = sqliteTable(
       .notNull()
       .references(() => users.id),
     title: text("title").notNull().unique(),
-    body: text("body").notNull(),
+    body: text("body").default(""),
     description: text("description").notNull(),
     slug: text("slug").notNull().unique(),
     published: integer("published", { mode: "boolean" }).notNull().default(false),

@@ -59,7 +59,7 @@ export default async function PostPage({
   if (!post || (!post.published && !viewer)) notFound();
 
   const p = { ...post, tags: tagsResult };
-  const mdxSource = await serializePost(p.body);
+  const mdxSource = await serializePost(p.body || "");
 
   return (
     <div className="w-full md:max-w-4xl">

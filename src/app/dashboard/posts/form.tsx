@@ -6,7 +6,7 @@ import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
-import type { PostType } from "../../posts/types";
+import type { PostType, PostFormType } from "../../posts/types";
 import PostMedia from "./form_media";
 import Link from "next/link";
 import SmallBadge from "../../../components/SmallBadge";
@@ -23,7 +23,7 @@ function classNames(...classes: string[]) {
 }
 
 function postStateReducer(
-  state: PostType,
+  state: PostFormType,
   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) {
   const { name, value } = event.target;
@@ -64,8 +64,8 @@ export default function PostForm(props: {
   const [showMetadata, setShowMetadata] = useState(isNewPost);
 
   // Load draft from localStorage for new posts
-  const getInitialState = () => {
-    const baseState = {
+  const getInitialState = (): PostFormType => {
+    const baseState: PostFormType = {
       id: "",
       title: "",
       description: "",
@@ -74,8 +74,14 @@ export default function PostForm(props: {
       published: false,
       publishDate: "",
       tags: [],
-      ...props.post,
     };
+
+    // If we have a post prop, merge it and ensure body is always a string
+    if (props.post) {
+      Object.assign(baseState, props.post, {
+        body: props.post.body ?? "",
+      });
+    }
 
     if (isNewPost && typeof window !== "undefined") {
       const draft = localStorage.getItem(NEW_POST_DRAFT_KEY);
@@ -91,7 +97,7 @@ export default function PostForm(props: {
   };
 
   const [state, setState] = React.useReducer(
-    (state: PostType, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (state: PostFormType, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       postStateReducer(state, event),
     getInitialState()
   );

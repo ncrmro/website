@@ -14,7 +14,7 @@ export interface PaginatedPosts {
     slug: string;
     title: string;
     description: string;
-    body: string;
+    body: string | null;
     publishDate: string | null;
     published: boolean;
     createdAt: string;
