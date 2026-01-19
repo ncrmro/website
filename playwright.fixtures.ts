@@ -23,7 +23,7 @@ export const test = base.extend<TestFixtures>({
     const password = "password";
     const user = await db
       .insertInto("users")
-      .values({ email, password: await Passwords.hash(password) })
+      .values({ email, password: await Passwords.hash(password), admin: true })
       .returning(["id", "email", "username"])
       .executeTakeFirstOrThrow();
     const session = await db

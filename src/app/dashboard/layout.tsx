@@ -15,6 +15,11 @@ export default async function DashboardLayout(props: {
     redirect(`/api/auth/signin?callbackUrl=/dashboard`);
   }
 
+  // Check if user has admin privileges
+  if (!session.user.admin) {
+    redirect(`/`);
+  }
+
   // Map NextAuth session to Viewer type expected by client layout
   const viewer = {
     id: session.user.id,
