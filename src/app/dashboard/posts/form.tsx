@@ -6,7 +6,7 @@ import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
-import type { PostType } from "../../posts/types";
+import type { PostType, PostFormType } from "../../posts/types";
 import PostMedia from "./form_media";
 import Link from "next/link";
 import SmallBadge from "../../../components/SmallBadge";
@@ -23,7 +23,7 @@ function classNames(...classes: string[]) {
 }
 
 function postStateReducer(
-  state: PostType,
+  state: PostFormType,
   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) {
   const { name, value } = event.target;
@@ -64,8 +64,8 @@ export default function PostForm(props: {
   const [showMetadata, setShowMetadata] = useState(isNewPost);
 
   // Load draft from localStorage for new posts
-  const getInitialState = () => {
-    const baseState = {
+  const getInitialState = (): PostFormType => {
+    const baseState: PostFormType = {
       id: "",
       title: "",
       description: "",
@@ -74,10 +74,14 @@ export default function PostForm(props: {
       published: false,
       publishDate: "",
       tags: [],
-      ...props.post,
-      // Ensure body is always a string, never null
-      body: props.post?.body ?? "",
     };
+
+    // If we have a post prop, merge it and ensure body is always a string
+    if (props.post) {
+      Object.assign(baseState, props.post, {
+        body: props.post.body ?? "",
+      });
+    }
 
     if (isNewPost && typeof window !== "undefined") {
       const draft = localStorage.getItem(NEW_POST_DRAFT_KEY);
@@ -93,7 +97,7 @@ export default function PostForm(props: {
   };
 
   const [state, setState] = React.useReducer(
-    (state: PostType, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (state: PostFormType, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       postStateReducer(state, event),
     getInitialState()
   );
@@ -139,7 +143,7 @@ export default function PostForm(props: {
 
   // Serialize post body after debounce delay (3 seconds)
   React.useEffect(() => {
-    serializePost(debouncedState.body || "").then((serializedBody) =>
+    serializePost(debouncedState.body).then((serializedBody) =>
       setSerializedBody(serializedBody)
     );
   }, [debouncedState.body]);
@@ -404,7 +408,7 @@ export default function PostForm(props: {
               if (index === 2) {
                 router.push(`/dashboard/posts/${params.slug}?media=1`);
               } else if (index === 1 && state) {
-                const serializedBody = await serializePost(state.body || "");
+                const serializedBody = await serializePost(state.body);
                 setSerializedBody(serializedBody);
                 router.push(`/dashboard/posts/${params.slug}?preview=1`);
               } else router.push(`/dashboard/posts/${params.slug}`);
@@ -479,7 +483,7 @@ export default function PostForm(props: {
                 id="body"
                 name="body"
                 placeholder="Write your post content here using Markdown..."
-                value={state?.body || ""}
+                value={state?.body}
                 onChange={setState}
                 disabled={isNewPost}
                 className={`block w-full border-0 outline-none focus:outline-none resize-none text-base leading-relaxed text-gray-900 placeholder:text-gray-400 dark:text-white dark:bg-[var(--background)] bg-[var(--background)] py-4 min-h-screen overflow-hidden ${isNewPost ? "pointer-events-none" : ""}`}
