@@ -25,6 +25,12 @@ async function submitForm(data: FormData) {
   const timezone = (await cookies()).get("viewer_timezone")?.value;
   if (!timezone) throw new Error("Timezone missing!");
   if (!session?.user) throw new Error("Viewer doesnt exist");
+  
+  // Check if user has admin privileges
+  if (!session.user.admin) {
+    throw new Error("Only admin users can create or edit journal entries");
+  }
+  
   const existingPost = data.get("id");
   const body = data.get("body");
   if (typeof body !== "string" || body === "")
