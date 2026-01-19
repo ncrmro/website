@@ -8,6 +8,7 @@ export const dynamicParams = true;
 import { DateTime } from "luxon";
 import React from "react";
 import Markdown from "react-markdown";
+import { randomUUID } from "crypto";
 
 /**
  * This is the earliest point of a day
@@ -39,6 +40,7 @@ async function submitForm(data: FormData) {
       .where(eq(journalEntries.id, id));
   } else {
     await db.insert(journalEntries).values({
+      id: randomUUID(),
       userId: session.user.id,
       body,
       createdDate: currentTimezoneMidnightUnixTimestamp(timezone),

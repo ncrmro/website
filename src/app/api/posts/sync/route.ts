@@ -3,6 +3,7 @@ import { getGravatarUrl } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db, users, posts, tags, postsTags, getResultArray } from "@/database";
 import { eq, and, sql } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 async function authenticateRequest(req: NextRequest) {
   // Check for Bearer token authentication
@@ -169,6 +170,7 @@ export async function POST(req: NextRequest) {
           const newPostResult = await db
             .insert(posts)
             .values({
+              id: randomUUID(),
               title,
               description: description || "",
               body,
@@ -195,7 +197,7 @@ export async function POST(req: NextRequest) {
             // Create tag if it doesn't exist (using INSERT OR IGNORE pattern)
             await db
               .insert(tags)
-              .values({ value: tagValue })
+              .values({ id: randomUUID(), value: tagValue })
               .onConflictDoNothing();
 
             // Get tag id
@@ -210,6 +212,7 @@ export async function POST(req: NextRequest) {
               await db
                 .insert(postsTags)
                 .values({
+                  id: randomUUID(),
                   postId: postId,
                   tagId: tag.id,
                 })

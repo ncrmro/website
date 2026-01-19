@@ -3,6 +3,7 @@ import { auth } from "@/app/auth";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
 import PostForm from "@/app/dashboard/posts/form";
+import { randomUUID } from "crypto";
 
 // Would be good to debounce and check the title for uniqueness
 
@@ -37,6 +38,7 @@ async function createPost(prevState: any, data: FormData) {
     const result = await db
       .insert(posts)
       .values({
+        id: randomUUID(),
         title: title.trim(),
         description: description.trim(),
         body: (data.get("body") as string) || "",

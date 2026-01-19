@@ -5,6 +5,7 @@ import { users } from '@/database/schema.users';
 import { eq } from 'drizzle-orm';
 import { authConfig } from '@/lib/auth.config';
 import { Passwords } from '@/lib/auth';
+import { randomUUID } from 'crypto';
 
 // Redirect URL for authenticated users
 export const AUTHENTICATED_USER_REDIRECT_URL = '/dashboard';
@@ -122,6 +123,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const [newUser] = await db
         .insert(users)
         .values({
+          id: randomUUID(),
           email,
           firstName,
           lastName,
