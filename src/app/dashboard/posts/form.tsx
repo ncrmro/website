@@ -75,6 +75,8 @@ export default function PostForm(props: {
       publishDate: "",
       tags: [],
       ...props.post,
+      // Ensure body is always a string, never null
+      body: props.post?.body ?? "",
     };
 
     if (isNewPost && typeof window !== "undefined") {
@@ -137,7 +139,7 @@ export default function PostForm(props: {
 
   // Serialize post body after debounce delay (3 seconds)
   React.useEffect(() => {
-    serializePost(debouncedState.body).then((serializedBody) =>
+    serializePost(debouncedState.body || "").then((serializedBody) =>
       setSerializedBody(serializedBody)
     );
   }, [debouncedState.body]);
@@ -402,7 +404,7 @@ export default function PostForm(props: {
               if (index === 2) {
                 router.push(`/dashboard/posts/${params.slug}?media=1`);
               } else if (index === 1 && state) {
-                const serializedBody = await serializePost(state.body);
+                const serializedBody = await serializePost(state.body || "");
                 setSerializedBody(serializedBody);
                 router.push(`/dashboard/posts/${params.slug}?preview=1`);
               } else router.push(`/dashboard/posts/${params.slug}`);
@@ -477,7 +479,7 @@ export default function PostForm(props: {
                 id="body"
                 name="body"
                 placeholder="Write your post content here using Markdown..."
-                value={state?.body}
+                value={state?.body || ""}
                 onChange={setState}
                 disabled={isNewPost}
                 className={`block w-full border-0 outline-none focus:outline-none resize-none text-base leading-relaxed text-gray-900 placeholder:text-gray-400 dark:text-white dark:bg-[var(--background)] bg-[var(--background)] py-4 min-h-screen overflow-hidden ${isNewPost ? "pointer-events-none" : ""}`}
