@@ -57,14 +57,8 @@ async function createPost(prevState: any, data: FormData) {
     const post = postRows[0];
     if (!post) throw new Error("Failed to create post");
 
-    redirect(`/dashboard/posts/${post.slug}`);
+    return { success: true, slug: post.slug };
   } catch (error) {
-    // Re-throw redirect errors - they're not actual errors
-    // Next.js redirects work by throwing errors with a special digest
-    if (error && typeof error === "object" && "digest" in error &&
-        typeof error.digest === "string" && error.digest.startsWith("NEXT_REDIRECT")) {
-      throw error;
-    }
     console.error("Failed to create post:", error);
     return { success: false, error: "Failed to create post" };
   }
