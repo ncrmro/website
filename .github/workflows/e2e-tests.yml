@@ -13,6 +13,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -32,12 +34,21 @@ jobs:
 
       - name: Start libsql-server with Docker
         run: |
-          # Start sqld using Docker
-          docker run -d -p 8080:8080 ghcr.io/tursodatabase/libsql-server:latest
-          sleep 5
-          curl http://127.0.0.1:8080/health || echo "Waiting for sqld..."
-          sleep 3
-          echo "sqld started on http://127.0.0.1:8080"
+          # Start sqld using Docker with a specific version
+          docker run -d -p 8080:8080 ghcr.io/tursodatabase/libsql-server:v0.24.26
+          
+          # Wait for sqld to be healthy with retry logic
+          echo "Waiting for sqld to be ready..."
+          for i in {1..30}; do
+            if curl -sf http://127.0.0.1:8080/health > /dev/null 2>&1; then
+              echo "sqld is healthy and ready!"
+              exit 0
+            fi
+            echo "Attempt $i: sqld not ready yet, waiting..."
+            sleep 2
+          done
+          echo "ERROR: sqld failed to become healthy after 60 seconds"
+          exit 1
 
       - name: Run database migrations
         run: npm run db:migrate
