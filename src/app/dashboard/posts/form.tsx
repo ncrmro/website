@@ -52,7 +52,7 @@ function postStateReducer(
 }
 
 export default function PostForm(props: {
-  action: (prevState: any, data: FormData) => Promise<{ success: boolean; error?: string }>;
+  action: (prevState: any, data: FormData) => Promise<{ success: boolean; error?: string; slug?: string }>;
   post?: PostType;
 }) {
   const params = useParams();
@@ -183,12 +183,16 @@ export default function PostForm(props: {
         // Clear localStorage draft for new posts
         if (isNewPost) {
           localStorage.removeItem(NEW_POST_DRAFT_KEY);
+          // Redirect to edit page after clearing localStorage
+          if (actionState.slug) {
+            router.push(`/dashboard/posts/${actionState.slug}`);
+          }
         }
       } else {
         toast.error(actionState.error || "Failed to save post");
       }
     }
-  }, [actionState, state, isNewPost]);
+  }, [actionState, state, isNewPost, router]);
 
   // Validate form before submission
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
