@@ -46,6 +46,7 @@ bin/dist/
 local.db*
 test-db-server.js
 .test-db/
+sqld.tar.gz
 
 sqlite3.db*
 /test-results/
