@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { db } from "./src/lib/database";
+import { db } from "./src/database";
 import { Passwords } from "./src/lib/auth";
 import { test as base } from "@playwright/test";
 import { Kysely } from "kysely";
