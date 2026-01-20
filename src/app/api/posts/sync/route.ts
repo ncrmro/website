@@ -22,6 +22,7 @@ async function authenticateRequest(req: NextRequest) {
           firstName: users.firstName,
           lastName: users.lastName,
           image: users.image,
+          admin: users.admin,
         })
         .from(users)
         .limit(1);
@@ -44,6 +45,7 @@ async function authenticateRequest(req: NextRequest) {
       image: session.user.image || getGravatarUrl(session.user.email!),
       firstName: session.user.name?.split(" ")[0] || null,
       lastName: session.user.name?.split(" ").slice(1).join(" ") || null,
+      admin: session.user.admin,
     };
   }
 
@@ -54,6 +56,14 @@ export async function GET(req: NextRequest) {
   const viewer = await authenticateRequest(req);
   if (!viewer) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if user has admin privileges
+  if (!viewer.admin) {
+    return NextResponse.json(
+      { error: "Only admin users can sync posts" },
+      { status: 403 }
+    );
   }
 
   try {
@@ -105,6 +115,14 @@ export async function POST(req: NextRequest) {
   const viewer = await authenticateRequest(req);
   if (!viewer) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if user has admin privileges
+  if (!viewer.admin) {
+    return NextResponse.json(
+      { error: "Only admin users can sync posts" },
+      { status: 403 }
+    );
   }
 
   try {

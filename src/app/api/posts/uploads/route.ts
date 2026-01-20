@@ -17,6 +17,14 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  // Check if user has admin privileges
+  if (!session.user.admin) {
+    return NextResponse.json(
+      { error: "Only admin users can list uploads" },
+      { status: 403 }
+    );
+  }
+
   try {
     const prefix = `uploads/posts/${postId}/`;
     const fileNames = await listR2Files(prefix);
@@ -36,6 +44,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "Viewer and postId must be defined" },
       { status: 400 }
+    );
+  }
+
+  // Check if user has admin privileges
+  if (!session.user.admin) {
+    return NextResponse.json(
+      { error: "Only admin users can upload media" },
+      { status: 403 }
     );
   }
 
