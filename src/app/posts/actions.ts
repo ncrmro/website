@@ -1,3 +1,5 @@
+"use server";
+
 import { serialize } from "next-mdx-remote/serialize";
 
 export async function serializePost(body: string) {
