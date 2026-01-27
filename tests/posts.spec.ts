@@ -217,13 +217,10 @@ test("preview tab shows rendered markdown", async ({ page, post }) => {
     await page.goto(`/dashboard/posts/${post.slug}`);
     
     // Add markdown content to the body
-    const markdownContent = "# Test Heading\n\nThis is a test paragraph with **bold** text.";
+    const markdownContent = "## Test Heading\n\nThis is a test paragraph with **bold** text.";
     await page.getByLabel("Body").fill(markdownContent);
     
-    // Wait a moment for debounce
-    await page.waitForTimeout(3500);
-    
-    // Click the Preview tab
+    // Click the Preview tab - the serialization will happen when the tab is clicked
     await page.locator("#post-edit-tab-preview").click();
     
     // Wait for the preview panel to be active
@@ -233,6 +230,7 @@ test("preview tab shows rendered markdown", async ({ page, post }) => {
     await page.locator("#post-edit-panel-preview").waitFor({ state: "visible" });
     
     // Verify rendered content appears (check for the heading and bold text)
+    // The serialization should have completed by the time the preview panel is visible
     await page.locator("#post-body h2", { hasText: "Test Heading" }).waitFor();
     await page.locator("#post-body strong", { hasText: "bold" }).waitFor();
 });
