@@ -213,24 +213,44 @@ test("save post with all metadata fields", async ({ page, post }) => {
     test.expect(await page.getByLabel("Body").inputValue()).toBe("Updated body content");
 });
 
-test("preview tab shows rendered markdown", async ({ page, post }) => {
+test("preview tab shows rendered markdown without hard refresh", async ({ page, post }) => {
     await page.goto(`/dashboard/posts/${post.slug}`);
     
-    // Add markdown content to the body
+    // Write markdown content in the body (draft)
     const markdownContent = "## Test Heading\n\nThis is a test paragraph with **bold** text.";
     await page.getByLabel("Body").fill(markdownContent);
     
-    // Click the Preview tab - the serialization will happen when the tab is clicked
+    // Verify we're on the Write tab initially
+    await page.locator("#post-edit-tab-write[aria-selected='true']").waitFor();
+    
+    // Click the Preview tab without saving first - the serialization will happen when the tab is clicked
     await page.locator("#post-edit-tab-preview").click();
     
-    // Wait for the preview panel to be active
+    // Wait for the URL to change to preview mode
     await page.waitForURL(`/dashboard/posts/${post.slug}?preview=1`);
     
     // Verify the preview panel is displayed
     await page.locator("#post-edit-panel-preview").waitFor({ state: "visible" });
     
     // Verify rendered content appears (check for the heading and bold text)
-    // The serialization should have completed by the time the preview panel is visible
-    await page.locator("#post-body h2", { hasText: "Test Heading" }).waitFor();
+    // This validates that preview works WITHOUT a hard refresh
+    await page.locator("#post-body h2", { hasText: "Test Heading" }).waitFor({ timeout: 5000 });
     await page.locator("#post-body strong", { hasText: "bold" }).waitFor();
+    
+    // Switch back to Write tab
+    await page.locator("#post-edit-tab-write").click();
+    await page.waitForURL(`/dashboard/posts/${post.slug}`);
+    
+    // Make another change to the content
+    const updatedContent = "## Updated Heading\n\nThis has **different** content and _italic_ text.";
+    await page.getByLabel("Body").fill(updatedContent);
+    
+    // Switch back to Preview tab
+    await page.locator("#post-edit-tab-preview").click();
+    await page.waitForURL(`/dashboard/posts/${post.slug}?preview=1`);
+    
+    // Verify the updated content is rendered correctly (without hard refresh)
+    await page.locator("#post-body h2", { hasText: "Updated Heading" }).waitFor({ timeout: 5000 });
+    await page.locator("#post-body strong", { hasText: "different" }).waitFor();
+    await page.locator("#post-body em", { hasText: "italic" }).waitFor();
 });
