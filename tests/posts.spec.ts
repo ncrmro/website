@@ -212,3 +212,25 @@ test("save post with all metadata fields", async ({ page, post }) => {
     test.expect(await page.getByLabel("Publish Date").inputValue()).toBe("2024-01-15");
     test.expect(await page.getByLabel("Body").inputValue()).toBe("Updated body content");
 });
+
+test("preview tab shows rendered markdown", async ({ page, post }) => {
+    await page.goto(`/dashboard/posts/${post.slug}`);
+    
+    // Add markdown content to the body
+    const markdownContent = "## Test Heading\n\nThis is a test paragraph with **bold** text.";
+    await page.getByLabel("Body").fill(markdownContent);
+    
+    // Click the Preview tab - the serialization will happen when the tab is clicked
+    await page.locator("#post-edit-tab-preview").click();
+    
+    // Wait for the preview panel to be active
+    await page.waitForURL(`/dashboard/posts/${post.slug}?preview=1`);
+    
+    // Verify the preview panel is displayed
+    await page.locator("#post-edit-panel-preview").waitFor({ state: "visible" });
+    
+    // Verify rendered content appears (check for the heading and bold text)
+    // The serialization should have completed by the time the preview panel is visible
+    await page.locator("#post-body h2", { hasText: "Test Heading" }).waitFor();
+    await page.locator("#post-body strong", { hasText: "bold" }).waitFor();
+});
