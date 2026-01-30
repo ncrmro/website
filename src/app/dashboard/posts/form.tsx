@@ -213,6 +213,18 @@ export default function PostForm(props: {
   return (
     <main className="min-h-screen bg-[var(--background)]">
       <form id="post-form" action={formAction} onSubmit={handleFormSubmit}>
+        <Tab.Group
+          selectedIndex={media ? 2 : preview ? 1 : 0}
+          onChange={async (index) => {
+            if (index === 2) {
+              router.push(`/dashboard/posts/${params.slug}?media=1`);
+            } else if (index === 1 && state) {
+              const serializedBody = await serializePost(state.body);
+              setSerializedBody(serializedBody);
+              router.push(`/dashboard/posts/${params.slug}?preview=1`);
+            } else router.push(`/dashboard/posts/${params.slug}`);
+          }}
+        >
         {/* Compact Header - Sticky Full Width */}
         <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
           <div className="py-4 px-4 sm:px-6 lg:px-8">
@@ -406,18 +418,6 @@ export default function PostForm(props: {
           </div>
 
           {/* Tabs - Part of Sticky Header - Full Width */}
-          <Tab.Group
-            selectedIndex={media ? 2 : preview ? 1 : 0}
-            onChange={async (index) => {
-              if (index === 2) {
-                router.push(`/dashboard/posts/${params.slug}?media=1`);
-              } else if (index === 1 && state) {
-                const serializedBody = await serializePost(state.body);
-                setSerializedBody(serializedBody);
-                router.push(`/dashboard/posts/${params.slug}?preview=1`);
-              } else router.push(`/dashboard/posts/${params.slug}`);
-            }}
-          >
             <Tab.List className="flex bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <div className="flex w-full pt-3 px-4 sm:px-6 lg:px-8">
                 <Tab
@@ -464,13 +464,9 @@ export default function PostForm(props: {
                 </div>
               </div>
             </Tab.List>
-          </Tab.Group>
         </div>
 
         {/* Editor Content Section */}
-        <Tab.Group
-          selectedIndex={media ? 2 : preview ? 1 : 0}
-        >
           <Tab.Panels>
             <Tab.Panel id="post-edit-panel-edit" className="w-full relative">
               {isNewPost && (
