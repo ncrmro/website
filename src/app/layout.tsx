@@ -5,9 +5,35 @@ import { Toaster } from "sonner";
 import React from "react";
 
 export const metadata = {
-  title: "Nicholas Romero",
+  metadataBase: new URL("https://ncrmro.com"),
+  title: {
+    default: "Nicholas Romero",
+    template: "%s | Nicholas Romero",
+  },
   description: "Personal Site of Nicholas Romero",
   manifest: "/manifest.json",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://ncrmro.com",
+    siteName: "Nicholas Romero",
+    title: "Nicholas Romero",
+    description: "Personal Site of Nicholas Romero",
+    images: [
+      {
+        url: "/android-chrome-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "Nicholas Romero",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Nicholas Romero",
+    description: "Personal Site of Nicholas Romero",
+    images: ["/android-chrome-512x512.png"],
+  },
 };
 
 export const viewport = {
