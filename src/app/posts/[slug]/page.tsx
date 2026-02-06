@@ -53,7 +53,7 @@ export async function generateMetadata({
       authors: ["Nicholas Romero"],
       images: [
         {
-          url: "/android-chrome-512x512.png",
+          url: "https://ncrmro.com/android-chrome-512x512.png",
           width: 512,
           height: 512,
           alt: title,
@@ -64,7 +64,7 @@ export async function generateMetadata({
       card: "summary",
       title,
       description,
-      images: ["/android-chrome-512x512.png"],
+      images: ["https://ncrmro.com/android-chrome-512x512.png"],
     },
   };
 }

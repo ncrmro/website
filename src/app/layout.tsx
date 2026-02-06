@@ -3,8 +3,9 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UmamiAnalytics from "@/components/UmamiAnalytics";
 import { Toaster } from "sonner";
 import React from "react";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL("https://ncrmro.com"),
   title: {
     default: "Nicholas Romero",
@@ -21,7 +22,7 @@ export const metadata = {
     description: "Personal Site of Nicholas Romero",
     images: [
       {
-        url: "/android-chrome-512x512.png",
+        url: "https://ncrmro.com/android-chrome-512x512.png",
         width: 512,
         height: 512,
         alt: "Nicholas Romero",
@@ -32,7 +33,7 @@ export const metadata = {
     card: "summary",
     title: "Nicholas Romero",
     description: "Personal Site of Nicholas Romero",
-    images: ["/android-chrome-512x512.png"],
+    images: ["https://ncrmro.com/android-chrome-512x512.png"],
   },
 };
 
