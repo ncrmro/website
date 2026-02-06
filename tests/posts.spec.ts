@@ -254,3 +254,103 @@ test("preview tab shows rendered markdown without hard refresh", async ({ page, 
     await page.locator("#post-body strong", { hasText: "different" }).waitFor();
     await page.locator("#post-body em", { hasText: "italic" }).waitFor();
 });
+
+test("auto-set publish date when publishing new post", async ({ page }) => {
+    await page.goto("/dashboard/posts/new");
+    
+    // Fill in required fields
+    const postTitle = `Test Auto Date ${Date.now()}`;
+    await page.getByLabel("Title").fill(postTitle);
+    await page.getByLabel("Description").fill("Testing automatic publish date");
+    
+    // Check the published checkbox WITHOUT setting a publish date
+    await page.getByLabel("Published", { exact: true }).check();
+    
+    // Save the post
+    await page.locator("button", { hasText: "Save" }).click();
+    
+    // Should redirect to edit page
+    const expectedSlug = slugify(postTitle);
+    await page.waitForURL(`/dashboard/posts/${expectedSlug}`);
+    
+    // Expand metadata section to check publish date
+    const editDetailsButton = page.locator("button", { hasText: "Edit Details" });
+    if (await editDetailsButton.isVisible()) {
+        await editDetailsButton.click();
+    }
+    
+    // Verify publish date was automatically set to today
+    const today = new Date().toISOString().split('T')[0];
+    const publishDateValue = await page.getByLabel("Publish Date", { exact: true }).inputValue();
+    test.expect(publishDateValue).toBe(today);
+});
+
+test("auto-set publish date when publishing existing draft", async ({ page, post }) => {
+    await page.goto(`/dashboard/posts/${post.slug}`);
+    
+    // Verify post starts as draft without publish date
+    const checkbox = await page.getByLabel("Published", { exact: true });
+    test.expect(await checkbox.isChecked()).toBeFalsy();
+    
+    // Expand metadata section to check publish date is empty
+    const editDetailsButton = page.locator("button", { hasText: "Edit Details" });
+    if (await editDetailsButton.isVisible()) {
+        await editDetailsButton.click();
+    }
+    
+    const publishDateBefore = await page.getByLabel("Publish Date", { exact: true }).inputValue();
+    test.expect(publishDateBefore).toBe("");
+    
+    // Publish the post without setting a date
+    await checkbox.check();
+    await page.locator("button", { hasText: "Update" }).click();
+    await page.waitForURL(`/dashboard/posts/${post.slug}`);
+    
+    // Reload to ensure we see persisted data
+    await page.reload();
+    
+    // Expand metadata section again after reload
+    const editDetailsBtn = page.locator("button", { hasText: "Edit Details" });
+    if (await editDetailsBtn.isVisible()) {
+        await editDetailsBtn.click();
+    }
+    
+    // Verify publish date was automatically set to today
+    const today = new Date().toISOString().split('T')[0];
+    const publishDateAfter = await page.getByLabel("Publish Date", { exact: true }).inputValue();
+    test.expect(publishDateAfter).toBe(today);
+});
+
+test("do not overwrite existing publish date when publishing", async ({ page, post }) => {
+    await page.goto(`/dashboard/posts/${post.slug}`);
+    
+    // Expand metadata section
+    const editDetailsButton = page.locator("button", { hasText: "Edit Details" });
+    if (await editDetailsButton.isVisible()) {
+        await editDetailsButton.click();
+    }
+    
+    // Set a specific publish date first
+    const customDate = "2023-06-15";
+    await page.getByLabel("Publish Date", { exact: true }).fill(customDate);
+    await page.locator("button", { hasText: "Update" }).click();
+    await page.waitForURL(`/dashboard/posts/${post.slug}`);
+    
+    // Now publish the post
+    await page.getByLabel("Published", { exact: true }).check();
+    await page.locator("button", { hasText: "Update" }).click();
+    await page.waitForURL(`/dashboard/posts/${post.slug}`);
+    
+    // Reload to ensure we see persisted data
+    await page.reload();
+    
+    // Expand metadata section again
+    const editDetailsBtn = page.locator("button", { hasText: "Edit Details" });
+    if (await editDetailsBtn.isVisible()) {
+        await editDetailsBtn.click();
+    }
+    
+    // Verify publish date was NOT changed (still has custom date)
+    const publishDateAfter = await page.getByLabel("Publish Date", { exact: true }).inputValue();
+    test.expect(publishDateAfter).toBe(customDate);
+});
