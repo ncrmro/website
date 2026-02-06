@@ -6,8 +6,68 @@ import { db, posts, tags, postsTags } from "@/database";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import React from "react";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  
+  const [postResult] = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      description: posts.description,
+      slug: posts.slug,
+      publishDate: posts.publishDate,
+    })
+    .from(posts)
+    .where(eq(posts.slug, slug));
+
+  if (!postResult) {
+    return {
+      title: "Post Not Found",
+    };
+  }
+
+  const title = postResult.title || "Untitled Post";
+  const description = postResult.description || "A blog post by Nicholas Romero";
+  const url = `https://ncrmro.com/posts/${slug}`;
+  const publishedTime = postResult.publishDate 
+    ? new Date(postResult.publishDate).toISOString() 
+    : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url,
+      publishedTime,
+      authors: ["Nicholas Romero"],
+      images: [
+        {
+          url: "https://ncrmro.com/android-chrome-512x512.png",
+          width: 512,
+          height: 512,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: ["https://ncrmro.com/android-chrome-512x512.png"],
+    },
+  };
+}
 
 export default async function PostPage({
   params,
