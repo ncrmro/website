@@ -49,8 +49,7 @@ function parseFrontmatter(content: string): {
   return { frontmatter, body };
 }
 
-export function getAllPosts(): PostData[] {
-  const entries = fs.readdirSync(POSTS_DIR);
+export function getAllPosts(): PostData[] {  const entries = fs.readdirSync(POSTS_DIR);
   const posts: PostData[] = [];
 
   for (const entry of entries) {
@@ -106,4 +105,12 @@ export function getAllPosts(): PostData[] {
 export function getPostBySlug(slug: string): PostData | null {
   const all = getAllPosts();
   return all.find((p) => p.slug === slug) ?? null;
+}
+
+export function getPostsByTag(tag: string): PostData[] {
+  return getAllPosts().filter((p) => p.tags.includes(tag));
+}
+
+export function getPostImagePath(post: PostData, src: string): string {
+  return `/posts/${post.dirName}/media/${src}`;
 }

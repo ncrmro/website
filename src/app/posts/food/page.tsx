@@ -1,9 +1,9 @@
-import { getAllPosts } from "@/lib/posts";
+import { getPostsByTag } from "@/lib/posts";
 import { PostItem } from "@/app/posts/PostItem";
 import React from "react";
 
 function TechnologyPosts() {
-  const postsList = getAllPosts().filter((p) => p.tags.includes("food"));
+  const postsList = getPostsByTag("food");
 
   return (
     <ul role="list" className="-mb-8">

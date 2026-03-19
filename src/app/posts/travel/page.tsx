@@ -1,9 +1,9 @@
-import { getAllPosts } from "@/lib/posts";
+import { getPostsByTag } from "@/lib/posts";
 import { PostItem } from "@/app/posts/PostItem";
 import React from "react";
 
-export default async function TravelPosts() {
-  const postsList = getAllPosts().filter((p) => p.tags.includes("travel"));
+export default function TravelPosts() {
+  const postsList = getPostsByTag("travel");
 
   return (
     <ul role="list" className="-mb-8">

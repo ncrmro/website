@@ -2,6 +2,7 @@
 import formatDate from "@/app/posts/formatDate";
 import React from "react";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { getPostImagePath } from "@/lib/posts";
 import type { PostType } from "../types";
 
 function PostHeader(props: { post: PostType }) {
@@ -76,7 +77,7 @@ export default function Post(props: { post: PostType }) {
                 <img
                   alt={p.alt}
                   style={{ maxWidth: "100%", height: "auto" }}
-                  src={`/posts/${props.post.dirName}/media/${p.src}`}
+                  src={getPostImagePath(props.post, p.src)}
                 />
               </div>
             ),
