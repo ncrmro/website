@@ -1,21 +1,9 @@
-import { db, posts } from "@/database";
-import { eq, desc } from "drizzle-orm";
+import { getAllPosts } from "@/lib/posts";
 import React from "react";
 import { PostItem } from "./PostItem";
 
 export async function Posts() {
-  const postsList = await db
-    .select({
-      slug: posts.slug,
-      title: posts.title,
-      description: posts.description,
-      body: posts.body,
-      publishDate: posts.publishDate,
-      published: posts.published,
-    })
-    .from(posts)
-    .where(eq(posts.published, true))
-    .orderBy(desc(posts.publishDate));
+  const postsList = getAllPosts();
 
   return (
     <ul role="list" className="-mb-8 md:max-w-3xl">
