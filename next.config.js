@@ -29,20 +29,8 @@ const generateAppDirEntry = (entry) => {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  serverExternalPackages: ['@libsql/isomorphic-ws'],
-  serverRuntimeConfig: {
-    CONTACT_INFO_JSON:
-      process.env.CONTACT_INFO_JSON ||
-      '{"key": "adsfadf","phoneNumber": "2993330000","email": "coolemail@gmail.com"}',
-  },
   env: {
     GOOGLE_ANALYTICS_TRACKING_ID: "G-6MYGCJZSVN",
-  },
-  images: {
-    remotePatterns: [
-      { hostname: "www.gravatar.com" },
-      { hostname: "r2.ncrmro.com" },
-    ],
   },
   async redirects() {
     return [

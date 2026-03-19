@@ -1,5 +1,5 @@
 ---
-title: Scytale: Ansible Automated Private Key Infrastructure.
+title: "Scytale: Ansible Automated Private Key Infrastructure."
 description: Automated private key infrastructure (PKI), Ansible managed certificate authority, server and client certificates.
 tags: technical
 state: published

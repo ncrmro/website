@@ -3,8 +3,6 @@ import Navbar from "@/components/Navbar";
 import React from "react";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: "Home",
   description: "Personal site and blog of Nicholas Romero - Software Engineer, Full Stack Developer, and Technology Enthusiast",
