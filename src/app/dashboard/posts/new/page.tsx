@@ -35,6 +35,14 @@ async function createPost(prevState: any, data: FormData) {
       ? slugValue.trim()
       : slugify(title);
 
+    const isPublished = Boolean(Number(data.get("published")));
+    const providedPublishDate = (data.get("publish_date") as string) || null;
+    
+    // Auto-set publish date if publishing and no date provided
+    const publishDate = isPublished && !providedPublishDate
+      ? new Date().toISOString().split('T')[0]
+      : providedPublishDate;
+
     const result = await db
       .insert(posts)
       .values({
@@ -42,8 +50,8 @@ async function createPost(prevState: any, data: FormData) {
         title: title.trim(),
         description: description.trim(),
         body: (data.get("body") as string) || "",
-        published: Boolean(Number(data.get("published"))),
-        publishDate: (data.get("publish_date") as string) || null,
+        published: isPublished,
+        publishDate: publishDate,
         userId: session.user.id,
         slug: finalSlug,
       })

@@ -65,14 +65,22 @@ export default async function EditPostPage({
         ? slugValue.trim()
         : slugify(title);
 
+      const isPublished = Boolean(Number(data.get("published")));
+      const providedPublishDate = (data.get("publish_date") as string) || null;
+      
+      // Auto-set publish date if publishing and no date provided, but don't overwrite existing dates
+      const publishDate = isPublished && !providedPublishDate && !post.publishDate
+        ? new Date().toISOString().split('T')[0]
+        : providedPublishDate;
+
       await db
         .update(posts)
         .set({
           title: title,
           description: data.get("description") as string,
           body: (data.get("body") as string) || "",
-          published: Boolean(Number(data.get("published"))),
-          publishDate: (data.get("publish_date") as string) || null,
+          published: isPublished,
+          publishDate: publishDate,
           slug: finalSlug,
         })
         .where(eq(posts.slug, slug));
