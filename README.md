@@ -1,49 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ncrmro website
 
-This is a mirror repository now, the source is on my personal Gitea instance
+Static Next.js personal site. Posts are authored as MDX route files
+and built into a fully static export.
 
-## Blog Post Sync
+## Content
 
-This project includes a blog post sync feature that allows you to sync blog posts between your local Obsidian directory and the website database. See [BLOG_SYNC.md](./BLOG_SYNC.md) for detailed usage instructions.
+- Posts: `src/app/posts/<slug>/page.mdx` (rendered by Next's MDX)
+- Post media: `public/posts/<slug>/media/*` (Git LFS)
+- Resume entries: `content/jobs/<slug>/index.md`
 
-Quick start:
-```bash
-# Download all posts as Obsidian markdown files
-npm run sync-posts
-
-# Push local Obsidian posts to the server
-npm run sync-posts -- --push
-```
-
-
-## Getting Started
-
-You will need to have [netlify CLI](https://docs.netlify.com/cli/get-started/#authentication) installed and have LFS set up as this is how
-media assets are saved to the repo. 
-
-First, run the development server:
+## Scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
+npm run build
+npm run start          # serves out/ after build
+npm run typecheck
+npm run e2e
+npm run sync:media     # upload public/posts/**/media to R2
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Media
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+`public/posts/**/media` is tracked in Git LFS (see `.gitattributes`)
+and mirrored to a Cloudflare R2 bucket via `npm run sync:media`.
 
-## Learn More
+Run the sync script with these env vars exported:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+R2_ACCOUNT_ID=...
+R2_ACCESS_KEY_ID=...
+R2_SECRET_ACCESS_KEY=...
+R2_BUCKET=ncrmro-website-uploads
+npm run sync:media
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Production builds
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Production sets:
 
-## Deploy on Vercel
+```bash
+GIT_LFS_SKIP_SMUDGE=1                            # CI checkout flag
+NEXT_PUBLIC_R2_BASE=https://r2.ncrmro.com        # rewrite media URLs
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`PostImage` rewrites `/posts/<slug>/media/<file>` to
+`${NEXT_PUBLIC_R2_BASE}/posts/<slug>/media/<file>`, so the static
+export references R2 directly and CI does not need LFS blobs.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Notes
+
+- No database, no auth, no dashboard, no runtime editor
+- `public/` only holds static assets — canonical content lives under
+  `src/app/posts` and `content/jobs`
