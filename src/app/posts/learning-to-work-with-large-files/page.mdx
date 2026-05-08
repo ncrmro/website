@@ -1,0 +1,47 @@
+---
+title: Learning to work with large files
+description: The first time you try to open any large file into your ide,text editor, excel etc you will be greated with your computer screeching to a halt.
+slug: learning-to-work-with-large-files
+date: 2023-09-06
+published: false
+tags: []
+---
+
+The first time you try to open any large file into your ide,text editor, excel etc you will be greated with your computer screeching to a halt.
+
+In this post we will show you how to work with large files.
+
+Typically we want to start by inspecting the first few or last rows of the file, if it's not compressed we can use `head` or `tail`
+
+First we create a dummy csv.
+
+```bash
+cat <<EOF > dummy.csv
+Name, Age, City
+John, 30, New York
+Alice, 25, Los Angeles
+Bob, 35, Chicago
+EOF
+```
+
+Then we can print the first two lines of the file using the `-n` flag
+
+```bash
+head -n 2 dummy.csv
+Name, Age, City
+John, 30, New York
+```
+
+
+cat <<EOF | gzip > dummy.csv.gz
+Name, Age, City
+John, 30, New York
+Alice, 25, Los Angeles
+Bob, 35, Chicago
+EOF
+
+First thing is we don't actually have to unzip a gzip to look.
+
+Here for example is a large xml files exporterd from apple health.
+
+Working with csv.gzip

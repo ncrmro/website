@@ -1,0 +1,34 @@
+---
+title: Browser Client timezone
+description: "Why: Recently I've been attempting to add an append only journal mostly for taking technical notes. That is each day has a row in the Sqlite database, the row c"
+slug: browser-client-timezone
+date: 2023-09-28
+published: false
+tags: []
+---
+
+Why: Recently I've been attempting to add an append only journal mostly for taking technical notes. That is each day has a row in the Sqlite database, the row contains a column called created_date which stores the unix timestamp at midnight of the users current timezone. Midnight being hour 0, second 0, minute 0, milisecond 0. This column is unique such that each day should only have one row in the database.
+
+Problem: When developing locally everything worked great. Thats because both my browser and the nodejs server where running in the timezone my laptop was set to 'America/Chicago'.
+
+But when I deployed my server's timezone is set to UTC the journal page was still showing the yesterdays journal entry  and thus my new journal entry wouldn't be created until 5PM.
+
+Getting the timezone in client is pretty easy.
+
+```typescript
+Intl.DateTimeFormat().resolvedOptions().timeZone
+```
+
+I can then pass the timezone has a hidden field and alter set the timezone cookie with my session cookie
+
+```typescript
+<input
+      type="hidden"
+      name="timezone"
+      value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+    />
+```
+
+This lead to the next issue, since i'm using NextJS 13's server components and all these components have the servers timezone.
+
+Extracting the above component to it's own file with "use client" at the top was the solution.

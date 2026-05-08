@@ -1,0 +1,82 @@
+---
+title: Your Notes Repo Is a Control Plane
+description: Notes that span projects need their own repo. When they get one, it becomes the control plane for everything — including AI agents.
+slug: your-notes-repo-is-a-control-plane
+date: 2026-02-13
+published: true
+tags: []
+---
+
+You take notes about your work. Where do they live?
+
+If they're in the project repo, they die with the project. If they're in Notion, they're disconnected from the code. If they're in Slack, they're buried in three days. If they're in your head, they're gone tomorrow.
+
+Most developers scatter context across all four. Project decisions live in PR descriptions nobody re-reads. Architecture rationale sits in a Confluence page last updated eighteen months ago. The mental model connecting six repos into one product exists only in your brain, rebuilt from scratch every Monday morning.
+
+The fix is simple: **notes that span projects need their own repo.**
+
+## A Markdown Repo as the Layer Above
+
+Take a git-tracked folder of markdown files. It could be an Obsidian vault, a plain directory, whatever you prefer -- the tool doesn't matter. What matters is what it holds and where it sits.
+
+This repo doesn't belong to any single project. It sits *above* them. It contains:
+
+- **Project files** with frontmatter linking to repos, tracking goals, and recording decisions
+- **Daily journals** in a lightweight format (I use Yesterday/Today/Blockers) that compound into a searchable history of what you worked on and why
+- **Running notes** -- the messy, unstructured thoughts you capture throughout the day before they evaporate
+- **Cross-project context** that no single repo can hold: how the API repo relates to the frontend, why you chose Postgres over SQLite, what the deployment story looks like across services
+
+The key property: it's git-tracked. That means versioned, diffable, greppable, and backed up. No vendor lock-in. No proprietary format. Just text files.
+
+You already have conventions for structuring code. This is the same idea applied to the knowledge *around* the code.
+
+## From Notes to Control Plane
+
+Here's where it gets interesting. Once your notes repo knows about all your projects, it can do more than remember. It becomes an orchestration layer.
+
+**Persistent agent context.** A `CLAUDE.md` file at the vault root gives every AI coding agent session full cross-project context -- your conventions, your architecture, what matters. The [AGENTS.md standard](https://agents.md/) (Linux Foundation) is formalizing this across vendors. You write it once, and every agent session starts informed instead of blank.
+
+**Task dispatch.** A `TASK.md` file becomes a contract between you and the agent: here's what to build, here are the acceptance criteria, update this file as you go.
+
+```yaml
+---
+repo: ncrmro/catalyst
+branch: feat/preview-envs
+agent: claude
+status: assigned
+---
+# Add preview environment routing
+## Acceptance Criteria
+- [ ] Ingress controller routes preview URLs to correct namespace
+- [ ] Preview environments clean up after PR merge
+- [ ] Health check endpoint returns 200
+```
+
+**Isolated sandboxes.** Git worktrees (`git worktree add .worktrees/feature-name`) give each agent its own working copy. No conflicts with your work, parallel execution across repos, trivial cleanup.
+
+**Workflow definitions.** Repeatable processes (plan → assign → review → merge) become callable commands with quality gates. The notes repo holds the workflow definitions; agents execute them against any project repo.
+
+**Compounding daily context.** A digest process reads your running notes, fetches GitHub activity across repos, and updates a structured daily journal. Tomorrow's agent session can reference what happened today without you explaining it.
+
+None of this requires new tools or formats. It's markdown files doing double duty as documentation and machine-readable configuration. The notes repo you started for *yourself* becomes infrastructure that agents can read.
+
+## Others Are Building This Too
+
+This pattern is emerging independently across the ecosystem:
+
+- [Gas Town](https://github.com/steveyegge/gastown) (Steve Yegge) orchestrates 20-30 parallel Claude Code agents, each in its own worktree, coordinated through a git-backed issue tracker
+- Google's [Conductor](https://github.com/gemini-cli-extensions/conductor) stores plans and specs as markdown files for Gemini CLI, with git-integrated track-based workflows
+- [tick-md](https://purplehorizons.io/blog/tick-md-multi-agent-coordination-markdown) uses a single markdown file as a multi-agent task board, coordinating across sessions via Git
+- [Claudesidian](https://github.com/heyitsnoah/claudesidian) and [obsidian-claude-pkm](https://github.com/ballred/obsidian-claude-pkm) ship pre-built vault templates with agent workflows, goal tracking, and slash commands
+
+The common thread: **git for persistence, markdown for configuration, worktrees for isolation.** Nobody planned a standard. The tools converged because the constraints are the same.
+
+## Three Things You Can Do Today
+
+**1. Start a notes repo.** `mkdir work-notes && cd work-notes && git init`. Add a folder per project. Write down what you'd tell a new teammate on their first day. You now have persistent cross-project context that will outlive any single repo.
+
+**2. Add a CLAUDE.md (or AGENTS.md) to it.** List your conventions, project relationships, and what matters across repos. Every agent session that touches any of your projects starts with this context loaded.
+
+**3. Use worktrees for agent work.** `git worktree add .worktrees/feature feature-branch` gives the agent its own sandbox. No risk to your working directory. When it's done, review the diff and clean up the worktree.
+
+These are small changes. Each one compounds. The notes you keep for yourself become the persistent memory that turns AI agents from stateless code generators into contextual collaborators -- and the repo holding those notes becomes the control plane you didn't know you were building.

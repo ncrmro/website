@@ -1,0 +1,244 @@
+---
+title: Hot Keys and Hardware Keys for Agentic Workflows
+description: Scoping SSH Access Without Killing Your Productivity
+slug: hot-keys-and-hardware-keys-for-agentic-workflows
+date: 2026-02-19
+published: true
+tags: []
+---
+
+# Hot Keys and Hardware Keys for Agentic Workflows
+
+## Your SSH Key is Basically God Mode
+
+Let's be honest: that SSH key you generated three years ago and added to every server, GitHub account, and secret management system you've ever touched? It's sitting in your ssh-agent right now, unlocked, ready to do anything you can do (unless you've been raw dogging an unencrypted private key, in which case it's even worse).
+
+And now you're letting AI agents run commands on your machine.
+
+I'm not here to tell you that's bad—those agents are genuinely useful. Claude Code, Codex, Copilot, whatever you're running: they ship code faster than you can review it. The problem isn't that agents exist. The problem is that your single unlocked SSH key can push a typo fix to a feature branch *and* force-push to main *and* rekey your production secrets *and* SSH as root into your infrastructure. There's no circuit breaker. No "are you sure?" that software can't click through.
+
+## The Problem: One Key to Rule Them All
+
+Here's the uncomfortable truth about agent security: sandboxes are partial solutions.
+
+Fine-grained GitHub tokens? Great for `your-username/your-repo`. Useless for `company/important-project` because those tokens don't support organization repos the same way. You're back to SSH keys.
+
+The "yolo mode" temptation is real. Watching an agent stop every 30 seconds to ask "may I run `git push`?" makes you want to throw your laptop into the ocean. So you crank up the permissions. You skip the prompts. You tell yourself the sandbox is enough.
+
+Meanwhile, your key has access to:
+- Every GitHub org you've ever joined
+- That production server you SSH'd into last month
+- Your agenix secrets that encrypt everything in your NixOS config
+
+One key. Unlocked. Ready for action.
+
+## The Framework: Hot Keys and Cold Keys
+
+Here's a better model: stop pretending one key can do everything safely.
+
+**Hot key**: Your daily driver. Lives in ssh-agent, unlocked when you log in. Handles routine git operations, SSH to dev servers, the stuff that happens fifty times a day. If something goes wrong with the hot key, you lose a branch or embarrass yourself on a dev server. Annoying, but recoverable.
+
+**Cold key**: Hardware-backed (YubiKey). Requires physical touch every time it's used. Gates the irreversible stuff: force-pushing to main, production SSH, rekeying secrets, anything that would ruin your week if it happened by accident.
+
+This isn't paranoia. It's insurance. You're not removing convenience—you're adding a circuit breaker between "routine work" and "catastrophic mistake."
+
+Think of it like your debit card vs. your safe deposit box key. You carry the debit card everywhere because losing $100 to fraud is annoying but survivable. The safe deposit box key stays somewhere secure because that's where the irreplaceable stuff lives.
+
+The cold key is the backstop. No matter what you decide to do with the hot key—give it to agents, scope it, lock it down—the cold key ensures that certain operations require you, physically present, touching a piece of hardware.
+
+**Hardware options for your cold key:**
+- **YubiKey** (5 series, firmware 5.2.3+) — Most common, well-documented
+- **SoloKey / Nitrokey** — Open source alternatives with FIDO2 support
+- **macOS Secure Enclave** — Use [Secretive](https://github.com/maxgoedjen/secretive) to store keys in Apple's hardware security, requiring Touch ID/Face ID
+
+Any FIDO2 key supporting `ed25519-sk` works. The rest of this post uses YubiKey as the example, but the concepts apply to all of them.
+
+## Your Threat Model, Your Rules
+
+I'm not going to tell you the "right" way to handle your hot key. That depends on your threat model, and you're smart enough to evaluate it yourself.
+
+| Hot Key Policy | Risk Accepted | Use Case |
+|----------------|---------------|----------|
+| Agents get hot key | Branch-level damage | Max convenience, trust sandbox |
+| Agents get scoped token | Repo-specific only | Balance, works for personal repos |
+| Agents get nothing | Zero SSH risk | Max caution, manual git only |
+
+All three are valid choices. The cold key makes any of them safer.
+
+If you're working on personal projects with good backup hygiene, maybe agents get the hot key. If you're touching company repos with real consequences, maybe agents get nothing. The point is: you're choosing your risk level for day-to-day work, and the cold key protects the stuff that matters regardless.
+
+## GitHub SSO Orgs: Per-Key Authorization
+
+Here's a lever you might not know exists: organizations with SSO enabled require SSH keys to be individually authorized per-org.
+
+This means you can selectively authorize which keys work with which orgs. Even if an agent has your hot key, it literally cannot touch orgs where that key isn't SSO-authorized. The authorization lives on GitHub's side, not yours.
+
+To set this up: **GitHub Settings → SSH and GPG keys → Configure SSO** next to each key. Pick which orgs each key can access.
+
+This solves the `company/repo` problem where fine-grained PATs fall short—you can scope access at the key level rather than the token level.
+
+## Signed Commits: Another Gate for Merges
+
+Here's a workflow that pairs nicely with hot/cold keys: require signed commits on protected branches, but let agents push unsigned commits to PR branches.
+
+**The setup:**
+1. Enable "Require signed commits" on your main/protected branches in GitHub branch protection rules
+2. Let your agent push freely to feature branches (unsigned is fine)
+3. When you're ready to merge, use GitHub's "Squash and Merge" button
+
+**Why this works:** When you click "Squash and Merge" in the GitHub UI, GitHub creates a brand new commit on the base branch and signs it with GitHub's own GPG key. This satisfies the signed commit requirement even though the individual PR commits were unsigned.
+
+The result: agents can do branch work all day, but merging to main requires a human in the browser clicking a button. No local signing ceremony needed, no cold key touch for every merge—just the natural friction of reviewing and clicking "Merge."
+
+If you want even more control, you can sign your squash commits locally with your cold key instead of relying on GitHub's signature. But for most workflows, GitHub's signature is sufficient.
+
+## What Belongs Behind the Cold Key
+
+Not everything needs hardware protection. Here's the litmus test: **would you be very upset if an agent did this by accident?**
+
+Operations that belong behind the cold key:
+
+- **Force push to main/protected branches** — History rewriting is forever
+- **SSH to production servers** — Especially root access
+- **Rekeying agenix/sops secrets** — This affects your entire infrastructure
+- **Disk encryption unlock** — LUKS, ZFS native encryption
+- **Signing commits** — Optional, but nice for high-trust repos
+
+If the answer is "I could recover from this in an hour," hot key is fine. If the answer is "I would spend the weekend fixing this and explaining it to my team," cold key.
+
+## Setting Up Your Cold Key (YubiKey + FIDO2)
+
+Time for the magic incantation. You'll need:
+- A YubiKey with firmware 5.2.3+ (check with `ykman info`)
+- OpenSSH 8.2+ (check with `ssh -V`)
+
+Generate your cold key:
+
+```bash
+ssh-keygen -t ed25519-sk -O resident -O verify-required -C "cold-key-$(hostname)"
+```
+
+Let's break down those flags:
+- `-t ed25519-sk`: Use the FIDO2-backed Ed25519 key type
+- `-O resident`: Store the key *on* the YubiKey, not just use it for signing
+- `-O verify-required`: Require PIN + touch, not just touch
+- `-C "cold-key-..."`: A comment so you can tell your keys apart
+
+The YubiKey will blink. Touch it. Enter your PIN if prompted. You'll get two files: `id_ed25519_sk` (a stub that references the hardware) and `id_ed25519_sk.pub` (your public key).
+
+The beautiful part: that private key stub is useless without the physical YubiKey. You can copy it to other machines, but it won't work without the hardware present.
+
+**Rehydrating on a new machine:**
+
+```bash
+cd ~/.ssh && ssh-keygen -K
+```
+
+This downloads the resident key from your YubiKey. Plug in the key, touch it, enter your PIN, done. No copying private keys around.
+
+Add the public key to GitHub, your servers, wherever the cold key needs access. Keep it separate from your hot key's authorizations.
+
+**Backup strategy:** Buy two YubiKeys. Register both with your services. Keep the backup in a safe or safety deposit box. If you lose your primary, you're not locked out of production at 2am.
+
+## SSH Config: Routing to the Right Key
+
+Now make SSH automatically use the right key for each context:
+
+```bash
+# ~/.ssh/config
+
+# Default: use hot key for everything
+Host *
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+
+# Production servers: require cold key
+Host prod-* *.prod.company.com
+    IdentityFile ~/.ssh/id_ed25519_sk
+    IdentitiesOnly yes
+
+# GitHub with cold key for specific operations
+# (You'd alias force-push commands to use this host)
+Host github-cold
+    HostName github.com
+    IdentityFile ~/.ssh/id_ed25519_sk
+    IdentitiesOnly yes
+```
+
+The `IdentitiesOnly yes` is crucial—it prevents SSH from trying every key in your agent, which would defeat the purpose of separation.
+
+For GitHub force-pushes, you can create a git alias:
+
+```bash
+git config --global alias.force-push-cold '!git push --force $(git remote get-url origin | sed "s/github.com/github-cold/")'
+```
+
+Now `git force-push-cold` routes through the cold key. Regular pushes use the hot key.
+
+## macOS Note
+
+If using Secretive with the Secure Enclave, you're set—Touch ID handles the "physical presence" requirement.
+
+If using a YubiKey on macOS, Apple's built-in OpenSSH has incomplete FIDO2 support. Install OpenSSH via Homebrew (`brew install openssh`) or Nix Home Manager and use that instead of the system version.
+
+## Bonus: NixOS Integration
+
+*Skip this section if you're not on NixOS.*
+
+Home Manager SSH config with tiered keys:
+
+```nix
+programs.ssh = {
+  enable = true;
+  matchBlocks = {
+    "*" = {
+      identityFile = "~/.ssh/id_ed25519";
+      identitiesOnly = true;
+    };
+    "prod-* *.prod.company.com" = {
+      identityFile = "~/.ssh/id_ed25519_sk";
+      identitiesOnly = true;
+    };
+  };
+};
+```
+
+For agenix, your `secrets.nix` can require the cold key for rekeying by only including the cold key's public key in the authorized keys list. When you run `agenix -r`, you'll need the YubiKey present.
+
+The dual benefit: your config is declarative and reproducible, *and* the hardware requirement is baked in.
+
+## The Nuclear Option: Agents Get Their Own Identity
+
+One more approach worth mentioning: give the agent its own everything.
+
+Spin up a VM or container. Create a dedicated SSH key that's only authorized on repos and servers the agent should touch. Set up a separate password manager account with scoped credentials. Let the agent run in full yolo mode inside its sandbox—because its identity is inherently restricted.
+
+This is the "sandbox the identity, not just the process" approach. The agent can't accidentally use your production credentials because it doesn't have them. It can't touch your personal GitHub orgs because its SSH key was never authorized there. The blast radius is baked into what the agent *is*, not what it's *allowed to do*.
+
+Tools like [nix-agent-sandbox](https://github.com/numtide/llm-agents.nix) make this easier—ephemeral environments where the agent's credentials are injected at runtime and scoped to the task. You get yolo-mode productivity with sandbox-level safety.
+
+This pairs well with the hot/cold key strategy: the agent's dedicated key is essentially a scoped hot key, and your cold key remains untouched for sensitive operations.
+
+## Sleep Better at Night
+
+Here's the deal: you're going to keep using AI agents because they're genuinely useful. You're probably going to keep using yolo mode or permissive sandboxes because the alternative is watching your agent ask permission for every `ls`.
+
+The hot/cold key strategy lets you do that without the existential dread.
+
+Hot key handles the daily work. Cold key guards the irreversible stuff. Physical touch means no software—not malware, not a rogue agent, not a typo in your config—can accidentally nuke production.
+
+**Next steps:**
+1. Audit your current SSH key usage (where is it authorized?)
+2. Buy a YubiKey 5 series (firmware 5.2.3+)
+3. Generate a cold key with `ssh-keygen -t ed25519-sk -O resident -O verify-required`
+4. Set up SSH config routing
+5. Move sensitive authorizations to the cold key only
+
+Your future self—the one who didn't have to explain to the team why main got force-pushed at 2am—will thank you.
+
+## Resources
+
+- [Yubico: Securing SSH with FIDO2](https://developers.yubico.com/SSH/Securing_SSH_with_FIDO2.html)
+- [SSH Resident Key Guide](https://gist.github.com/Kranzes/be4fffba5da3799ee93134dc68a4c67b)
+- [NVIDIA: Sandboxing Agentic Workflows](https://developer.nvidia.com/blog/practical-security-guidance-for-sandboxing-agentic-workflows-and-managing-execution-risk/)

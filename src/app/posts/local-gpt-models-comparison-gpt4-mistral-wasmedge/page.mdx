@@ -1,0 +1,131 @@
+---
+title: "Exploring Local GPT Models: A Comparison of GPT-4 and Mistral 7B on WasmEdge"
+description: "Comparing GPT-4 and (local) Mistral 7B: An comparison of their performance using WasmEdge for local GPT model execution."
+slug: local-gpt-models-comparison-gpt4-mistral-wasmedge
+date: 2023-11-22
+published: true
+tags: []
+---
+
+I've been on the hunt for running GPT's locally for a bit and played around in the maze of [Hugging Face](https://huggingface.co/) models for awhile now. 
+
+[Second State's Mistral 7B instruct v0.1](https://www.secondstate.io/articles/mistral-7b-instruct-v0.1/) crossed my radar and with it using [WasmEdge](https://wasmedge.org/) it's effortless to get running.
+
+The example provided  on their post has the user ask "What is the capital of France" so after getting it set up I instead asked
+
+```
+[USER]: 
+What is the capital of Texas?
+
+[ASSISTANT]:
+The capital of Texas is Austin.
+
+[USER]: 
+```
+
+This took about 3 seconds, the hardware used was.
+
+- CPU [5800X3D](https://www.amd.com/en/products/cpu/amd-ryzen-7-5800x3d) (power limited to 95w
+- RAM 64 GB DDR4 ECC
+- GPU [RTX 3800 TI](https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3080-3080ti/)
+
+I didn't see a much GPU ussage and it seemed WasmEdge was only using around 4 cores.
+
+## Testing a bigger question with code
+
+One of my todos for awhile has been automating opening tmux with all the commands I use to monitor my hardware during these sort of tests.
+
+The prompt
+
+> I need a shell script that opens up tmux with one large vertical window running htop on the left and two horizontal windows on the right each running an echo command I will replace.
+
+- GPT4 took around 30 seconds 
+- Mistral took about 4 minutes and 50 seconds.
+
+![](/posts/local-gpt-models-comparison-gpt4-mistral-wasmedge/media/gpt-generated-shell-script-tmux-hardware-watch.jpeg)
+
+
+# GPT4 Response
+
+---
+To create a shell script that opens tmux with a specific layout, you'll want to use tmux commands to split the window and run the desired commands in each pane. Here's a basic script that should achieve what you're looking for:
+
+```bash
+#!/bin/bash
+
+# Start a new tmux session
+tmux new-session -d -s my_session
+
+# Split the window vertically, 30% width for the left pane
+tmux split-window -h -p 70
+
+# Split the right pane horizontally
+tmux split-window -v
+
+# Select the left pane and run htop
+tmux select-pane -t 0
+tmux send-keys 'htop' C-m
+
+# Select the first right pane (top right)
+tmux select-pane -t 1
+tmux send-keys 'echo Replace this command with your desired command' C-m
+
+# Select the second right pane (bottom right)
+tmux select-pane -t 2
+tmux send-keys 'echo Replace this with another command' C-m
+
+# Attach to the tmux session
+tmux attach-session -t my_session
+```
+
+Here's a breakdown of what this script does:
+
+1. Creates a new tmux session named `my_session`.
+2. Splits the window vertically with 30% of the width allocated to the left pane (where `htop` will run).
+3. Splits the right pane horizontally into two equal parts.
+4. Selects the left pane and runs `htop`.
+5. Selects the top right pane and runs an `echo` command (you can replace this with your desired command).
+6. Selects the bottom right pane and runs another `echo` command (also replaceable).
+7. Attaches to the tmux session so you can interact with it.
+
+To use this script:
+
+1. Save it to a file, for example, `tmux_setup.sh`.
+2. Make the script executable: `chmod +x tmux_setup.sh`.
+3. Run the script: `./tmux_setup.sh`.
+
+Remember to replace the `echo` commands with your own commands as needed.
+---
+
+# Mistral 7b instruct v0.1
+
+---
+
+[USER]: 
+I need a shell script that opens up tmux with one large vertical window running htop on the left and two horizontal windows on the right each running an echo command I will replace.
+
+
+
+[ASSISTANT]:
+Here is a shell script that will open up tmux with one large vertical window running htop on the left and two horizontal windows on the right each running an echo command:
+```
+#!/bin/bash
+
+# Open tmux
+tmux new -s my-session
+
+# Set the window layout
+tmux set-window-layout 100% 50% 50%
+
+# Start htop in the left window
+tmux send -t 1 "htop"
+
+# Start echo commands in the right windows
+tmux send -t 2 "echo Hello, world!"
+tmux send -t 3 "echo This is a test."
+```
+To use this script, save it to a file (e.g. `start_tmux.sh`) and make it executable with the command `chmod +x start_tmux.sh`. Then, you can run the script with the command `./start_tmux.sh`. This will open tmux with the specified window layout and start the specified commands in the windows.
+
+[USER]: 
+
+---

@@ -1,0 +1,99 @@
+---
+title: OpsGenie notifications from Kubernetes with kube-prometheus-stack
+description: Setting up kube-prometheus-stack to send alerts to on call team.
+slug: opsgenie-notifications-from-kubernetes-with-kube-prometheus-stack
+date: 2023-12-04
+published: false
+tags: []
+---
+
+[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) is a must have for any one deploying applications to a Kubernetes cluster.
+
+In includes the following.
+
+- Grafana
+- Prometheus
+- Alertmaanger
+
+Out of the box is comes with some really handy alerts.
+
+- KubeDeploymentReplicasMismatch
+- KubePodCrashLooping
+- KubePersistentVolumeFillingUp
+- TargetDown
+
+Say you have a Postgres Database that is having a lot of a data written to it.
+
+Usually you will see something like the following happen.
+
+- Postgres Volume filling up, default alert is when less that 5% is left.
+- Postgres Pod crashing (ran out of space)
+- Application Pod crashing (Database connection is not working)
+
+
+---
+
+It includes all kinds of rules for things like volumes, running out of space or pods rolling. Sending alerts to slack is easy, but most engineers have Slack turned off during non working hours. Thus we want to use a pager service to notify a member of the team on call.
+
+Prometheus comes with a log of great rules out of the box but they all have a servility label of warning or info. We need to go ahead and instead make certain classes of prometheus rules have a label of pager.
+
+```yaml
+      - alert: NodeFilesystemAlmostOutOfSpace
+        annotations:
+          description: Filesystem on {{`{{`}} $labels.device {{`}}`}}, mounted on {{`{{`}} $labels.mountpoint {{`}}`}}, at {{`{{`}} $labels.instance {{`}}`}} has only {{`{{`}} printf "%.2f" $value {{`}}`}}% available space left.
+          runbook_url: https://runbooks.prometheus-operator.dev/runbooks/node/nodefilesystemalmostoutofspace
+          summary: Filesystem has less than 20% space left.
+        expr: |-
+          (
+            node_filesystem_avail_bytes{job="node-exporter",fstype!="",mountpoint!=""} / node_filesystem_size_bytes{job="node-exporter",fstype!="",mountpoint!=""} * 100 < 20
+          and
+            node_filesystem_readonly{job="node-exporter",fstype!="",mountpoint!=""} == 0
+          )
+        for: 5m
+        labels:
+          severity: page
+```
+
+We can then configure alert manager like so.
+
+```yaml
+    global:
+      resolve_timeout: 1m
+      slack_api_url: https://hooks.slack.com/services/RANDOM/AT3BC/na3ALN
+    route:
+      receiver: default
+      group_by:
+      - namespace
+      continue: false
+      routes:
+      - receiver: "null"
+        matchers:
+        - alertname=~"InfoInhibitor|Watchdog"
+        continue: false
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+    receivers:
+    - name: "null"
+    - name: default
+      opsgenie_configs:
+      # Platform Team
+      - send_resolved: true
+        api_key: your-api-key
+      slack_configs:
+      - send_resolved: true
+        channel: '#cluster-alerts'
+        username: '{{ template "slack.default.username" . }}'
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+        title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] - (cluster/%s)'
+        text: |-
+          {{- $root := . -}}
+          {{ range .Alerts }}
+            *Alert:* {{ .Annotations.summary }} - {{ .Labels.severity }}
+            *Description:* {{ .Annotations.description }}
+            *Name:* {{ .Labels.alertname }}
+          {{ end }}
+```
+
+
+As a note KubeMemoryOvercommit can be disabled unless you configure all your pods with limits.
