@@ -13,7 +13,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "e2e": "playwright test",
-    "migrate:content": "node bin/migrate-content.mjs"
+    "migrate:content": "node bin/migrate-content.mjs",
+    "sync:media": "node bin/sync-media.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",
