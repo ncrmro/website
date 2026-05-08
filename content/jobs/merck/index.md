@@ -1,0 +1,22 @@
+---
+title: Merck
+description: "- Developed features and supported ecommerce site with 2 billion dollars worth of annual transactions. - Refactored GraphQL API into self-contained service as w"
+slug: merck
+date: 2020-08-01
+role: Platform Engineer
+employmentType: Contract
+start: 2020-08
+end: Present
+url: "https://www.merckgroup.com"
+favicon: /uploads/resume/merck.ico
+tech: ["Node", "Typescript", "GraphQL", "React", "Next.JS", "Kubernetes", "Helm", "Playwright", "Gitlab", "CI", "Backstage"]
+---
+
+- Developed features and supported ecommerce site with 2 billion dollars worth
+  of annual transactions.
+- Refactored GraphQL API into self-contained service as well as caching to allow
+  product pages to be delivered near instantly.
+- Implemented automated End to End tests insuring new code as well as other
+  teams services worked with continuity
+- Set up [Backstage](https://backstage.io/) to document all services, apps and
+  api's, their teams owners etc.

@@ -1,0 +1,84 @@
+---
+title: The Entire Docs Site Is One HTML File
+description: A single HTML file fetches markdown from GitHub's Contents API, renders it with marked.js, and deploys on Vercel with clean URL rewrites. Zero build step, zero dependencies.
+slug: zero-build-docs-site
+date: 2026-03-11
+published: true
+tags: []
+---
+
+Documentation is markdown rendered as HTML. That is the entire problem. Yet the industry's default answer is a static site generator with its own build pipeline, dependency tree, and breaking upgrades -- a second software project just to show people how to use your first one.
+
+We built a docs site for [DeepWork](https://deepwork.md) that sidesteps this entirely: one HTML file, a CDN script tag, and a three-line Vercel config. No build step, no Node.js, no `package.json`. It fetches markdown from GitHub at runtime and renders it in the browser.
+
+## GitHub as Your CMS
+
+The [Contents API](https://docs.github.com/en/rest/repos/contents) returns directory listings and raw file content for any public repository -- no authentication required. Two fetch calls give you everything:
+
+```javascript
+var REPO = 'your-org/your-repo';
+var API_BASE = 'https://api.github.com/repos/' + REPO + '/contents/';
+
+Promise.all([
+  fetch(API_BASE).then(r => r.json()),
+  fetch(API_BASE + 'doc').then(r => r.json())
+]).then(function(results) {
+  var files = buildManifest(results[0], results[1]);
+});
+```
+
+Each file object includes a `download_url` for the raw markdown. Push a `.md` file, it appears on the site. Your repository *is* the CMS.
+
+## The Implementation
+
+A single `index.html` does everything:
+
+**Manifest building.** The API responses are filtered for `.md` files, slugified, categorized ("Getting Started" for root, "Technical Docs" for `doc/`), and sorted.
+
+```javascript
+function slugFromPath(path) {
+  var name = path.split('/').pop().replace(/\.md$/i, '');
+  if (/^readme$/i.test(name)) return '';
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+}
+```
+
+**Routing.** `window.location.pathname` extracts the slug; the manifest provides the `download_url`. No router library.
+
+**Rendering.** [marked.js](https://marked.js.org/) from a CDN parses the fetched markdown into HTML. One `<script>` tag.
+
+**Caching.** The manifest is cached in `localStorage` with a 24-hour TTL -- about 20 lines of code to stay within GitHub's 60 requests/hour limit.
+
+The entire file is 567 lines: 250 CSS, 50 HTML, 230 JavaScript. Every line readable without a transpiler.
+
+## The Three-Line Config
+
+Clean URLs need every `/docs/*` request to serve the same file:
+
+```json
+{
+  "rewrites": [
+    { "source": "/docs/:path*", "destination": "/docs/index.html" }
+  ]
+}
+```
+
+That's the entire `vercel.json`. The HTML file is the router, the renderer, and the layout engine.
+
+## What You Give Up
+
+**No SSR.** Search engines won't index these pages. If docs are a growth channel, use [Starlight](https://starlight.astro.build/) or Next.js. For project docs where users arrive via your README, this is irrelevant.
+
+**Rate limits.** 60 unauthenticated GitHub API requests per hour per IP. The localStorage cache handles normal browsing; heavy navigation by fresh visitors can hit the ceiling.
+
+**No search.** Bolt on [Pagefind](https://pagefind.app/) or [Fuse.js](https://www.fusejs.io/) if needed. For under 20 pages, sidebar navigation suffices.
+
+**No syntax highlighting.** Code blocks are plain `<pre><code>`. Add [Prism.js](https://prismjs.com/) from a CDN if you want token coloring.
+
+The pattern works when documentation is a companion to a project, not a product unto itself.
+
+## Try It Yourself
+
+Fork [ncrmro/zero-build-docs-site](https://github.com/ncrmro/zero-build-docs-site), change the `REPO` variable, deploy to Vercel. The example is self-referential -- it renders its own documentation. Design tokens are CSS custom properties in one `:root` block.
+
+Most of the complexity we've layered onto documentation was solving for edge cases that most projects never encounter. The interesting question isn't whether this pattern scales -- it's how many docs sites never needed to.

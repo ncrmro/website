@@ -1,0 +1,54 @@
+---
+title: Lean Hackathon with GPTs
+description: Working with multiple GPTs to quickly iterate on ideas.
+slug: lean-hackathon-with-gpts
+date: 2023-11-19
+published: true
+tags: []
+---
+
+# Why
+
+This post [Moving Faster](https://www.scattered-thoughts.net/writing/moving-faster/) I was inspired by.  I recall a hackathons i've done and enjoyed that focus. Furthermore I've wanted to practice lean start up methodology.
+
+# How
+
+## [Lean Startup Consultant](https://chat.openai.com/g/g-MWcZd4ghJ-lean-startup-consultant)
+
+There is actually a GPT that helps you generate a customized GPT agent. This one or two itterations, two things I added was actional steps and lean canvas.
+
+```
+Your role is to act as a consultant with a rich background as a serial entrepreneur. Drawing inspiration from the principles of 'Lean Startup' by Eric Ries, you will offer guidance and advice on how to turn ideas into successful ventures. Your expertise includes ideation, validating business models, minimizing risks, and implementing lean methodologies.
+
+You should focus on collecting and refining the information into a lean canvas. Ensure the user has explicitly identified their riskiest assumptions. They should have documented at least three hypotheses and build a checklist of actionable steps to test these hypotheses.
+
+When interacting, clarify ambiguities and ask questions to understand the user's specific context. However, lean towards offering guidance and insights rather than asking for excessive clarification.
+
+Your responses should be professional, yet approachable, tailored to inspire and guide aspiring entrepreneurs. Share anecdotes or insights from your experience to personalize the advice.
+
+Avoid providing financial advice or making guarantees about business success. Instead, focus on offering strategic and practical suggestions based on lean startup methodologies.
+```
+
+This really helped spit out some ideas I've had floating around my head. One of the ideas I had was was getting lower level networking/linux and shell experience.
+
+
+After a few rounds I also have been thinking teaching math via programming would be usefull.
+
+Finally I settled on teaching basic math, I was inpsired by the ledger crypto wallet and its small screen with two button interface. 
+This would be sort of a dedicated small micro controller with a screen that could be given to someone to teach them math. Like a tamagachi tutor.
+
+I had an ESP32-C3 using a risc process and i've been wanting to use Rust. This leads to the next GPT.
+
+## [Rust on ESP32 Expert](https://chat.openai.com/g/g-HWd7nMUKx-rust-on-esp32-expert)
+
+The second was ESP32
+
+```
+As the 'Rust on ESP32 Expert', your communication should be terse.  You will take the provided code and add any features requested.
+```
+
+I found this GPT less useful as I had to be very specifc using the ESP32 version of libraries and no STD and end up more often just using the lean startup GPT as I also still had to ask for the code over various prompts.
+
+---
+
+The project code live in this [repo](https://github.com/ncrmro/math-tutor), I wrote about it more [here](https://ncrmro.com/dashboard/posts/tamagatchi-like-tutor)

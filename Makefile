@@ -1,22 +1,16 @@
-.PHONY: up dev db db-studio lint typecheck e2e migration-reconcile
-
-# Start libsql and Next.js dev server together
-up:
-	concurrently --names "db,web" --prefix-colors "blue,green" \
-		"sqld --db-path ./local.db --http-listen-addr 127.0.0.1:8080" \
-		"npm run dev"
+.PHONY: dev build start lint typecheck e2e
 
 # Start only Next.js dev server
 dev:
 	npm run dev
 
-# Start only libsql database
-db:
-	sqld --db-path ./local.db --http-listen-addr 127.0.0.1:8080
+# Build static site output
+build:
+	npm run build
 
-# Open Drizzle Studio
-db-studio:
-	npm run db:studio
+# Serve static output
+start:
+	npm run start
 
 # Run linter
 lint:
@@ -30,8 +24,3 @@ typecheck:
 e2e:
 	npm run e2e
 
-migration-reconcile: ## Reset drizzle folder from main branch and regenerate migrations
-	rm -rf ./drizzle
-	git fetch
-	git checkout origin/main -- drizzle
-	npm run db:generate

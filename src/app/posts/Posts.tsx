@@ -1,29 +1,15 @@
-import { db, posts } from "@/database";
-import { eq, desc } from "drizzle-orm";
+import type { PostDoc } from "@/content/types";
 import React from "react";
 import { PostItem } from "./PostItem";
 
-export async function Posts() {
-  const postsList = await db
-    .select({
-      slug: posts.slug,
-      title: posts.title,
-      description: posts.description,
-      body: posts.body,
-      publishDate: posts.publishDate,
-      published: posts.published,
-    })
-    .from(posts)
-    .where(eq(posts.published, true))
-    .orderBy(desc(posts.publishDate));
-
+export function Posts(props: { posts: PostDoc[] }) {
   return (
     <ul role="list" className="-mb-8 md:max-w-3xl">
-      {postsList.map((post, index: number) => (
+      {props.posts.map((post, index: number) => (
         <PostItem
           key={post.slug}
           post={post}
-          evenRow={index !== postsList.length - 1}
+          evenRow={index !== props.posts.length - 1}
         />
       ))}
     </ul>

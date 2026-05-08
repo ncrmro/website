@@ -1,9 +1,8 @@
 import { Posts } from "@/app/posts/Posts";
 import Navbar from "@/components/Navbar";
+import { getPublishedPosts } from "@/content/posts";
 import React from "react";
 import type { Metadata } from "next";
-
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -31,11 +30,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const posts = await Posts();
+  const posts = await getPublishedPosts();
   return (
     <main className="w-full flex flex-col items-center p-4">
       <Navbar />
-      {posts}
+      <Posts posts={posts} />
     </main>
   );
 }

@@ -11,14 +11,7 @@ import React from "react";
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  let sessionCookie: string | undefined;
-  if (typeof window !== "undefined") {
-    const cookies = document.cookie;
-    console.log(cookies.split(";"));
-    sessionCookie = cookies
-      .split(";")
-      .find((cookie) => cookie.includes("viewer_session="));
-  }
+
   return (
     <nav
       id="navbar"
@@ -35,7 +28,7 @@ export default function Navbar() {
           <Link href="/posts">Posts</Link>
           <Link href="/projects">Projects</Link>
           <Link href="/about">About</Link>
-          {sessionCookie && <Link href="/dashboard">Dashboard</Link>}
+          <Link href="/resume">Resume</Link>
         </div>
       )}
       {isHome && (

@@ -1,10 +1,19 @@
+import { PostItem } from "@/app/posts/PostItem";
+import { getPostsByAnyTag } from "@/content/posts";
 import React from "react";
 
-export default function TechnologyPostsPage(props: any) {
+export default async function TechnologyPostsPage() {
+  const posts = await getPostsByAnyTag(["technical", "tech", "technology"]);
+
   return (
-    <div></div>
-    // <PageLayout>
-    //   <Posts posts={props.posts} />
-    // </PageLayout>
+    <ul role="list" className="-mb-8">
+      {posts.map((post, index: number) => (
+        <PostItem
+          key={post.slug}
+          post={post}
+          evenRow={index !== posts.length - 1}
+        />
+      ))}
+    </ul>
   );
 }

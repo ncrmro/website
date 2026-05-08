@@ -1,0 +1,27 @@
+---
+title: Vertical and Horizontal Scaling of Workers in Kubernetes
+description: Recently a client i've been working with has a binary that process work that can consume all the CPU it can throw at it, between 3-7 cores.
+slug: vertical-and-horizontal-scaling-of-workers-in-kubernetes
+date: 2023-08-20
+published: false
+tags: []
+---
+
+Recently a client i've been working with has a binary that process work that can consume all the CPU it can throw at it, between 3-7 cores. 
+
+This task is not easily parallelized and thus we need do vertical scaling up to the max of our currently available node size. If this process can consume more we scale up a new node from 0 to 1 and keep bring it up with bigger CPU/RAM until we find the limitation.
+
+Ideally once the process starts we shouldn't kill it to restart a bigger node so initial testing would be good which would also
+
+
+
+We've decided to move this binary into into Sidekiq. 
+
+The question is how do we cost effectively scale these Sidekiq workers to work as fast as possible while keeping spend down.
+
+In general we currently have auto scaling group of nodes that have 16GB of Ram and 4 Cores.
+
+
+
+
+https://github.com/Strech/sidekiq-prometheus-exporter

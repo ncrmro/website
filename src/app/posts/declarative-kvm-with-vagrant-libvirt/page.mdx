@@ -1,0 +1,158 @@
+---
+title: Declarative KVM with vagrant-libvirt
+description: I often reach for KVM for work that doesn't really fit into containerized workloads. This is sually for planning out a physical server
+slug: declarative-kvm-with-vagrant-libvirt
+date: 2023-09-23
+published: true
+tags: []
+---
+
+I often reach for KVM for work that doesn't really fit into containerized workloads.
+This is sually for planning out a physical server
+
+- TPM
+- ZFS
+- K3d Clusters
+- Custom OS's
+
+
+We can use `virt-install` to create the VM but we still have to install and setup SSH
+which we can snapshot but the whole thing takes a solid 10 minutes etc, hence
+the need for a more declative way to set up test VM's.
+
+```bash
+sudo virt-install \
+--name ubuntu-root-zfs-server \
+--boot uefi \
+--os-variant=ubuntu22.04 \
+--ram=8192 \
+--cpu host \
+--vcpus=6 \
+--disk pool=default,device=disk,bus=virtio,format=qcow2,size=50 \
+--cdrom /var/lib/libvirt/installers/ubuntu-22.04.2-desktop-amd64.iso \
+--graphics spice \
+--video virtio \
+--sound none \
+--network bridge=br0,model=virtio \
+--input keyboard,bus=ps2
+```
+
+With this Vagrantfile we can run `vagrant up` and `vagrant ssh` we
+can but in a live VM in a minute or so.
+
+
+
+```ruby
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/bookworm64"
+  config.vm.provider :libvirt do |libvirt|
+  end
+end
+```
+
+Full list of [libvirt options](https://github.com/vagrant-libvirt/vagrant-libvirt/blob/cf37fd44f640865973749d18750d8947449e72ff/lib/vagrant-libvirt/config.rb#L313)
+
+This shell script is also usefull for exporting an SSH config 
+and using SSH directly, it's a bit faster than the above.
+
+```bash
+set -e
+
+if ! [ -e vagrant-ssh ]
+then
+    echo "Downloading ssh config"
+    vagrant ssh-config > vagrant-ssh
+fi
+
+# run ssh with the file.
+ssh -F vagrant-ssh default 'bash -s' < install_script.sh
+```
+---
+
+## Installing
+
+Refer to the installation notes [here](https://vagrant-libvirt.github.io/vagrant-libvirt/installation.html)
+
+
+```bash
+sudo apt-get purge vagrant-libvirt
+sudo apt-mark hold vagrant-libvirt
+sudo apt-get install -y qemu libvirt-daemon-system libvirt-dev ebtables libguestfs-tools
+sudo apt-get install -y vagrant ruby-fog-libvirt
+vagrant plugin install vagrant-libvirt
+```
+
+On my first `vagrant up` I got this error.
+
+```bash
+Bringing machine 'default' up with 'libvirt' provider...
+It appears your machine doesn't support NFS, or there is not an
+adapter to enable NFS on this machine for Vagrant. Please verify
+that `nfsd` is installed on your machine, and try again. If you're
+on Windows, NFS isn't supported. If the problem persists, please
+contact Vagrant support.
+```
+
+Which I fixed with
+
+```bash
+vagrant-libvirt-testing sudo apt-get install nfs-common nfs-kernel-server
+```
+Vagrant will also get stuck at "Mounting NFS shared folders"
+
+We can allow NFS ports from the vagrant interface and subnet via.
+
+```bash
+sudo ufw allow in on virbr1 from 192.168.121.0/24 to any port 2049 comment 'Vagrant NFS'
+sudo ufw allow in on virbr1 from 192.168.121.0/24 to any port 111 comment 'Vagrant NFS'
+```
+
+
+Finally vagrant up with the Vagrantfile from earlier.
+
+```bash
+vagrant up
+Bringing machine 'default' up with 'libvirt' provider...
+==> default: Checking if box 'debian/bookworm64' version '12.20230723.1' is up to date...
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+
+==> default: Machine 'default' has a post `vagrant up` message. This is a message
+==> default: from the creator of the Vagrantfile, and not from Vagrant itself:
+==> default:
+==> default: Vanilla Debian box. See https://app.vagrantup.com/debian for help and bug reports
+```
+
+---
+
+## Virsh commands
+
+Running the following command with list all VM's
+
+```bash
+sudo virsh list --all
+ Id   Name                               State
+---------------------------------------------------
+ 1    vagrant-libvirt-testing_default    running
+```
+
+We can can inspect the VM
+
+```bash
+sudo virsh dominfo vagrant-libvirt-testing_default
+Id:             1
+Name:           vagrant-libvirt-testing_default
+UUID:           d45c17ce-6e9c-4dc5-9d73-7a604e9bc616
+OS Type:        hvm
+State:          running
+CPU(s):         1
+CPU time:       53.1s
+Max memory:     524288 KiB
+Used memory:    524288 KiB
+Persistent:     yes
+Autostart:      disable
+Managed save:   no
+Security model: apparmor
+Security DOI:   0
+Security label: libvirt-d45c17ce-6e9c-4dc5-9d73-7a604e9bc616 (enforcing)
+```
