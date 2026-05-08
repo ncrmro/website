@@ -1,7 +1,6 @@
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UmamiAnalytics from "@/components/UmamiAnalytics";
-import { Toaster } from "sonner";
 import React from "react";
 import type { Metadata } from "next";
 
@@ -51,20 +50,6 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           scriptUrl="https://umami.ncrmro.com/script.js"
           websiteId="8b476bdf-8835-4f55-8afc-9a4d78d16b13"
           domains={["ncrmro.com", "www.ncrmro.com"]}
-        />
-        <Toaster
-          position="bottom-center"
-          theme="system"
-          toastOptions={{
-            classNames: {
-              toast: 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700',
-              title: 'text-gray-900 dark:text-white',
-              description: 'text-gray-500 dark:text-gray-400',
-              actionButton: 'bg-indigo-600 text-white',
-              cancelButton: 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white',
-              closeButton: 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400',
-            },
-          }}
         />
         {props.children}
       </body>
