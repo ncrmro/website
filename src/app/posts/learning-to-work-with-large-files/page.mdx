@@ -33,12 +33,14 @@ John, 30, New York
 ```
 
 
+```bash
 cat <<EOF | gzip > dummy.csv.gz
 Name, Age, City
 John, 30, New York
 Alice, 25, Los Angeles
 Bob, 35, Chicago
 EOF
+```
 
 First thing is we don't actually have to unzip a gzip to look.
 

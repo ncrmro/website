@@ -1,5 +1,5 @@
 import JobDocument from "@/app/resume/JobItem";
-import { parseJobFiles } from "@/app/resume/utils";
+import { getAllJobs } from "@/content/jobs";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import React from "react";
@@ -34,8 +34,7 @@ const Info: React.FC<InfoProps> = (props) => (
 );
 
 export default async function ResumePage() {
-  const jobFiles = await parseJobFiles();
-  const jobs = jobFiles
+  const jobs = (await getAllJobs())
     .reverse()
     .map((job, index) => <JobDocument key={index} job={job} />);
   return (

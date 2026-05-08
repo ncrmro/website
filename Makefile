@@ -1,4 +1,4 @@
-.PHONY: dev build start lint typecheck e2e migrate-content
+.PHONY: dev build start lint typecheck e2e
 
 # Start only Next.js dev server
 dev:
@@ -24,5 +24,3 @@ typecheck:
 e2e:
 	npm run e2e
 
-migrate-content:
-	npm run migrate:content

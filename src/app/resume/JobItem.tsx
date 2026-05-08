@@ -1,8 +1,8 @@
-"use client";
 import SmallBadge from "@/components/SmallBadge";
-import { MDXRemote } from "next-mdx-remote";
+import type { JobDoc } from "@/content/types";
 import Image from "next/image";
 import React from "react";
+import Markdown from "react-markdown";
 
 export const TechUrls: Record<string, string> = {
   React: "https://reactjs.org",
@@ -41,8 +41,23 @@ export const TechUrls: Record<string, string> = {
 
 const components = {
   a: (props: any) => <a {...props} className="text-blue-700" />,
+  ul: (props: any) => <ul className="list-disc px-4 py-2" {...props} />,
+  p: (props: any) => <p className="py-1" {...props} />,
 };
-export default function JobDocument({ job }: { job: any }) {
+
+function normalizeFaviconPath(pathname: string | undefined) {
+  if (!pathname) {
+    return "/favicon.png";
+  }
+
+  if (pathname.startsWith("/uploads/resume/")) {
+    return pathname.replace("/uploads/resume/", "/resume/");
+  }
+
+  return pathname;
+}
+
+export default function JobDocument({ job }: { job: JobDoc }) {
   return (
     <li key={job.slug} className="flex flex-col gap-4 pl-12 pb-12 relative">
       <div className="flex">
@@ -50,7 +65,8 @@ export default function JobDocument({ job }: { job: any }) {
           className="absolute rounded-full left-0 top-4"
           width={40}
           height={40}
-          src={job.favicon}
+          unoptimized
+          src={normalizeFaviconPath(job.favicon)}
           alt={`${job.title} Icon`}
         />
         <span
@@ -68,11 +84,10 @@ export default function JobDocument({ job }: { job: any }) {
         </div>
       </div>
       <div>
-        {/* <MDXRemote {...job.compiledSource} components={components} /> */}
-        {job.content}
+        <Markdown components={components}>{job.body}</Markdown>
       </div>
       <div className="flex flex-wrap gap-2">
-        {job.tech?.split(",").map((tech: string) => (
+        {job.tech.map((tech) => (
           <SmallBadge key={tech}>
             <a href={TechUrls[tech]}>{tech}</a>
           </SmallBadge>

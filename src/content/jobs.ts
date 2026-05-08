@@ -8,6 +8,9 @@ import type { JobDoc } from "./types";
 const JOBS_DIR = path.join(process.cwd(), "content/jobs");
 
 function assertString(value: unknown, fieldName: string, sourcePath: string) {
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 10);
+  }
   if (typeof value !== "string" || value.trim() === "") {
     throw new Error(`Invalid ${fieldName} in ${sourcePath}`);
   }

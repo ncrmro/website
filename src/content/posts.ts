@@ -9,6 +9,9 @@ import type { PostDoc } from "./types";
 const POSTS_GLOB = "src/app/posts/*/page.mdx";
 
 function assertString(value: unknown, fieldName: string, sourcePath: string) {
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 10);
+  }
   if (typeof value !== "string" || value.trim() === "") {
     throw new Error(`Invalid ${fieldName} in ${sourcePath}`);
   }
