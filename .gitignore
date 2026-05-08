@@ -57,3 +57,7 @@ public/workbox*
 .playwright-mcp
 temp-uploads/
 .direnv
+
+# Tooling caches
+.deepwork/
+.claude/worktrees/
