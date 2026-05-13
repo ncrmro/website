@@ -20,6 +20,7 @@
             # Node.js
             nodejs_22
             pnpm
+            bun
 
             # Database
             sqld
