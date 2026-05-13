@@ -57,3 +57,10 @@ public/workbox*
 .playwright-mcp
 temp-uploads/
 .direnv
+
+# Astro
+astro/node_modules/
+astro/.astro/
+astro/dist/
+astro/.wrangler/
+astro/worker-configuration.d.ts

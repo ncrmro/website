@@ -1,0 +1,41 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	url: string;
+}
+
+const { title, description, url } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+	<div class="w-full md:max-w-4xl">
+		<div class="pt-6 pb-5">
+			<div class="sm:flex sm:items-baseline sm:justify-between">
+				<div class="sm:w-0 sm:flex-1">
+					<h1 class="text-xl font-semibold leading-6 text-gray-900 dark:text-white">
+						{title}
+					</h1>
+					<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+					<a
+						href={url}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-2 inline-block text-sm text-blue-600 hover:underline dark:text-blue-400"
+					>
+						{url}
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="pt-6 pb-3 text-gray-500 dark:text-gray-400">
+			<slot />
+		</div>
+		<div class="pt-6 border-t border-gray-200 dark:border-gray-700">
+			<a href="/projects" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+				&larr; Back to Projects
+			</a>
+		</div>
+	</div>
+</BaseLayout>

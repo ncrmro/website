@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostListItem from '../../components/PostListItem.astro';
+
+const posts = (await getCollection('blog', ({ data }) => data.published))
+	.sort((a, b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0));
+---
+<BaseLayout title="Posts" description="Blog posts by Nicholas Romero">
+	<ul role="list" class="-mb-8 w-full md:max-w-3xl">
+		{posts.map((post) => (
+			<PostListItem
+				slug={post.id}
+				title={post.data.title}
+				description={post.data.description}
+				publish_date={post.data.publish_date}
+				published={post.data.published}
+			/>
+		))}
+	</ul>
+</BaseLayout>

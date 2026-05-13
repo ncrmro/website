@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import SmallBadge from './SmallBadge.astro';
+import { TechUrls } from '../data/techUrls';
+
+interface Props {
+	job: CollectionEntry<'jobs'>;
+}
+
+const { job } = Astro.props;
+const { Content } = await render(job);
+const { title, url, favicon, role, start, end, tech } = job.data;
+
+// Rewrite legacy /uploads/resume/* references to the new /resume/* public path.
+const faviconSrc = favicon?.replace(/^\/uploads\//, '/');
+const techList = tech?.split(',').map((t) => t.trim()).filter(Boolean) ?? [];
+---
+<li class="relative flex flex-col gap-4 pb-12 pl-12">
+	{faviconSrc && (
+		<img
+			class="absolute left-0 top-4 h-10 w-10 rounded-full"
+			src={faviconSrc}
+			alt={`${title} icon`}
+			width="40"
+			height="40"
+		/>
+	)}
+	<span
+		class="absolute left-5 top-5 -ml-px -z-10 h-full w-0.5 bg-gray-200 dark:bg-gray-700"
+		aria-hidden="true"
+	></span>
+	<div class="flex flex-col justify-between">
+		<div>
+			<h2>{role}</h2>
+			<h3>{url ? <a href={url} class="text-blue-700 hover:underline dark:text-blue-400">{title}</a> : title}</h3>
+		</div>
+		<div>
+			{start} {end ?? ''}
+		</div>
+	</div>
+	<div class="prose prose-invert max-w-none">
+		<Content />
+	</div>
+	{techList.length > 0 && (
+		<div class="flex flex-wrap gap-2">
+			{techList.map((t) => (
+				<SmallBadge>
+					{TechUrls[t] ? <a href={TechUrls[t]}>{t}</a> : t}
+				</SmallBadge>
+			))}
+		</div>
+	)}
+</li>

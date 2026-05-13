@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import JobItem from '../components/JobItem.astro';
+
+const jobs = (await getCollection('jobs')).sort((a, b) => b.id.localeCompare(a.id));
+---
+<BaseLayout title="Resume" description="Resume of Nicholas Romero">
+	<div class="flex flex-col items-center">
+		<div class="flex max-w-3xl flex-col gap-4">
+			<div class="flex flex-col">
+				<a href="/about" class="text-blue-700 hover:underline dark:text-blue-400">
+					Nicholas Romero
+				</a>
+				<div>Houston, TX</div>
+				<p>
+					Full-stack software engineer with experience architecting, deploying and supporting
+					technical solutions. Including automation of tasks, quality assurance, uptime reliability
+					and cloud migrations. Speaker at PyCon India and other community meetups.
+				</p>
+			</div>
+			<ul class="flex flex-col gap-4">
+				{jobs.map((job) => <JobItem job={job} />)}
+			</ul>
+		</div>
+	</div>
+</BaseLayout>

@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategoryPosts from '../../components/CategoryPosts.astro';
+---
+<BaseLayout title="Tech" description="Tech-related posts by Nicholas Romero">
+	<div class="w-full md:max-w-4xl pt-6">
+		<h1 class="pb-4 text-xl font-semibold leading-6 text-gray-900 dark:text-white">Tech</h1>
+		<CategoryPosts tag="tech" />
+	</div>
+</BaseLayout>

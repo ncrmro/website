@@ -1,0 +1,40 @@
+---
+import GithubIcon from './Icons/Github.astro';
+import InstagramIcon from './Icons/Instagram.astro';
+import LinkedinIcon from './Icons/Linkedin.astro';
+import TwitterIcon from './Icons/Twitter.astro';
+
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/';
+---
+<nav id="navbar" class="mx-auto flex flex-col items-center gap-2 text-slate-500 dark:text-white">
+	<a
+		href="/"
+		class="min-w-[10rem] border-b py-2 text-center uppercase dark:text-white"
+	>
+		{isHome ? 'Nicholas Romero' : 'Home'}
+	</a>
+	{isHome && (
+		<div class="flex justify-center gap-4 uppercase">
+			<a href="/posts">Posts</a>
+			<a href="/projects">Projects</a>
+			<a href="/about">About</a>
+		</div>
+	)}
+	{isHome && (
+		<div class="flex justify-center gap-4">
+			<a href="https://www.linkedin.com/in/ncrmro/" aria-label="Linkedin profile">
+				<LinkedinIcon class="fill-current text-gray-300" />
+			</a>
+			<a href="https://github.com/ncrmro" aria-label="Github profile" rel="me">
+				<GithubIcon class="fill-current text-gray-300" />
+			</a>
+			<a href="https://twitter.com/ncrmro" aria-label="Twitter profile">
+				<TwitterIcon class="fill-current text-gray-300" />
+			</a>
+			<a href="https://www.instagram.com/ncrmro" aria-label="Instagram profile">
+				<InstagramIcon class="fill-current text-gray-300" />
+			</a>
+		</div>
+	)}
+</nav>

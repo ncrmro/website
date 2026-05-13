@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { projects } from '../../data/projects';
+---
+<BaseLayout title="Projects" description="Projects by Nicholas Romero">
+	<div class="w-full md:max-w-4xl pt-6">
+		<h1 class="pb-4 text-xl font-semibold leading-6 text-gray-900 dark:text-white">Projects</h1>
+		<div class="grid gap-4">
+			{projects.map((project) => (
+				<a
+					href={`/projects/${project.slug}`}
+					class="block rounded-lg border border-gray-200 p-4 transition-colors hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500"
+				>
+					<h2 class="text-base font-semibold text-gray-900 dark:text-white">
+						{project.title}
+					</h2>
+					<p class="text-sm text-gray-500 dark:text-gray-400">{project.description}</p>
+				</a>
+			))}
+		</div>
+	</div>
+</BaseLayout>
