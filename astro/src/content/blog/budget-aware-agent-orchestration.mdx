@@ -1,0 +1,171 @@
+---
+title: "Budget-Aware Agent Orchestration: Applying RCPSP to Agentic Workflows"
+description: "A framework for managing agentic AI workflows through multi-dimensional budgets: tokens, time, money, human attention, and risk."
+publish_date: 2026-02-06
+published: true
+tags: []
+---
+
+Your agents are busy, but the important work isn't shipping. PRs pile up waiting for review. Customer research stalls while you context-switch between agent outputs. That strategic planning block you scheduled? Consumed by babysitting automation tasks. You added AI to move faster, yet somehow you're more constrained than ever.
+
+This frustration points to a fundamental oversight in how we think about agentic workflows: we treat AI as a force multiplier without accounting for the resources it consumes beyond compute. The bottleneck isn't usually the agents—it's the invisible budgets they compete for.
+
+## The Five Budgets of Agentic Work
+
+Effective agent orchestration requires tracking five distinct resource budgets:
+
+**Human Attention** is the most undervalued budget. Code review bandwidth, decision fatigue, and interruption of deep work are finite resources. A vibe-coded landing page requires zero review time; a brownfield refactor PR demands 30 minutes of careful scrutiny.
+
+**Risk** measures uncertainty, reversibility, and blast radius. Early-stage customer research trades effort for risk reduction. Autonomous changes to production systems carry risk that compounds with each unsupervised action.
+
+**Time** encompasses wall-clock duration and deadline pressure. A task that takes 30 seconds of compute but blocks you for 2 hours waiting for completion has a different cost than one returning in 5 minutes.
+
+**Money** includes direct costs (API fees, compute) and opportunity costs. Running expensive research agents on low-value tasks burns budget that could fund high-impact work.
+
+**Tokens** create hard boundaries through API pricing, context window limits, and rate limits. Token spend is also a proxy for capability—more tokens often mean more thorough work, but they're rarely the actual bottleneck.
+
+## RCPSP: A Framework from Operations Research
+
+The Resource-Constrained Project Scheduling Problem (RCPSP) provides theoretical grounding for this multi-budget approach. RCPSP asks: given a set of tasks with dependencies and multiple resource constraints, what's the optimal schedule?
+
+Operations researchers have studied RCPSP for decades in construction and manufacturing contexts. The core insight applies directly to agent orchestration: optimizing for a single resource while ignoring others produces suboptimal schedules. A construction project can't schedule all trades simultaneously when they share a crane. Your agent swarm can't run unlimited browser automation while a human tries to review PRs—both compete for your attention budget.
+
+RCPSP is NP-hard, meaning perfect solutions are computationally expensive. This is actually good news for practitioners: it validates the use of heuristics and trade-offs rather than demanding optimal solutions. The goal isn't a perfect schedule—it's a better one than naive single-resource optimization provides.
+
+## Task-Budget Profiles in Practice
+
+Different tasks have distinct resource profiles. Understanding these profiles enables smarter scheduling decisions.
+
+**Browser Automation** (e.g., customer research, form testing)
+- Human Attention: Low during execution, high on failure
+- Risk: Moderate—external systems, unpredictable states
+- Tokens: High—vision models, long interactions, retries
+- Best scheduled: When human is unavailable for deep work
+
+**Landing Pages / MVPs** (vibe-coded greenfield)
+- Human Attention: Minimal—review is quick, stakes are low
+- Risk: Low—isolated, reversible
+- Tokens: Low to moderate
+- Best scheduled: Parallel with any other work, offloaded entirely
+
+**Brownfield PRs** (refactoring, platform work)
+- Human Attention: High—requires deep context, careful review
+- Risk: High—yak-shaving, unintended breakage
+- Tokens: Moderate
+- Best scheduled: When human has dedicated review time, risk budget available
+
+**Customer Research** (interviews, competitive analysis)
+- Human Attention: Moderate—requires interpretation
+- Risk: Negative—actively de-risks downstream decisions
+- Tokens: High—browser automation, LLM synthesis
+- Best scheduled: Early in projects, trades effort for risk reduction
+
+## Scheduling for Scarce Human Attention
+
+Human attention deserves special focus because it's the most overlooked budget. You operate in distinct cognitive modes throughout the day: deep planning, reviewing and decisioning, and context-switching between tasks. Agent work should align with these modes.
+
+During planning blocks, schedule agents that require your strategic input: customer research synthesis, architecture decisions, prioritization. These tasks need your full attention anyway—let agents gather data while you think.
+
+During review blocks, batch agent PRs for focused evaluation. Context-switching between review and other work destroys efficiency. If your agents produce 10 PRs, review them in one session rather than 10 interruptions.
+
+During flow states, run low-scrutiny tasks in parallel. A vibe-coded MVP requires no supervision. Browser automation for form testing runs in the background. These agents are invisible to your attention budget until they complete or fail.
+
+De-risking tasks deserve front-loaded attention. Spending human attention early on customer research reduces downstream risk—the investment pays compound returns by preventing wasted engineering effort on unwanted features.
+
+## Example: Task Budgets in Practice
+
+A concrete data structure for budget-aware scheduling might look like this:
+
+```json
+{
+  "project": "customer-portal-v2",
+  "period": {
+    "date": "2026-02-06",
+    "planning_blocks": ["09:00-10:30"],
+    "review_blocks": ["14:00-15:00", "16:30-17:00"],
+    "flow_blocks": ["10:30-12:00", "15:00-16:30"]
+  },
+  "tasks": [
+    {
+      "id": "task-001",
+      "name": "Customer research interviews",
+      "type": "browser_automation",
+      "budget": {
+        "tokens": { "estimate": 50000, "level": "high" },
+        "human_attention": { "estimate": 30, "unit": "min", "level": "moderate" },
+        "risk": { "delta": -2, "note": "de-risks product direction" }
+      },
+      "scheduling": {
+        "preferred_block": "planning",
+        "reason": "requires strategic interpretation of results"
+      }
+    },
+    {
+      "id": "task-002",
+      "name": "Build landing page MVP",
+      "type": "greenfield_vibe",
+      "budget": {
+        "tokens": { "estimate": 8000, "level": "low" },
+        "human_attention": { "estimate": 5, "unit": "min", "level": "minimal" },
+        "risk": { "delta": 0 }
+      },
+      "scheduling": {
+        "preferred_block": "any",
+        "run_parallel": true,
+        "reason": "no supervision needed"
+      }
+    },
+    {
+      "id": "task-003",
+      "name": "Refactor auth middleware",
+      "type": "brownfield_pr",
+      "budget": {
+        "tokens": { "estimate": 15000, "level": "moderate" },
+        "human_attention": { "estimate": 45, "unit": "min", "level": "high" },
+        "risk": { "delta": 3, "note": "touches critical path" }
+      },
+      "scheduling": {
+        "preferred_block": "review",
+        "requires_contiguous": true,
+        "reason": "needs focused PR review, yak-shaving risk"
+      }
+    }
+  ],
+  "daily_budgets": {
+    "tokens": { "limit": 150000, "consumed": 0 },
+    "human_attention": { "limit": 120, "unit": "min", "consumed": 0 },
+    "risk_capacity": { "limit": 5, "current": 0 }
+  }
+}
+```
+
+The `period` defines the day's cognitive blocks. Each task's `scheduling.preferred_block` maps to when it should run. Task-002 can run anytime in parallel; task-003 must wait for a review block with 45 contiguous minutes available. Risk uses negative values for de-risking tasks and positive for tasks that increase exposure.
+
+## Implications for Agent System Design
+
+This multi-budget perspective suggests design principles for agent orchestration systems:
+
+**Estimate budgets upfront.** Before launching an agent task, estimate expected human review time, risk level, and resource cost. These estimates don't need precision—rough categories (low/medium/high) enable better scheduling than no estimation at all.
+
+**Track actuals against estimates.** Create feedback loops that improve your estimation accuracy over time. Which tasks consistently require more review time than expected? Which create unexpected risk? This data improves future scheduling.
+
+**Match tasks to available budgets, not just priority.** A high-priority brownfield refactor shouldn't start when your review budget is exhausted. A low-priority landing page can run anytime. Priority is one input; available budgets are the constraints.
+
+**Use KPIs as budget allocation guides.** If your current project KPI emphasizes de-risking, allocate budget toward customer research agents. If you're in execution mode, allocate toward parallel low-supervision tasks. Budgets serve goals.
+
+## Budget-Awareness as Competitive Advantage
+
+Most teams optimize agents for speed or cost, missing the multi-dimensional picture. They pile up PRs while attention is elsewhere. They burn review time on low-stakes changes while high-risk work runs unsupervised.
+
+Budget-aware orchestration enables sustainable scaling. It's not about doing more—it's about matching work to available resources across all dimensions. The solo developer managing three projects and the organization running agent fleets face the same fundamental challenge: finite budgets across multiple dimensions.
+
+Start by identifying your current bottleneck. Are you attention-constrained or time-constrained? Do you have risk budget for experimental agent tasks, or should you focus on de-risking first? The framework scales, but the diagnostic question remains the same: what's your scarcest budget right now?
+
+---
+
+## Resources
+- ** RCPSP**: [Paper](https://www.iste.co.uk/data/doc_dtalmanhopmh.pdf)
+- **RCPSP Overview**: [Wikipedia: Resource-Constrained Project Scheduling](https://en.wikipedia.org/wiki/Resource_leveling) — foundational operations research concepts
+- **Deep Work Scheduling**: Concepts from attention management research apply directly to human-in-the-loop orchestration
+- **Lean Startup De-Risking**: The Build-Measure-Learn loop maps to trading effort for risk reduction through customer research
+- **Deepwork**: [Github](http://github.com/Unsupervisedcom/deepwork)

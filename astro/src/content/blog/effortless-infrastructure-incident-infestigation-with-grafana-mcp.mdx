@@ -1,0 +1,366 @@
+---
+title: Effortless infrastructure incident infestigation with Grafana MCP
+description: Using
+publish_date: 2026-01-27
+published: false
+tags: []
+---
+
+# Why AI Agents + Grafana MCP Make Incident Investigation Effortless
+
+*How we connected Claude, Gemini, and Cursor to our observability stack and never looked back*
+
+## The Problem: Context-Switching Hell During Incidents
+
+You're on-call. An alert fires at 2 AM. You open Grafana, search for the right dashboard, tweak the time range, flip between Loki and Prometheus, cross-reference Kubernetes events, and frantically try to correlate timestamps across three different interfaces. Meanwhile, the incident is still ongoing.
+
+Sound familiar?
+
+The real problem isn't a lack of observability data—it's that **the investigation process requires too much manual context-switching**. You're the integration layer between your logs, metrics, and events, and that's exhausting at 2 AM.
+
+## The Solution: Model Context Protocol (MCP)
+
+MCP is an open protocol that lets AI assistants like Claude, Gemini, and Cursor connect directly to external tools and data sources. Instead of copy-pasting queries or explaining your infrastructure to an AI, the agent can **directly query your observability stack**.
+
+Grafana publishes an official [mcp-grafana](https://github.com/grafana/mcp-grafana) server that exposes Loki, Prometheus, and dashboard search capabilities to any MCP-compatible agent.
+
+Here's what changes:
+
+| Before MCP | With MCP |
+|------------|----------|
+| "Show me error logs" → Agent suggests LogQL syntax → You run it manually | Agent runs `query_loki_logs` directly and analyzes results |
+| "Is CPU spiking?" → Agent suggests PromQL → You copy to Grafana | Agent runs `query_prometheus` and correlates with logs |
+| "What pods restarted?" → You check K8s dashboard separately | Agent queries events and builds unified timeline |
+
+## Why Most MCPs Are Underwhelming (And Why Grafana's Isn't)
+
+Let's be honest: many MCP servers are glorified API wrappers. They expose every endpoint, dump entire responses into context, and leave the agent to figure out what's relevant. The result? Context window exhaustion, hallucinated data, and frustrated developers.
+
+**The Grafana MCP is different because it's designed for how agents actually work.**
+
+### The Context Bloat Problem
+
+Loki logs are the worst offender for context bloat. A naive "fetch all logs" query can return megabytes of data—far exceeding any LLM's context window. Even if it fits, the signal-to-noise ratio is terrible. The agent drowns in stack traces and debug statements while missing the one error that matters.
+
+### How Grafana MCP Solves This
+
+**1. Stats Before Data**
+
+The `query_loki_stats` tool lets agents check volume *before* fetching logs:
+
+```
+mcp__grafana__query_loki_stats
+  logql: '{namespace="api-services"}'
+  startRfc3339: "2024-01-15T10:00:00Z"
+  endRfc3339: "2024-01-15T12:00:00Z"
+
+→ Returns: streams: 45, entries: 2.3M, bytes: 890MB
+```
+
+The agent now knows: "2.3 million log entries is too many. I need to filter harder." This prevents the classic mistake of requesting data that will blow up the context.
+
+**2. Built-in Limits and Direction Control**
+
+Every log query supports `limit` and `direction` parameters:
+
+```
+mcp__grafana__query_loki_logs
+  logql: '{namespace="api-services"} |= "error"'
+  limit: 50
+  direction: "backward"  # Most recent first
+```
+
+The agent gets the 50 most recent errors—not 50,000 log lines hoping to find errors somewhere.
+
+**3. Label Discovery for Precise Filtering**
+
+Instead of guessing at log structure, agents can discover available labels:
+
+```
+mcp__grafana__list_loki_label_names → [namespace, app, pod, level, ...]
+mcp__grafana__list_loki_label_values(label: "level") → [info, warn, error, fatal]
+```
+
+Now the agent can construct surgical queries like `{namespace="api-services", level="error"}` instead of broad pattern matches.
+
+**4. Aggregated Metrics Over Raw Data**
+
+For Prometheus, the MCP returns query results—not raw time series dumps. When you ask for error rates, you get:
+
+```
+mcp__grafana__query_prometheus
+  promql: 'rate(http_requests_total{status=~"5.."}[5m])'
+
+→ Returns: { "api-gateway": 0.23, "auth-service": 0.01 }
+```
+
+Compact, meaningful, fits in context.
+
+### The Pattern for Context-Efficient Investigation
+
+Our workflow exploits these capabilities:
+
+1. **Stats first**: Check `query_loki_stats` to understand data volume
+2. **Filter aggressively**: Use discovered labels to narrow scope
+3. **Limit results**: Never request more than 50-100 log entries per query
+4. **Iterate if needed**: If the first 50 errors don't show the pattern, refine the query rather than requesting more data
+
+This is why an agent can investigate a 2-hour incident window with millions of log entries without exhausting context—it never tries to load them all.
+
+## Architecture: One MCP Server, Many Agents
+
+We deploy the Grafana MCP server once in our Kubernetes cluster and connect multiple AI tools to it:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Kubernetes Cluster                        │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  mcp-grafana Deployment                               │   │
+│  │  (grafana/mcp-grafana:0.7.10)                         │   │
+│  │  --enabled-tools=prometheus,search,datasource,loki    │   │
+│  │  -transport=streamable-http                           │   │
+│  └──────────────────────────────────────────────────────┘   │
+│           │                                                  │
+│           ▼                                                  │
+│  ┌─────────────────────┐    ┌────────────────────────┐      │
+│  │ Grafana (internal)  │    │ Ingress (Basic Auth)   │      │
+│  │ - Loki datasource   │◀──│ grafana-mcp.company.com │      │
+│  │ - Prometheus        │    └────────────────────────┘      │
+│  └─────────────────────┘                 │                   │
+└──────────────────────────────────────────│───────────────────┘
+                                           │
+           ┌───────────────────────────────┼───────────────────┐
+           │                               │                   │
+           ▼                               ▼                   ▼
+    ┌─────────────┐              ┌─────────────┐      ┌─────────────┐
+    │ Claude Code │              │   Gemini    │      │   Cursor    │
+    │ .mcp.json   │              │ settings.json│     │ .cursor/    │
+    └─────────────┘              └─────────────┘      └─────────────┘
+```
+
+### The Kubernetes Manifest
+
+The MCP server runs as a simple deployment:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-grafana
+  namespace: unsupervised-singleton
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: mcp-grafana
+          image: grafana/mcp-grafana@sha256:05cf3be5052b...
+          args:
+            - "--enabled-tools=prometheus,search,datasource,loki"
+            - "--disable-write"  # Read-only for safety
+            - "-transport=streamable-http"
+            - "-address=:8000"
+          env:
+            - name: GRAFANA_URL
+              value: "http://unsupervised-singleton-grafana:80"
+            - name: GRAFANA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-user
+            - name: GRAFANA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-password
+```
+
+Key decisions:
+- **`--disable-write`**: Agents can query but not modify dashboards
+- **`streamable-http` transport**: Works with remote connections (agents aren't in-cluster)
+- **Basic Auth on Ingress**: Secure external access for developer machines
+
+### Client Configuration
+
+Every AI tool shares the same MCP endpoint with slightly different config formats.
+
+**Claude Code (`.mcp.json`)**:
+```json
+{
+  "mcpServers": {
+    "grafana": {
+      "type": "http",
+      "url": "https://grafana-mcp.unsupervised.com/mcp",
+      "headers": {
+        "Authorization": "${MCP_GRAFANA_BASIC_AUTH_HEADER}"
+      }
+    }
+  }
+}
+```
+
+**Gemini CLI (`.gemini/settings.json`)**:
+```json
+{
+  "mcpServers": {
+    "grafana": {
+      "url": "https://grafana-mcp.unsupervised.com/mcp",
+      "headers": {
+        "Authorization": "${MCP_GRAFANA_BASIC_AUTH_HEADER}"
+      }
+    }
+  }
+}
+```
+
+**Cursor IDE (`.cursor/mcp.json`)**:
+```json
+{
+  "mcpServers": {
+    "grafana": {
+      "url": "https://grafana-mcp.unsupervised.com/mcp",
+      "headers": {
+        "Authorization": "Basic <base64-encoded-credentials>"
+      }
+    }
+  }
+}
+```
+
+The configuration is nearly identical—the protocol is the same, just the file location differs.
+
+## The Incident Investigation Workflow
+
+We built a structured workflow that any agent can execute. Here's what happens when you trigger `/k8s_incident_investigation`:
+
+### Step 1: Gather Context
+
+The agent asks structured questions:
+- Which namespace?
+- What time range?
+- Any specific service?
+
+Then it validates access:
+```
+mcp__grafana__list_datasources → Find Loki & Prometheus UIDs
+mcp__grafana__list_loki_label_names → Verify we can query logs
+```
+
+### Step 2-4: Parallel Data Collection
+
+Three queries run with context-aware limits:
+
+**Logs (Loki)**:
+```
+# Check volume first
+query_loki_stats → "450K entries in time range"
+
+# Filter to errors only, limit to 50
+{namespace="api-services"} |= "error" or |= "ERROR"
+limit: 50, direction: backward
+```
+
+**Metrics (Prometheus)**:
+```promql
+rate(http_requests_total{namespace="api-services",status=~"5.."}[5m])
+container_memory_working_set_bytes{namespace="api-services"}
+histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+```
+
+**Kubernetes Events**:
+```
+OOMKilled events, CrashLoopBackOff, deployment changes
+```
+
+### Step 5: Correlation
+
+The agent builds a unified timeline:
+
+```
+[T-10m]        [T-5m]         [T-0m]          [T+5m]
+   |              |              |               |
+   Traffic        CPU            OOMKill         Recovery
+   Spike          Saturation     Event           Complete
+                     |              |
+                  First errors   Pod restart
+```
+
+It identifies patterns automatically:
+- "Memory metrics approaching limits → OOMKilled event → Error logs about killed processes"
+- This is a **Resource Exhaustion Cascade**
+
+### Step 6: Generate Report
+
+A complete incident report with:
+- Executive summary
+- Timeline of events
+- Root cause analysis with evidence
+- Remediation steps
+
+All without you leaving your terminal or switching between Grafana tabs.
+
+## Available MCP Tools
+
+The Grafana MCP server exposes these tools to agents:
+
+| Tool | Purpose | Context-Efficiency Feature |
+|------|---------|---------------------------|
+| `list_datasources` | Discover available data sources | Returns only metadata |
+| `query_loki_stats` | Get log volume statistics | **Check before fetch** |
+| `query_loki_logs` | Search logs with LogQL | `limit` and `direction` params |
+| `list_loki_label_names` | Find available log labels | Enables precise filtering |
+| `list_loki_label_values` | Get values for a label | Enables precise filtering |
+| `query_prometheus` | Run PromQL queries | Returns aggregated results |
+| `list_prometheus_metric_names` | Discover available metrics | Returns only names |
+| `search_dashboards` | Find relevant dashboards | Returns summaries, not full JSON |
+
+Agents can chain these intelligently. If they find high error rates in Prometheus, they automatically drill into Loki for the actual error messages—but only after checking stats and applying appropriate limits.
+
+## Why This Works
+
+### 1. Agents Excel at Correlation
+
+Humans are bad at correlating timestamps across multiple systems at 2 AM. Agents don't get tired and can instantly cross-reference: "The OOMKilled event at 14:32:15 matches the first error log at 14:32:14 and the memory spike starting at 14:30:00."
+
+### 2. Context-Aware by Design
+
+The Grafana MCP isn't just an API wrapper—it's designed for bounded context. Stats endpoints, result limits, and label discovery mean agents can investigate terabytes of observability data without loading it all into memory.
+
+### 3. Structured Output
+
+Instead of free-form Slack threads, you get a standardized incident report every time. Easy to share, easy to review in postmortems.
+
+### 4. Agent-Agnostic
+
+The same MCP server works with Claude, Gemini, Cursor, or any future agent that supports the protocol. You're not locked into one vendor's ecosystem.
+
+### 5. Read-Only by Default
+
+The `--disable-write` flag means agents can investigate but can't accidentally delete dashboards or modify alerts. Safe for production.
+
+## Getting Started
+
+1. **Deploy the MCP server** in your cluster using the manifest above
+2. **Create an Ingress** with basic auth for external access
+3. **Configure your agent** with the appropriate `.mcp.json` or settings file
+4. **Export the auth header** as an environment variable:
+   ```bash
+   export MCP_GRAFANA_BASIC_AUTH_HEADER="Basic $(echo -n 'user:pass' | base64)"
+   ```
+5. **Test the connection**:
+   ```
+   "List all Grafana datasources"
+   ```
+
+## What's Next
+
+We're extending this pattern to:
+- Automated incident response (agent creates JIRA tickets with findings)
+- Proactive monitoring (agent reviews metrics daily and flags anomalies)
+- Runbook execution (agent follows playbooks and reports progress)
+
+The future of incident management isn't better dashboards—it's intelligent agents that can navigate the dashboards for you. And with MCP servers designed for context efficiency like Grafana's, that future is already here.
+
+---
+
+*The Grafana MCP server is open source: [github.com/grafana/mcp-grafana](https://github.com/grafana/mcp-grafana)*

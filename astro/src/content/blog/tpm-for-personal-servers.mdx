@@ -1,0 +1,63 @@
+---
+title: TPM for personal servers
+description: You have encrypted server, its on a battery backup. You're on vacation and power goes out long enough to kill UPS. System boots and hangs at wanting the encrypt
+publish_date: 2023-09-21
+published: false
+tags: []
+---
+
+You have encrypted server, its on a battery backup. You're on vacation and power goes out long enough to kill UPS. System boots and hangs at wanting the encryption key.
+
+There are plenty of guides where you can install Dropbear a small SSH server that starts during the boot loader and allows you to put in your ssh key over encryption. I haven't seen many guides where this works with wireguard and even if it did you wireguard private key would still be visible.
+
+
+---
+
+Verifying TPM
+
+```bash
+dmesg | grep -i tpm
+```
+
+libtss2-tcti-tabrmd0
+tpm2-abrmd
+
+https://paolozaino.wordpress.com/2021/02/21/linux-configure-and-use-your-tpm-2-0-module-on-linux/
+
+https://ericchiang.github.io/post/tpm-keys/
+
+First we create the primary key.
+
+```bash
+ncrmro@mox:~$ tpm2 createprimary --key-context test
+name-alg:
+  value: sha256
+  raw: 0xb
+attributes:
+  value: fixedtpm|fixedparent|sensitivedataorigin|userwithauth|restricted|decrypt
+  raw: 0x30072
+type:
+  value: rsa
+  raw: 0x1
+exponent: 65537
+bits: 2048
+scheme:
+  value: null
+  raw: 0x10
+scheme-halg:
+  value: (null)
+  raw: 0x0
+sym-alg:
+  value: aes
+  raw: 0x6
+sym-mode:
+  value: cfb
+  raw: 0x43
+sym-keybits: 128
+rsa: c4588877f86c2787c34ea425024611b0730ad36f3d2c1cdba279860cbef35f1fdd6c3bcbe18b075369e8282ddd9948c20f012b2390a82ee6b87ab97ea153d24ea821eafec91caf3789e7e1f27e8b9eac2f1b5ee6c363a8f264b96b5e0bfb42e47046f8d733113f67b307683d04033906efecf0a2ec585a1b6ae1ad789aca31c4c2e78d79fb9273938cf5a4c6fda7b73ce256c33445af5201b6b58a258ad854535a1bd36dab2c8c7ba737d6cee021997f3dec28a4ccd907523c8f76229e701e0cc2e11b0e32d5fe7d9d2ad5b7e4aceeeb4bcac80db461fb8e9db49e8c023317925a5defed94642e3a9f29cd02b53de96c839f69ee1408480f741fd478b947c95f
+```
+
+```
+tpm2 getrandom 32 --hex
+f605f7332a8b2a228f7b47c93695b44206e31960eb66a1a22cb25d6649aa009f
+```
