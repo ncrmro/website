@@ -49,14 +49,13 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.bun/install/cache
-        key: ${{ runner.os }}-bun-${{ hashFiles('astro/bun.lock') }}
+        key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
         restore-keys: |
           ${{ runner.os }}-bun-
 
     - name: Install dependencies
       if: inputs.skip-setup != 'true'
       shell: bash
-      working-directory: astro
       run: bun install --frozen-lockfile
 
     # Persist Astro's content-collection metadata cache so incremental
@@ -65,20 +64,18 @@ runs:
     - name: Cache Astro build
       uses: actions/cache@v4
       with:
-        path: astro/node_modules/.astro
-        key: ${{ runner.os }}-astro-${{ hashFiles('astro/bun.lock') }}-${{ hashFiles('astro/src/content/**/*', 'astro/src/content.config.ts') }}
+        path: node_modules/.astro
+        key: ${{ runner.os }}-astro-${{ hashFiles('bun.lock') }}-${{ hashFiles('src/content/**/*', 'src/content.config.ts') }}
         restore-keys: |
-          ${{ runner.os }}-astro-${{ hashFiles('astro/bun.lock') }}-
+          ${{ runner.os }}-astro-${{ hashFiles('bun.lock') }}-
 
     - name: Build Astro site
       shell: bash
-      working-directory: astro
       run: bun run astro build
 
     - name: Deploy to Cloudflare (promote)
       if: inputs.mode == 'deploy'
       shell: bash
-      working-directory: astro
       env:
         CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare-account-id }}
@@ -92,7 +89,6 @@ runs:
       id: upload
       if: inputs.mode == 'upload'
       shell: bash
-      working-directory: astro
       env:
         CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare-account-id }}

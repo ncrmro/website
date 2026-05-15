@@ -3,7 +3,12 @@ name: Preview
 on:
   pull_request:
     paths:
-      - 'astro/**'
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'bun.lock'
+      - 'astro.config.mjs'
+      - 'wrangler.jsonc'
       - '.github/workflows/preview.yml'
       - '.github/actions/cloudflare-deploy/**'
 

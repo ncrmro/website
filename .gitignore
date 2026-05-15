@@ -1,66 +1,33 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# Dependencies
 /node_modules
-/.pnp
-.pnp.js
 
-# testing
-/coverage
+# Build output
+/dist
+/.astro
+.wrangler
+worker-configuration.d.ts
 
-# next.js
-/.next/
-/out/
-next-env.d.ts
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
 npm-debug.log*
 yarn-debug.log*
+pnpm-debug.log*
 yarn-error.log*
 
-# local env files
+# Environment files
 .env
 .env*.local
 .env.production
+.dev.vars*
 
-# vercel
-.vercel
+# Editor and OS
+.DS_Store
+*.pem
 
-# Turborepo
-.turbo
-
-# typescript
-*.tsbuildinfo
-
-# CLI build artifacts
-bin/dist/
-
-# Test database and helpers
-local.db*
-test-db-server.js
-
-sqlite3.db*
-/test-results/
-/playwright-report/
-/playwright/.cache/
-dist
-public/uploads/posts
-public/sw*
-public/workbox*
-.playwright-mcp
-temp-uploads/
+# Tooling caches
 .direnv
 
-# Astro
-astro/node_modules/
-astro/.astro/
-astro/dist/
-astro/.wrangler/
-astro/worker-configuration.d.ts
+# Agent and workflow scratch
+.claude/worktrees/
+.deepwork/

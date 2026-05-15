@@ -17,21 +17,9 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # Node.js
             nodejs_22
-            pnpm
             bun
-
-            # Database
-            sqld
-
-            # Development tools
-            concurrently
-
-            # Claude Code CLI
             claude-code
-
-            # Playwright dependencies
             playwright-driver.browsers
           ];
 
@@ -39,13 +27,8 @@
             export PLAYWRIGHT_BROWSERS_PATH="${pkgs.playwright-driver.browsers}"
             export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
 
-            # Set up local database path
-            export DATABASE_URL="file:./local.db"
-            export DB_PORT=8080
-
             echo "🚀 ncrmro website dev shell ready"
-            echo "   Run 'make up' to start libsql + Next.js"
-            echo "   Run 'claude' to start Claude Code"
+            echo "   Run 'bun run dev' to start the Astro dev server"
           '';
         };
       }
