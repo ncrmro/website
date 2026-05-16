@@ -20,7 +20,7 @@ inputs:
     required: false
     default: 'false'
   preview-alias:
-    description: 'DNS-safe alias for the preview URL (mode=upload only). When set, the preview URL becomes <alias>-ncrmro-website-astro.<acct>.workers.dev instead of <version-id>-…. Sanitize before passing — only [a-z0-9-] survives in DNS.'
+    description: 'DNS-safe alias for the preview URL (mode=upload only). When set, the preview URL becomes <alias>-ncrmro-website.<acct>.workers.dev instead of <version-id>-…. Sanitize before passing — only [a-z0-9-] survives in DNS.'
     required: false
     default: ''
 
@@ -83,7 +83,7 @@ runs:
 
     # `wrangler versions upload` creates a versioned preview without
     # touching the production alias. `--preview-alias` gives it a
-    # DNS-safe URL like <alias>-ncrmro-website-astro.<acct>.workers.dev
+    # DNS-safe URL like <alias>-ncrmro-website.<acct>.workers.dev
     # instead of the opaque <version-id>-… form.
     - name: Upload versioned preview
       id: upload
@@ -114,7 +114,7 @@ runs:
           url="$(grep -oE 'Version Preview URL: https://[^ ]+' "$log_file" | head -1 | sed 's/^Version Preview URL: //')"
         fi
         if [ -z "$url" ]; then
-          url="$(grep -oE 'https://[a-z0-9-]+-ncrmro-website-astro\.[a-z0-9]+\.workers\.dev' "$log_file" | head -1)"
+          url="$(grep -oE 'https://[a-z0-9-]+-ncrmro-website\.[a-z0-9]+\.workers\.dev' "$log_file" | head -1)"
         fi
         if [ -n "$url" ]; then
           echo "preview_url=$url" >> "$GITHUB_OUTPUT"

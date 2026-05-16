@@ -1,6 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "ncrmro-website-astro",
+	"name": "ncrmro-website",
 	"main": "@astrojs/cloudflare/entrypoints/server",
 	"compatibility_date": "2026-05-13",
 	"compatibility_flags": [
