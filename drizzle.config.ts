@@ -1,10 +1,7 @@
 import { defineConfig } from "drizzle-kit";
-import { config } from "dotenv";
-
-config({ path: ".env.local", quiet: true });
 
 export default defineConfig({
-  schema: "./src/database/schema.ts",
+  schema: "./db/schema.ts",
   out: "./drizzle",
   ...(process.env.TURSO_AUTH_TOKEN
     ? {

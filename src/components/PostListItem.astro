@@ -1,0 +1,37 @@
+---
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+	slug: string;
+	title: string;
+	description: string;
+	publish_date?: Date;
+	published: boolean;
+}
+
+const { slug, title, description, publish_date, published } = Astro.props;
+---
+<li class="p-2">
+	<div>
+		<div class="flex justify-between">
+			<a href={`/posts/${slug}`} class="font-medium text-gray-900 dark:text-white">
+				{title}
+			</a>
+			{!published && (
+				<span class="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+					Draft
+				</span>
+			)}
+		</div>
+		{publish_date && (
+			<p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+				<FormattedDate date={publish_date} />
+			</p>
+		)}
+	</div>
+	{description && (
+		<div class="mt-2 text-sm text-gray-700 dark:text-gray-400">
+			<p>{description}</p>
+		</div>
+	)}
+</li>

@@ -1,0 +1,39 @@
+---
+title: Setting up Adguard as home DHCP and DNS server
+description: "# Why"
+publish_date: 2023-10-20
+published: false
+tags: []
+---
+
+# Why
+
+Block ads and  trackers on network level
+To allow jellyfin to have a real domain routable inside my home network with ssl
+
+# How 
+
+Debian PI burned to SD Card
+Add SSH key to firmware
+UFW Fail2ban
+Curl
+Adguard script
+Set static ip on debain
+
+nano /etc/network/interfaces/eth0
+
+```
+auto enp0s5
+iface enp0s5  inet static
+ address 192.168.1.1
+ netmask 255.255.255.0
+ gateway 192.168.1.254
+ dns-domain local
+ dns-nameservers 1.1.1.1 8.8.8.8
+```
+
+systemctl restart networking.service
+# What
+
+Pi 4
+DHCP/DNS server.

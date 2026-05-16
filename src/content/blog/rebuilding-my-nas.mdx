@@ -1,0 +1,110 @@
+---
+title: Rebuilding my NAS
+description: Over the weekend I rebuilt my NAS using ZFS, Debian and K3s.
+publish_date: 2023-10-15
+published: false
+tags: []
+---
+
+# Why (Is this intersting)
+
+CPU the exhaust FAN's both burned out, diffrent brands LIAN LI and a Notcua
+
+
+# What
+
+* Hardware
+ * CPU Fan locked up.
+ * Top Exhaust locked up
+ * Replaced all fans in the case.
+* Hooking the UPC up to NAS
+
+* Software
+ * Default Cron Scrub job
+ * Sanoid backups
+ * Syncoid rpool sync to ocean. 
+ * Helm chart repo
+ * Cert maanger with cloudfalre cluster issuer
+ *  Wildcard NGINX cert
+ * Added to Wireguard VPN
+ * Pulled old media volumes over ssh to extract
+  * Allow user to send snapshots to pull
+  * Move all media and downloads folders into single dataset.
+* Installed hdparm to check disk rpm etc, quite noisy
+* install apcupsd usbutils
+* install fancontrol
+
+# How
+
+Previously my NAS was off site at a family member's house. It had been running TrueNAS for a couple years. While I was out in Denver for a few months I had noticed my NAS becoming quite unresponsive, upon further investigation I noticed CPU temps where at 90c, pretty much where all silicone based hardware starts to limit power and speed to keep the heat under on on control. I had initially guessed that the AC in the room it was located in went out, once I got back I opened it up and saw the fan stuck. The LIAN LI case I use is quite difficult to see into. 
+
+## Hardware
+
+Once I got the case in my new home and opened up I noticed the top CPU fan also froze shut. Luckily the FAN in the front of the case the blows air over the hard drives and then into the main hardware bay was still functioning as well as the power supply fan.
+
+The nice thing about the new fans are that they have 4 pins which allows for control over speed and noise from 
+
+I removed the old fan and amazon was late with getting the new one so I took the old 120mm fan and just pushed it up against the old card.
+
+## Data integrity and availability
+
+- Debian ZFS comes with a default scrub job that runs once a month.
+
+```shell
+cat /etc/cron.d/zfsutils-linux 
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# TRIM the first Sunday of every month.
+24 0 1-7 * * root if [ $(date +\%w) -eq 0 ] && [ -x /usr/lib/zfs-linux/trim ]; then /usr/lib/zfs-linux/trim; fi
+
+# Scrub the second Sunday of every month.
+24 0 8-14 * * root if [ $(date +\%w) -eq 0 ] && [ -x /usr/lib/zfs-linux/scrub ]; then /usr/lib/zfs-linux/scrub; fi
+```
+
+- Sanoid is installed via APT and automatically creates cronjob 
+
+```shell
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+*/15 * * * * root [ -f /etc/sanoid/sanoid.conf ] && if [ ! -d /run/systemd/system ]; then TZ=UTC /usr/sbin/sanoid --cron --quiet; fi
+```
+
+The config file is as follows
+
+```shell
+cat /etc/sanoid/sanoid.conf
+[rpool]
+        use_template = production
+        process_children_only = yes
+        recursive = yes
+
+#############################
+# templates below this line #
+#############################
+
+[template_production]
+        frequently = 6
+        hourly = 36
+        daily = 30
+        monthly = 3
+        yearly = 3
+        autosnap = yes
+        autoprune = yes
+```
+
+- Syncoid can be configured to sync rpool snapshots to the raid array.
+
+```shell
+cat /etc/cron.d/syncoid
+*/15 * * * * root flock -n /var/run/sanoid/cron-rpool-syncoid.lock -c "/usr/sbin/syncoid  --sendoptions=w --recvoptions=w --compress=none --no-sync-snap --recursive rpool ocean/backups/ocean/rpool"
+```
+ 
+## Pulling Old data
+
+Since the old data was on a zvol created by TrueNAS I pulled those of the NAS to my workstation, I had orignally mounted two virtual disks one for the OS and one for data. This caused more headache and often if using k3s with local privioner Id rather just keep everything on one disk. 
+
+At this point I had all the serarrs config directories and used kubectl to copy them into the /config dir for each of the pods.
+
+Using the ZFS k8 provisioner I also had to allow multiple deployments to share a single PVC.
+
+AFter that I temporarily mounted the new volumne so I could rsync the directories in a tmux session overnight.

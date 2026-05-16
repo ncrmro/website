@@ -1,0 +1,87 @@
+---
+title: Announcing Catalyst
+description: A development platform with preview environments for every pull request
+publish_date: 2025-08-10
+published: true
+tags: []
+---
+
+I'm building Catalyst, a development platform that gives every developer—human or AI—their own slice of a real Kubernetes cluster. The insight: Kubernetes already has the primitives for secure multi-tenancy (RBAC, namespaces, resource quotas, network policies), but wiring them together for developer environments is tedious. Catalyst handles that wiring, so you get isolated preview environments with actual cluster access, not a sandbox simulation.
+
+## The Problem
+
+Modern development workflows demand fast feedback loops. When someone opens a pull request, you want to see the changes running—not just pass tests, but actually click around and verify behavior. Yet setting up preview environments is a non-trivial infrastructure project:
+
+- Spinning up isolated Kubernetes namespaces per PR
+- Managing ingress routing and DNS
+- Handling resource quotas and cleanup
+- Integrating with GitHub for status updates and comments
+
+Most teams either don't have preview environments, or they've built fragile internal tooling that requires constant maintenance.
+
+## What Catalyst Does
+
+Catalyst automates the preview environment lifecycle:
+
+1. An agent or developer opens a pull request
+2. Catalyst creates an isolated preview environment in Kubernetes
+3. CI runs in the same environment (keeping feedback fast)
+4. Both agents (via MCP server) and humans can inspect services and public URLs
+5. When the PR closes, cleanup happens automatically
+
+Three core specs define the foundation:
+
+**Environments** — Manages deployment environments (production, staging) and development environments (preview pods for PRs). Each environment gets restricted kube access within its namespace.
+
+**VCS Providers** — Integrations with GitHub, GitLab, Gitea, and Forgejo. Posts preview URLs to PRs, synchronizes team memberships, provides unified project management.
+
+**Agent Harness** — Runs CLI coding agents (Claude Code, Codex, Aider) in isolated environments using your own subscriptions. Piggybacks on each agent's native capabilities rather than reinventing them.
+
+## Agents as First-Class Cluster Citizens
+
+The deeper vision: agents should be able to introspect and operate their environment, not just run code.
+
+By exposing the Kubernetes API directly to agents within their namespace, they can:
+
+- **Debug deployments** — Query pod status, read logs, check resource consumption
+- **Schedule workloads** — Spin up databases, caches, or helper services as needed
+- **Observe metrics** — Access Prometheus metrics and Loki logs via Grafana MCP
+- **Self-heal** — Restart failed pods, scale replicas, adjust resource limits
+
+This transforms agents from passive code-runners into active participants in their infrastructure.
+
+## Multi-Tenant Clusters
+
+This builds on an idea I've been thinking about for years: using Kubernetes primitives to safely share clusters between users.
+
+The security model layers several Kubernetes features:
+
+**RBAC (Role-Based Access Control)** — Each user/agent gets a ServiceAccount scoped to their namespace. They can create pods, services, and configmaps within their namespace, but cannot see or affect other namespaces.
+
+**Resource Quotas** — Each namespace has CPU/memory limits. One user's runaway process can't starve other tenants.
+
+**Network Policies** — Namespaces are isolated by default. Ingress comes only through the nginx controller; egress is restricted to DNS and the container registry. Users can't probe internal services or exfiltrate data to arbitrary endpoints.
+
+**Namespace Isolation** — Each PR, each project, each user gets their own namespace. Cleanup is as simple as `kubectl delete namespace`.
+
+The result: a single cluster can host dozens of isolated environments with strong security boundaries. Users get real Kubernetes access—not a sandbox simulation—but scoped to their slice of the cluster.
+
+## Current Focus
+
+Preview environments are working end-to-end at tetraship.app. The current work is fixing UI bugs (namespace mismatch, status updates) and implementing namespace garbage collection.
+
+## Tech Stack
+
+- Next.js 15 with TypeScript
+- PostgreSQL with Drizzle ORM
+- Kubernetes operator written in Go
+- Helm charts for deployment
+
+## Available
+
+Catalyst is available as a managed platform or self-hosted solution.
+
+## Links
+
+- [catalyst.ncrmro.com](https://catalyst.ncrmro.com)
+- [GitHub: ncrmro/catalyst](https://github.com/ncrmro/catalyst)

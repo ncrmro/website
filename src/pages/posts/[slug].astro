@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog', ({ data }) => data.published);
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, publish_date } = post.data;
+---
+<BaseLayout
+	title={title}
+	description={description}
+	type="article"
+	publishedTime={publish_date?.toISOString()}
+>
+	<article class="w-full md:max-w-4xl">
+		<header class="pt-6 pb-5">
+			<h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+				{title}
+			</h1>
+			{publish_date && (
+				<div class="text-gray-500 dark:text-gray-400">
+					<FormattedDate date={publish_date} />
+				</div>
+			)}
+			{description && (
+				<p class="mt-1 truncate text-sm text-gray-500 dark:text-gray-400">
+					{description}
+				</p>
+			)}
+		</header>
+		<div id="post-body" class="pt-6 pb-3 prose dark:prose-invert max-w-none">
+			<Content />
+		</div>
+	</article>
+</BaseLayout>

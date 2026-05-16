@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+body {
+	font-family: var(--font-atkinson), sans-serif;
+}
