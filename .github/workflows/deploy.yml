@@ -51,10 +51,13 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Drizzle migrations against the Turso database. Idempotent, so
-      # we run on every push — cheap, and keeps the migration path warm
-      # in case schema work returns.
+      # Drizzle migrations against the Turso database. The DB is inert
+      # scaffolding today (no live client reads it), so this step is
+      # allowed to fail without blocking the deploy — keeps the wiring
+      # in place for when schema work returns. Re-validate the step
+      # when the DB is revived.
       - name: Run database migrations
+        continue-on-error: true
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
