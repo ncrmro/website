@@ -3,7 +3,12 @@ name: Validate
 on:
   pull_request:
     paths:
-      - 'astro/**'
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'bun.lock'
+      - 'astro.config.mjs'
+      - 'wrangler.jsonc'
       - '.github/workflows/validate.yml'
 
 concurrency:
@@ -12,10 +17,6 @@ concurrency:
 
 permissions:
   contents: read
-
-defaults:
-  run:
-    working-directory: astro
 
 jobs:
   build:
@@ -36,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('astro/bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
