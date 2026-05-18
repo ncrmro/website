@@ -61,9 +61,9 @@ secrets.
 - `.github/actions/cloudflare-deploy/action.yml` — composite action
   shared by deploy and preview.
 
-Worker name: `ncrmro-website-astro` (per `wrangler.jsonc`). The preview
+Worker name: `ncrmro-website` (per `wrangler.jsonc`). The preview
 alias URL pattern is
-`<branch-slug>-ncrmro-website-astro.<acct>.workers.dev`.
+`<branch-slug>-ncrmro-website.<acct>.workers.dev`.
 
 ## Conventions
 

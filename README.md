@@ -69,8 +69,8 @@ as the env secrets are populated.
   `.github/workflows/preview.yml` publishes a versioned Cloudflare alias
   per PR and comments the URL; `.github/workflows/validate.yml` runs a
   fork-safe `astro build` on every PR.
-- **Worker**: `ncrmro-website-astro` (see `wrangler.jsonc`).
-- **Live**: https://ncrmro-website-astro.ncrmro.workers.dev/
+- **Worker**: `ncrmro-website` (see `wrangler.jsonc`).
+- **Live**: https://ncrmro-website.ncrmro.workers.dev/
 
 Required repo configuration:
 
