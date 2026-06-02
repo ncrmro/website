@@ -51,7 +51,7 @@ status: assigned
 - [ ] Health check endpoint returns 200
 ```
 
-**Isolated sandboxes.** Git worktrees (`git worktree add .worktrees/feature-name`) give each agent its own working copy. No conflicts with your work, parallel execution across repos, trivial cleanup.
+**Isolated sandboxes.** Git worktrees give each agent its own working copy. No conflicts with your work, parallel execution across repos, trivial cleanup.
 
 **Workflow definitions.** Repeatable processes (plan → assign → review → merge) become callable commands with quality gates. The notes repo holds the workflow definitions; agents execute them against any project repo.
 
@@ -76,6 +76,6 @@ The common thread: **git for persistence, markdown for configuration, worktrees 
 
 **2. Add a CLAUDE.md (or AGENTS.md) to it.** List your conventions, project relationships, and what matters across repos. Every agent session that touches any of your projects starts with this context loaded.
 
-**3. Use worktrees for agent work.** `git worktree add .worktrees/feature feature-branch` gives the agent its own sandbox. No risk to your working directory. When it's done, review the diff and clean up the worktree.
+**3. Use worktrees for agent work.** A `git worktree` per branch gives the agent its own sandbox. No risk to your working directory. When it's done, review the diff and clean up the worktree.
 
 These are small changes. Each one compounds. The notes you keep for yourself become the persistent memory that turns AI agents from stateless code generators into contextual collaborators -- and the repo holding those notes becomes the control plane you didn't know you were building.
