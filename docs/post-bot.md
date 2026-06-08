@@ -33,6 +33,25 @@ wrangler secret put AUTH_GOOGLE_ID
 wrangler secret put AUTH_GOOGLE_SECRET
 ```
 
+For branch preview OAuth, also set a redirect proxy URL so Google can call back to one stable authorized URI and Auth.js can redirect back to the preview URL encoded in state:
+
+```bash
+wrangler secret put AUTH_REDIRECT_PROXY_URL
+# value: https://<stable-host>/api/auth
+```
+
+Then add this Google OAuth authorized redirect URI:
+
+```text
+https://<stable-host>/api/auth/callback/google
+```
+
+For a one-off preview without a proxy, add the exact preview callback URI instead:
+
+```text
+https://feat-post-bot-ncrmro-website.ncrmro.workers.dev/api/auth/callback/google
+```
+
 Only `ncrmro@gmail.com` can sign in.
 
 Then open `/admin/posts`, sign in with Google, and create a post PR. The browser never receives `GITHUB_CONTENT_PAT`.
