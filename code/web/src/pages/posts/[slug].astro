@@ -14,6 +14,7 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const { title, description, publish_date } = post.data;
+const editHref = `/admin/posts/${encodeURIComponent(post.id)}`;
 ---
 <BaseLayout
 	title={title}
@@ -23,9 +24,18 @@ const { title, description, publish_date } = post.data;
 >
 	<article class="w-full md:max-w-4xl">
 		<header class="pt-6 pb-5">
-			<h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-				{title}
-			</h1>
+			<div class="flex items-start justify-between gap-4">
+				<h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+					{title}
+				</h1>
+				<a
+					id="admin-edit-post"
+					class="hidden rounded-md border border-gray-300 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+					href={editHref}
+				>
+					Edit post
+				</a>
+			</div>
 			{publish_date && (
 				<div class="text-gray-500 dark:text-gray-400">
 					<FormattedDate date={publish_date} />
@@ -41,4 +51,15 @@ const { title, description, publish_date } = post.data;
 			<Content />
 		</div>
 	</article>
+	<script>
+		const editLink = document.querySelector('#admin-edit-post');
+		fetch('/api/auth/session')
+			.then((response) => response.ok ? response.json() : null)
+			.then((session) => {
+				if (session?.user?.email?.toLowerCase() === 'ncrmro@gmail.com') {
+					editLink?.classList.remove('hidden');
+				}
+			})
+			.catch(() => {});
+	</script>
 </BaseLayout>

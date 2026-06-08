@@ -1,0 +1,49 @@
+post_bot_auth_api_security:
+  description: "Review post-bot auth, admin UI, and GitHub content API changes for auth bypasses, secret leakage, and unsafe content writes."
+  match:
+    include:
+      - "code/web/src/lib/auth.ts"
+      - "code/web/src/lib/githubPostBot.ts"
+      - "code/web/src/pages/api/**/*.ts"
+      - "code/web/src/pages/admin/**/*.astro"
+      - "code/web/src/components/AdminPostForm.astro"
+      - "code/web/src/pages/posts/*.astro"
+      - "code/web/scripts/post-bot.ts"
+  review:
+    strategy: matches_together
+    additional_context:
+      all_changed_filenames: true
+    instructions:
+      file: .deepwork/review/post_bot_auth_api_security.md
+
+cloudflare_ci_release_safety:
+  description: "Review Cloudflare, dependency, and GitHub Actions changes for deploy safety, preview correctness, and accidental gating drift."
+  match:
+    include:
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
+      - ".github/actions/**/action.yml"
+      - ".github/actions/**/action.yaml"
+      - "code/web/wrangler.jsonc"
+      - "code/web/package.json"
+      - "code/web/bun.lock"
+      - "devenv.nix"
+      - "devenv.yaml"
+      - ".envrc"
+  review:
+    strategy: matches_together
+    additional_context:
+      all_changed_filenames: true
+    instructions:
+      file: .deepwork/review/cloudflare_ci_release_safety.md
+
+content_post_integrity:
+  description: "Review blog MDX/frontmatter changes for schema compliance, publication intent, and media-link consistency."
+  match:
+    include:
+      - "code/web/src/content/blog/*.mdx"
+      - "code/web/src/content.config.ts"
+  review:
+    strategy: matches_together
+    instructions:
+      file: .deepwork/review/content_post_integrity.md

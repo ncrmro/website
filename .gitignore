@@ -32,4 +32,7 @@ yarn-error.log*
 
 # Agent and workflow scratch
 .claude/worktrees/
-.deepwork/
+.deepwork/*
+!.deepwork/review/
+!.deepwork/review/**
+.deepwork/tmp/

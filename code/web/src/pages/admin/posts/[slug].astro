@@ -1,0 +1,26 @@
+---
+import { env } from 'cloudflare:workers';
+import AdminPostForm from '../../../components/AdminPostForm.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { ALLOWED_EMAIL, getSession, type AuthEnv } from '../../../lib/auth';
+
+export const prerender = false;
+
+const session = await getSession(Astro.request, env as AuthEnv);
+const slug = Astro.params.slug ?? '';
+
+if (session?.user?.email?.toLowerCase() !== ALLOWED_EMAIL) {
+	return Astro.redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(`/admin/posts/${slug}`)}`);
+}
+---
+
+<BaseLayout title={`Edit ${slug}`} description="Edit a blog post through a GitHub PR preview.">
+	<section class="w-full max-w-6xl space-y-6 py-8">
+		<div class="space-y-2">
+			<p class="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">Admin</p>
+			<h1 class="text-4xl font-bold">Edit post</h1>
+			<p class="max-w-2xl text-gray-700 dark:text-gray-300">Current MDX for <code>{slug}</code> loads into the editor below.</p>
+		</div>
+		<AdminPostForm mode="edit" slug={slug} />
+	</section>
+</BaseLayout>
