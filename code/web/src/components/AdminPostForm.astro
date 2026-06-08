@@ -1,0 +1,171 @@
+---
+type Props = {
+	mode: 'new' | 'edit' | 'publish';
+	slug?: string;
+};
+
+const { mode, slug = '' } = Astro.props;
+---
+
+<div class="grid gap-6 lg:grid-cols-[1fr_18rem]">
+	<form id="post-bot-form" class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-700">
+		<div class="grid gap-4 md:grid-cols-2">
+			<label class="block space-y-1">
+				<span class="text-sm font-semibold">Action</span>
+				<select id="action" name="action" class="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+					<option value="new">New draft PR</option>
+					<option value="edit">Edit full MDX PR</option>
+					<option value="publish">Publish PR</option>
+				</select>
+			</label>
+
+			<label class="block space-y-1">
+				<span class="text-sm font-semibold">Slug</span>
+				<input id="slug" name="slug" class="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="my-new-post" required />
+			</label>
+		</div>
+
+		<div class="grid gap-4 md:grid-cols-2">
+			<label class="block space-y-1">
+				<span class="text-sm font-semibold">Title</span>
+				<input id="title" name="title" class="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="Required for new posts" />
+			</label>
+
+			<label class="block space-y-1">
+				<span class="text-sm font-semibold">Branch override</span>
+				<input id="branch" name="branch" class="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="Defaults to post/<slug>" />
+			</label>
+		</div>
+
+		<label class="block space-y-1">
+			<span class="text-sm font-semibold">Description</span>
+			<input id="description" name="description" class="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="Optional summary for new posts" />
+		</label>
+
+		<label class="block space-y-1">
+			<span class="text-sm font-semibold">Tags</span>
+			<input id="tags" name="tags" class="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="comma,separated,tags" />
+		</label>
+
+		<label class="block space-y-1">
+			<span class="text-sm font-semibold">Body / full MDX</span>
+			<textarea id="body" name="body" rows="22" class="w-full rounded-md border border-gray-300 bg-white p-2 font-mono text-sm text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="For new: body only. For edit: full MDX including frontmatter."></textarea>
+		</label>
+
+		<div class="flex flex-wrap items-center gap-4">
+			<label class="inline-flex items-center gap-2 text-sm">
+				<input id="published" name="published" type="checkbox" class="size-4" />
+				Create new post as published
+			</label>
+			<label class="inline-flex items-center gap-2 text-sm">
+				<input id="direct" name="direct" type="checkbox" class="size-4" />
+				Publish directly to main
+			</label>
+		</div>
+
+		<div class="flex flex-wrap gap-3">
+			<button class="rounded-md bg-gray-950 px-4 py-2 font-semibold text-white hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200" type="submit">
+				Run post bot
+			</button>
+			<button id="load-post" class="rounded-md border border-gray-300 px-4 py-2 font-semibold hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800" type="button">
+				Load current MDX
+			</button>
+			<a class="rounded-md border border-gray-300 px-4 py-2 font-semibold hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800" href="/admin/posts">
+				Back to posts
+			</a>
+		</div>
+	</form>
+
+	<aside class="space-y-4 rounded-xl border border-gray-200 p-4 dark:border-gray-700">
+		<h2 class="text-xl font-bold">Preview tracker</h2>
+		<label class="block space-y-1">
+			<span class="text-sm font-semibold">PR number</span>
+			<input id="pr-number" class="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="123" />
+		</label>
+		<button id="check-status" class="rounded-md border border-gray-300 px-4 py-2 font-semibold hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800" type="button">Check status</button>
+		<div id="quick-links" class="space-y-2 text-sm"></div>
+	</aside>
+</div>
+
+<pre id="result" class="min-h-32 overflow-auto rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-950 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100">Waiting for input…</pre>
+
+<script define:vars={{ initialMode: mode, initialSlug: slug }}>
+	const form = document.querySelector('#post-bot-form');
+	const result = document.querySelector('#result');
+	const statusButton = document.querySelector('#check-status');
+	const loadPostButton = document.querySelector('#load-post');
+	const quickLinks = document.querySelector('#quick-links');
+
+	function value(id) {
+		const element = document.querySelector(`#${id}`);
+		return element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement ? element.value.trim() : '';
+	}
+
+	function setValue(id, nextValue) {
+		const element = document.querySelector(`#${id}`);
+		if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) element.value = nextValue;
+	}
+
+	function checked(id) {
+		const element = document.querySelector(`#${id}`);
+		return element instanceof HTMLInputElement && element.checked;
+	}
+
+	function render(data) {
+		if (result) result.textContent = JSON.stringify(data, null, 2);
+		const payload = data?.result ?? data;
+		if (!quickLinks || !payload) return;
+		const links = [];
+		if (payload.prUrl) links.push(`<a class="underline" href="${payload.prUrl}" target="_blank" rel="noreferrer">Open PR #${payload.prNumber}</a>`);
+		if (payload.previewUrl) links.push(`<a class="underline" href="${payload.previewUrl}" target="_blank" rel="noreferrer">Open preview</a>`);
+		quickLinks.innerHTML = links.join('<br />');
+	}
+
+	async function loadPost(slug, branch = '') {
+		if (!slug) return;
+		setValue('action', 'edit');
+		setValue('slug', slug);
+		if (branch) setValue('branch', branch);
+		render({ loading: true, action: 'get', slug, branch: branch || undefined });
+		const params = new URLSearchParams({ slug });
+		if (branch) params.set('branch', branch);
+		const response = await fetch(`/api/post-bot?${params.toString()}`);
+		const data = await response.json();
+		if (data?.ok && data.result?.content) setValue('body', data.result.content);
+		render(data);
+	}
+
+	form?.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		const action = value('action');
+		const branch = value('branch');
+		const payload = { action, slug: value('slug') };
+		if (branch) payload.branch = branch;
+		if (action === 'new') {
+			payload.title = value('title');
+			payload.description = value('description');
+			payload.body = value('body');
+			payload.tags = value('tags').split(',').map((tag) => tag.trim()).filter(Boolean);
+			payload.published = checked('published');
+		}
+		if (action === 'edit') payload.content = value('body');
+		if (action === 'publish') payload.direct = checked('direct');
+
+		render({ loading: true, payload });
+		const response = await fetch('/api/post-bot', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+		render(await response.json());
+	});
+
+	statusButton?.addEventListener('click', async () => {
+		const pr = value('pr-number');
+		render({ loading: true, pr });
+		const response = await fetch(`/api/post-bot?pr=${encodeURIComponent(pr)}`);
+		render(await response.json());
+	});
+
+	loadPostButton?.addEventListener('click', () => loadPost(value('slug'), value('branch')));
+
+	setValue('action', initialMode);
+	setValue('slug', initialSlug);
+	if (initialMode === 'edit' && initialSlug) loadPost(initialSlug);
+</script>
