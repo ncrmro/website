@@ -66,8 +66,27 @@ function postPath(slug: string): string {
 	return `${POST_DIR}/${slug}.mdx`;
 }
 
+function assertBranch(branch: string): void {
+	if (
+		branch.length === 0 ||
+		branch.length > 100 ||
+		branch.startsWith('/') ||
+		branch.endsWith('/') ||
+		branch.endsWith('.') ||
+		branch.includes('..') ||
+		branch.includes('//') ||
+		branch.includes('@{') ||
+		branch.endsWith('.lock') ||
+		!/^[A-Za-z0-9._/-]+$/.test(branch)
+	) {
+		throw new Error(`Invalid branch "${branch}". Use a normal Git branch name with letters, numbers, dots, dashes, underscores, and slashes.`);
+	}
+}
+
 function branchFor(slug: string, explicit?: string): string {
-	return explicit && explicit.length > 0 ? explicit : `post/${slug}`;
+	const branch = explicit && explicit.length > 0 ? explicit : `post/${slug}`;
+	assertBranch(branch);
+	return branch;
 }
 
 function encodeBase64(value: string): string {

@@ -111,14 +111,24 @@ const { mode, slug = '' } = Astro.props;
 		return element instanceof HTMLInputElement && element.checked;
 	}
 
+	function appendLink(label, href) {
+		if (!quickLinks || !href) return;
+		const link = document.createElement('a');
+		link.className = 'underline';
+		link.href = href;
+		link.target = '_blank';
+		link.rel = 'noreferrer';
+		link.textContent = label;
+		quickLinks.append(link, document.createElement('br'));
+	}
+
 	function render(data) {
 		if (result) result.textContent = JSON.stringify(data, null, 2);
 		const payload = data?.result ?? data;
 		if (!quickLinks || !payload) return;
-		const links = [];
-		if (payload.prUrl) links.push(`<a class="underline" href="${payload.prUrl}" target="_blank" rel="noreferrer">Open PR #${payload.prNumber}</a>`);
-		if (payload.previewUrl) links.push(`<a class="underline" href="${payload.previewUrl}" target="_blank" rel="noreferrer">Open preview</a>`);
-		quickLinks.innerHTML = links.join('<br />');
+		quickLinks.replaceChildren();
+		if (payload.prUrl) appendLink(`Open PR #${payload.prNumber}`, payload.prUrl);
+		if (payload.previewUrl) appendLink('Open preview', payload.previewUrl);
 	}
 
 	async function loadPost(slug, branch = '') {
