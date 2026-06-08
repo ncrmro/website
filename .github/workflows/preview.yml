@@ -3,12 +3,12 @@ name: Preview
 on:
   pull_request:
     paths:
-      - 'src/**'
-      - 'public/**'
-      - 'package.json'
-      - 'bun.lock'
-      - 'astro.config.mjs'
-      - 'wrangler.jsonc'
+      - 'code/web/src/**'
+      - 'code/web/public/**'
+      - 'code/web/package.json'
+      - 'code/web/bun.lock'
+      - 'code/web/astro.config.mjs'
+      - 'code/web/wrangler.jsonc'
       - '.github/workflows/preview.yml'
       - '.github/actions/cloudflare-deploy/**'
 
@@ -60,6 +60,7 @@ jobs:
         with:
           mode: upload
           preview-alias: ${{ steps.alias.outputs.slug }}
+          working-directory: code/web
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
 

@@ -16,7 +16,7 @@ Guidance for Claude Code working in this repo.
 
 ## Commands
 
-Run inside the Nix dev shell. Direnv loads it via `.envrc` (`use flake`;
+Run inside the devenv shell. Direnv loads it via `.envrc` (`use devenv`;
 run `direnv allow` on first use).
 
 - `bun run dev` — Astro dev server (`localhost:4321`)
@@ -70,6 +70,6 @@ alias URL pattern is
 - Conventional Commits: `type(scope): subject`. Common scopes: `astro`,
   `ci`, none for cross-cutting changes.
 - Don't hand-edit `bun.lock` — let `bun install` regenerate.
-- Avoid running `playwright install` — the Nix dev shell provides
+- Avoid running `playwright install` — the devenv shell provides
   browsers via `playwright-driver.browsers`. (No Playwright tests live
   here today, but the dep is still wired up via the dev shell.)

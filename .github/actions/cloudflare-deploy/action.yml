@@ -11,6 +11,10 @@ inputs:
   cloudflare-account-id:
     description: 'Cloudflare account ID'
     required: true
+  working-directory:
+    description: 'Path to the Astro/bun project root (relative to repo). Defaults to repo root for backwards compatibility.'
+    required: false
+    default: '.'
   node-version:
     description: 'Node.js version'
     required: false
@@ -49,13 +53,14 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.bun/install/cache
-        key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+        key: ${{ runner.os }}-bun-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}
         restore-keys: |
           ${{ runner.os }}-bun-
 
     - name: Install dependencies
       if: inputs.skip-setup != 'true'
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: bun install --frozen-lockfile
 
     # Persist Astro's content-collection metadata cache so incremental
@@ -64,18 +69,20 @@ runs:
     - name: Cache Astro build
       uses: actions/cache@v4
       with:
-        path: node_modules/.astro
-        key: ${{ runner.os }}-astro-${{ hashFiles('bun.lock') }}-${{ hashFiles('src/content/**/*', 'src/content.config.ts') }}
+        path: ${{ inputs.working-directory }}/node_modules/.astro
+        key: ${{ runner.os }}-astro-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}-${{ hashFiles(format('{0}/src/content/**/*', inputs.working-directory), format('{0}/src/content.config.ts', inputs.working-directory)) }}
         restore-keys: |
-          ${{ runner.os }}-astro-${{ hashFiles('bun.lock') }}-
+          ${{ runner.os }}-astro-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}-
 
     - name: Build Astro site
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: bun run astro build
 
     - name: Deploy to Cloudflare (promote)
       if: inputs.mode == 'deploy'
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       env:
         CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare-account-id }}
@@ -89,6 +96,7 @@ runs:
       id: upload
       if: inputs.mode == 'upload'
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       env:
         CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare-account-id }}
@@ -101,14 +109,6 @@ runs:
         fi
         log_file="$(mktemp)"
         bunx wrangler versions upload "${passthrough[@]}" 2>&1 | tee "$log_file"
-        # Extraction strategy (most → least preferred):
-        # 1. "Version Preview Alias URL: …" — wrangler's branch-named
-        #    output when --preview-alias is passed.
-        # 2. "Version Preview URL: …" — wrangler's default versioned
-        #    URL (the <version-id>-<worker>.workers.dev form).
-        # 3. Generic regex for any workers.dev URL in the log — kept
-        #    as a last-resort fallback in case wrangler changes its
-        #    log prefixes in a future version.
         url="$(grep -oE 'Version Preview Alias URL: https://[^ ]+' "$log_file" | head -1 | sed 's/^Version Preview Alias URL: //')"
         if [ -z "$url" ]; then
           url="$(grep -oE 'Version Preview URL: https://[^ ]+' "$log_file" | head -1 | sed 's/^Version Preview URL: //')"

@@ -4,15 +4,15 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/**'
-      - 'public/**'
-      - 'db/**'
-      - 'drizzle/**'
-      - 'package.json'
-      - 'bun.lock'
-      - 'astro.config.mjs'
-      - 'wrangler.jsonc'
-      - 'drizzle.config.ts'
+      - 'code/web/src/**'
+      - 'code/web/public/**'
+      - 'code/web/db/**'
+      - 'code/web/drizzle/**'
+      - 'code/web/package.json'
+      - 'code/web/bun.lock'
+      - 'code/web/astro.config.mjs'
+      - 'code/web/wrangler.jsonc'
+      - 'code/web/drizzle.config.ts'
       - '.github/workflows/deploy.yml'
       - '.github/actions/cloudflare-deploy/**'
   workflow_dispatch:
@@ -20,6 +20,10 @@ on:
 concurrency:
   group: production
   cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: code/web
 
 jobs:
   deploy:
@@ -44,7 +48,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('code/web/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -67,5 +71,6 @@ jobs:
           # Job already ran Setup Node + bun + `bun install` for the
           # migration step above. Avoid doing it twice.
           skip-setup: 'true'
+          working-directory: code/web
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}

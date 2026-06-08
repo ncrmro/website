@@ -1,11 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # Dependencies
-/node_modules
+node_modules/
 
 # Build output
-/dist
-/.astro
+dist/
+.astro/
 .wrangler
 worker-configuration.d.ts
 
@@ -27,6 +27,8 @@ yarn-error.log*
 
 # Tooling caches
 .direnv
+.devenv
+.devenv.flake.nix
 
 # Agent and workflow scratch
 .claude/worktrees/
