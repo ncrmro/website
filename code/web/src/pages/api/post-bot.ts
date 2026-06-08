@@ -25,10 +25,14 @@ export const GET: APIRoute = async ({ request, url }) => {
 	}
 
 	const prNumber = url.searchParams.get('pr');
-	if (!prNumber) return json({ error: 'Missing ?pr=<number>.' }, { status: 400 });
+	const slug = url.searchParams.get('slug');
+	const branch = url.searchParams.get('branch') ?? undefined;
+	if (!prNumber && !slug) return json({ error: 'Missing ?pr=<number> or ?slug=<post-slug>.' }, { status: 400 });
 
 	try {
-		const result = await runPostBot(workerEnv, { action: 'status', prNumber });
+		const result = prNumber
+			? await runPostBot(workerEnv, { action: 'status', prNumber })
+			: await runPostBot(workerEnv, { action: 'get', slug: slug as string, branch });
 		return json({ ok: true, result });
 	} catch (error) {
 		return json({ ok: false, error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });

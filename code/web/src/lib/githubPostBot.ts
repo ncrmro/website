@@ -36,6 +36,7 @@ export type PostBotRequest =
 			published?: boolean;
 			branch?: string;
 		}
+	| { action: 'get'; slug: string; branch?: string }
 	| { action: 'edit'; slug: string; content: string; branch?: string }
 	| { action: 'publish'; slug: string; direct?: boolean; branch?: string }
 	| { action: 'status'; prNumber: number | string };
@@ -214,6 +215,14 @@ export async function runPostBot(env: BotEnv, request: PostBotRequest) {
 	const { baseBranch } = config(env);
 	const path = postPath(request.slug);
 	const branch = request.action === 'publish' && request.direct ? baseBranch : branchFor(request.slug, request.branch);
+
+	if (request.action === 'get') {
+		const ref = request.branch && request.branch.length > 0 ? request.branch : baseBranch;
+		const existing = await getFile(env, path, ref);
+		if (!existing) throw new Error(`${path} does not exist on ${ref}.`);
+		return { branch: ref, path, content: decodeContent(existing) };
+	}
+
 	if (!(request.action === 'publish' && request.direct)) await ensureBranch(env, branch);
 
 	if (request.action === 'new') {
