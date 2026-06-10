@@ -10,6 +10,8 @@ published: true
 tags: ["technical", "ai", "aerospace"]
 ---
 
+import ApolloReplayMap from '../../components/ApolloReplayMap';
+
 I've been doing most of my engineering work lately through Claude
 Code — Anthropic's agent running their Fable model — and the thing
 that keeps surprising me isn't the code it writes, it's the chores I'd
@@ -147,7 +149,9 @@ drift cancels. Flying the extracted profile, the landing error came
 out **almost entirely along the flight path — only 14 km sideways
 over a 2,500 km entry**. A misread curve or a flipped sign anywhere
 would have shattered that cancellation. The flight itself vouched
-for the chart-reading. (The
+for the chart-reading.
+
+<ApolloReplayMap client:only="react" /> (The
 along-track error is real and large — it's measuring my simulator's
 crude aerodynamics model, whose *real* curves are trapped in three
 more figures of a 1969 report. Same tracer, next weekend.)

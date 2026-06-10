@@ -37,8 +37,48 @@ const { title, description, publish_date } = post.data;
 				</p>
 			)}
 		</header>
-		<div id="post-body" class="pt-6 pb-3 prose dark:prose-invert max-w-none">
+		<div id="post-body" class="pt-6 pb-3 prose dark:prose-invert max-w-none prose-img:cursor-zoom-in">
 			<Content />
 		</div>
 	</article>
 </BaseLayout>
+
+<script>
+	// Click-to-zoom lightbox for post images: any <img> inside the
+	// prose body opens fullscreen on a dark backdrop at its natural
+	// resolution (the Apollo scans are 600 dpi — far more detail than
+	// the column width shows). Click anywhere or press Escape to close.
+	const body = document.getElementById('post-body');
+	let overlay: HTMLDivElement | null = null;
+
+	function close() {
+		overlay?.remove();
+		overlay = null;
+		document.body.style.overflow = '';
+	}
+
+	function open(src: string, alt: string) {
+		overlay = document.createElement('div');
+		overlay.className =
+			'fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center bg-black/90 p-4';
+		const img = document.createElement('img');
+		img.src = src;
+		img.alt = alt;
+		img.className = 'max-h-full max-w-full object-contain';
+		overlay.appendChild(img);
+		overlay.addEventListener('click', close);
+		document.body.appendChild(overlay);
+		document.body.style.overflow = 'hidden';
+	}
+
+	body?.addEventListener('click', (event) => {
+		const target = event.target as HTMLElement;
+		if (target.tagName === 'IMG' && !target.closest('astro-island')) {
+			const img = target as HTMLImageElement;
+			open(img.currentSrc || img.src, img.alt);
+		}
+	});
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape') close();
+	});
+</script>
