@@ -28,6 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Post media is Git-LFS tracked; without this the build
+          # ships pointer text files instead of images.
+          lfs: true
 
       - uses: actions/setup-node@v4
         with:

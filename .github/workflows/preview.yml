@@ -34,6 +34,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Post media is Git-LFS tracked; without this the build
+          # ships pointer text files instead of images.
+          lfs: true
 
       # Derive a DNS-safe slug from the PR's source branch so the preview
       # URL becomes <slug>-ncrmro-website.<acct>.workers.dev instead

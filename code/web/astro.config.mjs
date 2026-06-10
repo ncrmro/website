@@ -14,6 +14,11 @@ export default defineConfig({
 
 	vite: {
 		plugins: [tailwindcss()],
+		// Dev server is reached over the tailnet / LAN by machine
+		// hostname (e.g. ncrmro-laptop-14); allow any Host header.
+		server: {
+			allowedHosts: true,
+		},
 	},
 
 	fonts: [

@@ -33,6 +33,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Post media is Git-LFS tracked; without this the build
+          # ships pointer text files instead of images.
+          lfs: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
