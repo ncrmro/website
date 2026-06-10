@@ -12,57 +12,51 @@ tags: ["technical", "ai", "aerospace"]
 
 I've been doing most of my engineering work lately through Claude
 Code — Anthropic's agent running their Fable model — and the thing
-that keeps surprising me isn't the code it writes, it's the chores I
-can hand it that I'd always assumed needed a human's eyes and a
-human's patience. This is the story of one of those: I asked Claude
-to pull numeric data out of a fifty-year-old, hand-drawn NASA chart,
-and it worked — by building its own tool and *looking at its own
+that keeps surprising me isn't the code it writes, it's the chores I'd
+always assumed needed human eyes and human patience. This is one of
+those: pulling numeric data out of a fifty-year-old, hand-drawn NASA
+chart. It worked — Claude built its own tool and *looked at its own
 output* until it got it right.
 
-The chart in question is buried on page 29 of R. H. Manders' *Apollo
+The chart is buried on page 29 of R. H. Manders' *Apollo
 11 Entry Postflight Analysis* (NASA, 1970): **Figure 9**, the roll
 commands Apollo 11's guidance computer issued during its nine minutes
 of atmospheric reentry — every bank maneuver the capsule actually
 flew. I needed those numbers for some reentry simulation work I'll
 touch on at the end.
 
-The catch: the data was never published as data. The axes have
-numbers, but the values themselves exist only as the *shape of the
-curve* — nowhere in the report (or anywhere else) is there a table of
-time-and-angle pairs you could copy out. A draftsman drew the line by
-hand in 1970, it was scanned decades later at a slight angle with
-binder holes punched through the margin, and that drawing is the only
-surviving record of what the spacecraft did:
+The catch: the data was never published *as data*. The axes are
+labeled, but the values exist only as the shape of the curve — no
+table of time-and-angle pairs appears in the report or anywhere else.
+A draftsman drew the line by hand in 1970, it was scanned decades
+later at a slight angle, and that drawing is the only surviving
+record of what the spacecraft did:
 
 ![Page 29 of the Manders 1970 report: the figure is rotated sideways on the page, hand-drawn, with binder holes punched through the margin.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/manders-fig9-scan.png)
 
 If you want the values, someone has to get them off the picture.
 
-Worth pausing on how striking that is, because this problem has been
-*solved* for decades — just not retroactively. Modern missions publish
-their trajectories through NASA's NAIF group as **SPICE kernels**:
-binary ephemeris files you can query for a spacecraft's position and
-velocity at any instant, to the millisecond. When the OSIRIS-REx
-capsule reentered over Utah in 2023, JPL published a kernel tracking
-the capsule itself through the whole descent — in my simulation work I
-sample it directly and compare against my propagated state at every
-timestep. That's what ground truth looks like now: an API, effectively,
-for where the vehicle was.
+The strange part is that this problem has been *solved* for decades —
+just not retroactively. Modern missions publish trajectories through
+NASA's NAIF group as **SPICE kernels**: binary ephemeris files you can
+query for a spacecraft's position and velocity at any instant. When
+the OSIRIS-REx capsule reentered over Utah in 2023, JPL published a
+kernel tracking it through the whole descent; my simulation samples it
+directly at every timestep. That's ground truth now — an API,
+effectively, for where the vehicle was.
 
-Apollo predates all of it. The equivalent record for Apollo 11 is
-prose, tables of single events — and figures like this one. Same
-quality of underlying measurement, radically different durability of
-publication.
+Apollo predates all of it. Its record is prose, tables of single
+events, and figures like this one. Same quality of measurement,
+radically different durability of publication.
 
 ## The options we looked at
 
 **WebPlotDigitizer** is the standard tool for this: load the image,
 click a few known points on the axes to calibrate, then click your way
 along the curve and export CSV. It works. But it's fifteen-plus
-minutes of careful clicking per figure, this report has six figures I
-care about, the companion aerodynamics report has more — and the
-output is a pile of hand clicks with no way for anyone to re-derive it
-from the source scan and check.
+minutes of careful clicking per figure — this report has six figures
+I care about and the companion aerodynamics report has more — and the
+output is hand clicks nobody can re-derive from the source and check.
 
 **Engauge Digitizer** (it's in nixpkgs) advertises automatic curve
 tracing, which sounded like the answer — but it's built around its
@@ -78,8 +72,7 @@ down an arrow — and nothing in the program will notice.
 
 ## So Claude built one
 
-I handed the problem to Claude Fable in Claude Code. The program it
-wrote is not exotic — column-by-column curve following, the kind of
+The program Claude wrote is not exotic — column-by-column curve following, the kind of
 thing anyone could have written years ago. What made it actually work
 is that the agent ran a **closed loop on its own output**: trace the
 curve, draw the extracted points in red *on top of the original scan*,
@@ -100,13 +93,13 @@ attempt:
 
 ![Zoomed crop of the scan with the traced points in red: the trace follows the curve's plateau, then slides off down the "ENTER FINAL PHASE" annotation leader line and dies in the label text.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/failure-leader-line.png)
 
-The red trace rides the curve beautifully — then slides down the
+The red trace rides the curve beautifully — then slides down an
 annotation leader line and ends up tracing the words "ENTER FINAL
-PHASE". The difference between this project and a normal script is
-what happened next: the agent *looked at that overlay*, named the
-failure, and noticed something a human squinting at the scan would
-notice — the hand-drawn data curve is about three times thicker than
-the ruled annotation lines. So: prefer thick ink.
+PHASE". Here's where this stops being a normal script: the agent
+*looked at the overlay*, named the failure, and noticed what a human
+squinting at the scan would — the hand-drawn data curve is about
+three times thicker than the ruled annotation lines. So: prefer
+thick ink.
 
 That fixed the label dive but not the junction where the leader line
 *touches* the curve (same pen, same thickness there). The fix was the
@@ -132,11 +125,11 @@ of the 506 points came from the tracer.
 
 ![The full figure with the final trace overlaid: red dots track the entire roll-command history across all nine minutes.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/final-overlay.png)
 
-Three look-and-fix rounds, a few minutes each. The committed artifacts
-are the CSV, the tracer script, and a sidecar note with the
-calibration residuals — meaning anyone can re-run the extraction from
-the archived PDF and get the same numbers, which is the property a
-pile of manual clicks can never have.
+Three look-and-fix rounds, a few minutes each. The committed
+artifacts are the CSV, the tracer script, and a note with the
+calibration residuals — anyone can re-run the extraction from the
+archived PDF and get the same numbers, the one property manual
+clicking can never offer.
 
 ## What it was for, briefly
 
@@ -148,13 +141,13 @@ exact roll commands the real capsule flew**, open loop, rather than
 let a simulated autopilot aim for the known splashdown (which grades
 the controller, not the physics).
 
-The replay also closed the loop on the digitization itself, which is
-my favorite detail. Apollo's roll commands alternate left and right
-so that sideways drift cancels. When we flew the extracted profile,
-the landing error came out **almost entirely along the flight path —
-only 14 km sideways over a 2,500 km entry**. If the curve had been
-misread or a sign flipped anywhere, that cancellation would have
-shattered. The flight itself vouched for the chart-reading. (The
+My favorite detail: the replay also validated the digitization
+itself. Apollo's roll commands alternate left and right so sideways
+drift cancels. Flying the extracted profile, the landing error came
+out **almost entirely along the flight path — only 14 km sideways
+over a 2,500 km entry**. A misread curve or a flipped sign anywhere
+would have shattered that cancellation. The flight itself vouched
+for the chart-reading. (The
 along-track error is real and large — it's measuring my simulator's
 crude aerodynamics model, whose *real* curves are trapped in three
 more figures of a 1969 report. Same tracer, next weekend.)
