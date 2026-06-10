@@ -45,12 +45,17 @@ for (let lat = -10; lat <= 20; lat += 5) {
 	graticule.push({ path: [[-190, lat], [-165, lat]] });
 }
 
-const layers = [
-	// Carto dark raster basemap; the MapView repeats worlds so the
-	// unwrapped longitudes (west of -180) land on the adjacent copy.
+// Layers are constructed per component instance — deck.gl layers
+// carry internal state and cannot be shared between two Deck
+// instances (the post mounts this island twice).
+function makeLayers() {
+	return [
+	// Esri World Imagery (satellite, color); the MapView repeats
+	// worlds so the unwrapped longitudes (west of -180) land on the
+	// adjacent copy.
 	new TileLayer({
 		id: 'basemap',
-		data: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+		data: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
 		minZoom: 0,
 		maxZoom: 19,
 		tileSize: 256,
@@ -120,7 +125,8 @@ const layers = [
 		getBackgroundColor: [11, 18, 32, 180],
 		backgroundPadding: [4, 2],
 	}),
-];
+	];
+}
 
 function tooltip(info: PickingInfo): { text: string } | null {
 	const obj = info.object as { from?: TrackPoint; label?: string } | undefined;
@@ -142,12 +148,12 @@ export default function ApolloReplayMap() {
 				views={new MapView({ repeat: true })}
 				initialViewState={{ longitude: -175.5, latitude: 7.0, zoom: 3.2, minZoom: 2.5, maxZoom: 9 }}
 				controller={{ scrollZoom: false }}
-				layers={layers}
+				layers={makeLayers()}
 				getTooltip={tooltip}
 			/>
 			<div className="pointer-events-none absolute bottom-2 left-2 rounded bg-[#0b1220]/90 px-2 py-1 text-xs text-gray-300">
 				Track color = |bank command| from the digitized chart (blue ≈ lift-up, red ≈ full reversal).
-				Drag to pan, hover for details. Basemap © OpenStreetMap contributors © CARTO.
+				Drag to pan, hover for details. Imagery © Esri, Maxar, Earthstar Geographics.
 			</div>
 		</div>
 	);
