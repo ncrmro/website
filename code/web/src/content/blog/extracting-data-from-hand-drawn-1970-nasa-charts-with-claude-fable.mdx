@@ -1,10 +1,11 @@
 ---
-title: "Extracting Data from Hand-Drawn 1970 NASA Charts with Claude"
+title: "Extracting Data from Hand-Drawn 1970 NASA Charts with Claude Fable"
 description: >-
   I needed numbers that exist only as a hand-drawn curve in a
   fifty-year-old Apollo report. The manual digitizers didn't scale and
-  the automatic ones choke on annotation arrows — so Claude Fable wrote
-  its own tracer and verified it by looking at its own output.
+  the automatic ones choke on annotation arrows — so Claude Fable,
+  Anthropic's newest model, wrote its own tracer and verified it by
+  looking at its own output.
 publish_date: 2026-06-09
 published: true
 tags: ["technical", "ai", "aerospace"]
@@ -13,12 +14,12 @@ tags: ["technical", "ai", "aerospace"]
 import ApolloReplayMap from '../../components/ApolloReplayMap';
 
 I've been doing most of my engineering work lately through Claude
-Code — Anthropic's agent running their Fable model — and the thing
-that keeps surprising me isn't the code it writes, it's the chores I'd
-always assumed needed human eyes and human patience. This is one of
-those: pulling numeric data out of a fifty-year-old, hand-drawn NASA
-chart. It worked — Claude built its own tool and *looked at its own
-output* until it got it right.
+Code running **Claude Fable**, Anthropic's newest model — and the
+thing that keeps surprising me about Fable isn't the code it writes,
+it's the chores I'd always assumed needed human eyes and human
+patience. This is one of those: pulling numeric data out of a
+fifty-year-old, hand-drawn NASA chart. It worked — Fable built its
+own tool and *looked at its own output* until it got it right.
 
 The chart is buried on page 29 of R. H. Manders' *Apollo
 11 Entry Postflight Analysis* (NASA, 1970): **Figure 9**, the roll
@@ -40,7 +41,7 @@ extracted bank commands painted onto the track:
 
 And here is the only place those commands were ever published:
 
-![Page 29 of the Manders 1970 report: the figure is rotated sideways on the page, hand-drawn, with binder holes punched through the margin.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/manders-fig9-scan.png)
+![Page 29 of the Manders 1970 report: the figure is rotated sideways on the page, hand-drawn, with binder holes punched through the margin.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude-fable/media/manders-fig9-scan.png)
 
 If you want the values, someone has to get them off the picture.
 
@@ -78,11 +79,12 @@ typewritten labels are all the same black. Any naive
 follow-the-dark-pixels tracer will eventually wander off the data and
 down an arrow — and nothing in the program will notice.
 
-## So Claude built one
+## So Fable built one
 
-The program Claude wrote is not exotic — column-by-column curve following, the kind of
-thing anyone could have written years ago. What made it actually work
-is that the agent ran a **closed loop on its own output**: trace the
+The program Fable wrote is not exotic — column-by-column curve
+following, the kind of thing anyone could have written years ago.
+What made it actually work is that Fable ran a **closed loop on its
+own output**: trace the
 curve, draw the extracted points in red *on top of the original scan*,
 look at the image, find where it went wrong, patch, repeat.
 
@@ -99,11 +101,11 @@ First it set up the boring parts without any human clicking:
 Then came the part where every automatic digitizer dies. First
 attempt:
 
-![Zoomed crop of the scan with the traced points in red: the trace follows the curve's plateau, then slides off down the "ENTER FINAL PHASE" annotation leader line and dies in the label text.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/failure-leader-line.png)
+![Zoomed crop of the scan with the traced points in red: the trace follows the curve's plateau, then slides off down the "ENTER FINAL PHASE" annotation leader line and dies in the label text.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude-fable/media/failure-leader-line.png)
 
 The red trace rides the curve beautifully — then slides down an
 annotation leader line and ends up tracing the words "ENTER FINAL
-PHASE". Here's where this stops being a normal script: the agent
+PHASE". Here's where this stops being a normal script: Fable
 *looked at the overlay*, named the failure, and noticed what a human
 squinting at the scan would — the hand-drawn data curve is about
 three times thicker than the ruled annotation lines. So: prefer
@@ -116,22 +118,22 @@ kind of cheap trick you only find by staring at the actual image:
 right, the curve runs flat through the junction while the leader
 departs at an angle, and continuity keeps you on the data.
 
-![The same junction after the fix: red points ride the flat through the leader junction, up past the inflight-measured-data circles, over the +100 degree crest and down into the dip — never touching the annotation.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/reverse-trace-junction.png)
+![The same junction after the fix: red points ride the flat through the leader junction, up past the inflight-measured-data circles, over the +100 degree crest and down into the dip — never touching the annotation.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude-fable/media/reverse-trace-junction.png)
 
 One region resisted automation entirely — the most violent part of the
 flight, where the command dives to −180°, rides along the bottom
 border of the plot (indistinguishable from the axis line), pops back
 up, and spikes through a maneuver:
 
-![High-zoom crop of the bank-reversal region: near-vertical strokes diving to the bottom border of the plot, a narrow spike, and a long straight climb back up.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/bank-reversal-rails.png)
+![High-zoom crop of the bank-reversal region: near-vertical strokes diving to the bottom border of the plot, a narrow spike, and a long straight climb back up.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude-fable/media/bank-reversal-rails.png)
 
-For those 47 seconds the agent did exactly what a person with
+For those 47 seconds Fable did exactly what a person with
 WebPlotDigitizer would do — zoomed in and read the chart — except its
 "clicks" became 22 transcribed points in the assembly script, with a
 comment stating the method and a ±3° accuracy estimate. The other 484
 of the 506 points came from the tracer.
 
-![The full figure with the final trace overlaid: red dots track the entire roll-command history across all nine minutes.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/final-overlay.png)
+![The full figure with the final trace overlaid: red dots track the entire roll-command history across all nine minutes.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude-fable/media/final-overlay.png)
 
 Three look-and-fix rounds, a few minutes each. The committed
 artifacts are the CSV, the tracer script, and a note with the
@@ -157,8 +159,9 @@ over a 2,500 km entry**. A misread curve or a flipped sign anywhere
 would have shattered that cancellation. The flight itself vouched
 for the chart-reading.
 
-<ApolloReplayMap client:only="react" /> (The
-along-track error is real and large — it's measuring my simulator's
+<ApolloReplayMap client:only="react" />
+
+(The along-track error is real and large — it's measuring my simulator's
 crude aerodynamics model, whose *real* curves are trapped in three
 more figures of a 1969 report. Same tracer, next weekend.)
 
