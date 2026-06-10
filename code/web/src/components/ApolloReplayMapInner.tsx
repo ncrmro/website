@@ -6,7 +6,9 @@
 // (continuous west of -180) because the entry crosses the antimeridian.
 
 import { DeckGL } from '@deck.gl/react';
-import { LineLayer, PathLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers';
+import { BitmapLayer, LineLayer, PathLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers';
+import { TileLayer } from '@deck.gl/geo-layers';
+import { MapView } from '@deck.gl/core';
 import type { PickingInfo } from '@deck.gl/core';
 import replay from '../data/apollo-replay.json';
 
@@ -44,11 +46,28 @@ for (let lat = -10; lat <= 20; lat += 5) {
 }
 
 const layers = [
+	// Carto dark raster basemap; the MapView repeats worlds so the
+	// unwrapped longitudes (west of -180) land on the adjacent copy.
+	new TileLayer({
+		id: 'basemap',
+		data: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+		minZoom: 0,
+		maxZoom: 19,
+		tileSize: 256,
+		renderSubLayers: (props) => {
+			const { boundingBox } = props.tile;
+			return new BitmapLayer(props, {
+				data: undefined,
+				image: props.data,
+				bounds: [boundingBox[0][0], boundingBox[0][1], boundingBox[1][0], boundingBox[1][1]],
+			});
+		},
+	}),
 	new PathLayer({
 		id: 'graticule',
 		data: graticule,
 		getPath: (d: { path: [number, number][] }) => d.path,
-		getColor: [255, 255, 255, 26],
+		getColor: [255, 255, 255, 15],
 		getWidth: 1,
 		widthUnits: 'pixels',
 	}),
@@ -120,14 +139,15 @@ export default function ApolloReplayMap() {
 	return (
 		<div className="relative my-6 h-105 w-full overflow-hidden rounded-lg border border-gray-700 bg-[#0b1220] not-prose">
 			<DeckGL
-				initialViewState={{ longitude: -178.5, latitude: 5.0, zoom: 3.6, minZoom: 3, maxZoom: 9 }}
+				views={new MapView({ repeat: true })}
+				initialViewState={{ longitude: -175.5, latitude: 7.0, zoom: 3.2, minZoom: 2.5, maxZoom: 9 }}
 				controller={{ scrollZoom: false }}
 				layers={layers}
 				getTooltip={tooltip}
 			/>
 			<div className="pointer-events-none absolute bottom-2 left-2 rounded bg-[#0b1220]/90 px-2 py-1 text-xs text-gray-300">
 				Track color = |bank command| from the digitized chart (blue ≈ lift-up, red ≈ full reversal).
-				Drag to pan, hover for details.
+				Drag to pan, hover for details. Basemap © OpenStreetMap contributors © CARTO.
 			</div>
 		</div>
 	);

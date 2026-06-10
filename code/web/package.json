@@ -23,6 +23,7 @@
 		"@astrojs/sitemap": "^3.7.2",
 		"@auth/core": "^0.34.3",
 		"@deck.gl/core": "^9.3.3",
+		"@deck.gl/geo-layers": "^9.3.3",
 		"@deck.gl/layers": "^9.3.3",
 		"@deck.gl/react": "^9.3.3",
 		"astro": "^6.3.1",
