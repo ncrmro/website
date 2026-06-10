@@ -27,6 +27,22 @@ the spacecraft did:
 
 If you want the values, someone has to get them off the picture.
 
+Worth pausing on how striking that is, because this problem has been
+*solved* for decades — just not retroactively. Modern missions publish
+their trajectories through NASA's NAIF group as **SPICE kernels**:
+binary ephemeris files you can query for a spacecraft's position and
+velocity at any instant, to the millisecond. When the OSIRIS-REx
+capsule reentered over Utah in 2023, JPL published a kernel tracking
+the capsule itself through the whole descent — in my simulation work I
+sample it directly and compare against my propagated state at every
+timestep. That's what ground truth looks like now: an API, effectively,
+for where the vehicle was.
+
+Apollo predates all of it. The equivalent record for Apollo 11 is
+prose, tables of single events — and figures like this one. Same
+quality of underlying measurement, radically different durability of
+publication.
+
 ## The options we looked at
 
 **WebPlotDigitizer** is the standard tool for this: load the image,
