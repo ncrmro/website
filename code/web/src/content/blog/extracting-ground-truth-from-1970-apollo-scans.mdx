@@ -1,0 +1,184 @@
+---
+title: "Extracting Ground Truth from 1970 Apollo Scans with Claude Fable"
+description: >-
+  The data needed to validate a reentry simulator against Apollo 11
+  exists only as hand-drawn charts in fifty-year-old NASA scans. Manual
+  digitizers work but don't scale, automatic tracers choke on annotation
+  arrows — what worked was an agent that could look at its own output.
+publish_date: 2026-06-09
+published: true
+tags: ["technical", "ai", "aerospace"]
+---
+
+I've been building a reentry trajectory simulator and validating it
+against historical missions: start the simulation from the exact point
+in space where a real capsule hit the atmosphere, propagate it down,
+and measure how far the simulated landing point is from where the
+recovery crew actually found the vehicle. Apollo 11 is the gold-standard
+test case — fully declassified, exhaustively documented, and a *lifting*
+entry, meaning the capsule steered itself by rolling left and right
+during its nine minutes of descent.
+
+That steering is the problem. If you simulate Apollo 11 with a
+closed-loop autopilot that aims for the known splashdown point, you get
+a flattering number — my simulator gets within 17.6 km that way. But
+that's the answer key grading itself: a good controller will hide a
+mediocre physics model by continuously correcting toward the target.
+The honest test is to replay the **exact roll commands the real
+spacecraft executed, at the same times, open loop**, and let the physics
+land wherever it lands.
+
+And the record of those commands exists! NASA published it in 1970, in
+R. H. Manders' *Apollo 11 Entry Postflight Analysis*. There's just one
+catch: it exists as **Figure 9** — a hand-drawn curve on graph paper,
+scanned at an angle, with annotation arrows and typewriter labels
+overlapping the data.
+
+![Page 29 of the Manders 1970 report: the figure is rotated sideways on the page, hand-drawn, with binder holes punched through the margin.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/manders-fig9-scan.png)
+
+No table. No appendix. Fifty-five years later, if you want the numbers,
+someone has to get them off this picture.
+
+## The options that didn't fit
+
+**WebPlotDigitizer** is the standard answer, and it's a good tool: load
+the image, click known axis points to calibrate, click along the curve,
+export CSV. For one figure it's maybe fifteen minutes of careful
+clicking. But this figure is one of *many* — the same report has five
+more charts I need (altitude, velocity, load factor histories), and the
+companion aerodynamics report has another three. Worse, manual clicking
+produces a CSV with no machine-checkable provenance. I wanted an
+extraction that a reviewer could re-run from the archived PDF and get
+the same numbers.
+
+**Engauge Digitizer** is in nixpkgs and has semi-automatic curve
+tracing, which sounded promising — but it's built around its GUI, and
+the automatic mode assumes a clean plot. Which brings us to why
+"automatic" tools generally fail here:
+
+A 1970 NASA chart is *hostile* to naive curve extraction. The data
+curve, the gridlines, the annotation leader lines ("ENTER FINAL PHASE
+→"), and the typewritten labels are all the same black ink. A
+column-by-column "follow the dark pixels" tracer will happily walk off
+the data and down an annotation arrow, and you won't know unless
+something *looks* at the result.
+
+That last clause turned out to be the whole answer.
+
+## An agent with eyes on its own output
+
+I pointed Claude Fable (via Claude Code) at the problem. What made it
+work wasn't that the model knew some magic computer-vision incantation —
+the tracer it wrote is honestly simple. It's that the agent could run a
+**closed verification loop on its own work**: write the tracer, render
+the extracted points as red dots *on top of the original scan*, look at
+the image, diagnose the failure, patch the tracer, repeat.
+
+The pipeline it converged on:
+
+1. Render the PDF page at 600 dpi and rotate it to landscape.
+2. **Self-calibrate the axes** by finding the gridlines: sum the ink in
+   each pixel row and column inside the plot box — gridlines show up as
+   spikes. Fitting all 13 vertical and 19 horizontal lines pinned the
+   mapping from pixels to seconds and degrees with residuals under two
+   pixels, about a quarter second and a quarter degree. No human
+   clicking on axis points.
+3. Mask the gridlines out, then trace the curve column by column,
+   linking each column's ink to the previous one by continuity.
+
+The first run produced this:
+
+![Zoomed crop of the scan with the traced points in red: the trace follows the curve's plateau, then slides off down the "ENTER FINAL PHASE" annotation leader line and dies in the label text.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/failure-leader-line.png)
+
+The red trace rides the curve beautifully — then slides off down the
+annotation leader line and ends up tracing the words "ENTER FINAL
+PHASE". This is exactly the failure mode that makes people give up on
+automatic digitization. The agent looked at the overlay, named the
+problem, and added a prior: the hand-drawn data curve is about three
+times thicker than the ruled leader lines, so prefer thick ink runs.
+
+That fixed the label dive but not the junction itself, where the leader
+line *touches* the curve and is drawn with the same pen. Slope-memory
+tracking didn't save it either, because the trace approaches the
+junction on a downhill wiggle and happily continues downhill onto the
+leader. The fix was almost cheeky: **trace that span of the chart
+backwards.** Approached from the right, the curve is flat through the
+junction and the leader line departs at an angle, so continuity keeps
+you on the data.
+
+![The same junction after the fix: red points ride the flat through the leader junction, up past the inflight-measured-data circles, over the +100 degree crest and down into the dip — never touching the annotation.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/reverse-trace-junction.png)
+
+One region resisted automation entirely — and it's the most dramatic
+part of the flight. Around 90 seconds in, Apollo rolls hard from lift-up
+to full lift-down: the command dives to −180°, rails along the bottom
+edge of the plot (where it's indistinguishable from the axis line the
+tracer must mask), pops back up, rails again, and spikes through the
+"enter upcontrol" maneuver:
+
+![High-zoom crop of the bank-reversal region: near-vertical strokes diving to the bottom border of the plot, a narrow spike, and a long straight climb back up.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/bank-reversal-rails.png)
+
+For those 47 seconds the agent did what a human with WebPlotDigitizer
+would do — zoomed in and read the chart — except its "clicks" were
+22 hand-transcribed points written into the assembly script with a
+comment documenting the method and the ±3° accuracy estimate. Everything
+else, 484 of the 506 points, is the tracer's.
+
+![The full figure with the final trace overlaid: red dots track the entire roll-command history across all nine minutes.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/final-overlay.png)
+
+The committed artifacts are the point-by-point CSV, the tracer script,
+and a sidecar note with the calibration residuals — so the extraction is
+reproducible from the archived PDF by machine, which was the property
+manual clicking couldn't give me.
+
+## Did we get it right? The flight itself says yes
+
+Here's my favorite part. You can validate a digitization *with physics*.
+
+I fed the extracted roll history into the simulator as an open-loop
+replay — fly exactly what Apollo flew, no corrections — and decomposed
+the landing miss into two directions: along the flight path, and
+sideways across it.
+
+The result: **867 km of error along-track, 14 km cross-track.**
+
+Those two numbers mean completely different things. Apollo's roll
+commands alternate left and right precisely so that the sideways
+drift cancels out — that's how the real guidance managed cross-range.
+If I had digitized the curve wrong, gotten a sign convention backwards,
+or misread the bank reversals, the cancellation would break and the
+cross-track error would be enormous. Fourteen kilometers over a
+2,500 km flight is the cancellation *working*. The chart was read
+correctly.
+
+The along-track error is something else entirely: it's an honest
+measurement of my simulator's aerodynamics model, which currently uses
+a crude linear reconstruction of the Apollo capsule's lift and drag
+(the *real* curves are figure-only in another 1969 report — Hillje's
+entry aerodynamics paper — which is next in line for the same tracer).
+Open-loop replay is unforgiving by design: with no controller papering
+over model error, an imperfect drag schedule means the replayed bank
+maneuvers execute at the wrong speeds and altitudes, and the energy
+bookkeeping drifts hundreds of kilometers. That 50× gap between the
+closed-loop number (17.6 km) and the open-loop number (872 km) is the
+cleanest demonstration I've seen of why "my simulation hits the
+target" is not validation when the simulation is steering toward the
+target.
+
+## The takeaway
+
+The thing that made this tractable wasn't a smarter algorithm — column
+tracing with an ink-thickness prior and slope memory is something any
+of us could have written in 2010. It's that each failure mode was
+*visible* but not *predictable*: nobody writes "prefer thick runs" or
+"trace this span right-to-left" into version one. Those patches came
+from an agent rendering its own output onto the source scan, looking at
+it the way a person would, and iterating — three rounds, a few minutes
+each. Vision in the loop turns plot digitization from a manual chore
+into a code-review problem.
+
+Somewhere in NASA's archives there are thousands more figures like this
+one — wind-tunnel curves, trajectory reconstructions, telemetry plots —
+each one the only surviving record of measurements that cost millions
+of 1960s dollars to make. The data was never lost. It's just been
+waiting for readers with patience, and patience is exactly what
+machines are good at.
