@@ -10,19 +10,20 @@ published: true
 tags: ["technical", "ai", "aerospace"]
 ---
 
-This is **Figure 9** from R. H. Manders' *Apollo 11 Entry Postflight
-Analysis*, published by NASA in 1970:
+Buried on page 29 of R. H. Manders' *Apollo 11 Entry Postflight
+Analysis* (NASA, 1970) is **Figure 9**: the roll commands Apollo 11's
+guidance computer issued during its nine minutes of atmospheric
+reentry — every bank maneuver the capsule actually flew. I needed
+those numbers for some reentry simulation work I'll touch on at the
+end.
 
-![Page 29 of the Manders 1970 report: the figure is rotated sideways on the page, hand-drawn, with binder holes punched through the margin.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/manders-fig9-scan.png)
+The catch: there *are* no numbers. The report contains no table for
+this data. A draftsman drew the curve by hand in 1970, it was scanned
+decades later at a slight angle with binder holes punched through the
+margin, and that scan is now the only machine-readable trace of what
+the spacecraft did:
 
-It records the roll commands Apollo 11's guidance computer issued
-during its nine minutes of atmospheric reentry — every bank maneuver
-the capsule actually flew. I needed those numbers for some reentry
-simulation work I'll touch on at the end. The catch: there *are* no
-numbers. The report contains no table for this data. A draftsman drew
-the curve by hand in 1970, it was scanned decades later at a slight
-angle with binder holes punched through the margin, and that scan is
-now the only machine-readable trace of what the spacecraft did.
+![Page 29 of the Manders 1970 report: the figure is rotated sideways on the page, hand-drawn, with binder holes punched through the margin.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/manders-fig9-scan.png)
 
 If you want the values, someone has to get them off the picture.
 
@@ -70,7 +71,7 @@ First it set up the boring parts without any human clicking:
 Then came the part where every automatic digitizer dies. First
 attempt:
 
-![Zoomed crop of the scan with the traced points in red: the trace follows the curve's plateau, then slides off down the "ENTER FINAL PHASE" annotation leader line and dies in the label text.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/failure-leader-line.png)
+![Zoomed crop of the scan with the traced points in red: the trace follows the curve's plateau, then slides off down the "ENTER FINAL PHASE" annotation leader line and dies in the label text.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/failure-leader-line.png)
 
 The red trace rides the curve beautifully — then slides down the
 annotation leader line and ends up tracing the words "ENTER FINAL
@@ -87,14 +88,14 @@ kind of cheap trick you only find by staring at the actual image:
 right, the curve runs flat through the junction while the leader
 departs at an angle, and continuity keeps you on the data.
 
-![The same junction after the fix: red points ride the flat through the leader junction, up past the inflight-measured-data circles, over the +100 degree crest and down into the dip — never touching the annotation.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/reverse-trace-junction.png)
+![The same junction after the fix: red points ride the flat through the leader junction, up past the inflight-measured-data circles, over the +100 degree crest and down into the dip — never touching the annotation.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/reverse-trace-junction.png)
 
 One region resisted automation entirely — the most violent part of the
 flight, where the command dives to −180°, rides along the bottom
 border of the plot (indistinguishable from the axis line), pops back
 up, and spikes through a maneuver:
 
-![High-zoom crop of the bank-reversal region: near-vertical strokes diving to the bottom border of the plot, a narrow spike, and a long straight climb back up.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/bank-reversal-rails.png)
+![High-zoom crop of the bank-reversal region: near-vertical strokes diving to the bottom border of the plot, a narrow spike, and a long straight climb back up.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/bank-reversal-rails.png)
 
 For those 47 seconds the agent did exactly what a person with
 WebPlotDigitizer would do — zoomed in and read the chart — except its
@@ -102,7 +103,7 @@ WebPlotDigitizer would do — zoomed in and read the chart — except its
 comment stating the method and a ±3° accuracy estimate. The other 484
 of the 506 points came from the tracer.
 
-![The full figure with the final trace overlaid: red dots track the entire roll-command history across all nine minutes.](/posts/extracting-ground-truth-from-1970-apollo-scans/media/final-overlay.png)
+![The full figure with the final trace overlaid: red dots track the entire roll-command history across all nine minutes.](/posts/extracting-data-from-hand-drawn-1970-nasa-charts-with-claude/media/final-overlay.png)
 
 Three look-and-fix rounds, a few minutes each. The committed artifacts
 are the CSV, the tracer script, and a sidecar note with the
