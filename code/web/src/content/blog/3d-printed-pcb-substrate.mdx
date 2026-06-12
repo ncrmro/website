@@ -1,0 +1,217 @@
+---
+title: "Parametric 3D Sensor Placement with Integrated Routing: A Unified Substrate for Heterogeneous COTS Modules"
+description: "A parametric methodology that collapses PCB layout, cable-harness routing, and mechanical enclosure into a single 3D-printed substrate, with arbitrary 3D sensor orientation as a first-class design parameter."
+publish_date: 2026-06-10
+published: true
+tags: ["3d-printing", "pcb", "hardware", "anchorscad"]
+---
+
+## Abstract
+
+This paper introduces a parametric design methodology that collapses three traditionally separate disciplines — PCB layout, cable harness routing, and mechanical enclosure — into a single declarative artifact. Using AnchorSCAD as a programmatic CAD framework, the system synthesizes a 3D-printed substrate body with bare copper conductors threaded through printed channels on both faces, commercial off-the-shelf (COTS) modules retained by pressure-fit pin inlays integrated into the body, and the assembly closed by a pressure-fit lid that mechanically locks pins, wires, and modules in place without adhesives or solder.
+
+The defining feature of the substrate is that each module's orientation is a first-class design parameter. An ambient light sensor faces +Z toward an enclosure window, an environmental sensor faces outward into ambient airflow, an inertial measurement unit aligns with the host system's body axes, and a controller's USB connector and antenna orient toward their respective enclosure features — all encoded in the same parametric input and produced as one printed assembly. This is a design space underserved by single-board PCBs, where sensors share one plane and one orientation, and currently addressed by combinations of multiple PCBs joined by harnesses and mounted in custom enclosures, by flex PCBs with their cost and lead-time penalties, or by hand-wired modules in bespoke mechanical work.
+
+Three orthogonal advantages follow from the unified artifact. Arbitrary 3D sensor orientation becomes declarative rather than mechanical post-processing. Geometric thermal partitioning emerges naturally from the polymer body's low thermal conductivity, isolating heat-sensitive sensors from controller self-heating without PCB cutouts or extended cable runs. Skill substitution democratizes the workflow: one parametric input replaces three distinct CAD and EDA toolchains. The paper presents the architectural rationale, three explicit operating modes (open and reworkable, potted for committed short-run deployment, and stepping-stone-to-PCB via netlist export), the AnchorSCAD compiler including a layer-aware maze router and tolerance calibration pipeline, a worked example with arbitrary 3D module orientations, and a validation protocol with numerical targets for first-insertion contact yield and end-to-end iteration time. I2C is the demonstration bus; the framework generalizes to other low-speed signaling.
+
+## 1. Introduction
+
+Heterogeneous sensor systems built from COTS modules are conventionally assembled in one of three ways. The most common is multiple breakout boards joined by ribbon cables or Dupont jumpers and mounted in a separately designed enclosure, with the harness, the boards, and the mechanical housing each authored in a different tool and validated against the others by hand. The second is a custom PCB with daughterboard headers at angles, which still requires the daughterboards and accepts the limitations that headers impose on orientation flexibility. The third is a flex PCB that bends to accommodate the geometry, accepting fabrication cost, lead time, and design constraints in exchange for a single fabricated artifact.
+
+Each of these approaches splits one design problem — where do the sensors sit in 3D space, and how do they connect electrically — across two or three independent artifacts that must be reconciled manually. The harness designer assumes module positions; the enclosure designer assumes harness routing; the PCB designer assumes module footprints. When any of these change, all three artifacts must be re-reconciled.
+
+This paper proposes a unified artifact: a parametrically generated 3D-printed substrate body that simultaneously establishes module positions and orientations, routes electrical signals between them through bare copper wire in printed channels, and provides the mechanical structure that would otherwise be a separate enclosure. A pressure-fit lid closes the assembly without adhesives, fasteners, or solder. The entire artifact is generated from a declarative input describing modules and nets, by an AnchorSCAD-based compiler that emits STL files printable on consumer FDM or resin printers.
+
+The target competitor is not a single-board PCB. It is the multi-PCB, multi-cable, multi-enclosure stack that arises whenever sensor placement in 3D space matters, and the design effort and iteration cost that stack imposes.
+
+## 2. Three Orthogonal Advantages
+
+### 2.1 3D Sensor Orientation as a First-Class Parameter
+
+On a single PCB, every sensor shares the board's plane and the board's orientation in its enclosure. Achieving non-coplanar sensor orientations requires daughterboards on right-angle headers, flex sections, or board-to-board cabling — each of which adds parts, joints, and reconciliation work between the electrical and mechanical designs.
+
+In the substrate model, a module's orientation is part of its declarative placement. The compiler emits the inlay geometry, the channel terminations, and the body wall features at whatever angle the placement specifies. A sensor whose primary axis must point at a specific direction in the host system's frame is positioned by writing that orientation; the routing follows. The cost of an off-axis module is no greater than the cost of an aligned one.
+
+This collapses what was previously a coordinated effort across PCB design, mechanical CAD, and harness routing into a single placement statement.
+
+### 2.2 Geometric Thermal Partitioning
+
+Thermal conductivity of the substrate's structural material is approximately two orders of magnitude lower than copper and roughly half that of FR-4 (PLA approximately 0.13 W/m·K, PETG and ABS in the same range, FR-4 approximately 0.3 W/m·K, copper approximately 400 W/m·K). The bare copper conductors threaded through the polymer are therefore the only meaningful thermal paths between modules, and their cross-section is determined by the wire gauge — typically a fraction of a square millimeter.
+
+Controller self-heating, which on a PCB conducts through the copper pour and the FR-4 substrate to nearby components and forces designers to use thermal cutouts and extended cable runs to isolate environmental sensors, is structurally limited here by the substrate geometry itself. The polymer body acts as a thermal break wherever a continuous channel does not exist between modules. A BME280 placed 30 mm from an ESP32 in this substrate sees substantially less conducted heat than the same arrangement on a continuous PCB plane, without any explicit thermal-design effort.
+
+This is a side effect of the routing model rather than a designed feature, but it is consequential for sensor accuracy in compact assemblies and is one of the clearest electrical-design wins of the approach.
+
+### 2.3 Democratization via Skill Substitution
+
+A conventional sensor system requires fluency in three distinct toolchains: a PCB EDA tool (KiCad, Eagle, Altium), a mechanical CAD tool (Fusion 360, FreeCAD, SolidWorks), and a harness or assembly planning step that is typically informal. Each tool has its own conventions, file formats, and learning curve.
+
+The substrate methodology substitutes a single parametric Python input for all three. A user who can write a declarative module list and net list, and who has access to a 3D printer, can produce a complete assembly. This is skill substitution, not skill elimination — the user still needs basic electronics literacy and parametric CAD comfort — but it removes the requirement to learn and reconcile three independent toolchains.
+
+The democratization claim has limits worth stating up front. The current AnchorSCAD interface is Python, which is itself a barrier for non-programmers; a higher-level input format (YAML, or a visual editor) is part of the future pipeline described in Section 9. The module library is a community asset that requires contributions to grow, and the breadth of that library is the practical determinant of how many designs are accessible without the user authoring new module definitions.
+
+## 3. Operating Modes
+
+The substrate supports three distinct operating modes, each with a different competitor and a different value proposition. Designs typically progress through them sequentially.
+
+**Open and reworkable.** The lid is removable, wires can be lifted out of channels and re-routed, modules can be removed and reinserted. This is the iteration mode, competing with breadboards (faster electrical iteration than this mode, but no mechanical structure) and with PCB iteration loops (more permanent than this mode, but order-of-days lead time per revision). Failures are recoverable; the cost of being wrong is one re-print of the body or, more commonly, just re-routing one wire.
+
+**Potted and committed short-run.** Once a design stabilizes, the channels can be filled with epoxy or silicone, sealing the wires permanently and rendering the assembly resistant to vibration, moisture, and oxidation. Material selection (PETG, polycarbonate, or ASA in place of PLA) addresses the deployment environment. This mode competes with custom PCB plus enclosure for short-run deployments where a dozen units are needed in days rather than weeks. Long-term reliability concerns about bare copper oxidation, contact fretting, or polymer creep are addressed by potting and material choice; they are not in scope for the open-mode use case.
+
+**Stepping-stone to PCB.** When volumes justify a fabricated PCB and the design is stable, the netlist that drove the substrate generation can be exported to KiCad-compatible format. The compiler retains module footprints and net membership; only the spatial routing is discarded, since a PCB will route differently. This mode competes with starting a PCB design cold from a working but un-formalized prototype, which is the path most hobbyist projects take when they reach production scale and which is responsible for substantial bug introduction at the prototype-to-production boundary.
+
+The three modes are not exclusive: an open prototype can be potted in place once validated, and a potted design can still drive a KiCad export based on the netlist that produced it.
+
+## 4. System Architecture
+
+### 4.1 Physical Stack
+
+The assembly consists of three printed parts and bare copper wire. The substrate body is a single printed piece carrying routing channels on both its top and bottom faces, with vertical vias connecting the two. Module pin inlays are integral features of the body, locally thickened around each module footprint with through-holes sized to the module's pin diameter. The lid is a printed cover that pressure-fits onto the body, sealing the top-face channels and pressing modules into their inlays. An optional base plate seals the bottom face when the assembly does not rest against another surface.
+
+**Coordinate frame.** All geometry in this paper is expressed in a right-handed, Z-up Cartesian frame in which X runs along the substrate's long edge, Y runs along the short edge, and Z is perpendicular to the substrate with Z+ on the top routing face (lid side) and Z− on the bottom routing face (base / wire-channel side). This convention matches OpenSCAD, AnchorSCAD, FreeCAD, Blender, and conventional mechanical CAD; it also matches the print-bed frame on FDM and resin printers, so the substrate prints flat with its Z+ face up by default. KiCad's 2D PCB editor uses a different convention (Y+ pointing *down*, matching paper coordinates), and the compiler's KiCad-import path inverts Y when consuming `.kicad_pcb` geometry to land in the substrate frame; the inverse transform is applied when emitting the KiCad-compatible netlist of Section 3. Web-3D viewers (glTF, `model-viewer`) use the OpenGL convention with Y+ up and the camera looking down −Z; the glTF exporter emits coordinates in the substrate frame and the viewer applies its own camera transform. Module orientations in the library (Section 5.1) and explicit placements supplied by the designer (Section 5.2) are all specified in this same frame, so a sensor whose sensing axis is annotated "+Z" appears, by default, looking up out of the lid.
+
+### 4.2 Routing Planes and Vias
+
+The two routing planes are the top face and bottom face of the body. Channels are open trenches sized to the wire gauge with an interference fit; the wire is pressed into the channel and held by polymer compression on both sides. Channel depth exceeds wire diameter so the lid does not bear on the wire and induce creep. Vias are vertical cylindrical voids through the body connecting the two faces, sized for the wire to pass with light interference. The wire is bent at right angles to transition between channel and via.
+
+This differs from PCB vias, which are plated metal cylinders providing a separate electrical path. Here the via is a void; the conductor is the wire bent through it.
+
+### 4.3 Pin Inlays and Pressure Fit
+
+Each module footprint is realized as a cluster of through-holes in a thickened region of the body. Hole diameter targets the pin's nominal diameter minus a small interference allowance — typically 0.05 to 0.15 mm undersize for FDM with a 0.4 mm nozzle, less for resin — calibrated per printer and material as described in Section 5.5. Pins are pressed into the holes during assembly. Polymer elasticity holds them laterally; the lid pressing on the module body holds them axially. Beneath the inlay, the pin protrudes into the routing channel for 2 to 4 mm, and the wire makes contact by passing through or wrapping around the protruding segment.
+
+The pin axis is independent of the module's sensing axis. A sensor mounted with its sensing surface facing any direction in the substrate's coordinate frame can have its pins extending orthogonally into the routing layer. This decoupling is what makes arbitrary 3D module orientation tractable and is the reason pinned modules remain the primary interface in this methodology.
+
+### 4.4 Lid Retention
+
+The lid mates to the body via a pressure-fit lip running the assembly perimeter, with optional internal posts pressing on module bodies to maintain pin engagement. Lid removal requires deliberate force; under normal handling the assembly behaves as a rigid unit. The lid is generated by the same AnchorSCAD framework, with cutouts derived from the module library entries for features that must remain accessible — USB connectors, indicator LEDs, sensor apertures, antenna openings.
+
+## 5. AnchorSCAD Compiler
+
+### 5.1 Module Library
+
+A module entry encodes the footprint of a COTS device: the pin pattern, pin diameter, pin pitch, body dimensions, sensing-axis annotation, and any features the lid must accommodate. The library ships with definitions for the ESP32 DevKit (38-pin and 30-pin variants), common I2C sensor breakouts in the Adafruit and SparkFun form factors, and generic 0.1-inch pitch headers. Users add modules by providing the same parameter set.
+
+Module library breadth is the practical bottleneck on adoption. A community-contributable library with low-friction submission (fork, add module entry, pull request, automated geometry render in CI) is part of the democratization pipeline rather than a future-work item.
+
+### 5.2 Module Placement and Anchor Definition
+
+Module placement is the human-authored input that anchors the rest of the synthesis. The designer specifies a position and orientation — full six degrees of freedom — for each module in the substrate's coordinate frame, optionally constrained by mechanical requirements: the ESP32's USB connector aligned with an enclosure cutout, an environmental sensor facing into airflow, an IMU aligned with the host system's body axes.
+
+Once modules are placed, every pin's position and direction is derived deterministically from the module's library entry and its placement transform. Each pin becomes an anchor — a named point in 3D space with known geometry — that the routing stage treats as a fixed terminal. A net's endpoints are the pin anchors that participate in that net.
+
+The placement interface accepts three levels of specification. Explicit placement specifies a full transform per module. Constraint-based placement specifies relative relationships ("USB at +X edge," "BME280 at least 10 mm from the regulator," "OLED facing -Y") and a small constraint solver assigns absolute transforms. Auto-arrangement provides a default rectilinear grid for first-pass synthesis and exports the result back to the input file as explicit placements.
+
+### 5.3 Netlist Representation
+
+The netlist is a list of nets, each net being a list of module-pin references. For an I2C bus this is typically four nets — VCC, GND, SDA, SCL — with each net enumerating every participating pin. The compiler does not distinguish bus nets from point-to-point nets at this stage; routing topology is derived from net membership and module placement.
+
+A same-net adjacency that would be a defect on a PCB — two traces touching, or running so close that a manufacturing defect would short them — is a *feature* on a printed-substrate-plus-wire stack, provided both ends belong to the same net. Two GND branches running parallel through neighbouring channels can be consolidated into a single continuous strand of copper that wraps the shared corridor and feeds both endpoints, eliminating one solder joint and the via that would have separated the branches. Empirically this came up on the Tier 2 design: the SCD41 GND branch and the OLED GND branch fall on the same corridor and would normally be cut as two independent channels with their own vias, but because both are GND, the compiler can collapse them into one strand of wire routed once. The general rule the router can apply is *group net branches that lie within wire-bend-radius of each other into a single strand*; the saving compounds on power and ground nets where every additional device is one more branch on the same bus. This is one of the geometric simplifications that the 3D-printed-substrate model allows but the PCB model forbids.
+
+### 5.4 Layer-Aware Maze Router
+
+The compiler implements a layer-aware maze router over the two-face occupancy grid. Lee's algorithm is applied with via-cost weighting: lateral moves on a face cost the channel pitch, vertical moves between faces cost a configurable via penalty (typically 5 to 10 times the lateral cost) so the router prefers planar routes and uses vias only when necessary. Net ordering follows a longest-net-first heuristic with rip-up-and-reroute on conflicts.
+
+For I2C the router exploits bus topology: SDA and SCL are routed as serpentine paths passing sequentially through participating pin anchors, minimizing channel length and avoiding star configurations that would require multiple via transitions. Power and ground nets are routed with priority and given wider channels to reduce voltage drop.
+
+The router is in scope for this methodology because manual routing on more than four modules erases the iteration-speed advantage that motivates the approach. Sequential routing with manual override is retained as a fallback and as an authoring affordance for designers who want to constrain specific paths.
+
+### 5.5 Tolerance Calibration
+
+FDM dimensional accuracy varies with printer geometry, filament chemistry, extrusion temperature, and print orientation, with anisotropy that differs between X-Y and Z dimensions and between holes printed vertically versus horizontally. Resin printing has its own systematic offsets. A single nominal hole or channel size therefore produces inconsistent fits across printers and even across print orientations on the same printer.
+
+Tolerance calibration is part of the day-one workflow rather than future work. The framework includes a calibration print: a small object containing nominally-dimensioned holes and channels at multiple sizes and orientations, which the user prints once and measures with calipers. The measured offsets are stored as a printer profile and applied automatically to subsequent designs. The calibration cycle takes under thirty minutes and is required only when changing printers, filaments, or print orientation conventions.
+
+A validation prototype on consumer FDM hardware exposed a failure class the straightforward "subtract a calibration offset" model does not capture: at the small end of the design space, holes can vanish entirely. A first receptacle test coupon with hole diameters of 0.50, 0.55, 0.60, and 0.65 mm — chosen to bracket the expected interference fit for a 0.64 mm DuPont pin — printed as solid plastic under a default Bambu Studio profile (PLA, 0.4 mm nozzle): no row passed visible light. Companion measurements on a separate enclosure-base print on the same hardware showed up to +0.43 mm of excess material at recess transitions while bulk dimensions shrank by only −0.05 mm. The implication is that a printer-and-slicer system has a *printability floor* — a minimum CAD feature size below which the slicer either omits the feature or fills it during elephant's-foot / seam compensation — and the calibration tool must surface that floor as a first-class output, not merely report linear offsets.
+
+A second coupon revision shifted the brackets up to 0.80, 0.95, 1.10, and 1.25 mm in 0.15 mm steps. On the validation hardware only the largest row — **1.25 mm CAD** — both printed open and accepted the OLED's 0.64 mm male header pin; the three smaller rows either remained closed or were too tight for the pin to enter. The Tier 2 substrate's pressure-fit receptacles therefore use 1.25 mm as their nominal CAD diameter, with the understanding that the resulting interference fit is loose-but-positive (the pin is retained but easily pulled out for rework); achieving a tighter grip is a slicer-tuning exercise (Bambu Studio's "Hole compensation" / "Elephant's foot compensation" controls) rather than a CAD change. The validated number, not the bracketed range, is what propagates back into the design defaults. The calibration cycle thus closes on a specific number per printer-and-slicer pair: print the coupon, identify the smallest row that both passes the light-through check and accepts the target pin, and write that value back into the substrate's receptacle-diameter parameter. The minimum reliable CAD hole diameter observed on this hardware was ~0.8 mm for light-through and 1.25 mm for pin acceptance, well above the naive 0.6 mm initial estimate. This empirical floor must drive any design that relies on small printed apertures, including the pressure-fit pin receptacles described in Section 4.3.
+
+Without this calibration, first-insertion contact yield (Section 8) is unreliable. With it, the iteration loop is closed against the variability that would otherwise be the dominant failure mode.
+
+### 5.6 Geometry Synthesis and Output
+
+Each routing plan is realized as AnchorSCAD shape operations: rectangular extrusions for channel segments, cylindrical extrusions for vias, parametric inlay primitives for module footprints, and oriented placement transforms for full 3D module positioning. The body is composed by Boolean union of polymer mass with subtraction of channel, via, and inlay voids. The lid is composed similarly, with cutouts derived from module entries.
+
+A practical print-time optimization falls out of the netlist representation directly: the compiler only emits through-hole subtractions for pins that participate in a routed net. Many COTS MCU modules expose more header pins than a given design consumes — the ESP32-C3 SuperMini, for example, exposes 18 header pins but the I2C-only spike circuit uses only 4 of them (VCC, GND, SDA, SCL). The remaining 14 pins are GPIO or no-connect on this design and need no electrical access through the substrate. Skipping their through-holes is purely a function of "does this pin appear as an endpoint in any net in the netlist," which the compiler already has. The resulting STL loses ~20 % of its small-feature count and prints measurably faster; the inlay pocket walls and the four routed pins continue to hold the module aligned. The trade-off is on the assembly side: the user either solders only the needed pins on a bare-pin module or trims the unused pre-soldered pins flush before insertion. Sensor breakouts whose headers are vendor-pre-soldered (SCD41, BH1750) keep all their pin through-holes by default — the optimization is opt-in per module, driven by whether the design controls the module's pin population.
+
+The compiler emits STL files for the body, lid, and optional base plate, plus a routing report listing every net with its assigned channels, vias, and required wire length. Pre-print validation checks include minimum wall thickness between adjacent channels, via-to-via clearance, inlay-to-channel clearance, and lid-to-module-feature interference. A 3D preview renders the proposed routing for visual inspection before printing.
+
+The compiler can also emit a KiCad-compatible netlist for the stepping-stone-to-PCB mode (Section 3), retaining module references and net membership while discarding the spatial routing.
+
+## 6. Electrical Scope
+
+### 6.1 Conductor Properties
+
+Solid-core copper wire of 22 to 26 AWG is the target conductor. DC resistance is negligible at the route lengths involved, and current capacity exceeds the requirements of any I2C peripheral or ESP32 GPIO. Power distribution at 22 AWG handles the ESP32's peak draw with margin; lower gauges are selected for higher-current rails.
+
+### 6.2 Inter-Conductor Capacitance
+
+Bare wires separated by polymer walls of 1 to 2 mm exhibit capacitance per unit length adequate for I2C operation at 100 kHz to 400 kHz over routes up to approximately one meter, well within the bus specification's 400 pF total-capacitance limit. The substrate does not provide a continuous reference plane, so precise impedance characterization is not claimed and is not required for the bus speeds in scope. Designers contemplating signaling above approximately 1 MHz should validate with measurement rather than rely on the geometric argument; this is one of the boundaries of the methodology's electrical envelope.
+
+### 6.3 Crosstalk and Noise
+
+The system targets low-speed signaling — I2C, SPI at moderate speeds, UART, GPIO, analog signals at audio frequencies and below. It is not suitable for DDR, USB high-speed, Ethernet PHY, MIPI, or RF without additional design considerations beyond this paper's scope. The absence of a continuous ground plane means return currents follow whatever ground conductor exists, and inductive loops can be larger than on a PCB. For I2C specifically, the open-drain topology and slow edge rates make this a non-issue in practice.
+
+### 6.4 Generalization Beyond I2C
+
+The methodology applies to any low-speed signaling where bus capacitance and ground return paths are not critical. SPI buses route similarly to I2C with one additional net per device for chip select. UART is a point-to-point three-net case. GPIO expansion is netlist-trivial. Power distribution to multiple modules works as long as current stays within wire ampacity and the polymer's thermal limits. The I2C focus of this paper is a demonstration choice rather than a methodology limit.
+
+## 7. Worked Example
+
+A representative configuration places an ESP32 DevKit and three sensors on a single substrate body approximately 80 by 60 by 25 mm, with each module at a distinct 3D orientation reflecting its function.
+
+The ESP32 mounts with its USB connector at the +X face for enclosure pass-through and its antenna at the -X face for line-of-sight clearance. A BME280 environmental sensor mounts on the +Z face with a vent cutout in the lid above its sensing aperture, isolating it both spatially and thermally from the ESP32's regulator. A BNO055 IMU mounts with its body axes aligned to the host system's reference frame, which in this example places it rotated 45 degrees relative to the ESP32. An SSD1306 OLED display mounts on the -Y face for user-facing readout, with a lid cutout exposing the display surface.
+
+The four I2C nets — 3.3 V, GND, SDA, SCL — pass through all four modules. Power and ground route on the bottom face as parallel channels minimizing loop area. SDA and SCL route on the top face as serpentine paths through the pin anchors of each module in turn. Three vias resolve crossings where the BNO055's rotated orientation forces local conflicts. Total wire length across all four nets is approximately 380 mm. The maze router produces this routing plan in under a second; print time is under three hours for the body and under one hour for the lid on a consumer FDM printer; assembly time is approximately twenty minutes.
+
+The same configuration on a single PCB would require either rotating the BNO055 footprint on the board (which decouples its sensing axes from the host frame, defeating the purpose), mounting it on a daughterboard at the correct angle (adding parts and a board-to-board connector), or building the entire assembly with three separate PCBs joined by harnesses (the conventional approach this methodology replaces).
+
+## 8. Validation Protocol
+
+Two numerical gates determine whether the methodology's iteration-speed and democratization claims hold. They are presented as a validation protocol rather than as completed measurements.
+
+### 8.1 First-Insertion Contact Yield
+
+The protocol is to build three to five independent fresh assemblies of the worked example, each from a freshly printed body and lid, freshly cut wires, and unmodified COTS modules. Each assembly contains approximately 16 to 24 pin-to-wire contacts (four nets times four modules, with some nets touching fewer pins). Across the build set this yields 60 to 100 contact samples. The metric is the fraction of contacts that produce clean electrical handshake — a successful I2C scan recognizing all peripherals — on the first power-up, with no rework.
+
+The target is at least 95 percent first-insertion yield. This number gates everything downstream: if first-insertion yield is below this threshold, the iteration loop is dominated by post-assembly debugging and the methodology's speed advantage erodes. This is not a long-term reliability test (which is out of scope for the open-mode use case) but a manufacturability test of the design and tolerance pipeline.
+
+### 8.2 End-to-End Iteration Time
+
+The protocol is to measure wall-clock time from netlist specification to a working assembled board for the worked example, and to compare against an equivalent KiCad design plus JLCPCB fabrication loop for the same module set. The substrate path includes compile time, print time, and assembly time. The PCB path includes layout time, fabrication lead time, shipping, and assembly time.
+
+The expected ratio is at least 5x in favor of the substrate path for first iteration (hours versus days), with the gap widening on second and subsequent iterations because PCB respins incur a new fabrication cycle while substrate revisions require only a re-print.
+
+If both numerical gates clear, the rest of the methodology is engineering effort. If either fails, the value proposition does not hold and the approach should be reconsidered.
+
+## 9. Limitations and Future Work
+
+### 9.1 Scope Boundaries
+
+The methodology targets low-speed signaling, COTS-module-based designs, and use modes where long-term reliability is addressed by potting or material selection rather than by inherent assembly properties. High-speed digital, RF, precision analog, and high-density designs are out of scope. Designs with more than approximately a dozen modules begin to strain the two-face routing topology and would benefit from stacked substrates, which are a future-work direction.
+
+### 9.2 Pinless Variants Reconsidered
+
+An earlier framing of this work proposed eliminating header pins entirely, routing copper directly to module solder pads. In the 3D-orientation framing, this is less attractive than initially apparent: pin headers are an asset, not a liability, because the pin axis is independent of the module's sensing axis. A sensor whose surface must face an arbitrary direction can have pins extending orthogonally into the routing layer, decoupling sensing direction from substrate plane.
+
+A pinless variant re-couples them: the module's solder pads are coplanar with its body, so a pad-direct connection forces the routing layer to be parallel to the module's surface, which constrains orientation. Pinless designs therefore make sense only for modules whose surface orientation is irrelevant — flat I2C breakouts that can face any direction without affecting function. For sensors with directional surfaces (light, environmental, IMU, display), pins are the right interface.
+
+This is a reversal of the earlier draft's position, prompted by the reframing of the methodology around 3D sensor orientation as a primary design parameter.
+
+### 9.3 Democratization Pipeline
+
+Skill substitution is not skill elimination. The current pipeline still requires Python literacy for AnchorSCAD inputs, electronics literacy for net specification, and 3D printer access. Three improvements would broaden access materially: a higher-level input format above the Python layer (YAML, or a visual placement and netlist editor) that compiles down to AnchorSCAD; a community module library with low-friction contribution mechanisms (the moat of the project, and currently the bottleneck); and a polished KiCad export path so substrate prototypes can transition to fabricated PCBs without re-authoring the design.
+
+These are pipeline elements rather than research questions; they are engineering work whose completion expands the addressable user base.
+
+### 9.4 Stacked Substrates
+
+The two-face routing topology of a single substrate body limits net density. Stacked substrates with inter-substrate vias would lift this limit at the cost of assembly complexity and additional pressure-fit interfaces. The AnchorSCAD compiler architecture supports this extension; the routing algorithm generalizes to N-face occupancy grids without structural change.
+
+## 10. Conclusion
+
+A parametric 3D-printed substrate that simultaneously establishes module positions, electrical routing, and mechanical structure offers a unified alternative to the multi-PCB, multi-cable, multi-enclosure stacks currently used for sensor systems with non-coplanar sensor orientations. The methodology's three orthogonal advantages — arbitrary 3D sensor orientation as a declarative parameter, geometric thermal partitioning emerging from the polymer body, and skill substitution collapsing three toolchains into one — address pain points specific to the design space it targets, and not pain points specific to single-board PCB design, which it does not compete with.
+
+Three operating modes (open and reworkable, potted for committed short-run, stepping-stone to PCB) make the same artifact useful from prototype iteration through production hand-off. A layer-aware maze router and an automated tolerance calibration pipeline are in scope from the outset because manual routing and uncalibrated tolerances would individually erase the iteration-speed advantage that motivates the approach. The validation protocol's two numerical gates — first-insertion contact yield and end-to-end iteration time — determine whether the claims hold; if they clear, the rest is engineering.
+
+I2C is the demonstration bus because it exemplifies the heterogeneous, low-speed, multi-module sensor systems for which the methodology is designed. The framework generalizes; the I2C focus is illustrative, not constitutive.
