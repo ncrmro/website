@@ -1,0 +1,69 @@
+---
+import { getCollection, render } from 'astro:content';
+import { env } from 'cloudflare:workers';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { ALLOWED_EMAIL, getSession, type AuthEnv } from '../../lib/auth';
+
+// Drafts are unpublished and gated per-request behind the admin session,
+// so this route is server-rendered rather than prerendered.
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+const session = await getSession(Astro.request, env as AuthEnv);
+if (session?.user?.email?.toLowerCase() !== ALLOWED_EMAIL) {
+	return Astro.redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(`/drafts/${slug}`)}`);
+}
+
+const post = (await getCollection('blog', ({ data }) => !data.published)).find(
+	(entry) => entry.id === slug,
+);
+if (!post) {
+	return new Response('Not found', { status: 404 });
+}
+
+const { Content } = await render(post);
+const { title, description, publish_date } = post.data;
+const editHref = `/admin/posts/${encodeURIComponent(post.id)}`;
+---
+<BaseLayout
+	title={title}
+	description={description}
+	type="article"
+	publishedTime={publish_date?.toISOString()}
+>
+	<article class="w-full md:max-w-4xl">
+		<header class="pt-6 pb-5">
+			<div class="flex items-start justify-between gap-4">
+				<div class="space-y-1">
+					<span class="inline-block rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-amber-900 dark:bg-amber-900 dark:text-amber-100">
+						Draft — visible to signed-in admin only
+					</span>
+					<h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+						{title}
+					</h1>
+				</div>
+				<a
+					class="rounded-md border border-gray-300 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+					href={editHref}
+				>
+					Edit post
+				</a>
+			</div>
+			{publish_date && (
+				<div class="text-gray-500 dark:text-gray-400">
+					<FormattedDate date={publish_date} />
+				</div>
+			)}
+			{description && (
+				<p class="mt-1 truncate text-sm text-gray-500 dark:text-gray-400">
+					{description}
+				</p>
+			)}
+		</header>
+		<div id="post-body" class="pt-6 pb-3 prose dark:prose-invert max-w-none">
+			<Content />
+		</div>
+	</article>
+</BaseLayout>
