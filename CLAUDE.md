@@ -38,6 +38,19 @@ When adding posts: `src/content/blog/<slug>.mdx` (kebab-case). Media goes
 in `public/posts/<slug>/media/<file>`; reference with absolute path like
 `![alt](/posts/<slug>/media/photo.jpg)`.
 
+## Admin editor (quiescent)
+
+`/admin` is an in-browser post editor built on the `@quiescent/*` packages
+(from [ncrmro/quiescent](https://github.com/ncrmro/quiescent)): CodeMirror
+editing at `/admin/edit/<repo-path>`, drafts autosaved to the `DRAFTS` KV
+namespace, flushed to commits on `main` on idle/Ctrl-S (contributors
+without push get a PR instead). Auth is a GitHub App OAuth flow at
+`/admin/auth/*` (`OAUTH_CALLBACK_PATH=/admin/auth/callback`), sessions in
+the `SESSIONS` KV namespace, guarded by `src/middleware.ts`. The custom
+worker entry (`src/worker.ts`, wrangler `main`) adds the cron `scheduled`
+handler that flushes drafts abandoned mid-edit. Secrets on the worker:
+`OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`, `SESSION_SECRET`.
+
 ## DB scaffolding
 
 `db/` (Drizzle schema TS files) and `drizzle/` (SQL migrations) are kept
