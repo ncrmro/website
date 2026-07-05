@@ -1,7 +1,8 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "ncrmro-website",
-	"main": "@astrojs/cloudflare/entrypoints/server",
+	// Custom entry adds the scheduled handler for quiescent's cron draft flush.
+	"main": "./src/worker.ts",
 	"compatibility_date": "2026-05-13",
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
@@ -10,9 +11,22 @@
 		"directory": "./dist",
 		"binding": "ASSETS"
 	},
+	"kv_namespaces": [
+		{ "binding": "SESSIONS", "id": "59da8c5e261e46e495ec1ea351fe87e2" },
+		{ "binding": "DRAFTS", "id": "284c39a3c527423d823a9c88ba0234a8" }
+	],
+	"triggers": {
+		// Flush drafts abandoned mid-edit into commits.
+		"crons": ["*/5 * * * *"]
+	},
 	"vars": {
 		"AUTH_URL": "https://ncrmro.com/api/auth",
-		"AUTH_REDIRECT_PROXY_URL": "https://ncrmro.com/api/auth"
+		"AUTH_REDIRECT_PROXY_URL": "https://ncrmro.com/api/auth",
+		"FORGE_KIND": "github",
+		"REPO_OWNER": "ncrmro",
+		"REPO_NAME": "website",
+		"DEFAULT_BRANCH": "main",
+		"OAUTH_CALLBACK_PATH": "/admin/auth/callback"
 	},
 	"observability": {
 		"enabled": true
