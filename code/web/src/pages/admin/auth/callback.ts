@@ -8,7 +8,12 @@ import {
 	SESSION_COOKIE,
 	sessionCookieValue,
 } from '@quiescent/server';
-import { quiescentEnv } from '../../../lib/quiescent';
+import {
+	adminEmails,
+	quiescentEnv,
+	resolveAdminEmail,
+	type AdminSession,
+} from '../../../lib/quiescent';
 
 export const prerender = false;
 
@@ -27,14 +32,27 @@ export const GET: APIRoute = async ({ locals, url, cookies, redirect }) => {
 	const tokens = await exchangeCode(oauthConfig(env, url.origin), code);
 	const forge = createForge(forgeConfig(env, tokens.accessToken));
 	const user = await forge.getUser();
-	const permissions = await forge.getRepoPermissions();
 
-	const sessionId = await createSession(env, {
+	// SECURITY: only accounts with a verified allowlisted email get a session
+	// at all — everyone else is turned away before /admin is reachable.
+	const email = await resolveAdminEmail(tokens.accessToken, adminEmails(env), user.email);
+	if (!email) {
+		return new Response('This GitHub account is not authorized to use /admin.', {
+			status: 403,
+		});
+	}
+
+	const session: AdminSession = {
 		userId: user.id,
 		login: user.login,
-		canPush: permissions.push,
+		// Forced off so flushes always go through a pull request, never a
+		// direct commit to main (FLUSH_MODE=pull-request enforces the same
+		// from @quiescent/server 0.3).
+		canPush: false,
 		tokens,
-	});
+		email,
+	};
+	const sessionId = await createSession(env, session);
 	cookies.set(SESSION_COOKIE, await sessionCookieValue(env, sessionId), {
 		path: '/',
 		httpOnly: true,

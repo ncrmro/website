@@ -1,6 +1,11 @@
 import { env as cfEnv } from 'cloudflare:workers';
 import { defineMiddleware } from 'astro:middleware';
-import { quiescentEnv, resolveQuiescentSession } from './lib/quiescent';
+import {
+	adminEmails,
+	quiescentEnv,
+	resolveQuiescentSession,
+	type AdminSession,
+} from './lib/quiescent';
 
 function isGuarded(pathname: string): boolean {
 	if (pathname.startsWith('/admin/auth/')) return false;
@@ -24,6 +29,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			});
 		}
 		return context.redirect('/admin/auth/login');
+	}
+
+	// SECURITY: sessions are only minted for allowlisted emails, but re-check
+	// on every request so removing an address from ADMIN_EMAILS revokes
+	// access immediately, existing sessions included.
+	const email = (resolved.session as AdminSession).email;
+	if (!email || !adminEmails(cfEnv).has(email.toLowerCase())) {
+		return new Response('This GitHub account is not authorized to use /admin.', {
+			status: 403,
+		});
 	}
 
 	context.locals.qsSession = resolved.session;

@@ -15,9 +15,9 @@
         "@deck.gl/geo-layers": "^9.3.3",
         "@deck.gl/layers": "^9.3.3",
         "@deck.gl/react": "^9.3.3",
-        "@quiescent/editor": "^0.1.0",
-        "@quiescent/git": "^0.1.0",
-        "@quiescent/server": "^0.1.0",
+        "@quiescent/editor": "^0.2.0",
+        "@quiescent/git": "^0.2.0",
+        "@quiescent/server": "^0.2.0",
         "astro": "^6.3.1",
         "react": "^19.2.7",
         "react-dom": "^19.2.7",
@@ -424,11 +424,11 @@
 
     "@probe.gl/stats": ["@probe.gl/stats@4.1.1", "", {}, "sha512-4VpAyMHOqydSvPlEyHwXaE+AkIdR03nX+Qhlxsk2D/IW4OVmDZgIsvJB1cDzyEEtcfKcnaEbfXeiPgejBceT6g=="],
 
-    "@quiescent/editor": ["@quiescent/editor@0.1.0", "", { "dependencies": { "@codemirror/commands": "^6.8.0", "@codemirror/lang-markdown": "^6.3.0", "@codemirror/language": "^6.11.0", "@codemirror/state": "^6.5.0", "@codemirror/view": "^6.36.0", "marked": "^15.0.0" } }, "sha512-w8C2CxQs/CqUaFgad9bp7DWyTkKFZAO7OlpcYmBdvpDLQX4KkTvUTvpWb40qfBctPSgZ23WHaiS7PJQRXaJH4w=="],
+    "@quiescent/editor": ["@quiescent/editor@0.2.0", "", { "dependencies": { "@codemirror/commands": "^6.8.0", "@codemirror/lang-markdown": "^6.3.0", "@codemirror/language": "^6.11.0", "@codemirror/state": "^6.5.0", "@codemirror/view": "^6.36.0", "marked": "^15.0.0" } }, "sha512-FVTIwjQoVYaBRDLMFcuAUCAU6xkFZ6b/sAtOppydUgV41QeRtXkkysXzgwDsjOC1c3gYbZnN9iuD27X6ZpYO/Q=="],
 
-    "@quiescent/git": ["@quiescent/git@0.1.0", "", {}, "sha512-HCrxn3Q704y25F1dv23HjqKS2yI1B/SLi15B6S8meWRi07e7mRor2uv5gqguBVSJPogxNmhLsb68iLvRgyphpQ=="],
+    "@quiescent/git": ["@quiescent/git@0.2.0", "", {}, "sha512-GoC8Vie/zkPF+DfBpeCwOqWkL0Q6gH5do+G2q0IWWKym1vxqX3wh3voonOQshdakOr76RRnkEW9eFqgC+FRBnw=="],
 
-    "@quiescent/server": ["@quiescent/server@0.1.0", "", { "dependencies": { "@quiescent/git": "^0.1.0" } }, "sha512-hdm+cfFdP/XVhVYzwdboEdKLs1WWbqagUCxPFAT3WRZ/yM2R7gVupHskmw6Ahc1UbjhBz7+2Wq4bzSZDpWuotg=="],
+    "@quiescent/server": ["@quiescent/server@0.2.0", "", { "dependencies": { "@quiescent/git": "^0.1.0" } }, "sha512-ZKObUXJu9riQOZbHTza2kaRmuMgcbFGz6mCiNfk/miCI+AF/rIUusH72PF9a4wSdAjXkh/h4vP+XyLQqt1ZCFA=="],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-rc.3", "", {}, "sha512-eybk3TjzzzV97Dlj5c+XrBFW57eTNhzod66y9HrBlzJ6NsCrWCp/2kaPS3K9wJmurBC0Tdw4yPjXKZqlznim3Q=="],
 
@@ -1433,6 +1433,8 @@
     "@esbuild-kit/esm-loader/get-tsconfig": ["get-tsconfig@4.14.0", "", { "dependencies": { "resolve-pkg-maps": "^1.0.0" } }, "sha512-yTb+8DXzDREzgvYmh6s9vHsSVCHeC0G3PI5bEXNBHtmshPnO+S5O7qgLEOn0I5QvMy6kpZN8K1NKGyilLb93wA=="],
 
     "@loaders.gl/3d-tiles/long": ["long@5.3.2", "", {}, "sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA=="],
+
+    "@quiescent/server/@quiescent/git": ["@quiescent/git@0.1.0", "", {}, "sha512-HCrxn3Q704y25F1dv23HjqKS2yI1B/SLi15B6S8meWRi07e7mRor2uv5gqguBVSJPogxNmhLsb68iLvRgyphpQ=="],
 
     "@rollup/pluginutils/estree-walker": ["estree-walker@2.0.2", "", {}, "sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w=="],
 
