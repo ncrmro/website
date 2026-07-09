@@ -1,0 +1,109 @@
+---
+title: Announcing ai-outfitter/outfitter and ai-outfitter/actions
+description: Reusable agent profiles locally, and the same profiles running headlessly from GitHub Actions.
+publish_date: 2026-07-09
+published: true
+tags: []
+---
+
+# Announcing ai-outfitter/outfitter and ai-outfitter/actions
+
+I have been poking at a simple question: what is the smallest useful packaging layer for agentic workflows?
+
+Not a whole platform. Not a dashboard. Not another giant orchestration story.
+
+Just enough structure to say: "run this kind of agent, with this profile, in this repo, for this unit of work."
+
+That is the shape behind two projects:
+
+- [`ai-outfitter/outfitter`](https://github.com/ai-outfitter/outfitter)
+- [`ai-outfitter/actions`](https://github.com/ai-outfitter/actions)
+
+## Outfitter
+
+Outfitter is a CLI for assembling and launching repeatable agent profiles.
+
+A profile can bundle the stuff that makes an agent useful in a particular role:
+
+- context
+- prompts
+- skills
+- extensions
+- subagents
+- agent-specific configuration
+
+The first target is [`pi`](https://github.com/earendil-works/pi-coding-agent), with Claude Code support in the same adapter-shaped model.
+
+The point is not to hide the agent CLI. The point is to make the setup reproducible.
+
+If an engineering profile should use a certain model, append a repo architecture note to the system prompt, expose a few skills, and launch with stricter controls, that should be something you can package, share, sync, and run again.
+
+```bash
+npx @ai-outfitter/outfitter
+```
+
+or:
+
+```bash
+npm install -g @ai-outfitter/outfitter
+outfitter run --profile engineer
+```
+
+Profiles can live locally, in a repo, or in a shared catalog. That makes them useful for personal defaults, team roles, and organization-approved agent setups.
+
+## Actions
+
+`ai-outfitter/actions` takes the same idea into GitHub Actions.
+
+It installs Outfitter on the runner, points it at a profile source, and runs the selected profile in headless print mode for one workflow run:
+
+```yaml
+- uses: ai-outfitter/actions@v1
+  with:
+    profile: reviewer
+    profile-source: my-org/outfitter-catalog
+    profile-source-ref: v1.2.0
+    prompt: >-
+      Review pull request #${{ github.event.pull_request.number }} in
+      ${{ github.repository }}. Use gh to read the diff, then post findings.
+  env:
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+```
+
+That gives you a small building block for workflows like:
+
+- review a PR when it leaves draft
+- audit sensitive paths on push
+- summarize commits on a schedule
+- complete a task when an issue is assigned to a bot account
+- smoke-test a deployment URL
+- open a triage issue when a deployment fails
+
+The action is deliberately thin. GitHub owns the trigger, token, checkout, and permissions. Outfitter owns profile assembly. The agent owns the work.
+
+## Why This Shape
+
+The thing I want is boring composability.
+
+Agent workflows should not require copy-pasting a bunch of prompt and CLI setup into every repo. They also should not require turning every automation into its own bespoke agent identity.
+
+With Outfitter, the reusable part becomes a profile. With Actions, the workflow part becomes a normal GitHub job. The handoff is just a prompt plus whatever structured context the workflow passes in.
+
+That means you can start small:
+
+1. Create one useful profile.
+2. Run it locally.
+3. Put it in a catalog when it starts being reused.
+4. Call it from GitHub Actions when the work should happen on a trigger.
+
+The security model stays understandable too. The GitHub token is the blast radius. Use the default `GITHUB_TOKEN` when possible, set explicit `permissions:`, pin profile sources you do not own, and do not paste untrusted issue bodies or PR titles directly into workflow prompts.
+
+## The Bet
+
+My bet is that agentic engineering workflows need a package manager feeling more than they need a command center feeling.
+
+Profiles should be portable. Skills should be reusable. GitHub Actions should be able to run a profile without every repo relearning the same setup ceremony.
+
+That is what `ai-outfitter/outfitter` and `ai-outfitter/actions` are trying to make boring.
+
+Local agent profiles. Shared catalogs. Headless CI runs. Same shape.
