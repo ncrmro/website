@@ -4,6 +4,7 @@ import { env } from 'cloudflare:workers';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { ALLOWED_EMAIL, getSession, type AuthEnv } from '../../lib/auth';
+import { CONTENT_DIR, editHref as quiescentEditHref } from '../../lib/quiescent';
 
 // Drafts are unpublished and gated per-request behind the admin session,
 // so this route is server-rendered rather than prerendered.
@@ -25,7 +26,7 @@ if (!post) {
 
 const { Content } = await render(post);
 const { title, description, publish_date } = post.data;
-const editHref = `/admin/posts/${encodeURIComponent(post.id)}`;
+const editHref = quiescentEditHref(`${CONTENT_DIR}/${post.id}.mdx`);
 ---
 <BaseLayout
 	title={title}

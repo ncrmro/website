@@ -1,0 +1,145 @@
+---
+import { env as cfEnv } from 'cloudflare:workers';
+import { createForge } from '@quiescent/git';
+import { forgeConfig, getDraft, getValidAccessToken } from '@quiescent/server';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { quiescentEnv } from '../../../lib/quiescent';
+
+export const prerender = false;
+
+const env = quiescentEnv(cfEnv);
+const session = Astro.locals.qsSession!;
+const path = Astro.params.path;
+if (!path) return Astro.redirect('/admin');
+
+const isNew = Astro.url.searchParams.has('new');
+const token = await getValidAccessToken(env, Astro.url.origin, Astro.locals.qsSessionId!, session);
+const forge = createForge(forgeConfig(env, token));
+
+const file = isNew ? null : await forge.getFile(path, env.DEFAULT_BRANCH);
+if (!file && !isNew) return new Response('Not found', { status: 404 });
+
+// Joined to keep literal `---` lines out of this component's frontmatter.
+const template = [
+	'---',
+	'title: ""',
+	'description: ""',
+	`publish_date: ${new Date().toISOString().slice(0, 10)}`,
+	'published: false',
+	'tags: []',
+	'---',
+	'',
+	'',
+].join('\n');
+
+// Resume an unflushed draft over the committed version.
+const draft = await getDraft(env, session.userId, path);
+const doc = draft?.content ?? file?.content ?? (isNew ? template : '');
+const editorData = { path, baseSha: file?.sha, doc, canPush: session.canPush };
+const name = path.split('/').pop();
+---
+
+<BaseLayout title={`Edit ${name}`} description="Edit post">
+	<section class="w-full">
+		<div class="flex items-center gap-4 pt-4 pb-2">
+			<a class="text-sm text-blue-700 hover:underline dark:text-blue-400" href="/admin">← posts</a>
+			<h1 class="flex-1 truncate text-base font-semibold text-gray-900 dark:text-white">{name}</h1>
+			<span id="status" class="text-sm text-gray-500 dark:text-gray-400">
+				{draft ? 'unflushed draft restored' : 'loaded'}
+			</span>
+			<button
+				id="flush-now"
+				type="button"
+				class="rounded-md border border-gray-300 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+			>
+				{session.canPush ? 'Commit now' : 'Open pull request'}
+			</button>
+		</div>
+		<div class="mt-2 grid items-start gap-4 lg:grid-cols-2">
+			<div id="editor" class="min-h-[60vh] rounded-md border border-gray-300 dark:border-gray-700"></div>
+			<article
+				id="preview"
+				class="prose dark:prose-invert min-h-[60vh] max-w-none rounded-md border border-gray-200 px-4 dark:border-gray-800"
+			></article>
+		</div>
+		<script is:inline type="application/json" id="editor-data" set:html={JSON.stringify(editorData)} />
+	</section>
+</BaseLayout>
+
+<script>
+	import { createEditor, createPreview } from '@quiescent/editor';
+
+	const data = JSON.parse(document.getElementById('editor-data')!.textContent!) as {
+		path: string;
+		baseSha?: string;
+		doc: string;
+		canPush: boolean;
+	};
+	const status = document.getElementById('status')!;
+	const preview = createPreview(document.getElementById('preview')!);
+	preview.update(data.doc);
+
+	const draftUrl = `/api/quiescent/draft/${data.path}`;
+
+	async function saveDraft(doc: string): Promise<void> {
+		status.textContent = 'saving draft…';
+		const response = await fetch(draftUrl, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ content: doc, baseSha: data.baseSha }),
+		});
+		status.textContent = response.ok ? 'draft saved' : 'draft save failed';
+	}
+
+	async function flush(): Promise<void> {
+		status.textContent = data.canPush ? 'committing…' : 'opening pull request…';
+		const response = await fetch('/api/quiescent/flush', { method: 'POST' });
+		const result = (await response.json()) as { mode?: string; url?: string; error?: string };
+		if (!response.ok) {
+			status.textContent = `flush failed: ${result.error ?? response.status}`;
+			return;
+		}
+		editor.markClean();
+		status.textContent =
+			result.mode === 'commit'
+				? 'committed'
+				: result.mode === 'pull-request'
+					? 'pull request opened'
+					: 'nothing to flush';
+		if (result.mode === 'pull-request' && result.url) {
+			status.innerHTML = `<a href="${result.url}" target="_blank" rel="noopener">pull request opened</a>`;
+		}
+	}
+
+	const editor = createEditor({
+		parent: document.getElementById('editor')!,
+		doc: data.doc,
+		idleMs: 30_000,
+		onChange: (doc) => {
+			preview.update(doc);
+			void saveDraft(doc);
+		},
+		onIdle: () => void flush(),
+		onSave: async (doc) => {
+			await saveDraft(doc);
+			await flush();
+		},
+	});
+
+	document.getElementById('flush-now')!.addEventListener('click', async () => {
+		await saveDraft(editor.getDoc());
+		await flush();
+	});
+
+	// Best-effort draft persistence when the tab closes mid-edit; the cron
+	// trigger flushes whatever landed in KV.
+	window.addEventListener('pagehide', () => {
+		if (!editor.isDirty()) return;
+		navigator.sendBeacon?.(
+			draftUrl,
+			new Blob([JSON.stringify({ content: editor.getDoc(), baseSha: data.baseSha })], {
+				type: 'application/json',
+			}),
+		);
+	});
+</script>

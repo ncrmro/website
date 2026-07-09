@@ -48,5 +48,7 @@ export default defineConfig({
 		},
 	],
 
-	adapter: cloudflare(),
+	// Reuse the SESSIONS KV namespace for the adapter's session binding so it
+	// doesn't append a duplicate kv_namespaces entry to the generated config.
+	adapter: cloudflare({ sessionKVBindingName: 'SESSIONS' }),
 });

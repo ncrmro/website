@@ -1,0 +1,65 @@
+---
+import { env as cfEnv } from 'cloudflare:workers';
+import { createForge } from '@quiescent/git';
+import { forgeConfig, getValidAccessToken } from '@quiescent/server';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CONTENT_DIR, editHref, quiescentEnv } from '../../lib/quiescent';
+
+export const prerender = false;
+
+const env = quiescentEnv(cfEnv);
+const session = Astro.locals.qsSession!;
+
+const token = await getValidAccessToken(env, Astro.url.origin, Astro.locals.qsSessionId!, session);
+const forge = createForge(forgeConfig(env, token));
+const entries = await forge.listDir(CONTENT_DIR, env.DEFAULT_BRANCH);
+const posts = entries
+	.filter((entry) => entry.type === 'file')
+	.sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout title="Admin — posts" description="Edit blog posts in the browser">
+	<section class="w-full md:max-w-4xl">
+		<header class="flex items-center justify-between gap-4 pt-6 pb-5">
+			<h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+				Posts <span class="font-normal text-gray-500 dark:text-gray-400">({session.login}{session.canPush ? '' : ', suggest-only'})</span>
+			</h1>
+			<form method="post" action="/admin/auth/logout">
+				<button
+					class="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+					type="submit">Sign out</button
+				>
+			</form>
+		</header>
+
+		<form class="mb-4 flex gap-2" method="get" action="/admin/new">
+			<input
+				class="w-full max-w-sm rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+				type="text"
+				name="slug"
+				placeholder="new-post-slug"
+				pattern="[a-z0-9\-]+"
+				required
+			/>
+			<button
+				class="rounded-md border border-gray-300 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+				type="submit">New post</button
+			>
+		</form>
+
+		<ul class="flex flex-col gap-1">
+			{
+				posts.map((entry) => (
+					<li>
+						<a
+							class="text-sm text-blue-700 hover:underline dark:text-blue-400"
+							href={editHref(entry.path)}
+						>
+							{entry.name}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</BaseLayout>
