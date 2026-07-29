@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import { env } from 'cloudflare:workers';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import ApolloReplayMap from '../../components/ApolloReplayMap.astro';
 import { ALLOWED_EMAIL, getSession, type AuthEnv } from '../../lib/auth';
 import { postSlug } from '../../lib/posts';
 
@@ -64,7 +65,7 @@ const editHref = `/admin/posts/${encodeURIComponent(post.id)}`;
 			)}
 		</header>
 		<div id="post-body" class="pt-6 pb-3 prose dark:prose-invert max-w-none">
-			<Content />
+			<Content components={{ ApolloReplayMap }} />
 		</div>
 	</article>
 </BaseLayout>

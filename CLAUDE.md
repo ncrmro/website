@@ -6,8 +6,9 @@ Guidance for Claude Code working in this repo.
 
 - **Astro 6** (`@astrojs/cloudflare` adapter, server output + prerendered
   routes), TypeScript, **Tailwind 4** via `@tailwindcss/vite`.
-- **MDX** content collection at `src/content/blog/` with a Zod schema
-  in `src/content.config.ts`.
+- **MDX** posts at `docs/posts/` in the *repository root* — not under the
+  Astro app. The collection loads them via a relative `base` in
+  `code/web/src/content.config.ts`, where the Zod schema lives.
 - **bun** is the package manager (single lockfile: `bun.lock`).
 - **Cloudflare Workers** deploy via `wrangler deploy`. The build output
   in `dist/` is served as static assets via `@astrojs/cloudflare`.
@@ -26,17 +27,33 @@ run `direnv allow` on first use).
 
 ## Content collection
 
+**Posts are not authored here.** Their canonical home is the notes vault
+(`~/notes/publications/<date>-<slug>/index.mdx`), and `sync-posts.sh` there
+copies them into `docs/posts/<date>-<slug>.mdx`, commits, and pushes to
+`main`. Editing a post in this repo will be overwritten by the next sync.
+The root `posts` symlink points at `docs/posts` for convenience.
+
+Filenames carry a `YYYY-MM-DD-` prefix mirroring the vault directory;
+`postSlug()` in `src/lib/posts.ts` strips it so URLs stay `/posts/<slug>/`.
+
 Schema (`src/content.config.ts`) requires `title`; optional fields:
 `description`, `publish_date` (coerced date), `published` (default false),
-`tags` (default []), `places` (travel posts), `heroImage` (filename).
+`draft` (default false), `tags` (default []), `places` (travel posts),
+`heroImage` (filename). Public routes filter on `isPublic()` —
+`published && !draft`. The sync stamps `draft: true` on anything not yet
+published, so it lands here but renders only at `/drafts/<slug>` behind the
+admin session.
 
-The `/posts/` index and `/posts/<slug>/` pages filter on
-`data.published === true`. Drafts (`published: false`) are written and
-committed but won't render until flipped.
+**Components in posts.** A post must stay portable — it is a copy of a vault
+file and cannot depend on this repo's layout, so it carries no import
+statements and no client directives. Instead the routes inject components via
+`<Content components={{ … }} />` (Astro's documented mechanism), and a
+framework island gets an `.astro` wrapper here that owns its `client:*`
+directive — see `src/components/ApolloReplayMap.astro`.
 
-When adding posts: `src/content/blog/<slug>.mdx` (kebab-case). Media goes
-in `public/posts/<slug>/media/<file>`; reference with absolute path like
-`![alt](/posts/<slug>/media/photo.jpg)`.
+Media: uploaded to Cloudflare R2 by the vault's `sync-media.sh` and referenced
+by absolute URL (`https://r2.ncrmro.com/posts/<slug>/media/<file>`). Legacy
+media under `public/posts/<slug>/media/` predates that and stays in Git LFS.
 
 ## DB scaffolding
 

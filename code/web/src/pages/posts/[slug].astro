@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import ApolloReplayMap from '../../components/ApolloReplayMap.astro';
 import { isPublic, postSlug } from '../../lib/posts';
 
 export async function getStaticPaths() {
@@ -39,7 +40,7 @@ const { title, description, publish_date } = post.data;
 			)}
 		</header>
 		<div id="post-body" class="pt-6 pb-3 prose dark:prose-invert max-w-none prose-img:cursor-zoom-in">
-			<Content />
+			<Content components={{ ApolloReplayMap }} />
 		</div>
 	</article>
 </BaseLayout>

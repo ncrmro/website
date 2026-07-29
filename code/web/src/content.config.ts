@@ -2,8 +2,11 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
+// Posts live at the repository root in docs/posts/, not under the Astro app —
+// they are the render target of the notes vault's publications/ directories
+// (see publications/sync-posts.sh there), and the site is one consumer of them.
 const blog = defineCollection({
-	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
+	loader: glob({ base: '../../docs/posts', pattern: '**/*.{md,mdx}' }),
 	schema: z.object({
 		title: z.string(),
 		description: z.string().default(''),

@@ -1,0 +1,11 @@
+---
+// Hydration wrapper for the React island. Posts live outside the app in
+// docs/posts/ and are canonical copies of the notes vault's publications, so
+// they must not carry framework imports or client directives — a client:only
+// directive in MDX requires a static import, which would bind the content file
+// to this repo's layout. Routes inject this wrapper via <Content components=…>,
+// and the post body just writes <ApolloReplayMap />.
+import ApolloReplayMapReact from './ApolloReplayMap';
+---
+
+<ApolloReplayMapReact client:only="react" />
