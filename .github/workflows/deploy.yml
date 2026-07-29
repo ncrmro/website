@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'docs/posts/**'
       - 'code/web/src/**'
       - 'code/web/public/**'
       - 'code/web/db/**'
