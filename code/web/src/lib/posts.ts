@@ -12,3 +12,12 @@ export function postSlug(id: string): string {
 export function isPublic({ data }: CollectionEntry<'blog'>): boolean {
 	return data.published && !data.draft;
 }
+
+export function isVisibleInLocalDevelopment(entry: CollectionEntry<'blog'>): boolean {
+	return isPublic(entry) || import.meta.env.DEV;
+}
+
+export function postHref(entry: CollectionEntry<'blog'>): string {
+	const slug = postSlug(entry.id);
+	return isPublic(entry) ? `/posts/${slug}` : `/drafts/${slug}`;
+}

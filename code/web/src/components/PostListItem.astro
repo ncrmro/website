@@ -7,14 +7,15 @@ interface Props {
 	description: string;
 	publish_date?: Date;
 	published: boolean;
+	href?: string;
 }
 
-const { slug, title, description, publish_date, published } = Astro.props;
+const { slug, title, description, publish_date, published, href = `/posts/${slug}` } = Astro.props;
 ---
 <li class="p-2">
 	<div>
 		<div class="flex justify-between">
-			<a href={`/posts/${slug}`} class="font-medium text-gray-900 dark:text-white">
+			<a href={href} class="font-medium text-gray-900 dark:text-white">
 				{title}
 			</a>
 			{!published && (

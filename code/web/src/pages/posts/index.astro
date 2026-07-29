@@ -2,9 +2,9 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostListItem from '../../components/PostListItem.astro';
-import { isPublic, postSlug } from '../../lib/posts';
+import { isVisibleInLocalDevelopment, postHref, postSlug } from '../../lib/posts';
 
-const posts = (await getCollection('blog', isPublic))
+const posts = (await getCollection('blog', isVisibleInLocalDevelopment))
 	.sort((a, b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0));
 ---
 <BaseLayout title="Posts" description="Blog posts by Nicholas Romero">
@@ -12,10 +12,11 @@ const posts = (await getCollection('blog', isPublic))
 		{posts.map((post) => (
 			<PostListItem
 				slug={postSlug(post.id)}
+				href={postHref(post)}
 				title={post.data.title}
 				description={post.data.description}
 				publish_date={post.data.publish_date}
-				published={post.data.published}
+				published={post.data.published && !post.data.draft}
 			/>
 		))}
 	</ul>
