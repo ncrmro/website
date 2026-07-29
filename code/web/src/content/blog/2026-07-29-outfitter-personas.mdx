@@ -1,0 +1,81 @@
+---
+title: Outfitter Personas Are Markdown, Not Another Agent Type
+description: Personas let agents review code, docs, designs, and plans from a specific viewpoint without turning every customer archetype into a runtime resource.
+publish_date: 2026-07-29
+published: false
+tags: [agents, outfitter, personas]
+
+draft: true
+---
+
+A persona is a repo document that keeps a specific reader in the room. It tells humans and agents who the work is for, what that person needs, which trade-offs matter, and how technical the answer should be.
+
+Persona reviews are the most common example. Pick a persona, then ask how the work reads from that point of view:
+
+- How would my marketing site read to a _non-technical finance person_?
+- How would these onboarding docs read to a _platform lead_?
+- How would this pricing page read to a _budget owner_?
+- How would this product demo read to a _sales representative_ preparing for an account call?
+
+By defining the persona, each decision, design, prioritization, and demo can be done with a specific user or reader in mind, usually allowing these decisions to be made more expeditiously.
+
+Outfitter Personas make that document runnable.
+
+A persona is not an Outfitter-only object. It is not a new resource type, a settings key, or a near-duplicate agent. The useful primitive is one Markdown file that says who the work is for.
+
+```text
+docs/personas/
+  platform-lead.md
+  software-engineer.md
+  marketing-manager.md
+  sales-representative.md
+```
+
+That file can describe a role, biography, organization, constraints, vocabulary, and decision signals. A persona can say whether the reader is an engineer, a finance approver, a marketing manager, or a sales rep preparing for an account call. The point is to replace "the user" with someone specific enough to make trade-offs.
+
+This comes from the same place as Lean Startup personas: a product team needs to know who it is building for before it evaluates whether the thing works. The agent benefits from the file, but the file is for humans first. You should be able to read it in a planning meeting without caring which agent harness will consume it later.
+
+Outfitter adds the runnable part. The pattern is small:
+
+1. Keep one shared reviewer agent.
+2. Commit one Markdown file per persona.
+3. Append one persona file when launching a review.
+4. Ask the reviewer to inspect a design, code change, document, website, plan, or release.
+5. Save the report with citations and provenance.
+
+The reviewer owns the method. The persona file supplies the viewpoint. Swapping the file swaps the reviewer's point of view without creating another executable agent.
+
+A project skill can hide the launch mechanics behind a normal instruction:
+
+```md
+When persona review is requested, launch the shared `persona-reviewer` with the selected persona file appended, pass the review target in the prompt, and save the report beside the project docs.
+```
+
+<details>
+<summary>Full Outfitter command</summary>
+
+```sh
+outfitter run persona-reviewer -- \
+  --append-system-prompt docs/personas/platform-lead.md \
+  --print "Review the onboarding docs from this persona's point of view."
+```
+
+</details>
+
+That boundary is the product decision. If every stakeholder becomes an agent, the catalog fills with brittle duplicates. If personas become schema fragments, every tool needs to understand the schema. If personas stay Markdown, the same file works in Outfitter, a web chat project, a planning session, or a human review.
+
+The file is portable because it is plain.
+
+A persona can be a role archetype, a named individual, or a composite grounded in customer research. It should not invent demographics, private facts, or fake validation. Persona feedback is a decision aid, not user research. It can show how a plausible platform lead might react to a setup flow. It cannot tell you what actual platform leads did in production.
+
+That limit keeps the tool honest. The goal is not to replace discovery. The goal is to stop reviewing every change for an amorphous blob.
+
+The same documentation change can produce different useful reports. An engineer may ask whether the example is technically complete. A marketing manager may ask whether a claim is safe to reuse in campaign copy. A sales representative may ask whether the text helps prepare a customer conversation without exposing account data. A platform lead may ask who owns policy, rollout, audit, and rollback.
+
+Those are different questions. They deserve different reviews.
+
+Once a persona file lives in the repo, it can steer more than review. It can shape specs, plans, docs, release notes, and design discussions. Outfitter makes the file runnable, comparable, and auditable, but its value starts before the run command.
+
+Design with a specific person in mind. Then let the agent help keep that person in the room.
+
+Personas are one file in a larger repo documentation stack; I describe that stack in [Project Steering Docs Are Context Engineering for Humans First](/posts/project-steering-docs).

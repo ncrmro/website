@@ -1,0 +1,106 @@
+---
+title: Project Steering Docs Are Context Engineering for Humans First
+description: A small set of repository documents can tell humans and agents what the project is, how to work on it, and who it is for.
+publish_date: 2026-07-29
+published: false
+tags: [agents, documentation, project-steering]
+
+draft: true
+---
+
+Agents do better when the project has steering docs. Humans do too.
+
+The mistake is treating "agent context" as a separate pile of prompts. If the only reader is an agent, the docs drift toward incantations, shortcuts, and hidden assumptions. If the docs are written for humans first, the agent gets better context as a side effect.
+
+Project steering docs are the small set of Markdown files that answer three questions before work starts:
+
+- What is this project?
+- How should it be changed?
+- Who is it for?
+
+A useful baseline is:
+
+```text
+README.md
+CONTRIBUTING.md
+AGENTS.md
+docs/mission.md
+docs/personas/<name>.md
+```
+
+These are not five names for the same document. Each one steers a different decision.
+
+## `README.md`: what is this?
+
+The README is the front door. It should tell a new reader what the project does, why it exists, how to run the common path, and where to go next.
+
+For an agent, the README sets the product boundary. It prevents a coding session from treating every repo as a generic package with tests. The agent should know whether it is working on a CLI, website, firmware image, research spike, library, deployment repo, or docs site before it proposes a plan.
+
+A good README orients. It should not become the whole manual.
+
+## `CONTRIBUTING.md`: how do we change it?
+
+Contributing docs own the workflow. They answer the questions that create wasted review cycles:
+
+- How do I set up the repo?
+- Which commands prove a change?
+- What branch, commit, and PR conventions matter?
+- Where do requirements live?
+- What should not be changed casually?
+
+For humans, this lowers the cost of a good contribution. For agents, it defines safe defaults and evidence requirements. "Run tests" is vague. "Run `npm test -- --runInBand path/to/test` for narrow changes and `npm run check` before handoff" is operational.
+
+## `AGENTS.md`: what must an agent know?
+
+`AGENTS.md` is the repo-local contract for coding agents. It should not duplicate the README or CONTRIBUTING. It should point to them, then add the agent-specific rules that must survive across sessions.
+
+Good entries are concrete:
+
+```md
+@CONTRIBUTING.md
+
+- Read `docs/mission.md` before changing product language.
+- Preserve hand-written notes and task rows.
+- Ask before changing dependencies, release config, credentials, generated fixtures, or public APIs.
+- Every substantive change MUST name the validation command that supports it.
+```
+
+The file is most useful when it is boring and enforceable. Agents do not need a manifesto in every repo. They need the local constraints that keep work aligned and reviewable.
+
+## `docs/mission.md`: why are we doing this?
+
+Mission docs preserve product judgment. They explain the customer, promise, non-goals, and trade-offs the project is allowed to make.
+
+This matters because many agent mistakes are product mistakes, not syntax mistakes. The agent implements an option because it can. It expands scope because the prompt sounded broad. It writes copy for "users" because no one told it whether the reader is an engineer, finance approver, founder, or operator.
+
+A mission doc gives reviewers a harder question than "does this work?" It lets them ask, "does this move the project toward the mission, or did it only add surface area?"
+
+## `docs/personas/<name>.md`: who is this for?
+
+Personas make the mission specific. They turn "the user" into a role with needs, constraints, vocabulary, and decision signals.
+
+A persona file can be plain Markdown:
+
+```md
+# Platform Lead
+
+I am responsible for the paved road used by engineering teams across a regulated organization.
+
+## What I need
+
+I need reproducible setup, clear ownership, auditability, rollback, and a path that reduces drift without making my team the bottleneck.
+```
+
+That file helps humans think. It also helps agents review. You can ask: "Read `docs/personas/platform-lead.md`, then review this onboarding page from that viewpoint." The agent now has a concrete reader in mind instead of an amorphous blob.
+
+The persona is still not user research. It is a steering document. It keeps the project honest about who it claims to serve until real evidence corrects it.
+
+## The stack works because it is shared
+
+The important move is not adding files for their own sake. It is giving each file one job and making the same docs useful to humans and agents.
+
+`README.md` orients. `CONTRIBUTING.md` operationalizes. `AGENTS.md` binds agent behavior. `docs/mission.md` preserves product judgment. `docs/personas/<name>.md` keeps a specific reader in the room.
+
+Together, they form a steering layer. A human can review it in a pull request. An agent can read it before planning. A future maintainer can diff it when the project changes direction.
+
+That is the order I want: design for humans first, then integrate agents into the human-readable system. Better project steering docs mean less pasted context, fewer repeated explanations, and fewer guesses about what "good" means.
