@@ -16,9 +16,10 @@ Describe that sequence to a software engineer and it should start to itch, becau
 The correspondence is structural rather than decorative, and the practical consequence is smaller than it sounds. CODEOWNERS expresses which discipline must sign off on which part of a maneuver plan. Pull request templates express what a plan must contain before anyone reviews it. Issue templates express what a measurement anomaly must record. Branch protection expresses the rule that a plan computed against a stale state cannot be approved. That is three files and a repository setting. The producers behind them — the navigation filter, the propulsion analysis, the trajectory solver — remain the real work; what the forge removes is the need to invent the review layer sitting on top of them.
 
 Launch opportunity is the clearest case, because it is the one where the
-candidates are visibly competing. Several windows are open at once, each a
-complete proposal computed against the same vehicle state, and they are mutually
-exclusive: taking one closes the rest. That is a release train with competing
+candidates are visibly competing. Starship's thirteenth flight test ran the
+loop in public in July 2026: three countdowns against the same stacked
+vehicle, each a complete proposal, and mutually exclusive — the first one to
+fly closes the launch period. That is a release train with competing
 candidates, and a forge already has the shape for it — parallel pull requests,
 exactly one of which merges.
 
@@ -26,22 +27,51 @@ Time flows up; `●` is landed history, `◉` is in flight, `○` is planned, an
 marks a boundary.
 
 ```text
-◇  launched — window B, 2026-11-18 22:05Z
+◇  launched — Flight 13, 2026-07-24 22:51Z
 │
-│ ○  window D: 2026-12-02 09:40Z   PR #25 · closed unmerged
-│ ○  window C: 2026-11-25 14:20Z   PR #24 · closed unmerged
-│ ◉  window B: 2026-11-18 22:05Z   PR #23 · approved — mission director
-│ ○  window A: 2026-11-04 06:12Z   PR #22 · closed — Δv exceeds margin
-│
-●  nav state @ 2026-10-28T00:00Z                     c4d5e6f
+├─╮
+│ ●  attempt 3: 2026-07-24 22:51Z               PR #24  attempt-3 → main · merged
+├─╯
+●  weather refit: clear sky confirmed 07-24     a8b9c0d
+│ ○  attempt 2: 2026-07-23 23:45Z               PR #23  attempt-2 → main · closed — weather
+├─╯
+●  weather refit: Bertha slips window to 07-23  f7a8b9c
+●  engine remediation: LOX turbopumps           e6f7a8b
+●  reconstruction: T−0 ignition abort           d5e6f7a
+│ ○  attempt 1: 2026-07-16 23:45Z               PR #22  attempt-1 → main · closed — abort
+├─╯
+●  flight ready: Ship 40 / Booster 20           c4d5e6f
 ```
 
-The two closures are not the same event. Window A is rejected on the merits — its
-Δv does not fit the margin. C and D are discarded by B merging, and they were
-never unviable; they were later. A candidate stays open until something else
-lands, which is the ordinary fate of a pull request and the ordinary fate of a
-launch window. Section 3 develops the notation on maneuvers; identifiers, shas,
-and any figure not quoted in the surrounding text are illustrative.
+The two closures are not the same event. Attempt 1 is rejected on the merits,
+and by a machine: the count reached T−0 and the vehicle aborted itself during
+ignition on LOX turbopump faults — CI failing the deploy step, not a reviewer
+changing their mind. Attempt 2 was never unviable; it was closed by an
+environmental gate, scrubbed for weather because the ascent imagery of the
+heat shield needed clear sky. Attempt 3 merged, and merging is what ended the
+launch period. A candidate stays open until something else lands, which is the
+ordinary fate of a pull request and the ordinary fate of a launch window.
+And between the attempts, main moves: the abort reconstruction, the turbopump
+remediation, and each weather refit land as commits, so every surviving
+candidate forks from the new tip rather than the state the last one was
+computed against — section 2.4's staleness rule, enforcing itself.
+Section 3 develops the notation on maneuvers; PR numbers and shas are
+illustrative — the dates, times, and closure reasons here are Flight 13's.
+
+The direction of causality is worth fixing before going further, because it is
+the opposite of how software teams usually meet a repo. The repository does not
+fly the vehicle; the vehicle — and the tracking stations watching it — drive
+the repository, which is the record of what actually happened. But a landed
+record is also the trigger for what happens next, the way a push event starts
+a CI run. Once the launch vehicle releases the spacecraft, it flies a few
+orbits while tracking accumulates; navigation fits the data and commits an
+orbit determination; and that commit is the event that opens the next phase's
+branch — a worktree carrying the next major mission event's trajectory
+solution, filter tuning, and burn plan, computed against exactly the state
+that triggered it, reviewed by the disciplines that own its files, and
+approved for merge. Every phase of the mission is one turn of that loop:
+reality lands as a commit, the commit opens the branch for the next event,
+the merge authorizes it, and the vehicle's response lands as the next commit.
 
 ## 1. The Approval Loop
 
