@@ -1,0 +1,104 @@
+---
+title: Few Profiles, Many Skills
+description: A small pattern for adding agentic GitHub workflows without profile sprawl or near-duplicate Actions jobs.
+publish_date: 2026-07-09
+published: false
+tags: []
+draft: true
+---
+
+The tempting way to build agentic GitHub workflows is to make every automation its own agent profile.
+
+One profile for idea triage. One for weekly KPI reports. One for deployment smoke tests. One for release review. One for failed deploys. One for retrospectives.
+
+It feels clean for the first few workflows because everything is explicit. Then the profiles start duplicating each other. They share the same repo rules, write policy, prompt-injection posture, escalation behavior, and GitHub conventions. The thing that actually changes is usually much smaller: the trigger facts.
+
+The pattern I keep coming back to is:
+
+**Few profiles. Many skills. Structured trigger context in the prompt.**
+
+Profiles should define identity, policy, and common operating rules. Skills should define workflow-specific behavior. GitHub Actions should pass exact event data into the prompt so the agent can decide which skill applies to this run.
+
+## The Job of the Action
+
+The GitHub Action should be boring. Its job is to expose facts:
+
+```json
+{
+  "trigger_context": {
+    "repository": "owner/repo",
+    "workflow": "agentic-workflows",
+    "run_id": "123456789",
+    "event_name": "issues",
+    "event_action": "labeled",
+    "issue_number": 42,
+    "issue_label": "idea",
+    "ref_name": "main",
+    "sha": "abc123"
+  }
+}
+```
+
+For a scheduled report, the same shape might include `schedule` and `report_period`. For a deployment, it might include `deployment_status`, `environment`, and `environment_url`. For a release, it might include `release_tag`.
+
+The action does not need to become an agent router. It does not need a new job body for every workflow. It passes the normalized trigger context and lets the profile interpret it.
+
+## The Job of the Profile
+
+The profile should be stable.
+
+It says things like:
+
+- how to treat untrusted content
+- when to commit directly vs. open a PR
+- how to cite evidence
+- which repo conventions matter
+- which permissions are allowed
+- how to escalate when the task is risky
+
+Those rules should not be copied into ten profiles just because ten triggers exist.
+
+The profile can then map structured trigger context to skills:
+
+- If an issue is labeled `idea`, load the idea-triage skill.
+- If the weekly schedule fires, load the KPI-report skill.
+- If a deployment succeeds and has an environment URL, load the smoke-test skill.
+- If a deployment fails, load the failed-deployment-triage skill.
+- If it is Friday afternoon, load the retrospective skill.
+
+Same agent posture. Different run facts. Different skill.
+
+## Why Skills Make This Work
+
+The important part is progressive disclosure.
+
+A skill lets the agent load the relevant behavior only when the trigger context calls for it. The idea-triage instructions do not have to sit in the profile next to the smoke-test instructions and every future workflow path you have not invented yet.
+
+That matters because I expect stuffing every possible workflow into the profile to make the agent worse: the prompt gets longer, the decision surface gets blurrier, and unrelated instructions start competing for attention. I have not measured where that line sits.
+
+Skills keep the profile small while letting the capability surface grow. The agent begins with stable policy and a compact context block. Then, when the context says "this is an issue labeled idea," it loads the idea-triage behavior. When the context says "this is a successful deployment," it loads the smoke-test behavior.
+
+That is a much cleaner scaling story than building one giant profile that tries to remember every possible path up front.
+
+## The DRY Line
+
+Most new workflows are not new agent identities. They are the same agent seeing different facts.
+
+So adding a workflow should usually mean:
+
+1. Add or reuse a skill.
+2. Add the trigger that supplies the right structured context.
+3. Keep the profile stable unless the policy actually changed.
+
+Permissions can still vary by workflow because GitHub permissions are a real security boundary. A deployment triage job may need different permissions than a read-only report. But the agent profile does not need to multiply just because the trigger changed.
+
+The division of labor:
+
+- GitHub Actions: trigger plumbing, permissions, secrets, exact event data
+- Profiles: identity, shared policy, common operating rules
+- Skills: workflow-specific behavior, loaded only when relevant
+- Prompt payload: the structured handoff between the action and the agent
+
+The payoff is that new agentic workflows become additive. You can add idea triage, reports, smoke tests, release reviews, and retrospectives without an explosion of profiles or the same GitHub Actions job copied over and over.
+
+The pattern stops paying when two workflows genuinely need different agent identities — a bot that can push to main and a read-only reporter should not share a profile just to keep the count low.

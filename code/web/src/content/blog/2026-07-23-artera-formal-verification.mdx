@@ -1,0 +1,175 @@
+---
+title: "Grounding the Numbers: Formally Verifying an Estimate Model"
+description: "The prices and budgets a startup shows investors and customers should be provably correct, not just tested. A spike verifying TypeScript estimate functions with LemmaScript and Dafny — and the audit map it produces."
+publish_date: 2026-07-23
+published: false
+tags: ["formal-methods", "typescript", "dafny", "verification", "artera"]
+draft: true
+---
+
+Every startup ships a spreadsheet's worth of numbers it wants you to believe:
+the price of an order, the payback period on a machine, the delta-v to reach an
+orbit, the mass budget a payload has to fit inside. We render them in a nice UI
+and call them a model. But the function that produced the number is usually just
+code someone wrote once — maybe unit-tested on a few examples, maybe not — and
+the number inherits whatever bugs and unstated assumptions that code carries.
+
+For [Artera](https://artera.space) — a constellation of orbital crop-growing pods
+— those numbers decide whether a business closes. But the idea didn't start with a
+grand claim about investor models. It started somewhere much smaller.
+
+## It started with a storage bill
+
+Each Earth-analogue pod carries a small camera pushing JPEGs to an
+[R2](https://developers.cloudflare.com/r2/) bucket — the same pod I spent a day
+[getting onto Wi-Fi](/posts/esp32-auth-expired-weak-antenna). A boring question
+came up while designing it: **what does this cost to store?** And a sharper one:
+should every frame be written twice — once as the live `latest.jpg`, once into a
+retained history — or is that quietly doubling the bill?
+
+The honest way to answer "is the cheaper design actually cheaper" is to write the
+cost as a function and *prove* the claim, not eyeball it. So the R2 cost model
+became the first function to carry a specification:
+
+```ts
+//@ verify
+//@ ensures \result.writeUsd >= 0 && \result.storageUsd >= 0 && \result.usd >= 0
+//@ ensures historyEveryS == 0 ==> \result.writesPerMonth == framesPerMonth
+export function monthlySnapshotCost(inputs: SnapshotCostInputs): SnapshotCostResult { … }
+```
+
+That last line is the whole optimization stated as a theorem: with history off,
+the month's writes exactly equal the frames — one write per frame, not two. That
+clause is what pins the cheap branch; the naïve "write latest **and** history
+every frame" design is the one it rules out. The worked number fell out at about
+**$0.19/mo per camera** at a 60-second interval — a Tier C figure by this post's
+own rule, since it rests on published R2 prices rather than proof.
+
+It's a small, almost silly number to formally verify. But once *one* number
+carried a proof instead of a comment, the obvious question was: why stop at the
+storage bill? The numbers that decide the business — order prices,
+payback, mass budgets — deserve at least as much rigor as the R2 invoice.
+
+## The thesis: function provenance, not just data provenance
+
+Artera's data model already tracks **data** provenance: every mocked input carries
+an `evidence_backed` flag and a source. That's good discipline for inputs. But it
+says nothing about the *computation*. A perfectly-sourced cost fed through a buggy
+pricing function is still a wrong price.
+
+So the move is to add **function** provenance: attach a specification to each
+number-producing function and have a machine check that the function meets it.
+Not "here's where the input came from" but "here's the property this calculation
+provably has, for all inputs."
+
+## TypeScript specs, a real prover underneath
+
+The mechanism behind those `//@` comments is
+[LemmaScript](https://github.com/midspiral/LemmaScript), which compiles annotated
+TypeScript to [Dafny](https://dafny.org) (or Lean). The annotations are ordinary
+comments — inert at runtime — so the executable code never changes. The next
+number I reached for was the one an investor actually reads: Artera's capacity
+pricing.
+
+```ts
+//@ verify
+//@ type cost real
+//@ type margin real
+//@ type \result real
+//@ requires cost >= 0 && margin >= 0 && margin < 1
+//@ ensures \result >= cost
+export function priceAtMargin(cost: number, margin: number): number {
+  return cost / (1 - margin);
+}
+```
+
+Recover a cost at a target gross margin, priced `cost / (1 - margin)`. The
+`//@ ensures` says the priced revenue is **never below cost**. LemmaScript emits
+Dafny, Dafny hands it to Z3, and the whole toolchain came from
+[nix](https://nixos.org) — no global installs. The result:
+
+```
+Dafny program verifier finished with 12 verified, 0 errors
+```
+
+Twelve proofs across four cores — starting with that R2 write-count optimization,
+then pricing, payload-fit margins, and order totals — with a matching `bun test`
+differential suite (11 tests, 6,612 assertions) confirming the verified cores
+agree with the real functions they abstract.
+
+## The bug it caught
+
+A proof you can't fail is theater. So I ran a negative control: the same function,
+but with the `margin < 1` precondition removed. Dafny refused it:
+
+```
+Error: possible division by zero
+Error: a postcondition could not be proved on this return path
+```
+
+That's not a contrived failure. The *actual* `annualCapacityRevenue` in the
+codebase divides by `(1 - margin)` with **no guard** that `margin ≠ 1`. At a 100%
+target margin it divides by zero; above it, it silently returns negative revenue.
+The specification surfaced a latent bug that every existing unit test walked past.
+
+## Three tiers, honestly labeled
+
+Here's the part most "just formally verify it" pitches skip. What this toolchain
+reasons about is integers and reals. IEEE-754 floats and transcendental functions
+like `√`, `ln`, or `exp` are reachable in principle — Z3 has a float theory, and
+Dafny can axiomatize `√` — but they were well out of budget here. Artera's orbital
+mechanics (`period = 2π√(a³/μ)`) and its crop-growth model live squarely in that
+zone. Pretending otherwise would be worse than not verifying at all.
+
+So every number lands in one of three tiers, and **a number is only as trustworthy
+as its weakest input**:
+
+| Tier | What | How it's grounded |
+| --- | --- | --- |
+| **A — proven** | linear/rational finance & budgets | Dafny proof (`cost / (1 - margin) >= cost`; `margin = budget - load`) |
+| **B — tested** | floats / transcendentals (orbital period, crop model) | golden values + fuzzed properties |
+| **C — sourced** | constants (prices, μ, Isp) | provenance, not proof — and a *stub* here taints everything above it |
+
+A few engineering notes for anyone trying this:
+
+- Reals need explicit `//@ type … real` annotations.
+- Decimal literals aren't supported in specs — use integers and let Dafny coerce.
+- Nonlinear *division* needed a one-line proof hint; nonlinear *multiplication*
+  verified on its own.
+- `Math.round` is non-linear, so you verify the pre-rounding core and
+  differential-test the rounded wrapper.
+
+## The payoff: a trust map, not a checkmark
+
+The point was never a green badge. It's an **audit map**. A generator walks the
+annotated functions, their dependency graph, and the stub markers already in the
+code, and emits a manifest graded by trust, where the grade propagates over the
+whole dependency closure:
+
+| Number | Status | Why |
+| --- | --- | --- |
+| R2 snapshot writes/mo (where it began) | proven | |
+| Investor required annual revenue | proven | division on sourced constants |
+| Payload mass/power/volume fit | proven | |
+| Orbital period (map tooltip) | tested | `√` is outside the prover |
+| **Order total price** | **stub** | rests on the Δv regime table |
+| Δv-between-regimes table | stub | labeled as such in the code |
+| Gravitational parameter μ | sourced | constant |
+
+The order total is a stub **not because its formula is wrong** — that formula is
+proven — but because it inherits an unsourced delta-v stub three hops down.
+Meanwhile the number an investor reads, required annual revenue, comes out
+proven: sound arithmetic on sourced constants. That's the view I want a human (or
+an agent) to be able to pull up: *what, exactly, is this number standing on?*
+
+## Where this goes
+
+For a company whose credibility rests on numbers it can't yet measure in orbit,
+"here is the machine-checked guarantee, and here is the honest list of what's
+still a stub" is a stronger and more auditable claim than any spreadsheet. The
+plan from here is unglamorous: keep the differential tests always-on, run the
+formal proofs as a separate CI job, and extend coverage one number at a time,
+starting with the Δv regime table. Until that one is sourced, the order total —
+the number a customer sees first — stays a stub, and the map says so.
+
+Verification didn't replace judgment. It made the judgment *legible*.

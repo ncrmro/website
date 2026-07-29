@@ -1,0 +1,165 @@
+---
+title: "\"Auth Expired\": a day chasing the wrong ESP32 bug"
+description: "An ESP32 camera pod refused to join Wi-Fi with reason='Auth Expired'. I blamed the password, the router, PMF, WPA3 — everything but the real cause. The fix was an antenna, and the clue was one number we didn't measure until hour six."
+publish_date: 2026-07-23
+published: false
+tags: ["esp32", "esphome", "wifi", "debugging", "hardware", "artera"]
+draft: true
+---
+
+Every so often a bug lies to you in the error message itself. This is the story
+of one that did, on an ESP32, for the better part of a day — and the two-word log
+line that sent me down every wrong road before one measurement ended it in
+thirty seconds.
+
+The context: I'm building the first Earth-analogue pod for
+[Artera](https://artera.space) — a little camera node that captures a JPEG of a
+grow chamber and pushes it to a bucket. It's a Seeed XIAO ESP32-S3 Sense
+running [ESPHome](https://esphome.io), and I'd already gotten the fun parts
+working: the firmware compiles, a custom component POSTs frames to the control
+plane, the whole pipeline is deployed. All that was left was the most boring
+step imaginable: join the Wi-Fi.
+
+It would not join the Wi-Fi.
+
+## The lie
+
+```
+[W][wifi_esp32]: Disconnected ssid='cocean' bssid=90:D0:92:42:51:F4 reason='Auth Expired'
+[W][wifi_esp32]: Disconnected ssid='cocean' bssid=90:D0:92:42:51:F4 reason='Auth Expired'
+[W][wifi_esp32]: Disconnected ssid='cocean' bssid=90:D0:92:42:51:F4 reason='Auth Expired'
+```
+
+`Auth Expired`. Forever. Read that as a human and it means one thing: the
+password is wrong. So that's where I started. And that's the trap, because
+the device clearly *found* the network (there's the BSSID), and it connected to a
+phone hotspot instantly when I held the phone next to it. Right password.
+Right SSID. Reachable AP. And still, `Auth Expired`.
+
+Here is roughly the list of things I tried, in order, each one feeling reasonable
+at the time:
+
+1. **Re-checked the password.** Pulled it straight from the keyring with
+   `nmcli -s -g 802-11-wireless-security.psk connection show cocean`. Correct.
+2. **Suspected my own secrets pipeline.** Maybe a `#` in the password was getting
+   eaten as a dotenv comment. Compared the string length at every hop from `.env`
+   to the generated `secrets.yaml`. Byte-for-byte identical.
+3. **`power_save_mode: none`.** A famous ESPHome fix for exactly this error.
+   Nothing.
+4. **`output_power: 8.5`, `fast_connect`.** The rest of the documented combo.
+   Nothing. (`output_power` *lowers* transmit power, which was precisely the
+   wrong direction.)
+5. **WPA3?** Checked `key-mgmt`: `wpa-psk`. Plain WPA2. Not that.
+6. **PMF (802.11w)?** Went as far as compiling a boot lambda that calls
+   `esp_wifi_disable_pmf_config()`. Still nothing.
+7. **Blamed the router.** It's an AT&T gateway: a mesh, with band-steering and
+   802.11r, none of which I could disable in its locked-down admin. This felt
+   like the answer. It was not the answer.
+
+Six wrong turns, several of them "known fixes" from forum threads describing this
+exact error. Every one of them treats `Auth Expired` as an *authentication*
+problem. That framing is the bug.
+
+## The number we didn't measure
+
+The whole time, one thing nagged: it connected to the phone hotspot at inches.
+If it were truly a router or auth problem, distance wouldn't matter. So finally I
+did the thing I should have done first, turning on debug logging to read the
+Wi-Fi scan, which prints the signal strength of every AP it can hear:
+
+```
+- 'cocean' (90:D0:92:42:51:F4) ▂▄▆█ Ch:11  -95 dB
+```
+
+**−95 dBm.** That's the noise floor. That's "I can just barely tell a network is
+there." For reference: −65 is great, −75 is workable, −85 is marginal, and −95
+means the radio is straining to hear a whisper. At that level the device can sort
+of *receive* the access point, but its own weak transmit can't get the four-way
+handshake replies *back*, so the handshake times out and ESPHome surfaces that
+as `Auth Expired`. It was never auth. It was **signal**, the entire time.
+
+The phone worked because it was two inches away. `cocean` is across the room.
+
+## The trail, in RSSI
+
+Once I was watching the actual number, everything lined up. Each change moved the
+signal, and the *failure mode itself* tracked the signal:
+
+| Setup | RSSI | What happened |
+| --- | ---: | --- |
+| Onboard antenna, `cocean` (across room) | **−95 dBm** | instant `Auth Expired` |
+| Onboard antenna, an AP in the same room | −86 dBm | instant reject |
+| Moved it closer | −66 dBm | *associates*, then stalls ~46 s |
+| **External antenna** + close AP | −54 dBm | reaches the handshake |
+| External antenna, `cocean`, correct pw | −88 dBm | connected |
+
+Watch the reason codes climb the ladder as signal improves: `Auth Expired`
+(can't even handshake) → `4-Way Handshake Timeout` (got into the key exchange) →
+`connected`. The error was a **thermometer for signal strength**, and I'd been
+reading it as a verdict on my password.
+
+The last row is the one that gives the game away: −88 dBm connected where −86 dBm
+had been rejected outright. RSSI only measures what the board *hears*. The
+external antenna's real work was on transmit, which no number in this table
+shows.
+
+The culprit was the **antenna**. The XIAO ESP32-S3 Sense has a tiny onboard trace
+antenna, and on the *Sense* the camera daughterboard sits over the RF section,
+which I assume is not helping. It ships with a little external U.FL antenna that you're meant to plug
+in — and I hadn't. Plugging it in (and getting the pod nearer the gateway) is what
+finally carried the handshake home:
+
+```
+[C][wifi:1259]:   IP Address: 192.168.1.155
+[C][wifi:1270]:   SSID: 'cocean'
+[I][snapshot_uploader:100]: uploaded 10212 bytes -> HTTP 200 (kept)
+[I][snapshot_uploader:100]: uploaded 10377 bytes -> HTTP 200
+```
+
+Real frames, over the normal house Wi-Fi, at last.
+
+## The kicker: a router I fully controlled
+
+Somewhere around hour five, I got tired of not being able to separate "is it the
+device or the AT&T router?" So — since the workstation is on Ethernet and its
+Wi-Fi radio was just sitting there idle — I had it stand up its **own** access
+point, right next to the pod, with one command:
+
+```bash
+nmcli device wifi hotspot ifname wlp6s0 ssid artera-pod password '••••••••' band bg
+#   → 10.42.0.1/24, dnsmasq handing out DHCP, NAT'd out the Ethernet.
+#     band bg forces 2.4 GHz (an ESP32 can't see 5 GHz at all).
+```
+
+Now I had a known-good, clean WPA2 AP (no PMF, no band-steering, no mesh) with
+real internet, feet from the device — and it *still* read weak and *still*
+stalled. That was the moment the router theory died for good: if even an AP on
+the same desk looks faint to this board, the problem is the board's ears (and
+mouth), not anyone's router. The bench AP didn't fix it — but it's what proved
+what the fix had to be. (Teardown is just
+`nmcli connection down Hotspot && nmcli connection delete Hotspot`.)
+
+## What I'd tell past me
+
+- **Measure RSSI before you theorize.** One line of `logger: level: DEBUG` prints
+  the dBm of every AP in the scan. On any flavor of "can't connect," read that
+  number *first*. `Auth Expired` and `4-Way Handshake Timeout` are, more often
+  than not, signal in a trench coat.
+- **`Auth Expired` ≠ wrong password.** A wrong password fails *later*, in the key
+  exchange, after the device has associated. Failing at the auth stage with a
+  *known-good* password points at the physical layer. (`4-Way Handshake Timeout`
+  is the ambiguous one: it is where a bad PSK lands, but weak signal reaches it
+  too, as the −66 dBm row above shows.)
+- **Wi-Fi links are asymmetric.** "It hears the AP fine" doesn't mean the AP can
+  hear *it*. A weak transmitter associates and then dies in the handshake.
+- **Know your board's antenna.** The XIAO ESP32-S3 Sense wants its external
+  antenna. A phone hotspot held at inches is the fastest known-good, strong-signal
+  control in your kit; `nmcli device wifi hotspot` on a wired box is the reusable
+  bench version.
+- **Config knobs won't fix physics.** `power_save_mode`, `output_power`,
+  `fast_connect`, PMF — none of them add signal. I burned an afternoon on settings
+  when the answer was a two-dollar antenna and eighteen inches.
+
+The pod is up now, streaming frames to the dashboard over ordinary house Wi-Fi.
+The last mile turned out to be the oldest lesson in radio: **check your
+signal.**
