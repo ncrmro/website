@@ -42,8 +42,3 @@ identical in both repos. To use a component in one, see
 - [docs/architecture.md](docs/architecture.md) — stack, layout, content
   pipeline, deployment
 - [CONTRIBUTING.md](CONTRIBUTING.md) — dev shell, commands, conventions
-
-The Astro scaffold started from the
-[Bear Blog](https://github.com/HermanMartinus/bearblog/) starter. This repo is
-mirrored at https://github.com/ncrmro/website and
-https://git.ncrmro.com/ncrmro/website.
