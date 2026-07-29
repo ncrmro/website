@@ -10,6 +10,15 @@
 		"directory": "./dist",
 		"binding": "ASSETS"
 	},
+	// The Cloudflare adapter always injects a SESSION KV binding, even though
+	// nothing here uses Astro sessions (auth is JWT via @auth/core) — see
+	// https://github.com/withastro/astro/issues/15802. Left unbound, wrangler
+	// tries to auto-provision "ncrmro-website-session" on every deploy and
+	// fails because it already exists (API error 10014). Binding the existing
+	// namespace explicitly makes wrangler bind instead of create.
+	"kv_namespaces": [
+		{ "binding": "SESSION", "id": "5df32d935585452fa748139eb0e64212" }
+	],
 	"vars": {
 		"AUTH_URL": "https://ncrmro.com/api/auth",
 		"AUTH_REDIRECT_PROXY_URL": "https://ncrmro.com/api/auth"
