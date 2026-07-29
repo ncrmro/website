@@ -1,9 +1,10 @@
 import { getCollection } from 'astro:content';
 import rss from '@astrojs/rss';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { isPublic, postSlug } from '../lib/posts';
 
 export async function GET(context) {
-	const posts = (await getCollection('blog', ({ data }) => data.published)).sort(
+	const posts = (await getCollection('blog', isPublic)).sort(
 		(a, b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0),
 	);
 	return rss({
@@ -14,7 +15,7 @@ export async function GET(context) {
 			title: post.data.title,
 			description: post.data.description,
 			pubDate: post.data.publish_date,
-			link: `/posts/${post.id}/`,
+			link: `/posts/${postSlug(post.id)}/`,
 		})),
 	});
 }

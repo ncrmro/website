@@ -1,14 +1,15 @@
 ---
 import { getCollection } from 'astro:content';
 import PostListItem from './PostListItem.astro';
+import { isPublic, postSlug } from '../lib/posts';
 
 interface Props {
 	tag: string;
 }
 
 const { tag } = Astro.props;
-const posts = (await getCollection('blog', ({ data }) =>
-	data.published && data.tags.includes(tag),
+const posts = (await getCollection('blog', (entry) =>
+	isPublic(entry) && entry.data.tags.includes(tag),
 )).sort(
 	(a, b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0),
 );
@@ -19,7 +20,7 @@ const posts = (await getCollection('blog', ({ data }) =>
 	<ul role="list" class="-mb-8 w-full md:max-w-3xl">
 		{posts.map((post) => (
 			<PostListItem
-				slug={post.id}
+				slug={postSlug(post.id)}
 				title={post.data.title}
 				description={post.data.description}
 				publish_date={post.data.publish_date}

@@ -9,6 +9,9 @@ const blog = defineCollection({
 		description: z.string().default(''),
 		publish_date: z.coerce.date().optional(),
 		published: z.boolean().default(false),
+		// Set by the vault sync for pieces pushed ahead of publication; a
+		// draft is never publicly listed even if published is flipped.
+		draft: z.boolean().default(false),
 		tags: z.array(z.string()).default([]),
 		places: z.array(z.string()).optional(),
 		heroImage: z.string().optional(),

@@ -4,6 +4,7 @@ import { env } from 'cloudflare:workers';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { ALLOWED_EMAIL, getSession, type AuthEnv } from '../../lib/auth';
+import { postSlug } from '../../lib/posts';
 
 // Drafts are unpublished and gated per-request behind the admin session,
 // so this route is server-rendered rather than prerendered.
@@ -16,8 +17,8 @@ if (session?.user?.email?.toLowerCase() !== ALLOWED_EMAIL) {
 	return Astro.redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(`/drafts/${slug}`)}`);
 }
 
-const post = (await getCollection('blog', ({ data }) => !data.published)).find(
-	(entry) => entry.id === slug,
+const post = (await getCollection('blog', ({ data }) => !data.published || data.draft)).find(
+	(entry) => postSlug(entry.id) === slug || entry.id === slug,
 );
 if (!post) {
 	return new Response('Not found', { status: 404 });
