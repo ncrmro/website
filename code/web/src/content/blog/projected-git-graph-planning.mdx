@@ -1,6 +1,6 @@
 ---
 title: Projected git graph planning
-description: A plain-text design language that draws plans in a notation engineers already read — the git graph — plus the agreement that those commits are the ones that land.
+description: A mildly retrocausal planning notation — fix the next release and it reaches back to decide today's commit — drawn as the git graph engineers already read.
 publish_date: 2026-07-25
 published: true
 tags: ["technical", "ai", "developer-tools", "git"]
@@ -36,10 +36,14 @@ The symbols carry state:
 - `●` is shipped on main.
 - `◇` is a release boundary.
 
-Time flows upward, like `git log`. The next unit of work is the lowest open
-circle — the one with nothing unfinished beneath it. That rule matters when
-several agents are available: it tells them what is ready without turning every
-unfinished idea into an equally urgent checkbox.
+Time flows upward, like `git log`. The graph is mildly retrocausal: you fix a
+point in the future — the next release — and it reaches back to decide what
+you're allowed to commit this afternoon.
+
+The next unit of work is the lowest open circle — the one with nothing
+unfinished beneath it. That rule matters when several agents are available: it
+tells them what is ready without turning every unfinished idea into an equally
+urgent checkbox.
 
 Because the lines are real commit subjects, there is no translation step at the
 end. The plan line becomes the commit message verbatim.
