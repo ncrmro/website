@@ -1,6 +1,6 @@
 ---
 title: Projected git graph planning
-description: A mildly retrocausal planning notation — fix the next release and it reaches back to decide today's commit — drawn as the git graph engineers already read.
+description: A mildly retrocausal planning notation — pin the next minor release and it reaches back to decide which feature you commit today.
 publish_date: 2026-07-25
 published: true
 tags: ["technical", "ai", "developer-tools", "git"]
@@ -36,9 +36,9 @@ The symbols carry state:
 - `●` is shipped on main.
 - `◇` is a release boundary.
 
-Time flows upward, like `git log`. The graph is mildly retrocausal: you fix a
-point in the future — the next release — and it reaches back to decide what
-you're allowed to commit this afternoon.
+Time flows upward, like `git log`. The graph is mildly retrocausal: you pin a
+point in the future — the next minor release — and it reaches back to decide
+which feature you're allowed to commit this afternoon.
 
 The next unit of work is the lowest open circle — the one with nothing
 unfinished beneath it. That rule matters when several agents are available: it
@@ -122,5 +122,7 @@ are the ones you are free to split, reorder, and drop. What you cannot redraw
 are the `●`s. Once a line becomes a real commit, the repository — not the prose
 around it — is the authority.
 
-The complete format and templates live in my
-[`project-planning` skill](https://github.com/ncrmro/.agents/blob/main/skills/project-planning/SKILL.md).
+This started as a set of instructions for my own coding agents — the notation,
+the drawing rules, and the templates are all there. Not a spec to adopt; just
+where the idea came from and the version that happens to be running:
+[`project-planning`](https://github.com/ncrmro/.agents/tree/main/skills/project-planning).
