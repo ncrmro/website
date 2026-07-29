@@ -1,0 +1,122 @@
+---
+title: Projected git graph planning
+description: A plain-text design language that draws plans in a notation engineers already read — the git graph — plus the agreement that those commits are the ones that land.
+publish_date: 2026-07-25
+published: true
+tags: ["technical", "ai", "developer-tools", "git"]
+---
+
+A project plan should look like the history you want to read after the work
+ships. So I've started giving coding agents a small text notation that draws a
+plan as a **projected git graph**: the future `git log`, written before the work
+exists — real commits, branch structure, and one next step.
+
+It borrows most of its structure. Engineers already carry the model — commits in
+order, branches as lanes, merges as joins — so what's new is four state glyphs,
+defined below. It is plain text, so it renders in a terminal, an issue body, a
+`TASKS.md`, or a diff — wherever the work happens.
+
+## The plan is executable
+
+Every commit line in the graph is a conventional commit subject:
+
+```text
+◇  v0.3.0 (next)
+│
+○  feat(auth): session refresh
+◉  feat(api): token endpoint      PR #2 · in review
+●  feat(db): user table           a1b2c3d
+◇  v0.2.0 — 2026-07-10
+```
+
+The symbols carry state:
+
+- `○` is planned.
+- `◉` is in flight on a branch or pull request.
+- `●` is shipped on main.
+- `◇` is a release boundary.
+
+Time flows upward, like `git log`. The next unit of work is the lowest open
+circle — the one with nothing unfinished beneath it. That rule matters when
+several agents are available: it tells them what is ready without turning every
+unfinished idea into an equally urgent checkbox.
+
+Because the lines are real commit subjects, there is no translation step at the
+end. The plan line becomes the commit message verbatim.
+
+## Plans advance instead of being rewritten
+
+The graph changes through promotion. A planned commit becomes in flight when its
+pull request opens, then shipped when it lands. Planned lines can be split,
+reordered, or dropped; shipped lines are history.
+
+This matters with agent-written code: an agent can produce a large diff quickly,
+but speed does not make it reviewable. Planning in commits forces an earlier
+question — what are the smallest pieces that can land independently, and in what
+dependency order?
+
+## Branches remain branches
+
+Independent pull requests occupy separate lanes. Dependent pull requests form a
+stack. The topology stays visible in plain text.
+
+ASCII is the default because both humans and agents can read and update it in
+place. Mermaid renders the same graph where a diagram helps, like a pull request
+body.
+
+## The landing agreement
+
+A projected graph is a claim about what main will look like. The claim is only
+worth making if the planned commits are the ones that land — so the graph
+carries an agreement: **every `○` becomes its own `●`**.
+
+This rules out squash-merging. Squash has a real use: a branch of `wip`, `fix
+typo`, `address review` should collapse, because those commits were never
+chosen. A planned span is the opposite — every line was chosen before it was
+written, and squashing discards what the graph encoded: the dependency order,
+the reasoning per step, and the ability to bisect or review one piece at a time.
+A large pull request is not a reason to squash; it is the reason not to.
+
+The clean landing is a fast-forward. Rebase the branch onto main, then move main
+to it. The push creates nothing — the commits you pushed are the commits on
+main, with no merge commit and no rewriting on the way in:
+
+```bash
+git fetch origin
+git rebase origin/main
+git push origin HEAD:main
+```
+
+Stacked pull requests are the motivating case. Each is one clean span, and
+squash-merging them individually yields one commit per pull request while losing
+what is inside. Let the stack accumulate on a branch and fast-forward main to
+its tip. A long-lived milestone branch works the same way, or takes a `--no-ff`
+merge when the boundary is worth a marker in the log.
+
+Settle this before the graph is drawn. A repository configured squash-only
+cannot hold a multi-commit plan; find that out while grouping the work, not at
+merge time. I learned it by squash-merging a stack I had just finished planning,
+then unpacking it back out of main.
+
+## Why the shape of history is the point
+
+A squashed branch records that a merge happened. It does not record the work.
+History documents itself only when its commits are units someone chose — which
+is the argument for projecting the graph up front. The plan and the history stop
+being two artifacts that drift apart; they are the same artifact, read at
+different times.
+
+## What the graph does not prove
+
+The graph organizes delivery; product judgment still has to decide whether the
+feature should exist at all. It makes the proposed path to main specific enough
+to inspect.
+
+The obvious objection is that you often cannot know the decomposition until you
+have written some of it. True — and the graph is built for that, since `○` lines
+are the ones you are free to split, reorder, and drop. What you cannot redraw
+are the `●`s. Once a line becomes a real commit, the repository — not the prose
+around it — is the authority.
+
+The complete format and templates live in my
+[`project-planning` skill](https://github.com/ncrmro/.agents/blob/main/skills/project-planning/SKILL.md).
