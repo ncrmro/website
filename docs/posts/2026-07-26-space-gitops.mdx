@@ -15,16 +15,15 @@ Describe that sequence to a software engineer and it should start to itch, becau
 
 The correspondence is structural rather than decorative, and the practical consequence is smaller than it sounds. CODEOWNERS expresses which discipline must sign off on which part of a maneuver plan. Pull request templates express what a plan must contain before anyone reviews it. Issue templates express what a measurement anomaly must record. Branch protection expresses the rule that a plan computed against a stale state cannot be approved. That is three files and a repository setting. The producers behind them — the navigation filter, the propulsion analysis, the trajectory solver — remain the real work; what the forge removes is the need to invent the review layer sitting on top of them.
 
-Launch opportunity is the clearest case, because it is the one where the
-candidates are visibly competing. Starship's thirteenth flight test ran the
-loop in public in July 2026: three countdowns against the same stacked
+Launch opportunity is the clearest case, because the candidates visibly
+compete. [Starship's thirteenth flight test](https://en.wikipedia.org/wiki/Starship_flight_test_13)
+ran the loop in public in July 2026: three countdowns against the same stacked
 vehicle, each a complete proposal, and mutually exclusive — the first one to
-fly closes the launch period. That is a release train with competing
-candidates, and a forge already has the shape for it — parallel pull requests,
+fly closes the launch period. That is a release train: parallel pull requests,
 exactly one of which merges.
 
-Time flows up; `●` is landed history, `◉` is in flight, `○` is planned, and `◇`
-marks a boundary.
+Time flows up; `●` is landed history, `○` is a candidate that never landed,
+and `◇` marks a boundary. Later figures add `◉` for work in flight.
 
 ```text
 ◇  launched — Flight 13, 2026-07-24 22:51Z
@@ -43,23 +42,19 @@ marks a boundary.
 ●  flight ready: Ship 40 / Booster 20           c4d5e6f
 ```
 
-The two closures are not the same event. Attempt 1 is rejected on the merits,
-and by a machine: the count reached T−0 and the vehicle aborted itself during
-ignition on LOX turbopump faults — CI failing the deploy step, not a reviewer
-changing their mind. Attempt 2 was never unviable; it was closed by an
-environmental gate, scrubbed for weather because the ascent imagery of the
-heat shield needed clear sky. Attempt 3 merged, and merging is what ended the
-launch period. A candidate stays open until something else lands, which is the
-ordinary fate of a pull request and the ordinary fate of a launch window.
+The two closures are not the same event. Attempt 1 was approved, executed,
+and failed at deploy: the count reached T−0 and the vehicle aborted itself
+during ignition on LOX turbopump faults — CI red, not a reviewer changing
+their mind. Attempt 2 was viable throughout; an environmental gate closed it,
+scrubbed for weather because the ascent imagery of the heat shield needed
+clear sky. Attempt 3 merged, and merging is what ended the launch period.
 And between the attempts, main moves: the abort reconstruction, the turbopump
 remediation, and each weather refit land as commits, so every surviving
 candidate forks from the new tip rather than the state the last one was
-computed against — section 2.4's staleness rule, enforcing itself.
-Section 3 develops the notation on maneuvers; PR numbers and shas are
-illustrative — the dates, times, and closure reasons here are Flight 13's.
+computed against. PR numbers and shas are illustrative: the dates, times, and
+closure reasons are Flight 13's, as reported at the time.
 
-The direction of causality is worth fixing before going further, because it is
-the opposite of how software teams usually meet a repo. The repository does not
+The direction of causality is worth fixing. The repository does not
 fly the vehicle; the vehicle — and the tracking stations watching it — drive
 the repository, which is the record of what actually happened. But a landed
 record is also the trigger for what happens next, the way a push event starts
@@ -69,35 +64,33 @@ orbit determination; and that commit is the event that opens the next phase's
 branch — a worktree carrying the next major mission event's trajectory
 solution, filter tuning, and burn plan, computed against exactly the state
 that triggered it, reviewed by the disciplines that own its files, and
-approved for merge. Every phase of the mission is one turn of that loop:
-reality lands as a commit, the commit opens the branch for the next event,
-the merge authorizes it, and the vehicle's response lands as the next commit.
+approved for merge.
 
-## 1. The Approval Loop
+## 1. The approval loop
 
-The account below comes from one recorded conversation with a flight dynamics participant working in contemporary deep-space operations. The recording's speaker labels were never matched to identities, so nothing here is attributed to a named individual, and the timings are that participant's operational experience rather than an industry standard.
+The account below comes from one recorded conversation with a flight dynamics participant in deep-space operations. The recording's speaker labels were never matched to identities, so nothing here is attributed to a named individual, and the timings are that participant's operational experience rather than an industry standard.
 
-Three disciplines produce three independent estimates, and none of them can be skipped.
+Three disciplines produce three independent estimates.
 
-**Navigation** owns where the vehicle actually is. It publishes "spacecraft position and velocity at this particular epoch based on our tracking data up to this point" — a state vector with a stated cutoff.
+Navigation owns where the vehicle actually is. It publishes "spacecraft position and velocity at this particular epoch based on our tracking data up to this point" — a state vector with a stated cutoff.
 
-**Propulsion** owns how the engine is actually performing, and its numbers move. Thrust profile "does not stay constant during a mission… especially for liquid propellant which most of these use," so the team issues "new Isp numbers, new thrust numbers" rather than the design values.
+Propulsion owns how the engine is actually performing, and its numbers move. Thrust profile "does not stay constant during a mission… especially for liquid propellant which most of these use," so the team issues "new Isp numbers, new thrust numbers" rather than the design values.
 
-**Trajectory design** consumes both and solves for the maneuver: it "takes both the initial state given from the navigation team as well as the updated propulsion parameters and then redesigns a new trajectory to hit the end orbit." The target is usually unchanged. The answer is not. "So it will be a different Δv than when you initially anticipated."
+Trajectory design consumes both and solves for the maneuver: it "takes both the initial state given from the navigation team as well as the updated propulsion parameters and then redesigns a new trajectory to hit the end orbit." The target is usually unchanged. The answer is not. "So it will be a different Δv than when you initially anticipated."
 
 Then approval: "eventually it goes through a chain of commands like the mission director has to approve obviously." The account names only the director; whether the chain above him holds independent gates is not described. After approval the commands are generated and uplinked on a timer — "six hours from now it's gonna perform this maneuver" — because "commands sent to the spacecraft and all this process could take a little bit, even in the most streamlined fashion." The team allows itself six hours to plan and starts "six to eight hours before the next anticipated burn." The full cycle, which they call *burn plan procedures and post-burn analysis*, "would take us right now about like twelve hours."
 
 Two properties of this loop matter for what follows.
 
-The first is that each discipline works in its own toolchain, and at the hand-off boundaries those toolchains are opaque. Navigation uses Monte, "based off of JPL… for taking and tracking data and figuring out where we are." Trajectory design uses Copernicus, "very high fidelity mission design slash trajectory design software." And of the propulsion team's tools: "they have their own like some analysis software that I don't even know." Replacing all three is a large project, and one the same conversation goes on to contemplate. Making them interoperate is not: what the hand-off needs is an agreed interface, which is what a version-controlled file with a required reviewer is.
+The first is that each discipline works in its own toolchain, and at the hand-off boundaries those toolchains are opaque. Navigation uses Monte, "based off of JPL… for taking and tracking data and figuring out where we are." Trajectory design uses Copernicus, "very high fidelity mission design slash trajectory design software." And of the propulsion team's tools: "they have their own like some analysis software that I don't even know." Replacing all three is a large project. Getting them to hand off is a smaller one, though not a free one: the disciplines still have to agree on what a state vector or a propulsion revision looks like on disk. What the forge supplies is everything after that agreement — versioning, required reviewers, and a diff.
 
 The second is that the answer expires. Propellant is spent, engine performance drifts, the navigation state is refit every pass — and for a resupply vehicle, mass also changes as cargo and water are loaded and offloaded. A lane's Δv must therefore be recomputed rather than read from a route table, and a plan is only valid against the state it was computed from.
 
-## 2. Forge Primitives
+## 2. Forge primitives
 
 Each element of that loop has a native representation in a git forge. These are not analogies to be implemented later; they are files.
 
-### 2.1 CODEOWNERS Is the Sign-Off Matrix
+### 2.1 CODEOWNERS is the sign-off matrix
 
 A maneuver plan is a directory, and each discipline owns the file it produces. The mission director's approval is required on all of them.
 
@@ -110,9 +103,9 @@ A maneuver plan is a directory, and each discipline owns the file it produces. T
 
 Three lines encode the division of labor the previous section described, and the forge enforces it: a change to the propulsion parameters cannot merge without the propulsion team, and nothing merges without the director.
 
-The director is repeated on each line rather than given a broad `/plans/` rule of their own, and the reason is a forge opinion worth knowing. CODEOWNERS resolves last-match-wins, and owners only combine when they share a line. A trailing `/plans/ @artera/mission-director` would therefore not add the director to the three disciplines — it would silently *replace* them, leaving the director as the sole required reviewer and never summoning propulsion at all. The mechanism is small enough to fit in four lines and opinionated enough to get wrong on the first try, which is an argument for adopting the forge's version rather than building one.
+The director is repeated on each line rather than given a broad `/plans/` rule of their own, for a reason worth knowing. CODEOWNERS resolves last-match-wins, and owners only combine when they share a line. A trailing `/plans/ @artera/mission-director` would therefore not add the director to the three disciplines — it would silently *replace* them, leaving the director as the sole required reviewer and never summoning propulsion at all. The mechanism is three lines and it has a trap in it — the kind of resolution semantics a home-grown sign-off matrix would have to invent, get wrong, and re-litigate. Here they are fixed, documented, and enforced at merge time.
 
-### 2.2 The Pull Request Template Is the Maneuver Plan
+### 2.2 The pull request template is the maneuver plan
 
 The call enumerates most of what a plan must carry. The template below adds two fields it does not — the covariance summary and the rejection log — for reasons section 3.3 takes up.
 
@@ -143,7 +136,7 @@ The call enumerates most of what a plan must carry. The template below adds two 
 
 Those two checkboxes are not free. Each names a producer the forge does not supply — a solver and a feasibility engine — and a check that has to be written. The template's contribution is narrower: it makes the inputs to a maneuver a matter of record before anyone is asked to approve one.
 
-### 2.3 The Issue Template Is the Anomaly Report
+### 2.3 The issue template is the anomaly report
 
 The anomalies described in the call are not engine failures. They are measurement problems, resolved by judgment: "a sudden jump in your range data. But your spacecraft didn't suddenly move five thousand kilometres. Then it'd be like hey, our measurements are probably terrible." The analyst removes the outliers or de-weights them. Sometimes the cause is a specific ground station — "this station sucks." As the participant put it: "All this is like an art and a science… there's not like one equation that tells you how you should do all this."
 
@@ -179,19 +172,19 @@ body:
       required: true
 ```
 
-### 2.4 The Staleness Rule Was Invented Twice
+### 2.4 The staleness rule was invented twice
 
 The observation that prompted this paper is a requirement we wrote before noticing what it was. Drafting a mission-analysis engine from that same interview, we specified that *a stale plan must not be approvable*: if the vehicle state has moved since a maneuver plan was computed, that plan must be recomputed before anyone can approve it.
 
-That is, nearly verbatim, GitHub's "require branches to be up to date before merging." That setting ships off by default. It serializes merges — every pull request must rebase onto the tip before it can land — which is the cost merge queues exist to amortize. Whether flight operations states the rule explicitly, the interview does not say. But the hazard is the one branch protection addresses: both authorize an irreversible action against a world that may have changed since the authorization was prepared.
+That is, nearly verbatim, GitHub's "require branches to be up to date before merging." That setting ships off by default. It serializes merges — every pull request must rebase onto the tip before it can land — which is the cost merge queues exist to amortize. The interview does not say whether flight operations states the rule explicitly. But the hazard is the one branch protection addresses: both authorize an irreversible action against a world that may have changed since the authorization was prepared.
 
 The hazard appears at two levels here, and the second is enforceable as an ordinary status check. A plan goes stale against the *vehicle* when navigation refits the state. But `sequence.yml` also goes stale against its own *inputs* — it was solved from particular revisions of `state.yml` and `propulsion.yml`, and if either moves, the Δv it reports is answering a question nobody asked anymore. A check comparing the recorded input revisions against current `HEAD` is the same mechanism as branch protection, applied one level down.
 
-## 3. Worked Scenarios
+## 3. Worked scenarios
 
 The graphs below use the same [projected git graph notation](/posts/projected-git-graph-planning) as the launch figure above. Here `main` is the flown history of one spacecraft.
 
-### 3.1 The Nominal Maneuver
+### 3.1 The nominal maneuver
 
 Navigation and propulsion publish first; trajectory design cannot solve until both land, because it consumes both. The director's approval is the merge, and the uplink is the deploy.
 
@@ -208,13 +201,13 @@ Navigation and propulsion publish first; trajectory design cannot solve until bo
 ●  burn: LOI-1 executed                           9f8e7d6
 ```
 
-The ordering is a real constraint, not a convention — but it is not one CODEOWNERS expresses. Per-path ownership says who signs, never in what order, so nothing stops #14 being approved first. Either #14 is stacked on #12 and #13 as its base, or the input-revision check of §2.4 fails it. The forge has both mechanisms; ownership is not one of them.
+The ordering is a real constraint, not a convention — but it is not one CODEOWNERS expresses. Per-path ownership says who signs, never in what order, so nothing stops #14 being approved first. Either #14 is stacked on #12 and #13 as its base, or the input-revision check of section 2.4 fails it. The forge has both mechanisms; ownership is not one of them.
 
-### 3.2 Reconstruction Invalidates What Was Queued
+### 3.2 Reconstruction invalidates what was queued
 
 No engine is perfect. After the burn, navigation collects more tracking and back-estimates what the vehicle actually did: you said "you're gonna do a hundred metre per second burn in this direction, RA five degrees, dec ten degrees, but really you burnt like ninety-five." Three error sources stack — navigation error, engine performance, and attitude, since "you will never point perfectly."
 
-The reconstruction is a new commit, never an edit to the plan. And it moves the base, so the maneuver that was queued behind it drops back to planned.
+The reconstruction lands as its own commit, and it moves the base, so the maneuver that was queued behind it drops back to planned.
 
 ```text
 │ ○  maneuver: LOI-2 trim                      PR #15 · stale: recompute vs a1b2c3d
@@ -224,11 +217,11 @@ The reconstruction is a new commit, never an edit to the plan. And it moves the 
 ◇  approved — mission director                 (uplink T+6h)
 ```
 
-Two things the account does not settle. It gives no acceptance tolerance — the verdict is that you will "most likely gonna be off a little bit, but it's probably gonna be acceptable" — so a status check would have to make explicit a threshold that operations currently carries as judgment. And the check cannot report at merge time at all, which section 4 takes up.
+Two things the account does not settle. It gives no acceptance tolerance — the verdict is that you will "most likely gonna be off a little bit, but it's probably gonna be acceptable" — so a status check would have to make explicit a threshold that operations currently carries as judgment. And the verdict cannot arrive at merge time, for reasons section 4 takes up.
 
-### 3.3 A Contested Measurement
+### 3.3 A contested measurement
 
-A state estimate is not reproducible from its measurements alone, because the weights applied to them are a judgment the measurements do not carry. It follows — this is inference, not a claim the call made — that two analysts could weight the same tracking pass differently, and that an estimate is therefore only interpretable alongside what was rejected and why. This is why the plan template carries the rejections.
+A state estimate is not reproducible from its measurements alone, because the weights applied to them are a judgment the measurements do not carry. It follows — by inference, not from the call — that two analysts could weight the same tracking pass differently, and that an estimate is therefore only interpretable alongside what was rejected and why. This is why the plan template carries the rejections.
 
 ```text
 │ ○  navigation: state @ 04:00Z (refit)     PR #16 · 1 anomaly linked
@@ -240,16 +233,16 @@ A state estimate is not reproducible from its measurements alone, because the we
 
 An estimate that arrives with its rejections attached can be audited. One that arrives as a number can only be believed.
 
-## 4. Where the Analogy Breaks
+## 4. Where the analogy breaks
 
 A merge is deterministic; a burn is not. Command a hundred meters per second and you may achieve ninety-five, with pointing error in two axes. The loop therefore resembles continuous delivery more than version control: desired state is declared, a reconciler applies it, and observed state is measured and fed back as drift. So a maneuver reconstruction must be a *new* commit recording actuals, never an amendment to the plan that produced it. Propellant is spent, the burn happened, and no revision of the plan can unspend it.
 
 The second break is timing, and it has no software equivalent worth pretending about. A CI check reports in seconds. The check that says whether a burn worked cannot report at merge time at all: fitting the achieved Δv requires "enough sufficient hours of tracking data to do that analysis," so "you can't even start [to] really have a good idea until a few [hours] after your burn finishes." The vehicle flies for hours in a state known only approximately. Any workflow borrowed from software has to model verification as a soak period with a genuinely unknown interval, not as a gate that passes or fails promptly.
 
-The third break belongs to the model rather than the sources. The loop as described names one approval gate, and contains no observed case of a director rejecting a plan, two disciplines disagreeing, or two maneuvers contending for the same window. A forge already answers those — requested changes, merge queues. That operations would eventually need them is a prediction of this framing; the sources do not report it.
+The third break belongs to this framing rather than to the sources. The maneuver loop as described names one approval gate, and the interview contains no case of a director rejecting a plan or two disciplines disagreeing — contention appears only in the launch campaign above, not in cruise operations. A forge already answers those — requested changes, merge queues. That deep-space operations would eventually need them is a prediction of this framing; the interview does not report it.
 
-## 5. What This Is Not
+## 5. What this is not
 
 A budget-level feasibility gate is not a flight dynamics system, and a passing check is not trajectory approval: high-fidelity validation remains downstream, as does the human judgment the participant returned to repeatedly, particularly in deciding which measurements to trust. Autonomy is further off still — removing the ground loop means moving state estimation, measurement judgment, trajectory redesign, and commit authority onto the vehicle, which is four separate hard problems, and the last one absorbs the mission director.
 
-The claim is narrower. The planning and approval layer above the flight dynamics system is a workflow problem software engineering has spent two decades converging on, and spacecraft operators should not have to rediscover those answers from scratch — or, given how much already ships in a forge, write more than a handful of files.
+The claim is narrower. The planning and approval layer above the flight dynamics system is a workflow problem software engineering has already built tooling for, and spacecraft operators should not have to rediscover those answers — or, given how much already ships in a forge, write more than a handful of files.
