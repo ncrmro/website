@@ -1,0 +1,112 @@
+---
+title: "Agentic Primitives: Profiles, Skills, and Deep Work"
+description: "The composable primitives we're building at Unsupervised under ai-outfitter — profiles that delegate, skills that route, issue templates that dispatch, and deepwork jobs that catch what long sessions forget."
+publish_date: 2026-07-16
+published: false
+tags: []
+draft: true
+---
+
+At Unsupervised we've been building out a small set of composable primitives under [ai-outfitter](https://github.com/ai-outfitter) that let us run agents the way you'd staff a team: **profiles** define who an agent is and who it can delegate to, **skills** route it into esoteric context or process, **issue templates** give work a structured front door that dispatches the right actions flow, and **deepwork** jobs, schemas, reviews, and plans enforce the structure and follow-through that long sessions inevitably drop.
+
+The insight is that none of these are exotic. Each one maps to something you already do with people — job descriptions, runbooks, checklists, release gates, milestone plans. The primitives just make them legible to agents, and more importantly, composable with each other.
+
+## Profiles: who the agent is, and who it can call
+
+A profile is the base unit: a persona plus its toolkit. Our default set includes `founder`, `engineer`, `researcher`, and profiles built for CI — the (GitHub) `actions` profiles that run headless in workflows.
+
+Profiles compose two ways:
+
+- **Inheritance** — a profile extends another, picking up its skills and behaviors. The founder profile can *be* an engineer when it needs to be.
+- **Delegation** — a profile has other profiles available as sub-agents, or is explicitly instructed to *only* delegate to them. A founder profile constrained to delegation never touches the code directly; it dispatches an engineer sub-agent and evaluates the result.
+
+Delegation is where it gets interesting, because sub-agents compose too. A founder profile can spawn one engineer sub-agent to do the work and a *second* engineer sub-agent to review the first one's output — the same separation of author and reviewer you'd insist on with humans, expressed as profile wiring.
+
+Skills attach at the profile level, and the same skill can attach to very different profiles. The `review` skill lives on the engineer profile for interactive sessions *and* on the actions profile so PRs get reviewed in CI with the same standards.
+
+Roughly, the decision tree looks like this:
+
+```text
+founder
+├── inherits: engineer            (can do the work itself)
+│   └── skill: review
+├── or delegates only to:
+│   ├── engineer (sub-agent A)    → does the work
+│   ├── engineer (sub-agent B)    → reviews A's output
+│   └── researcher                → gathers context, checks claims
+│
+engineer
+└── skill: review
+│
+researcher
+└── skills: source-import, transcription, ...
+│
+actions (GitHub Actions profiles)
+├── skill: review                 (PR review in CI)
+├── deepwork plans                (milestone-level planning)
+└── triggered by issue templates:
+    ├── research                  → researcher flow
+    ├── platform                  → infra/tooling engineer flow
+    ├── fix                       → reproduce, patch, PR
+    ├── feature                   → plan, implement, peer-review
+    └── milestone                 → deepwork plan + child issues
+```
+
+## Skills: routers into esoteric territory
+
+Skills are mostly routers. An agent doesn't need the entire operating manual for some niche corner of your stack in its context window — it needs a pointer that says "when you're in this territory, load this context and follow this process." The review skill routes into review standards; a transcription skill routes into the whisper/ffmpeg pipeline; a deploy skill routes into the release process.
+
+This works remarkably well for *context*. It works less well for *process*, and the failure mode is specific: **long sessions**.
+
+## Issue templates: the front door for actions
+
+Profiles and skills define capability, but something still has to hand work to the CI agents in a form they can act on. That's what issue templates are for. We define a small set — **research**, **platform**, **fix**, **feature**, and **milestone** — and each one can kick off an actions flow.
+
+The template does two jobs at once. For the human, it's a structured intake form: a fix template asks for reproduction steps, a research template asks for the question and what a good answer looks like. For the agent, it's a dispatch signal: the template (via its label) selects which actions profile picks up the issue and which skills it enters with.
+
+- **research** → dispatches a researcher profile to gather sources, check claims, and report back on the issue.
+- **platform** → infrastructure and tooling work; an engineer profile scoped to CI, deploy, and repo plumbing.
+- **fix** → an engineer profile with the smallest scope: reproduce, patch, test, open a PR.
+- **feature** → an engineer profile that plans first, then implements, with a second engineer reviewing the PR.
+- **milestone** → the big one: an actions flow that authors a deepwork plan, decomposes the milestone into child issues (using the other templates), and tracks progress across runs.
+
+The milestone template is where the primitives visibly compose. Filing one issue produces a plan, which produces feature and fix issues, which dispatch engineer flows, whose PRs get reviewed by the review skill — the whole tree grows from a single structured form.
+
+It's worth being honest about what this means for oversight: a human running the founder profile is not going to review every issue and PR this generates, and that's the point. Filing an issue moves the task out of the local agent's — and the user's — context window entirely. The work becomes **fully event-driven**: issues trigger flows, PRs trigger reviews, merges trigger releases, and the human's attention is spent at the gates that matter (the deep reviews, the release PR) rather than spread across every intermediate artifact.
+
+CODEOWNERS is one more routing mechanism in the same spirit, and GitHub already ships it. Owning a path with a machine account means PRs touching that path automatically get a review from a specific actions profile — the review skill fires without anyone asking. And owning the paths that matter with a *human* inverts it: put the deepwork plans directory under a human owner and every milestone plan requires their sign-off before it merges, while routine fixes flow through machine-only review. It's the same "attention at the gates" principle, expressed as a file GitHub already enforces.
+
+A note on identity: the agent reviews as either the default `github-actions[bot]` via the workflow token, or as a dedicated **machine account**. The token identity is zero-setup and fine for workflow-posted reviews, but only a real machine account can be listed in CODEOWNERS, be assigned issues or requested as a reviewer, and open PRs that trigger CI. If you want CODEOWNERS to do the routing, you want the machine account.
+
+## When process breaks: the long-session problem
+
+A skill can tell an agent the process. It can't guarantee the agent finishes it. After an actions profile reviews a large PR — hundreds of files, deep context accumulation — it might produce an excellent review and then simply forget to post the comment. A wiki agent might import and transcribe a batch of sources and forget to update all the pages that reference them. The process was known; the tail of it fell off the end of a long session.
+
+This is when we reach for **deepwork**: jobs, schemas, reviews, and plans that live *outside* the session and check its output.
+
+### Deep reviews
+
+A deep review is a structured, multi-step review that runs against an artifact rather than inside the session that produced it. It would catch the unposted PR comment and the un-updated wiki pages, because it's checking outcomes against a definition of done, not relying on the working agent's memory.
+
+Deep reviews also change *where* you spend review effort. If you're being cavalier about committing or merging to main — and with good agents you increasingly can be — release-please gives you a natural gate: its final release PR is a single, well-defined artifact that can be deep-reviewed thoughtfully. Instead of scrutinizing every merge, you do **release-level deep reviews** — batch the rigor where it pays.
+
+### Deep schemas
+
+Deep schemas enforce structure on a body of content. Our main use is the wiki: a schema defines what a contact page, a problem page, or a concept page must contain, and the review checks conformance rather than vibes. This deserves its own post — how we combine schemas with actions to regularly clean up the wiki, in the spirit of [Karpathy's notes on self-maintaining knowledge bases](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
+
+### Deepwork plans
+
+Plans are the same primitive pointed forward instead of backward: actions profiles use deepwork plans for milestone-level planning, breaking a goal into reviewable steps the way [Link](/blog/announcing-outfitter) does. The plan is an artifact the CI agent executes against across runs, so progress survives session boundaries.
+
+## Putting it together: `/goal ai-outfitter/wiki-maintainer`
+
+The payoff of composable primitives is that a complete workflow collapses into one invocation. `/goal ai-outfitter/wiki-maintainer` combines everything above into an outfitter profile plus an actions workflow that maintains a project wiki — contacts, problems, concepts:
+
+- a **profile** that knows how to import sources, transcribe, and write pages, delegating to researcher sub-agents for gathering;
+- **skills** that route into the transcription pipeline and the wiki's conventions;
+- **issue templates** so a research or milestone issue kicks off the right actions flow against the wiki;
+- **deep schemas** that enforce page structure;
+- **deep reviews** on a schedule and at releases, catching the pages the session forgot;
+- **deepwork plans** so the actions runs make steady milestone progress instead of restarting from zero.
+
+None of the pieces is magic. The composition is the product: profiles decide who works and who checks, skills decide what they know, issue templates decide how work arrives, and deepwork decides what "done" means when the session is too long to trust.

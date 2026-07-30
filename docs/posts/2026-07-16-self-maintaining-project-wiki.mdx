@@ -1,0 +1,93 @@
+---
+title: "A Self-Maintaining Project Wiki"
+description: "Operationalizing Karpathy's LLM Wiki pattern with ai-outfitter primitives — deep schemas enforce page structure, issue templates drive ingest, and scheduled actions lint the wiki so it compounds instead of rots."
+publish_date: 2026-07-16
+published: false
+tags: []
+draft: true
+---
+
+Karpathy's [LLM Wiki gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) sketches a pattern for AI-maintained knowledge bases: instead of RAG's read-and-forget retrieval, an agent reads new sources, extracts what matters, and integrates it into an evolving wiki of markdown pages. "The wiki is a persistent, compounding artifact." He separates three layers — immutable **raw sources**, the **wiki** the LLM writes, and a **schema** defining structure — and three workflows: **ingest**, **query**, and **lint**.
+
+The gist is intentionally abstract, and the abstraction hides the hard part: who *runs* this? An agent that ingests a source in a long session forgets to update half the referencing pages. Lint "periodically" means never unless something schedules it. The pattern needs an operator, and the operator shouldn't be you.
+
+This post is about operationalizing the pattern with the [agentic primitives we're building under ai-outfitter](/blog/agentic-primitives-profiles-skills-deepwork) — profiles, skills, issue templates, actions, and deepwork. The result is a plain GitHub repo that maintains itself.
+
+## The repo is the wiki
+
+The three layers map directly onto a repo layout:
+
+```text
+wiki-repo/
+├── index.md                  # catalog of all pages by category
+├── log.md                    # append-only chronological log
+├── sources/                  # immutable originals — agents read, never modify
+├── wiki/
+│   ├── contacts/             # people and orgs
+│   ├── problems/             # open problems, one page each
+│   └── concepts/             # ideas, terms, decisions
+├── .deepwork/schemas/        # deep schemas — one per page type
+└── .github/
+    ├── ISSUE_TEMPLATE/       # research, fix, feature, milestone...
+    ├── workflows/            # ingest + lint actions
+    └── CODEOWNERS
+```
+
+Karpathy's line is "Obsidian is the IDE; the LLM is the programmer; the wiki is the codebase." Taking "the wiki is the codebase" literally is the whole trick: once it's a repo, every piece of GitHub-native machinery — issues, actions, PRs, reviews, CODEOWNERS — becomes wiki-maintenance machinery for free.
+
+## Deep schemas: the schema layer, enforced
+
+Karpathy's schema layer is a configuration document the agent is supposed to respect. Ours is a set of **deep schemas** — one per page type — that are actually *checked*. A schema names its matchers and states requirements in RFC-2119 terms:
+
+```yaml
+# .deepwork/schemas/wiki-contact/deepschema.yml
+summary: Contact pages describing a person or organization.
+matchers:
+  - "wiki/contacts/*.md"
+requirements:
+  has-relationship-context: >-
+    The page MUST state how this contact relates to the project
+    (introduced by whom, relevant to which problems).
+  links-are-real: >-
+    Every [[wikilink]] MUST resolve to an existing page in wiki/.
+  sourced-claims: >-
+    Claims about the contact SHOULD cite a file in sources/.
+```
+
+Requirements are deliberately semantic — the things a JSON Schema can't say but a reviewing agent can check. Structure the schema can't express becomes a lint finding instead of silent rot.
+
+## Ingest: issue templates in, pull requests out
+
+Ingest is event-driven. Filing a **research** issue — "here's a podcast episode, extract the contacts and concepts" — dispatches the wiki-maintainer actions flow: a researcher profile imports the source into `sources/`, transcribes it if needed, then writes and updates wiki pages in a PR. The issue template is the intake form *and* the dispatch signal, exactly as in the previous post.
+
+Because ingest lands as a PR rather than direct commits, the review skill fires on it, and the deep schemas give the reviewer teeth: a contact page missing relationship context, or a concept page whose wikilinks dangle, is a concrete finding, not a style opinion.
+
+## Lint: scheduled actions plus deep reviews
+
+Here's where the long-session failure gets caught. The ingest agent *will* sometimes transcribe three sources and update only two of the pages that reference them — the tail of the process falls off the end of the session. Rather than trying to make one session perfect, we schedule a second one:
+
+- A **cron-triggered actions workflow** runs the wiki-maintainer profile in lint mode on a schedule: check every page against its deep schema, find orphans, dangling wikilinks, contradictions between pages, entries in `log.md` with no corresponding page updates.
+- Findings become issues (filed with the same templates, so fixes dispatch automatically) or a cleanup PR directly.
+
+This is Karpathy's lint workflow with the "periodically" made real — and it's cheap to be aggressive about, because the deep review checks *outcomes against schemas*, not the working agent's memory of what it meant to do.
+
+## CODEOWNERS: who guards the schema
+
+The wiki pages are machine territory; the schemas are not. CODEOWNERS encodes that split:
+
+```text
+wiki/**                 @wiki-maintainer-bot
+sources/**              @wiki-maintainer-bot
+.deepwork/schemas/**    @ncrmro
+.github/workflows/**    @ncrmro
+```
+
+Routine page updates flow through machine review without touching a human's attention budget. But a PR that changes what a contact page *is required to contain* — or the workflow that enforces it — waits for human sign-off. The schema layer is the constitution; you don't let the governed amend it.
+
+The bot in that file has to be a dedicated **machine account**, not the default `github-actions[bot]` token identity — only a real account can be a code owner, be requested as a reviewer, or open PRs that trigger CI. If you skip the machine account and run everything on the workflow token, you still get the ingest and lint flows (reviews just post as `github-actions[bot]` from the workflow itself); you give up CODEOWNERS-driven routing on the machine side, while the human entries keep working either way.
+
+## One invocation
+
+All of this is what `/goal ai-outfitter/wiki-maintainer` sets up: the repo skeleton, the schemas, the issue templates, the ingest and lint workflows, the CODEOWNERS split. You file issues; the wiki compounds.
+
+The pattern generalizes past wikis. Any body of content with a definable page grammar — runbooks, ADRs, a CRM-in-markdown — is a candidate for the same loop: schemas define valid, templates drive ingest, scheduled deep reviews keep it valid while you're not looking.
