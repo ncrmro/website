@@ -3,10 +3,10 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import ApolloReplayMap from '../../components/ApolloReplayMap.astro';
-import { isPublic, postSlug } from '../../lib/posts';
+import { isVisibleInLocalDevelopment, postSlug } from '../../lib/posts';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog', isPublic);
+	const posts = await getCollection('blog', isVisibleInLocalDevelopment);
 	return posts.map((post) => ({
 		params: { slug: postSlug(post.id) },
 		props: { post },

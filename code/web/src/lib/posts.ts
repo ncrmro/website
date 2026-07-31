@@ -18,6 +18,5 @@ export function isVisibleInLocalDevelopment(entry: CollectionEntry<'blog'>): boo
 }
 
 export function postHref(entry: CollectionEntry<'blog'>): string {
-	const slug = postSlug(entry.id);
-	return isPublic(entry) ? `/posts/${slug}` : `/drafts/${slug}`;
+	return `/posts/${postSlug(entry.id)}/`;
 }
