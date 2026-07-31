@@ -1,7 +1,6 @@
 // @ts-check
 
 import mdx from '@astrojs/mdx';
-import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
@@ -12,7 +11,15 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
 	site: 'https://ncrmro.com',
 	// Drafts live under /drafts/* behind auth; keep them out of the public sitemap.
-	integrations: [react(), mdx(), sitemap({ filter: (page) => !page.includes('/drafts/') })],
+	integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/drafts/') })],
+
+	// Bind every interface, not just loopback — the dev server is reached from
+	// other machines by hostname (ncrmro-workstation, ncrmro-laptop-14), and a
+	// 127.0.0.1 binding refuses those connections before allowedHosts is ever
+	// consulted.
+	server: {
+		host: '0.0.0.0',
+	},
 
 	vite: {
 		plugins: [tailwindcss()],

@@ -1,11 +1,52 @@
 ---
-// Hydration wrapper for the React island. Posts live outside the app in
+// Island for the deck.gl trajectory view. Posts live outside the app in
 // docs/posts/ and are canonical copies of the notes vault's publications, so
-// they must not carry framework imports or client directives — a client:only
-// directive in MDX requires a static import, which would bind the content file
-// to this repo's layout. Routes inject this wrapper via <Content components=…>,
-// and the post body just writes <ApolloReplayMap />.
-import ApolloReplayMapReact from './ApolloReplayMap';
+// they must not carry framework imports or client directives. Routes inject
+// this wrapper via <Content components=…>, and the post body just writes
+// <ApolloReplayMap />.
+//
+// deck.gl loads through a dynamic import in the client script below, so it
+// never enters the server module graph — its dependency tree pulls Node
+// builtins (worker_threads) that the Cloudflare SSR environment refuses.
 ---
 
-<ApolloReplayMapReact client:only="react" />
+<div
+	class="apollo-replay-map not-prose relative my-6 h-105 w-full overflow-hidden rounded-lg border border-gray-700 bg-[#0b1220]"
+	data-pending
+>
+	<div
+		class="pointer-events-none absolute bottom-2 left-2 z-10 rounded bg-[#0b1220]/90 px-2 py-1 text-xs text-gray-300"
+	>
+		Track color = |bank command| from the digitized chart (blue ≈ lift-up, red ≈ full reversal).
+		Drag to pan, hover for details. Imagery © Esri, Maxar, Earthstar Geographics.
+	</div>
+</div>
+
+<script>
+	// One Deck per container: the post mounts this island twice, and deck.gl
+	// layers carry internal state that cannot be shared between instances.
+	const containers = document.querySelectorAll<HTMLDivElement>('.apollo-replay-map[data-pending]');
+
+	if (containers.length > 0) {
+		const { mount } = await import('./apollo-replay-map');
+
+		for (const container of containers) {
+			container.removeAttribute('data-pending');
+			mount(container);
+		}
+	}
+</script>
+
+<style>
+	/* Placeholder shown until the deck.gl chunk has loaded and mounted. */
+	.apollo-replay-map[data-pending]::after {
+		content: 'Loading trajectory view…';
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.875rem;
+		color: rgb(156 163 175);
+	}
+</style>
