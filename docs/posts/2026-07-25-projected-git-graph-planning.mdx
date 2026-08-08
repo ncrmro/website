@@ -26,8 +26,9 @@ Every commit line in the graph is a conventional commit subject:
 ◇  v0.3.0 (next)
 │
 ○  feat(auth): session refresh
-◉  feat(api): token endpoint      PR #2 · in review
-●  feat(db): user table           a1b2c3d
+◉  feat(api): token endpoint    PR #2 · in review
+│
+●  feat(db): user table         a1b2c3d
 ◇  v0.2.0 — 2026-07-10
 ```
 
@@ -50,25 +51,82 @@ urgent checkbox.
 Because the lines are real commit subjects, there is no translation step at the
 end. The plan line becomes the commit message verbatim.
 
-## Plans advance instead of being rewritten
+## Branching so agents can work in parallel
 
-The graph changes through promotion. A planned commit becomes in flight when its
-pull request opens, then shipped when it lands. Planned lines can be split,
-reordered, or dropped; shipped lines are history.
+Lanes exist for one reason: to put more than one agent to work at the same time.
+Independent pull requests occupy separate lanes, dependent ones form a stack, and
+a graph that is a single column — however well decomposed — is a queue, where one
+agent takes the lowest open circle and the others have nothing to do. Branches
+have to be drawn before the agents start, because that is when they get cut.
 
-This matters with agent-written code: an agent can produce a large diff quickly,
-but speed does not make it reviewable. Planning in commits forces an earlier
-question — what are the smallest pieces that can land independently, and in what
-dependency order?
+Take a feature big enough to need it: a trip browser over a real database. The
+obvious plan is a straight line — schema, then API, then UI. It reads fine, and
+it is close to the worst available order:
 
-## Branches remain branches
+- Everything queues behind the schema, the decision you understand least on day
+  one.
+- The schema is also the most expensive step to reverse, because migrations and
+  data outlive the code written on top of them.
+- The line is strictly serial: three agents are available and two of them wait.
 
-Independent pull requests occupy separate lanes. Dependent pull requests form a
-stack. The topology stays visible in plain text.
+Everything so far has been the release column — commits drawn flat, topology
+omitted. When the topology _is_ the plan, draw the branches. ASCII is the default
+because both humans and agents can read and update it in place; mermaid renders
+the same graph where a diagram helps, like a pull request body.
 
-ASCII is the default because both humans and agents can read and update it in
-place. Mermaid renders the same graph where a diagram helps, like a pull request
-body.
+```text
+◇  v0.5.0 (next)
+│  ── milestone: real data, same contract ──
+○  feat(api): read trips from postgres
+○  feat(db): trip schema and migrations
+│  ── milestone: deployable on fixtures ──
+○  test(e2e): browse, filter, book smoke path
+○  feat(web): read trips from the API
+│ ◉  feat(web): booking flow states              PR #44 · in review
+│ ◉  feat(web): itinerary view against fixtures
+│ │ ◉  feat(api): filter and pagination params   PR #46 · in review
+│ │ ◉  feat(api): serve the fixture contract
+│ │ │ ◉  ci(deploy): preview environment per PR  PR #47 · in review
+│ │ │ ◉  ci(deploy): stack skeleton
+├─╯ │ │
+├───╯ │
+├─────╯
+●  feat(fixtures): trip contract and seed data   a1b2c3d  ← main
+◇  v0.4.0 — 2026-07-17
+```
+
+The bottom commit carries the whole idea. `feat(fixtures)` lands a trip contract
+and the seed data satisfying it, on main, before anything branches. It is not
+scaffolding to delete later — it is the interface all three lanes build against,
+and the shape the real database will eventually have to produce. It is also what
+makes the fork legal: without an agreed contract, every lane is waiting on the
+schema, and there is nothing to parallelize.
+
+The three fork rows stack on that one commit, and that is the notation for three
+agents starting level. Each lane is a worktree cut from the same sha:
+
+```text
+trips/                       main, kept clean — nothing is developed here
+trips.worktrees/
+  feat/web-itinerary/        agent 1 · PR #44
+  feat/api-trips/            agent 2 · PR #46
+  chore/preview-env/         agent 3 · PR #47
+```
+
+Because the branch name is the path, a column in the graph is a place on disk.
+No lane waits on another, none edits another's files, and their vertical order
+carries no meaning — the deepest sits lowest only so every column ends cleanly.
+
+An open pull request has a fork row and no merge row: nothing has landed, and the
+graph does not get to claim otherwise. When they do land they rebase onto main in
+whichever order they finish and the columns collapse leftward.
+
+Everything above the lanes is the final state, and it is drawn on day one: the
+client swaps to the real API, a smoke test runs, the stack deploys while it is
+still stateless, and only then does the schema get designed — last, when you have
+already watched the list paginate and seen which filters the UI sends. Pin that
+ending at the top and it reaches back to constrain how you write the seed data at
+the bottom.
 
 ## The landing agreement
 
@@ -79,13 +137,12 @@ carries an agreement: **every `○` becomes its own `●`**.
 This rules out squash-merging. Squash has a real use: a branch of `wip`, `fix
 typo`, `address review` should collapse, because those commits were never
 chosen. A planned span is the opposite — every line was chosen before it was
-written, and squashing discards what the graph encoded: the dependency order,
-the reasoning per step, and the ability to bisect or review one piece at a time.
-A large pull request is not a reason to squash; it is the reason not to.
+written, and squashing discards the dependency order, the reasoning per step, and
+the ability to bisect. A large pull request is not a reason to squash; it is the
+reason not to.
 
 The clean landing is a fast-forward. Rebase the branch onto main, then move main
-to it. The push creates nothing — the commits you pushed are the commits on
-main, with no merge commit and no rewriting on the way in:
+to it — the commits you pushed are the commits on main:
 
 ```bash
 git fetch origin
@@ -93,38 +150,33 @@ git rebase origin/main
 git push origin HEAD:main
 ```
 
-Stacked pull requests are the motivating case. Each is one clean span, and
-squash-merging them individually yields one commit per pull request while losing
-what is inside. Let the stack accumulate on a branch and fast-forward main to
-its tip. A long-lived milestone branch works the same way, or takes a `--no-ff`
-merge when the boundary is worth a marker in the log.
+Let a stack accumulate on a branch and fast-forward main to its tip; a milestone
+branch takes a `--no-ff` merge when the boundary is worth a marker in the log.
 
-Settle this before the graph is drawn. A repository configured squash-only
-cannot hold a multi-commit plan; find that out while grouping the work, not at
-merge time. I learned it by squash-merging a stack I had just finished planning,
-then unpacking it back out of main.
+Settle this before the graph is drawn. A repository configured squash-only cannot
+hold a multi-commit plan. I learned that by squash-merging a stack I had just
+finished planning, then unpacking it back out of main.
 
-## Why the shape of history is the point
-
-A squashed branch records that a merge happened. It does not record the work.
-History documents itself only when its commits are units someone chose — which
-is the argument for projecting the graph up front. The plan and the history stop
-being two artifacts that drift apart; they are the same artifact, read at
-different times.
+A squashed branch records that a merge happened, not the work. The plan and the
+history stop being two artifacts that drift apart; they are the same artifact,
+read at different times.
 
 ## What the graph does not prove
 
-The graph organizes delivery; product judgment still has to decide whether the
-feature should exist at all. It makes the proposed path to main specific enough
-to inspect.
+You often cannot know the decomposition until you have written some of it. The
+graph is built for that: `○` lines are the ones you are free to split, reorder,
+and drop. What you cannot redraw are the `●`s. Once a line becomes a real commit,
+the repository — not the prose around it — is the authority.
 
-The obvious objection is that you often cannot know the decomposition until you
-have written some of it. True — and the graph is built for that, since `○` lines
-are the ones you are free to split, reorder, and drop. What you cannot redraw
-are the `●`s. Once a line becomes a real commit, the repository — not the prose
-around it — is the authority.
+## Make the agent draw it
 
-This started as a set of instructions for my own coding agents — the notation,
-the drawing rules, and the templates are all there. Not a spec to adopt; just
-where the idea came from and the version that happens to be running:
-[`project-planning`](https://github.com/ncrmro/.agents/tree/main/skills/project-planning).
+None of this works as a document you consult. It works when the agent cannot
+answer any other way, which means putting the notation where it always loads —
+the system prompt, or a skill the agent reads before planning. The instruction is
+one line: present planned work as a projected git graph, never as a checklist,
+with stacked and parallel pull requests as lanes and the final state on top.
+
+Mine is
+[`project-planning`](https://github.com/ncrmro/.agents/tree/main/skills/project-planning)
+— the notation, the drawing rules, and the ASCII and mermaid templates. Not a
+spec to adopt; just the version that happens to be running.

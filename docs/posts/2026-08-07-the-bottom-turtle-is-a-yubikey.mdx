@@ -1,0 +1,161 @@
+---
+title: The bottom turtle is a YubiKey
+description: Encrypting secrets into git is the easy half. The hard half is deciding which key opens the first door — and that chain has to bottom out in something you can't copy.
+publish_date: 2026-08-07
+published: false
+tags: ["technical", "security", "nixos", "raspberry-pi", "homelab"]
+
+kind: post
+publish_at: null
+canonical: null
+
+syndication: []
+draft: true
+---
+
+Committing encrypted secrets to a public repository is a solved problem. sops
+encrypts the values and leaves the keys legible, so a diff still reads like a
+diff. That part is boring, and boring is the point.
+
+The interesting question is the one underneath: **what decrypts the secrets?**
+Whatever answers that needs a key of its own, and so does whatever holds *that*
+key. The chain has to bottom out somewhere that isn't another file, or you have
+merely relocated the problem and given it a nicer filename.
+
+I have three Raspberry Pis. They are called blackberry, blueberry, and
+cranberry, because a naming convention that makes you smile is a naming
+convention you will still be using in a year. Each one needs the house Wi-Fi
+password before it can do anything useful, including tell you it failed. Getting
+that password onto them turned out to be a tidy demonstration of where the chain
+bottoms out.
+
+## The bootstrap paradox, in one sentence
+
+sops-nix lets a machine decrypt its own secrets at boot using its SSH host key.
+Elegant — the host key already exists, already persists, already identifies the
+machine.
+
+Except on a machine that has never booted. A fresh SD image has no host key,
+because host keys are generated on first boot. So:
+
+- The Pi needs the Wi-Fi password to join the network.
+- The password is encrypted to the Pi's host key.
+- The host key is generated on first boot.
+- First boot requires the network.
+
+This is a bootstrap paradox, and no amount of clever configuration dissolves it.
+Something outside the loop has to reach in and place the first key. The only
+real decision is *what*.
+
+## Not the build, definitely not the build
+
+The obvious move is to bake the host key into the image. Nix builds the image;
+Nix can write a file; write the key.
+
+Do not do this. Anything a Nix build produces lands in `/nix/store`, which is
+world-readable by design and content-addressed by construction. A private key in
+a store path is a private key with a stable public name, replicated to every
+binary cache that ever saw it, surviving long after you have forgotten it was
+there. The store is not a vault. It is a warehouse with the doors open, and that
+is a feature everywhere except here.
+
+So the encrypted document goes in at build time — ciphertext in the store is
+inert, which is the entire premise — and the one plaintext secret gets injected
+afterward, outside Nix:
+
+```bash
+# build produces a pristine, cacheable, secret-free image
+nix build .#packages.aarch64-linux.blackberry-pi-image
+
+# provisioning loop-mounts it and places the one key Nix must never hold
+bin/pi-image-provision blackberry-pi /var/tmp/blackberry-pi.raw
+```
+
+Two phases, because they have genuinely different purity requirements. The
+build is reproducible and shareable. The provision is local, impure, and
+deliberately unrepeatable by anyone but me.
+
+This is also why the three Pis cannot share one image. Each has its own host key
+and its own age recipient, so the images differ only in `/etc/ssh` — but they
+*must* differ, or blackberry could read cranberry's mail.
+
+## Which brings us to the turtle
+
+The provisioning step decrypts a document. What opens *that*?
+
+If the answer is a private key sitting in `~/.config`, then the security of
+three machines reduces to the security of one laptop file, and a stolen laptop
+is a stolen fleet. That is the moment where most homelab setups quietly
+capitulate, because the alternative sounds like work.
+
+The alternative is a YubiKey, and the property that matters is narrow and
+absolute: **the private key cannot leave the hardware.** Not "should not."
+Cannot. You do not get a copy. You get an oracle — you hand it ciphertext, it
+performs a decryption, it hands back plaintext, and the key stays where it was
+born. `age-plugin-yubikey` puts a *stub* in your identity file, a pointer of no
+value to a thief, and the key itself never touches the disk it protects.
+
+Which means the identity file, the repo, and the images are all safely public in
+the only sense that counts: possessing them gets you nothing. The chain of keys
+bottoms out in an object that must be physically present and physically touched.
+The turtle at the bottom is a piece of metal in your pocket.
+
+## The part where the turtle appears to be dead
+
+Here is the tax, and it is the reason I wrote this down.
+
+Everything above is sound engineering. Then I ran the command and got:
+
+```text
+Recovery failed because no master key was able to decrypt the file.
+```
+
+This message appeared three times over an hour. It was correct three times. It
+described a different cause each time, and named none of them.
+
+**The first** was `SOPS_AGE_KEY_FILE`. sops does not read the default identity
+path unless that variable points at it — so it matched zero identities, skipped
+the plugin, and never contacted the YubiKey at all. A hardware key that was
+never asked reports identically to a hardware key that refused.
+
+**The second** was the wrong YubiKey. The identity stub named serial A; serial B
+was in the port. Both were valid recipients. Neither error message mentioned
+serials, because from sops's altitude "no identity matched" is the whole truth.
+
+**The third** was self-inflicted. Adding the second key's stub, I captured the
+plugin's output with `2>&1` — merging stderr into stdout, interleaving a
+diagnostic line into the middle of the identity file, and producing `unknown
+identity type`. A corrupted identity file and an absent YubiKey are, again,
+indistinguishable from the error.
+
+Then the decrypt succeeded and a `jq` in the pipeline exploded on
+`Invalid numeric literal at line 1, column 11` — column eleven being exactly the
+width of `-----BEGIN `. sops's `--extract` returns a raw string; the pipeline had
+asked for JSON and gotten a PEM.
+
+Four failures. Zero of them the YubiKey. Every one of them presenting as a
+hardware fault, because the layer that reports the error is too far from the
+layer that caused it. The repo's own `sops-edit` wrapper already carried a
+comment about the first trap — someone had been here before and left a note —
+which is the strongest argument I know for writing the note.
+
+## The actual lesson
+
+Hardware-backed secrets are not harder cryptography. The cryptography is
+identical. What changes is that a failure now has a physical dimension — a key
+in the wrong port, an unpressed touch, a PIN cached in a session you closed —
+and none of your software knows the physical world exists. Every one of those
+failures arrives dressed as the same generic decryption error.
+
+So budget for it. When you move a chain of trust onto hardware, the cost is not
+the setup; it is that your error messages get worse at exactly the moment your
+security gets better. Write the diagnostic wrapper that names the actual missing
+piece. Put a comment where the next person will hit the trap. That wrapper is
+part of the security design, not a convenience on top of it — a control nobody
+can operate is a control that will be routed around by a tired person at
+midnight.
+
+The berries are still on the bench, waiting to be flashed. But the interesting
+work was never the flashing. It was deciding which turtle sits at the bottom,
+and then discovering how loudly the stack complains when the answer stops being
+a file.

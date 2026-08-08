@@ -1,0 +1,345 @@
+---
+draft: true
+title: What a Kilogram of Blueberries Costs on the Moon
+description: Delivering one kilogram of freeze-dried blueberries to the lunar surface costs at least three quarters of a million dollars. Growing it there costs about two bush-years, forty robot-hours, and a plant that does not fit in the pod.
+publish_date: 2026-08-04
+published: false
+tags: [space, cost-modeling, evidence, agriculture]
+
+kind: post
+publish_at: null
+canonical: null
+
+syndication: []
+---
+
+A kilogram of freeze-dried blueberries costs a few tens of dollars at a grocery
+store. Delivered to the lunar surface it costs **at least $770,000**, and
+plausibly several times that. The freight is four to five orders of magnitude
+more than the food.
+
+That ratio is the entire reason my company exists. Artera builds
+controlled-environment growing pods for spaceflight, on the premise that past
+some delivery price it becomes cheaper to grow food at the destination than to
+ship it there. Everything then turns on the delivery price — which, it turns
+out, almost nobody can cite.
+
+I went looking for that number and found that most of the figures in
+circulation are models wearing the costume of prices, or real prices that
+stopped being true a decade ago. Below is every public figure I could source,
+on one axis, labeled with the year each was last quoted. Then what the same
+kilogram costs to grow, which is where the argument gets uncomfortable.
+
+## The kilogram
+
+One kilogram of freeze-dried blueberries is about **6.7 kg of fresh fruit** with
+the water taken out. Blueberries are roughly 85% water; drying a kilogram of
+fresh fruit sheds about 0.8 kg of it and leaves about 0.15 kg of product.
+
+You dry it because freight is sold by mass. Shipping fresh fruit means paying
+lunar delivery rates to move water, which is the one commodity you would rather
+make on site than import. Freeze-drying is not a preservation choice so much as
+a response to a price — the food is dehydrated because the rocket is expensive.
+
+Hold that kilogram in mind. It is the unit for everything that follows.
+
+<figure>
+<svg viewBox="0 0 1000 565" width="100%" role="img" aria-labelledby="chart-title">
+  <title id="chart-title">Cost to deliver one kilogram to each destination, by evidence class and year last quoted, on a logarithmic axis from one thousand to ten million dollars. Published launch prices to low Earth orbit sit near seven thousand dollars. Modeled destination costs cluster between fifteen and fifty-one thousand. Figures derived from actual NASA lunar contracts sit above seven hundred and seventy thousand. No public figure exists for near-rectilinear halo orbit.</title>
+
+  <text x="0" y="18" font-size="13" fill="currentColor" font-weight="600">Cost to deliver 1 kg of freeze-dried blueberries</text>
+  <text x="0" y="34" font-size="11" fill="currentColor" fill-opacity="0.6">6.7 kg of fresh fruit, dried — because freight is priced by mass</text>
+
+  <line x1="265" y1="86" x2="265" y2="444" stroke="currentColor" stroke-opacity="0.15" />
+  <line x1="403.75" y1="86" x2="403.75" y2="444" stroke="currentColor" stroke-opacity="0.15" />
+  <line x1="542.5" y1="86" x2="542.5" y2="444" stroke="currentColor" stroke-opacity="0.15" />
+  <line x1="681.25" y1="86" x2="681.25" y2="444" stroke="currentColor" stroke-opacity="0.15" />
+  <line x1="820" y1="86" x2="820" y2="444" stroke="currentColor" stroke-opacity="0.15" />
+
+  <text x="265" y="464" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">$1k</text>
+  <text x="403.75" y="464" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">$10k</text>
+  <text x="542.5" y="464" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">$100k</text>
+  <text x="681.25" y="464" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">$1M</text>
+  <text x="820" y="464" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">$10M</text>
+  <text x="542.5" y="486" font-size="11" fill="currentColor" fill-opacity="0.5" text-anchor="middle">US dollars to deliver one kilogram — logarithmic</text>
+
+  <text x="210" y="60" font-size="12" fill="currentColor" fill-opacity="0.55" text-anchor="end">destination and method</text>
+  <text x="265" y="60" font-size="12" fill="currentColor" fill-opacity="0.55">cited</text>
+  <text x="990" y="60" font-size="12" fill="currentColor" fill-opacity="0.55" text-anchor="end">figure</text>
+
+  <text x="210" y="106" font-size="13" fill="currentColor" text-anchor="end">Low Earth orbit</text>
+  <text x="210" y="119" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">SpaceX rideshare, published rate</text>
+  <rect x="217" y="99" width="42" height="18" rx="4" fill="none" stroke="#22c55e" stroke-width="1.5" />
+  <text x="238" y="112" font-size="11" fill="#22c55e" text-anchor="middle" font-weight="600">2026</text>
+  <circle cx="382" cy="110" r="7" fill="#22c55e" />
+  <text x="990" y="114" font-size="12" fill="currentColor" text-anchor="end">$7,000</text>
+
+  <text x="210" y="150" font-size="13" fill="currentColor" text-anchor="end">Mars orbit</text>
+  <text x="210" y="163" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">BVAD location factor × launch rate</text>
+  <rect x="217" y="143" width="42" height="18" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.3" />
+  <text x="238" y="156" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">2022</text>
+  <rect x="429" y="146" width="26" height="16" rx="3" fill="#94a3b8" />
+  <text x="990" y="158" font-size="12" fill="currentColor" text-anchor="end">$15,120 – $23,590</text>
+
+  <text x="210" y="194" font-size="13" fill="currentColor" text-anchor="end">Mars surface</text>
+  <text x="210" y="207" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">BVAD location factor × launch rate</text>
+  <rect x="217" y="187" width="42" height="18" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.3" />
+  <text x="238" y="200" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">2022</text>
+  <rect x="444" y="190" width="27" height="16" rx="3" fill="#94a3b8" />
+  <text x="990" y="202" font-size="12" fill="currentColor" text-anchor="end">$19,390 – $30,310</text>
+
+  <text x="210" y="238" font-size="13" fill="currentColor" text-anchor="end">Lunar surface</text>
+  <text x="210" y="251" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">BVAD location factor × launch rate</text>
+  <rect x="217" y="231" width="42" height="18" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.3" />
+  <text x="238" y="244" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">2022</text>
+  <circle cx="501" cy="242" r="7" fill="#94a3b8" />
+  <text x="990" y="246" font-size="12" fill="currentColor" text-anchor="end">$50,400</text>
+
+  <text x="210" y="282" font-size="13" fill="currentColor" text-anchor="end">Lunar orbit</text>
+  <text x="210" y="295" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">BVAD location factor × launch rate</text>
+  <rect x="217" y="275" width="42" height="18" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.3" />
+  <text x="238" y="288" font-size="11" fill="currentColor" fill-opacity="0.6" text-anchor="middle">2022</text>
+  <circle cx="502" cy="286" r="7" fill="#94a3b8" />
+  <text x="990" y="290" font-size="12" fill="currentColor" text-anchor="end">$51,100</text>
+
+  <text x="210" y="326" font-size="13" fill="currentColor" text-anchor="end">Lunar surface</text>
+  <text x="210" y="339" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">Astrobotic advertised list price</text>
+  <rect x="217" y="319" width="42" height="18" rx="4" fill="none" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="238" y="332" font-size="11" fill="#f59e0b" text-anchor="middle" font-weight="600">2016</text>
+  <circle cx="692" cy="330" r="7" fill="#f59e0b" />
+  <text x="990" y="334" font-size="12" fill="currentColor" text-anchor="end">$1,200,000</text>
+
+  <text x="210" y="370" font-size="13" fill="currentColor" text-anchor="end">Lunar surface</text>
+  <text x="210" y="383" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">NASA CLPS contracts, implied floor</text>
+  <rect x="217" y="363" width="42" height="18" rx="4" fill="none" stroke="#3b82f6" stroke-width="1.5" />
+  <text x="238" y="376" font-size="11" fill="#3b82f6" text-anchor="middle" font-weight="600">2024</text>
+  <rect x="665" y="366" width="86" height="16" rx="3" fill="#3b82f6" />
+  <text x="990" y="378" font-size="12" fill="currentColor" text-anchor="end">at least $770k – $3.2M</text>
+
+  <text x="210" y="414" font-size="13" fill="currentColor" text-anchor="end">NRHO / Gateway</text>
+  <text x="210" y="427" font-size="10" fill="currentColor" fill-opacity="0.6" text-anchor="end">only a $7B program ceiling exists</text>
+  <rect x="217" y="407" width="42" height="18" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="3 2" />
+  <text x="238" y="420" font-size="11" fill="currentColor" fill-opacity="0.45" text-anchor="middle">—</text>
+  <line x1="270" y1="418" x2="815" y2="418" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 5" />
+  <text x="542.5" y="414" font-size="11.5" fill="currentColor" fill-opacity="0.6" text-anchor="middle">no public price exists</text>
+  <text x="990" y="422" font-size="12" fill="currentColor" fill-opacity="0.5" text-anchor="end">—</text>
+
+  <circle cx="272" cy="520" r="6" fill="#22c55e" />
+  <text x="285" y="524" font-size="11" fill="currentColor" fill-opacity="0.75">published price</text>
+  <circle cx="400" cy="520" r="6" fill="#3b82f6" />
+  <text x="413" y="524" font-size="11" fill="currentColor" fill-opacity="0.75">derived from a signed contract</text>
+  <circle cx="600" cy="520" r="6" fill="#f59e0b" />
+  <text x="613" y="524" font-size="11" fill="currentColor" fill-opacity="0.75">vendor list price, stale</text>
+  <circle cx="756" cy="520" r="6" fill="#94a3b8" />
+  <text x="769" y="524" font-size="11" fill="currentColor" fill-opacity="0.75">model, not a price</text>
+</svg>
+<figcaption>
+
+Every public per-kilogram figure I could source for delivery beyond LEO. The two
+lunar-surface entries separated by fifteen- to sixtyfold are the same
+destination measured two different ways.
+
+</figcaption>
+</figure>
+
+## Three kinds of number wearing the same units
+
+**A published price** is what a vendor will charge you today. There is exactly
+one at this altitude: SpaceX's rideshare rate, $7,000 per kilogram above a
+50 kg minimum, checked in 2026. It buys an insertion opportunity and nothing
+past it.
+
+**A model** multiplies that rate by a location factor — the kilograms of vehicle
+you must stage in low Earth orbit to move one kilogram elsewhere. NASA's
+Baseline Values and Assumptions Document publishes them: 7.2 to the lunar
+surface, 2.77 to 4.33 to the Martian one. Multiply and you get the grey rows.
+
+**A contract** is what somebody actually paid. NASA's Commercial Lunar Payload
+Services program has eight delivery task orders on the books, individually
+$77.0M to $322.8M. The audit that tabulates them notes that NASA's market
+research found no commercial provider with capacity for payloads over 100 kg.
+Divide and the floor is $770,000 per kilogram — a floor, because 100 kg is the
+class ceiling rather than any manifested mass, and the individual instruments
+flown are described as ten to fifteen kilograms each. That division is mine, not
+NASA's; the agency publishes mission prices and never a rate.
+
+So for the same destination, the model says $50,400 and the invoices say at
+least $770,000. **The method understates reality by fifteen to sixtyfold**, and
+we only know that because the Moon is the one destination where somebody is
+actually buying.
+
+## Why the Moon is expensive and Mars looks cheap
+
+The chart's most misleading feature is that Mars appears cheaper than the Moon.
+That is not an error in the table. It is an assumption showing through, and
+unpacking it is the whole Moon-versus-Mars story.
+
+**The Moon has nothing to push against.** Every meter per second of arrival
+velocity must be burned: roughly 0.9 km/s of orbit insertion, then about 1.9
+km/s of powered descent, all of it propellant you carried from Earth. Through
+the rocket equation that compounds exponentially, which is why the lunar factor
+is 7.2.
+
+**Mars has an atmosphere, and it half helps.** Aerodynamic braking sheds most of
+the arrival velocity for free — BVAD states the assumption directly, that both
+architectures use "chemical propulsion and aero-braking when possible", and only
+one of the two destinations makes it possible. But the Martian atmosphere is a
+famously bad compromise: thick enough to demand a heat shield, too thin to land
+heavy payloads on parachutes alone. The discount arrives bundled with an entry
+system whose mass the location factor never counts, because that factor is
+defined over *propulsion* assets — engines, fuel, tankage — and a heat shield is
+not one.
+
+The tell is in the rows I left off the chart:
+
+| | one way to the surface | surface and back |
+| --- | ---: | ---: |
+| Moon | 7.2 | **13.8** |
+| Mars | 2.77 – 4.33 | **9.50 – 14.83** |
+
+Round trip, the two destinations converge. The gap exists only in the one-way
+case, because a one-way Mars delivery never buys the propellant to slow itself
+down or to leave again. Correct as a statement about propellant. Silent about
+cost.
+
+**And the two destinations differ in a way no factor captures: cadence.** The
+Moon is three days away with launch windows on a roughly monthly rhythm, a
+second and a half of comms latency, and — decisively — a functioning market.
+CLPS landers are being bought right now, which is exactly why real lunar numbers
+exist to cite.
+
+Mars is six to nine months away, with transfer windows that open about every 26
+months, comms latency running to twenty minutes each way, and no cargo delivery
+service at any price. Nothing to buy, so nothing to quote.
+
+That inverts the naive reading of the chart. **The destination where freight
+looks cheapest is the destination where freight can help you least.** On the
+Moon, a grow pod competes against a real freight line and must beat a number. On
+Mars there is no number to beat, because between windows there is no delivery at
+all. A crop cycle measured in weeks against a resupply cycle measured in
+twenty-six months is not a price comparison. It is an availability argument, and
+availability does not appear anywhere in dollars per kilogram.
+
+## What the same kilogram costs to grow
+
+Here is where an honest version of this post stops flattering its author.
+
+We ran the production side of exactly this unit — one kilogram of blueberries,
+grown and picked with nobody in the loop. Scaled to the freeze-dried kilogram
+the chart prices, at 6.7 kg fresh:
+
+- **1.5 to 2.9 mature plant-years.** A bush yields 2.3–4.5 kg a year at
+  maturity, so the kilogram is roughly two entire bush-years of fruit.
+- **25 to 42 robot-hours of picking.** Selective autonomous harvest runs about
+  28 seconds per fruit at 83% success, and cost is charged *per fruit*, so small
+  fruit is punished. Blueberries run 400–670 to the kilogram. Strawberries need
+  roughly a tenth of the picking time for the same mass, purely from being
+  bigger.
+- **About 53 kWh to freeze-dry**, at 5.2–19.5 kWh per kilogram of water removed.
+  Against the 500 W pod we are designing to, that is more than four days of the
+  entire spacecraft's power budget, for one kilogram, before any lighting.
+
+And then the finding that matters most, which is that we cannot grow it at all.
+Blueberry takes **6–8 years to reach full production**, requires **800–1,500
+chilling hours** in a narrow band around freezing, and stands **1.5–2.4 m tall**
+against the 0.65 m cell our pod actually has. Worse, the chill is not a one-time
+cost: sustained warmth *negates* accumulated chilling, so a chamber held at the
+productive constant setpoint every other crop wants will actively suppress
+fruiting. Those are properties of the species, not of our hardware. The evidence
+points at strawberry instead — 0.25 m tall, 77.88 g of fresh mass per square
+metre per day, with an actual robotic-harvest literature behind it.
+
+I have kept blueberries as the example anyway, because the shape of the answer
+is the lesson: **a delivery price tells you what you are allowed to spend, not
+what you are able to build.** Seven hundred and seventy thousand dollars of
+freight headroom does not conjure a bush that fruits without a winter.
+
+## Why I went looking
+
+Our own financial model carried $250,000 per kilogram to the Gateway. It was
+labeled a sourced estimate and attributed to the lunar logistics contract's
+scope. I went to fetch the citation for an email and could not construct one —
+not because the source was hard to find, but because the arithmetic does not
+exist. The Gateway Logistics Services contract publishes a $7 billion ceiling
+across all providers and all missions over a twelve-year ordering period. No
+per-mission value. No manifested mass. Nothing that survives division.
+
+An empty cell in a financial model does not stay empty. It fills with something
+that sounds researched, and then it renders onto a page and reads as fact to
+everyone including the people who put it there. Ours is now marked a
+placeholder.
+
+The destination has moved besides. NASA's Inspector General recorded in June
+2026 that the agency reformulated the Artemis campaign that February, and stated
+the consequence plainly: rather than using the Gateway as a staging location for
+lunar surface missions, NASA intends to shift toward a permanent Moon base. The
+Gateway's habitation module is among four systems worth $5.9 billion that the
+agency has announced plans to cancel or repurpose, with a stop-work order issued
+to its contractor. So the destination with no price attached is also the
+destination whose anchor customer has left. Those are probably the same fact.
+
+## What to ask for instead
+
+Cost per kilogram is a category error beyond low Earth orbit. Nobody sells a
+kilogram there. They sell a mission, and the mass is a consequence of the
+mission's design rather than the unit of sale — which is why every honest figure
+above is a launch rate that stops at LEO, a model with an architecture baked
+into it, or a contract value that somebody divided.
+
+When a number arrives claiming otherwise, three questions strip it down: *what
+mass does it divide, what does the money buy, and what year was it quoted?* Most
+figures in circulation fail the third before they reach the first.
+
+We are pre-flight. What Artera has today is an instrumented Earth-analogue bench
+running two sensor nodes and a gravimetric watering cell, which is a long way
+from a pod on the lunar surface. But the arithmetic above is what the company is
+for, and publishing the version that kills our own crop choice seems a better
+use of it than publishing the version that doesn't.
+
+---
+
+<details>
+<summary>The figures and their sources</summary>
+
+**Delivery**
+
+| Destination | Figure | Kind | Cited from | Source |
+| --- | ---: | --- | :-: | --- |
+| Low Earth orbit (SSO) | $7,000/kg, $350k floor | Published price | 2026 | SpaceX rideshare rate, retrieved 2026-07-16 |
+| Mars orbit | $15,120 – $23,590 | Calculation | 2022 × 2026 | BVAD Rev 2 Table 3-20, factors 2.16–3.37, × the SpaceX rate |
+| Mars surface | $19,390 – $30,310 | Calculation | 2022 × 2026 | BVAD Rev 2 Table 3-20, factors 2.77–4.33, × the SpaceX rate |
+| Lunar surface | $50,400 | Calculation | 2022 × 2026 | BVAD Rev 2 Table 3-20, factor 7.2, × the SpaceX rate |
+| Lunar orbit | $51,100 | Calculation | 2022 × 2026 | BVAD Rev 2 Table 3-20, factor 7.3, × the SpaceX rate |
+| Lunar surface | $1,200,000 | Vendor list price | **2016** | Astrobotic press release, 17 November 2016 |
+| Lunar surface | at least $770,000 – $3,200,000 | Contract-derived calculation | 2024 | NASA OIG IG-24-013, task orders $77.0M–$322.8M against a sub-100 kg payload class |
+| NRHO / Gateway | none | — | — | Gateway Logistics Services publishes only a $7B program ceiling |
+
+Government contract values are what NASA paid specific vendors under
+firm-fixed-price task orders that included agency-directed changes; the same
+audit attributes $208.2 million in cost growth, 82 percent of it to those
+changes. A vendor list price establishes an offer, not a transaction. The
+location-factor figures are modeled comparisons and were never intended as
+tariffs. None of these is a quote available to a third party.
+
+**Production**
+
+Per kilogram of *fresh* fruit, from our own resolved research spike; the
+freeze-dried figures in the text multiply these by 6.7.
+
+| Quantity | Value | Source |
+| --- | ---: | --- |
+| Water fraction | ~85% | 1 kg fresh sheds ~0.8 kg water, yielding ~0.15 kg dried |
+| Yield at maturity | 2.3 – 4.5 kg per plant-year | Iowa State Extension |
+| Time to full production | 6 – 8 years | OSU Extension |
+| Chilling requirement | 800 – 1,500 h (northern highbush) | OSU Extension; MSU Extension P3067 |
+| Mature height | 1.5 – 2.4 m | OSU Extension |
+| Selective harvest rate | 28.2 s per fruit, 83% success | Robofruit, Parsa et al. 2023 |
+| Freeze-drying energy | 5.2 – 19.5 kWh per kg water removed | MDPI Sustainability, 2021 |
+| Strawberry productivity | 77.88 g fw/m²·d, 0.25 m tall | BVAD |
+
+Fruit-per-kilogram counts assume 1.5–2.5 g per blueberry, which is an internal
+assumption and not sourced. No nutrition, shelf-life, or water-recovery claim is
+made here; those remain open in our own records. The plant-year and robot-hour
+figures for the dried kilogram are derived, not measured.
+
+</details>

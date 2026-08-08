@@ -100,6 +100,16 @@ That file helps humans think. It also helps agents review. You can ask: "Read `d
 
 The persona is still not user research. It is a steering document. It keeps the project honest about who it claims to serve until real evidence corrects it.
 
+Personas are the one file in this stack that is also directly runnable: a reviewer agent can wear one and report back. I cover that in [Outfitter Personas Are Markdown, Not Another Agent Type](/posts/outfitter-personas).
+
+Tools in this space converge on the same shape. [Spec Kit](https://github.com/github/spec-kit), for example, opens a project with a constitution at `.specify/memory/constitution.md`. [Its own](https://github.com/github/spec-kit/blob/main/.specify/memory/constitution.md) is five numbered principles — "II. Test-Backed Change (NON-NEGOTIABLE)" among them — each with a rationale, and the whole document signed off like legislation:
+
+```md
+**Version**: 1.0.0 | **Ratified**: 2026-06-19 | **Last Amended**: 2026-06-19
+```
+
+Its planning step checks a proposed approach against those principles before work starts.
+
 ## The stack works because it is shared
 
 The important move is not adding files for their own sake. It is giving each file one job and making the same docs useful to humans and agents.

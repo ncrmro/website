@@ -81,6 +81,22 @@ They deserve different reviews.
 
 Once a persona file lives in the repo, it can steer more than review. It can shape specs, plans, docs, release notes, and design discussions. Outfitter makes the file runnable and its reports auditable, but its value starts before the run command.
 
+[Spec Kit](https://github.com/github/spec-kit) is the clearest example. Every spec it writes opens with prioritized user stories, each one a journey in plain language with acceptance scenarios attached — straight from its [spec template](https://github.com/github/spec-kit/blob/main/templates/spec-template.md):
+
+```md
+### User Story 1 - [Brief Title] (Priority: P1)
+
+[Describe this user journey in plain language]
+
+**Why this priority**: [Explain the value and why it has this priority level]
+
+**Acceptance Scenarios**:
+
+1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+```
+
+The template says "user." The persona file says which one. Same slot, different feature.
+
 Design with a specific person in mind. Then let the agent stop them from leaving.
 
 Personas are one file in a larger repo documentation stack; I describe that stack in [Project Steering Docs Are Context Engineering for Humans First](/posts/project-steering-docs).
