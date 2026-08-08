@@ -100,38 +100,31 @@ Everything above is the part that worked. Then I ran the command and got:
 Recovery failed because no master key was able to decrypt the file.
 ```
 
-This message appeared twice in an hour. It was correct both times. It described
-a different cause each time, and named neither.
+That message is the entire diagnostic. It does not separate a key that was never
+asked from a key that refused, or a malformed identity file from an absent one.
+From sops's altitude "no identity matched" is the whole truth, and the cause
+lives several layers underneath it.
 
-The first was the wrong YubiKey. The identity file held the stub for serial A;
-serial B was in the port. Both were valid recipients of the file — either could
-have opened it. No error message mentioned serials, because from sops's altitude
-"no identity matched" is the whole truth. A hardware key that was never asked
-reports identically to a hardware key that refused.
+So I guessed. I decided the problem was a missing `SOPS_AGE_KEY_FILE` and wrote
+that into a commit message and a source comment before testing the claim. sops
+reads `$XDG_CONFIG_HOME/sops/age/keys.txt` on its own; the variable changes
+nothing. A ten-line fixture — encrypt to a throwaway key at the default path,
+decrypt with a bare environment — would have caught it in under a minute, and I
+reverted the commit once I finally ran one.
 
-The second was self-inflicted. Adding the second key's stub, I captured the
+The next failure I caused outright. Editing the identity file, I captured a
 plugin's output with `2>&1` — merging stderr into stdout, interleaving a
-diagnostic line into the middle of the identity file, and producing `unknown
-identity type` nested inside that same outer message.
+diagnostic line into the middle of the file, and producing `unknown identity
+type` nested inside that same outer message.
 
-Then the decrypt finally succeeded and a `jq` further down the pipeline exploded
-on `Invalid numeric literal at line 1, column 11` — column eleven being exactly
-the width of `-----BEGIN `. sops's `--extract` returns a raw string; the
-pipeline had asked for JSON and been handed a PEM.
+Then the decrypt succeeded and a `jq` further down the pipeline exploded on
+`Invalid numeric literal at line 1, column 11` — column eleven being exactly the
+width of `-----BEGIN `. sops's `--extract` returns a raw string; the pipeline had
+asked for JSON and been handed a PEM.
 
-Three failures. None of them the YubiKey, and two of them arriving dressed as
-the same generic decryption error, because the layer that reports the failure
-sits too far from the layer that caused it.
-
-I will admit to a fourth, which is the one worth your attention. I diagnosed the
-first failure as a missing `SOPS_AGE_KEY_FILE` and wrote that into a commit
-message and a source comment before testing the claim. sops reads
-`$XDG_CONFIG_HOME/sops/age/keys.txt` on its own; the variable changes nothing. A
-ten-line fixture — encrypt to a throwaway key at the default path, decrypt with
-a bare environment — would have caught it in under a minute, and I reverted the
-commit once I ran one. A plausible mechanism that explains the symptom is not
-the same as the mechanism, and hardware failures are exactly where that
-distinction goes soft.
+None of it was the YubiKey. A plausible mechanism that explains the symptom is
+not the mechanism, and hardware is where that distinction goes soft — the
+physical explanation is always available, and it always feels sufficient.
 
 ## Budget for the physical layer
 
