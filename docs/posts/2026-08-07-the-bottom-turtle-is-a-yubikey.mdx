@@ -1,5 +1,5 @@
 ---
-title: The bottom turtle is a YubiKey
+title: The bottom turtle is a hardware key
 description: Encrypting secrets into git is the easy half — the hard half is what opens the first door, and that chain has to bottom out in something you can't copy.
 publish_date: 2026-08-07
 published: true
@@ -77,10 +77,10 @@ machines reduces to the security of one laptop file, and a stolen laptop is a
 stolen fleet. The alternative sounds like work, which is generally enough to
 keep it from getting done.
 
-The alternative is a YubiKey, and the property that matters is narrow and
-absolute: **the private key cannot leave the hardware.** Not "should not."
+The alternative is a hardware key, and the property that matters is narrow and
+absolute: **the private key cannot leave the device.** Not "should not."
 Cannot. You do not get a copy. You get an oracle — you hand it ciphertext, it
-hands back plaintext, and the key stays where it was born.
+hands back plaintext, and the key stays where it was born. A plugin like
 `age-plugin-yubikey` puts a *stub* in your identity file, a pointer of no value
 to a thief, and the key itself never touches the disk it protects.
 
@@ -121,9 +121,9 @@ Then the decrypt succeeded and a `jq` further down the pipeline exploded on
 width of `-----BEGIN `. sops's `--extract` returns a raw string; the pipeline had
 asked for JSON and been handed a PEM.
 
-None of it was the YubiKey. A plausible mechanism that explains the symptom is
-not the mechanism, and hardware is where that distinction goes soft — the
-physical explanation is always available, and it always feels sufficient.
+None of it was the hardware key. A plausible mechanism that explains the
+symptom is not the mechanism, and hardware is where that distinction goes soft
+— the physical explanation is always available, and it always feels sufficient.
 
 ## Budget for the physical layer
 
