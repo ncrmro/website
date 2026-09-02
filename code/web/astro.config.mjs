@@ -10,6 +10,9 @@ import cloudflare from '@astrojs/cloudflare';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://ncrmro.com',
+	redirects: {
+		'/posts/the-bottom-turtle-is-a-yubikey/': '/posts/sops-secrets-with-a-yubikey/',
+	},
 	// Drafts live under /drafts/* behind auth; keep them out of the public sitemap.
 	integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/drafts/') })],
 
