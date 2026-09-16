@@ -11,7 +11,10 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
 	site: 'https://ncrmro.com',
 	redirects: {
-		'/posts/the-bottom-turtle-is-a-yubikey/': '/posts/sops-secrets-with-a-yubikey/',
+		'/posts/the-bottom-turtle-is-a-yubikey/':
+			'/posts/bootstrapping-nixos-secrets-before-first-boot/',
+		'/posts/sops-secrets-with-a-yubikey/':
+			'/posts/bootstrapping-nixos-secrets-before-first-boot/',
 	},
 	// Drafts live under /drafts/* behind auth; keep them out of the public sitemap.
 	integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/drafts/') })],
