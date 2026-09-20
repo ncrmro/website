@@ -1,0 +1,121 @@
+---
+title: Keystone's First Public Installer Release Candidate
+description: Boot a target from the Keystone ISO, drive the installation from a Docker container, and try the NixOS desktop without first installing Nix.
+publish_date: 2026-09-20
+published: true
+tags: ["keystone", "nixos", "linux", "docker", "zfs"]
+
+kind: post
+publish_at: null
+canonical: null
+
+syndication: []
+---
+
+Keystone OS `v0.13.0-rc.2` is the first release candidate packaged for someone
+outside my own fleet: a bootable ISO for the target machine and a matching
+Docker controller for the machine doing the installation. You do not need Nix
+on the controller. You need Docker, an expendable x86-64 computer, and a healthy
+respect for the word **ERASE**.
+
+Keystone is my NixOS distribution for workstations, laptops, and servers. It
+composes a terminal environment, a Hyprland desktop, encrypted ZFS storage, and
+a fleet configuration into one versioned system. The long-term aim is mundane
+in the best sense: rebuilding a computer should be a declared operation, not an
+oral history.
+
+## Why two images?
+
+The ISO boots a small, temporary NixOS environment on the target. It exposes the
+hardware over SSH and carries no assumptions about the operating system on your
+other computer. The controller image contains Nix, NixOS Anywhere, and the
+Keystone installer. It evaluates your configuration, shows the disks it intends
+to erase, requires an exact interactive confirmation, installs the system, and
+then attempts one post-boot health check.
+
+The split removes an awkward prerequisite from NixOS Anywhere: the person
+trying Keystone does not first have to install Nix locally. The ISO is the
+ingress; the container carries the machinery.
+
+## Try the release candidate
+
+This release is for testing on a spare machine or virtual machine. Back up
+anything you care about. The bootstrap root, SSH, and disk-encryption password
+is the publicly known `changeme`, so use a trusted local network and do not keep
+this generation as a production configuration.
+
+Download the matched release files into one directory:
+
+```bash
+curl -LO https://github.com/keystone-systems/os/releases/download/v0.13.0-rc.2/keystone-os-v0.13.0-rc.2-x86_64-linux.iso
+curl -LO https://github.com/keystone-systems/os/releases/download/v0.13.0-rc.2/keystone-installer-v0.13.0-rc.2-x86_64-linux.oci.tar.gz
+curl -LO https://github.com/keystone-systems/os/releases/download/v0.13.0-rc.2/SHA256SUMS
+sha256sum -c SHA256SUMS
+```
+
+Write the ISO to a USB drive with your normal image writer, boot the target from
+it, and run `ip addr` at the console to find its address. Leave that machine
+running.
+
+The release includes a starter fleet configuration. Download it without
+installing Nix:
+
+```bash
+curl -L https://github.com/keystone-systems/os/archive/refs/tags/v0.13.0-rc.2.tar.gz \
+  | tar xz
+cp -R os-0.13.0-rc.2/templates/default keystone-config
+cd keystone-config
+```
+
+Before installing, change the administrator fields in `flake.nix` and adapt
+`hosts/laptop/hardware.nix` to the target. In particular, replace
+`__KEYSTONE_DISK__` with the stable `/dev/disk/by-id/...` path you intend to
+erase and replace the QEMU defaults with the target's hardware configuration.
+If you use a coding agent, this is the useful prompt:
+
+> Help me adapt this Keystone v0.13.0-rc.2 starter configuration for a new
+> laptop. Ask me for the target IP address, show me how to identify its stable
+> disk path and hardware configuration from the booted ISO, and review every
+> proposed edit before running the installer. Do not erase anything until the
+> controller prints the disk identity and I type its exact confirmation line.
+
+Load the public controller archive and run it against the IP address shown by
+the ISO:
+
+```bash
+mkdir -p "$HOME/.local/state/keystone-installer"
+gzip -dc ../keystone-installer-v0.13.0-rc.2-x86_64-linux.oci.tar.gz \
+  | docker load
+
+docker run --rm -it \
+  -v "$PWD:/workspace" \
+  -v "$HOME/.local/state/keystone-installer:/state" \
+  ghcr.io/keystone-systems/os-installer:v0.13.0-rc.2 \
+  install --target 192.168.1.100 --flake /workspace#laptop
+```
+
+Replace `192.168.1.100` with the target's address. The controller will display
+the target's disks and the configured erase set before it accepts the one exact
+confirmation that crosses the destructive boundary. Logs and a small JSON
+result remain under `~/.local/state/keystone-installer`.
+
+## What the RC has proved—and what it has not
+
+The matched Digital Twin boots the published ISO, accepts root SSH, evaluates
+the target configuration, and reaches the full desktop closure build through
+the container. The latest end-to-end run did not reach first boot: a pinned
+Codex `0.147` vendor archive failed while Nix was building the desktop closure.
+That dependency is the present edge of the test envelope, not a successful
+installation claim.
+
+In other words, the release mechanism is public; the release candidate is not
+yet boring. Do not point it at an irreplaceable machine. If you test it, attach
+the controller log and JSON result to a
+[Keystone OS issue](https://github.com/keystone-systems/os/issues), along with
+the hardware model and the phase that failed.
+
+The [release page](https://github.com/keystone-systems/os/releases/tag/v0.13.0-rc.2)
+has the ISO, controller archive, and checksums. The next useful milestone is not
+a larger feature list. It is several uneventful installations on computers I
+did not configure myself—the point where a release candidate stops being a
+controlled experiment and starts becoming an operating system.
