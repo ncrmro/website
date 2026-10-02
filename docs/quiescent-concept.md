@@ -6,7 +6,7 @@ sitemap, projects and résumé are preserved. Astro's remaining `jobs` collectio
 serves only the résumé. The old MDX loader, draft reader, vault read-only rows,
 Drizzle/Turso scaffolding and dual-source routing have been removed.
 
-## Verified preparation, not a live cutover
+## Verified migration and live cutover
 
 The migration manifest records 73 documents: 42 public and 31 unpublished drafts, including two scratch drafts formerly in `public/hold`.
 All 73 decode through the real Quiescent document layout and schema. Inverse
@@ -16,19 +16,23 @@ R2 upload/download readback verifies the same hashes. Unreferenced originals are
 retained, including on later document-folder renames. Astro image metadata
 decodes all 43 originals (31 JPEG, 10 PNG, 2 GIF), including oversized imports.
 
-Published documents are prepared in `content/posts`. Private documents are
-prepared in dedicated `quiescent/posts/<UUID>/1` branches; do not publish them to
+Published documents are prepared in `content/posts`. Unpublished documents are
+stored in dedicated `quiescent/posts/<UUID>/<UUID>` branches; do not publish them to
 import them. The manifest and migration scripts are one-time import evidence,
 not a second runtime content source. The pre-migration safety ref is
 `refs/quiescent-migration/prepared-b5c52b93e92c` at
 `817ddf88079d8d076883e6567ba8e03c11ede370`.
 
-**Deployment remains blocked until the user supplies `SERVICE_TOKEN` and the
-repository public/private branches plus media are verified through that token.**
-The full migration has not been deployed. Without the token, public post routes
-return an explicit noncacheable 503, while admin authentication remains available;
-there is no empty success page or legacy fallback. Live save/publish/delete and
-media restoration remain acceptance checks after credentials are installed.
+The user installed `SERVICE_TOKEN`, and the migration plus all 31 draft branches
+are on GitHub. Commit `fac9ba8b` was deployed to `ncrmro.com` as Worker version
+`e295251e-28aa-457b-9aa5-61d91cb3723a`. Live checks confirmed all 42 imported
+published sitemap entries, exclusion of all 31 imported drafts, authentication
+boundaries, mobile layout, responsive WebP delivery, original GIF integrity, and
+whole-page cache hits. Authenticated live save/publish/delete and mutation-driven
+cache warming remain pending the user's signed-in test. Without a token, public
+post routes return a noncacheable 503; there is no legacy fallback. The latest
+pre-cutover rollback version retaining the token is
+`9d19015b-133f-45b5-abf1-84089ac2c54d`.
 
 ## Document and editor contract
 
