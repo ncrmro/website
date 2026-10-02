@@ -16,7 +16,7 @@ import { env } from "cloudflare:workers";
     {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection. Configure SERVICE_TOKEN with access to this website repository to save and publish.</p>}
     {canPublish(Astro.url.hostname) && <section data-collection="posts" aria-label="Editable posts">
       <p role="status">Loading documents…</p>
-      <ul class="space-y-4 break-words [&_a]:block [&_a]:py-2"></ul>
+      <ul class="admin-post-list"></ul>
     </section>}
   </section>
   <script>
@@ -26,3 +26,15 @@ import { env } from "cloudflare:workers";
     document.querySelectorAll<HTMLElement>("[data-collection]").forEach(mountDocumentList);
   </script>
 </BaseLayout>
+
+<style is:global>
+  .admin-post-list { margin-top: 1rem; }
+  .admin-post-list li + li { border-top: 1px solid var(--border); }
+  .admin-post-list a { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; }
+  .admin-post-list a > div { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+  .admin-post-list h2 { font-size: 1.125rem; font-weight: 600; }
+  .admin-post-list .post-meta { color: var(--muted); font-size: .875rem; margin-top: .25rem; }
+  .admin-post-list .post-description { margin-top: .5rem; }
+  .admin-post-list img { width: 100px; height: 70px; flex: none; object-fit: cover; border-radius: .25rem; }
+  @media (min-width: 640px) { .admin-post-list img { width: 160px; height: 112px; } }
+</style>

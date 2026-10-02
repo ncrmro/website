@@ -23,10 +23,10 @@
     "@deck.gl/layers": "^9.3.3",
     "astro": "^7.3.5",
     "sharp": "0.35.5",
-    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-b3ce425.tgz",
-    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-b3ce425.tgz",
-    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-b3ce425.tgz",
-    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-b3ce425.tgz",
+    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-6ea629c.tgz",
+    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-6ea629c.tgz",
+    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-6ea629c.tgz",
+    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-6ea629c.tgz",
     "marked": "^17.0.0",
     "sanitize-html": "^2.17.0"
   },
@@ -40,9 +40,9 @@
     "@types/sanitize-html": "^2.16.0"
   },
   "overrides": {
-    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-b3ce425.tgz",
-    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-b3ce425.tgz",
-    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-b3ce425.tgz",
-    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-b3ce425.tgz"
+    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-6ea629c.tgz",
+    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-6ea629c.tgz",
+    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-6ea629c.tgz",
+    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-6ea629c.tgz"
   }
 }

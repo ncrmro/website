@@ -21,3 +21,11 @@ export const transformImage: import("@quiescent/astro/images").TransformImage = 
     .output({ format: `image/${options.format}`, quality: options.quality });
   return result.response();
 };
+
+/** Listing previews use a still frame so animated originals stay inexpensive to display. */
+export async function thumbnailImage(body: ReadableStream<Uint8Array>): Promise<Response> {
+  const result = await env.IMAGES.input(body)
+    .transform({ width: 320, height: 224, fit: "scale-down" })
+    .output({ format: "image/webp", quality: 75, anim: false });
+  return result.response();
+}

@@ -11,10 +11,10 @@
         "@deck.gl/core": "^9.3.3",
         "@deck.gl/geo-layers": "^9.3.3",
         "@deck.gl/layers": "^9.3.3",
-        "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-b3ce425.tgz",
-        "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-b3ce425.tgz",
-        "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-b3ce425.tgz",
-        "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-b3ce425.tgz",
+        "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-6ea629c.tgz",
+        "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-6ea629c.tgz",
+        "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-6ea629c.tgz",
+        "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-6ea629c.tgz",
         "astro": "^7.3.5",
         "marked": "^17.0.0",
         "sanitize-html": "^2.17.0",
@@ -32,10 +32,10 @@
     },
   },
   "overrides": {
-    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-b3ce425.tgz",
-    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-b3ce425.tgz",
-    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-b3ce425.tgz",
-    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-b3ce425.tgz",
+    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-6ea629c.tgz",
+    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-6ea629c.tgz",
+    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-6ea629c.tgz",
+    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-6ea629c.tgz",
   },
   "packages": {
     "@astrojs/astro2tsx": ["@astrojs/astro2tsx@0.1.2", "", { "dependencies": { "@emnapi/core": "1.11.3", "@napi-rs/wasm-runtime": "1.2.4" } }, "sha512-Uj/M9zbrhu5cIZEvWAGTbQJRKSxXWJ/E59BZwt7F+chrKhbfttW+9rkS/l+1QxoJP1KU3UnpM62M7yszfAI0WA=="],
@@ -382,13 +382,13 @@
 
     "@probe.gl/stats": ["@probe.gl/stats@4.1.1", "", {}, "sha512-4VpAyMHOqydSvPlEyHwXaE+AkIdR03nX+Qhlxsk2D/IW4OVmDZgIsvJB1cDzyEEtcfKcnaEbfXeiPgejBceT6g=="],
 
-    "@quiescent/astro": ["@quiescent/astro@../../vendor/quiescent-astro-0.0.0-b3ce425.tgz", { "dependencies": { "@quiescent/server": "^0.2.0" }, "peerDependencies": { "astro": "^7.3.5" } }, "sha512-sruAEfLSs2rKU4Dt4NmKO230R3A2Et/08j27ATIXWFL5San2/M890UB/WmBgsv8Bupf6BzwQyCW0OFTkg/krxg=="],
+    "@quiescent/astro": ["@quiescent/astro@../../vendor/quiescent-astro-0.0.0-6ea629c.tgz", { "dependencies": { "@quiescent/server": "^0.2.0" }, "peerDependencies": { "astro": "^7.3.5" } }, "sha512-sruAEfLSs2rKU4Dt4NmKO230R3A2Et/08j27ATIXWFL5San2/M890UB/WmBgsv8Bupf6BzwQyCW0OFTkg/krxg=="],
 
-    "@quiescent/editor": ["@quiescent/editor@../../vendor/quiescent-editor-0.2.0-b3ce425.tgz", { "dependencies": { "@quiescent/server": "^0.2.0", "@tiptap/core": "^3.0.0", "@tiptap/extension-image": "^3.0.0", "@tiptap/starter-kit": "^3.0.0" } }, "sha512-THFpGL8QonibCGikpAHTXvC4vDjjH7BcrUJ3QWzhMbQ/+mdUr4DVo0syHX8FfFHrrHUTGyQV4euWeuZYOiPb1g=="],
+    "@quiescent/editor": ["@quiescent/editor@../../vendor/quiescent-editor-0.2.0-6ea629c.tgz", { "dependencies": { "@quiescent/server": "^0.2.0", "@tiptap/core": "^3.0.0", "@tiptap/extension-image": "^3.0.0", "@tiptap/starter-kit": "^3.0.0" } }, "sha512-THFpGL8QonibCGikpAHTXvC4vDjjH7BcrUJ3QWzhMbQ/+mdUr4DVo0syHX8FfFHrrHUTGyQV4euWeuZYOiPb1g=="],
 
-    "@quiescent/git": ["@quiescent/git@../../vendor/quiescent-git-0.2.0-b3ce425.tgz", {}, "sha512-GIMZBI36RVvtwEeZa5Q+PP+jFu8Ah3Jd6A7chodbKIBCAPFTWtzfnOUyyOLz+4bGHxVot7bsmPau3ZHZBTrLWw=="],
+    "@quiescent/git": ["@quiescent/git@../../vendor/quiescent-git-0.2.0-6ea629c.tgz", {}, "sha512-2z0kJQRqLcd7JB628GS4SaTql/eOTZHHKbSJNvgzL/qsTXjFNlhcQy5CME9rbLo1E0DMM+leEP7czvw3MXNAOg=="],
 
-    "@quiescent/server": ["@quiescent/server@../../vendor/quiescent-server-0.2.0-b3ce425.tgz", { "dependencies": { "@cfworker/json-schema": "^4.1.1", "@quiescent/git": "^0.2.0", "@tiptap/core": "^3.0.0", "@tiptap/extension-image": "^3.0.0", "@tiptap/markdown": "^3.31.3", "@tiptap/starter-kit": "^3.0.0", "aws4fetch": "^1.0.20", "yaml": "^2.9.1" } }, "sha512-mXunPNT2rd7C8Ei0C7Mx9eklpc4WmBd0WX0TX6Z69VaazE8w3YY0HoaafJzmKGd/zvcdPB9l7XdvHeGMKyP0Iw=="],
+    "@quiescent/server": ["@quiescent/server@../../vendor/quiescent-server-0.2.0-6ea629c.tgz", { "dependencies": { "@cfworker/json-schema": "^4.1.1", "@quiescent/git": "^0.2.0", "@tiptap/core": "^3.0.0", "@tiptap/extension-image": "^3.0.0", "@tiptap/markdown": "^3.31.3", "@tiptap/starter-kit": "^3.0.0", "aws4fetch": "^1.0.20", "yaml": "^2.9.1" } }, "sha512-KETWIvGljHkv6oYb/YSEKviFtdXGx/uEmbWqqstjYE0XNVpWydpYmdWEc4oKc6MYqBDBytQLN6zGrzrTUV2osQ=="],
 
     "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.12", "", { "os": "android", "cpu": "arm" }, "sha512-dB/a1214qKfHMXCpgqR4OZT+jS4kTyEXbQGJPqzobt5EwH5rX080pxE37alt3RzvR1bf1Yz/yGqRfrYAxuPw0A=="],
 
