@@ -1,6 +1,4 @@
 import { reservedSlugs } from "./policy";
-import { getCollection } from "astro:content";
-import { postSlug } from "../lib/posts";
 import { createForge, createLfsClient, requirePublishingForge } from "@quiescent/git";
 import {
   configuredCollection,
@@ -8,10 +6,11 @@ import {
   DocumentError,
   defineDocumentConfig,
   localR2Media,
+  MAX_STORED_IMAGE_SIZE,
   type MediaStorage,
   WritingConfigurationError,
 } from "@quiescent/server";
-import { markdownImages } from "@quiescent/server/content";
+import { markdownImageReferences } from "./markdown";
 import configuration from "../../quiescent.config.json" with { type: "json" };
 import type { Collection, ExampleMetadata } from "./collections";
 import type { WritingEnv } from "./config";
@@ -51,11 +50,11 @@ export function writingApp(env: WritingEnv, collection: Collection = "posts") {
   const service = createDocumentService<ExampleMetadata>({
     ...configuredCollection<ExampleMetadata>(documentConfig, collection),
     references: (document) => [
-      ...markdownImages(document.body),
+      ...markdownImageReferences(document.body),
       ...(document.frontmatter.headerImage ? [document.frontmatter.headerImage] : []),
     ],
     async beforePublish(document) {
-      const reserved = new Set([...reservedSlugs, ...(await getCollection("blog")).map((post) => postSlug(post.id))]);
+      const reserved = reservedSlugs;
       if (reserved.has(document.frontmatter.slug)) throw new DocumentError("This slug is reserved by an existing page", "conflict");
       if (!document.frontmatter.title.trim())
         throw new DocumentError("Add a title before publishing", "invalid");
@@ -71,6 +70,7 @@ export function writingApp(env: WritingEnv, collection: Collection = "posts") {
     forge,
     media,
     lfs: createLfsClient({
+      maxSize: MAX_STORED_IMAGE_SIZE,
       endpoint: `https://github.com/${owner}/${repo}.git/info/lfs`,
       authorization: `Basic ${btoa(`${owner}:${env.SERVICE_TOKEN}`)}`,
     }),

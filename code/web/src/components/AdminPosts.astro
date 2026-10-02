@@ -1,11 +1,8 @@
 ---
-import { getCollection } from "astro:content";
-import { isPublic, postSlug } from "../lib/posts";
 import SiteNav from "./SiteNav.astro";
 import ThemeHead from "./ThemeHead.astro";
 import { canPublish } from "../writing/policy";
 import { env } from "cloudflare:workers";
-const vaultPosts = (await getCollection("blog")).sort((a,b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0));
 ---
 
 <!doctype html>
@@ -30,18 +27,6 @@ const vaultPosts = (await getCollection("blog")).sort((a,b) => (b.data.publish_d
     <ul></ul>
   </section>
 ))}
-      <section aria-labelledby="vault-heading">
-        <h2 id="vault-heading">Vault posts</h2>
-        <p>These posts are managed in the notes vault. Open a post to read it; edit its source in the vault.</p>
-        <ul class="vault-posts">
-          {vaultPosts.map(post => (
-            <li>
-              <a href={`/${isPublic(post) ? "posts" : "drafts"}/${postSlug(post.id)}/`}>{post.data.title}</a>
-              <span class="post-status">{isPublic(post) ? "Published" : "Draft"} · Vault-managed · Read-only</span>
-            </li>
-          ))}
-        </ul>
-      </section>
     </main>
     <script>
     import { mountDocumentList } from "../writing/document-list";
@@ -74,9 +59,6 @@ const vaultPosts = (await getCollection("blog")).sort((a,b) => (b.data.publish_d
       padding-left: 1.2rem;
     }
     li { margin-block: 1rem; overflow-wrap: anywhere; }
-    .vault-posts { list-style: none; padding: 0; }
-    .vault-posts li { padding-block: .65rem; border-bottom: 1px solid var(--border); }
-    .post-status { display: block; color: var(--muted); font-size: .85rem; }
     </style>
   </body>
 </html>

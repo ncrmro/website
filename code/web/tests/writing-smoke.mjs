@@ -6,7 +6,6 @@ import { defineDocumentConfig, configuredCollection } from '@quiescent/server/do
 import configuration from '../quiescent.config.json' with { type: 'json' };
 
 assert.equal(publicSlug({id: 'uuid', slug: '2026-10-01-notes'}), '2026-10-01-notes');
-assert.equal(publicSlug({id: '2026-10-01-notes'}), 'notes');
 for (const slug of ['new', 'tech', 'food', 'travel', 'the-bottom-turtle-is-a-yubikey', 'sops-secrets-with-a-yubikey']) assert.ok(reservedSlugs.has(slug));
 assert.ok(canPublish('ncrmro.com') && canPublish('ncrmro-website.ncrmro.workers.dev'));
 assert.ok(!canPublish('preview-ncrmro-website.ncrmro.workers.dev'));
@@ -20,15 +19,19 @@ assert.ok(configuredCollection(config, 'posts'));
 const request = (path, options = {}) => fetch(new URL(path, base), {redirect: 'manual', ...options});
 for (const path of ['/', '/posts/', '/resume', '/projects', '/rss.xml', '/posts/bootstrapping-nixos-secrets-before-first-boot/']) {
   const response = await request(path);
-  assert.equal(response.status, 200, path);
-  assert.ok((await response.text()).length > 1000, path);
+  const unavailable = process.env.EXPECT_POSTS_UNAVAILABLE && !['/resume', '/projects'].includes(path);
+  assert.equal(response.status, unavailable ? 503 : 200, path);
+  if (unavailable) assert.equal(response.headers.get('cache-control'), 'no-store');
+  else assert.ok((await response.text()).length > 1000, path);
 }
-for (const path of ['/write', '/write/', '/posts/new', '/posts/00000000-0000-0000-0000-000000000000/edit']) {
+for (const path of ['/write', '/write/']) {
   assert.equal((await request(path)).status, 404, path);
 }
+if (!process.env.EXPECT_POSTS_UNAVAILABLE) {
 const sitemap = await (await request('/sitemap-0.xml')).text();
 assert.ok(sitemap.includes('/posts/bootstrapping-nixos-secrets-before-first-boot/'));
 assert.ok(!sitemap.includes('/admin') && !sitemap.includes('/posts/new/</loc>') && !sitemap.includes('/drafts/'));
+}
 for (const path of ['/api/documents/posts', '/api/documents/posts/schema', '/api/tags/posts']) {
   const response = await request(path);
   assert.equal(response.status, 401, path);
@@ -58,8 +61,8 @@ if (process.env.TEST_AUTH_SECRET) {
     const html = await response.text();
     assert.ok(html.includes('awaiting its repository connection'));
     if (path === '/admin') {
-      assert.ok(html.includes('Vault-managed') && html.includes('Read-only'));
-      assert.ok(html.includes('/posts/bootstrapping-nixos-secrets-before-first-boot/'));
+      assert.ok(!html.includes('Vault-managed'));
+      assert.ok(html.includes('/admin/posts/new'));
     }
   }
   if (process.env.PREVIEW_URL) {
@@ -81,4 +84,4 @@ if (process.env.TEST_AUTH_SECRET) {
   assert.equal((await request('/api/documents/posts', {method: 'POST', headers: {...headers, Origin: 'https://other.invalid'}})).status, 403);
   assert.equal((await request('/api/documents/posts', {headers: await session('other@example.invalid')})).status, 401);
 }
-console.log('Writing smoke passed: configured branch, legacy pages, sitemap, private routes and optional local JWT checks.');
+console.log('Writing smoke passed: configured branch, post availability, private routes and optional local JWT checks.');

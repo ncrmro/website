@@ -1,180 +1,49 @@
 ---
+import { getImage } from "astro:assets";
+import type { MarkdownImage } from "../writing/markdown";
 import { env } from "quiescent:runtime";
-import DocumentBody from "@quiescent/astro/components/DocumentBody.astro";
+import type { DocumentDraft } from "@quiescent/server";
+import { documentMediaUrl } from "@quiescent/server/content";
 import DocumentImage from "@quiescent/astro/components/DocumentImage.astro";
 import { documentImages } from "@quiescent/astro/images";
-import type { DocumentDraft } from "@quiescent/server";
-import { fromMarkdown } from "@quiescent/server/content";
-import { writingApp } from "../writing/app";
-import { type Collection, documentPath, type ExampleMetadata } from "../writing/collections";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FormattedDate from "./FormattedDate.astro";
+import PostBody from "./PostBody.astro";
 import EditLink from "./EditLink.astro";
-import ThemeHead from "./ThemeHead.astro";
-
-interface Props {
-  collection: Collection;
-  post: DocumentDraft<ExampleMetadata> | null;
-  posts: DocumentDraft<ExampleMetadata>[];
-}
-const { post, posts, collection } = Astro.props;
-const { service } = writingApp(env, collection);
-const imageSets = new Map<string, Awaited<ReturnType<typeof documentImages>>>();
-for (const draft of posts)
-  imageSets.set(
-    draft.document.id,
-    await documentImages(
-      draft,
-      post
-        ? service.references(draft.document)
-        : draft.document.frontmatter.headerImage
-          ? [draft.document.frontmatter.headerImage]
-          : [],
-      service.readMedia,
-    ),
-  );
-let body: ReturnType<typeof fromMarkdown> | undefined;
-if (post) {
-  try {
-    body = fromMarkdown(post.document.body);
-  } catch {
-    /* Preserve unsupported Markdown as escaped source. */
+import { writingApp } from "../writing/app";
+import type { Collection, ExampleMetadata } from "../writing/collections";
+interface Props { collection: Collection; post: DocumentDraft<ExampleMetadata> | null; }
+const { collection, post } = Astro.props;
+if (!post) return new Response("Not found", {status: 404});
+const {document} = post;
+const {title, description, headerImage, tags} = document.frontmatter;
+const date = new Date(document.frontmatter.publish_date ?? document.publishedAt ?? document.createdAt);
+const {service} = writingApp(env, collection);
+const images = await documentImages(post, service.references(document), service.readMedia);
+const responsive = new Map<string, MarkdownImage>();
+for (const [name, source] of Object.entries(images)) {
+  if (source.format === "gif") {
+    responsive.set(name, {src: source.src, width: source.width, height: source.height});
+    continue;
   }
+  const width = Math.min(source.width, 1440);
+  const result = await getImage({src: source, width, widths: [...new Set([360,720,1080,1440,width].filter(value => value <= width))], format: "webp"});
+  responsive.set(name, {src: result.src, srcset: result.srcSet.attribute, sizes: "(max-width: 768px) calc(100vw - 48px), 896px", width, height: Math.round(source.height * width / source.width)});
 }
-const images = post ? imageSets.get(post.document.id)! : {};
+const imageUrl = (filename: string) => responsive.get(filename) ?? documentMediaUrl(document.id, filename, {revision: post.headSha});
 ---
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <ThemeHead />
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>{post?.document.frontmatter.title ?? "Stories"}</title>
-  </head>
-  <body class="reader-page">
-    <nav><a href="/">Nicholas Romero</a><a href="/posts">Posts</a></nav>
-    <main>
-      {post ? (
-  <>
-    <nav>
-      <a href="/">All stories</a>
-      <EditLink server:defer collection={collection} documentId={post.document.id} />
-    </nav>
-    <h1>{post.document.frontmatter.title}</h1>
-    {post.document.frontmatter.headerImage && images[post.document.frontmatter.headerImage] && (
-      <DocumentImage
-        source={images[post.document.frontmatter.headerImage]!}
-        alt=""
-        class="header-image"
-        priority
-      />
-    )}
-    {post.document.frontmatter.tags?.length ? (
-      <ul class="tags" aria-label="Tags">
-        {post.document.frontmatter.tags.map((tag) => (
-          <li>{tag}</li>
-        ))}
-      </ul>
-    ) : null}
-    <p>{post.document.frontmatter.description}</p>
-    {body ? (
-      <DocumentBody
-        node={body}
-        images={images}
-        imageComponent={DocumentImage}
-      />
-    ) : (
-      <pre>{post.document.body}</pre>
-    )}
-  </>
-) : (
-  <>
-    <h1>{collection === "posts" ? "Stories" : "Recipes"}</h1>
-    {posts.map(({ document }, index) => (
-      <article>
-        <h2>
-          <a href={documentPath(collection, document)}>{document.frontmatter.title}</a>
-        </h2>
-        <p>{document.frontmatter.description}</p>
-        {document.frontmatter.headerImage &&
-          imageSets.get(document.id)?.[document.frontmatter.headerImage] && (
-            <DocumentImage
-              source={imageSets.get(document.id)![document.frontmatter.headerImage]!}
-              alt=""
-              class="header-image"
-              priority={index === 0}
-            />
-          )}
-        {document.frontmatter.tags?.length ? (
-          <p class="tags">{document.frontmatter.tags.join(" · ")}</p>
-        ) : null}
-        <EditLink server:defer collection={collection} documentId={document.id} />
-      </article>
-    ))}
-  </>
-)}
-    </main>
-  </body>
-</html>
-<script>
-import { wireNewLinks } from "../writing/navigation";
-
-wireNewLinks();
-</script>
-<style is:global>
-body.reader-page {
-  & {
-    max-width: 720px;
-    margin: 4rem auto;
-    padding: 0 1.5rem;
-    font:
-      19px / 1.7 Georgia,
-      serif;
-    color: var(--text);
-    background: var(--page);
-  }
-  h1,
-  h2 {
-    line-height: 1.2;
-  }
-  a {
-    color: var(--accent);
-  }
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .edit {
-    display: inline-block;
-    padding: 0.25rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    text-decoration: none;
-    font:
-      16px / 1.6 system-ui,
-      sans-serif;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  .header-image {
-    width: 100%;
-    max-height: 420px;
-    object-fit: cover;
-  }
-  .tags {
-    display: flex;
-    gap: 0.75rem;
-    list-style: none;
-    padding: 0;
-    font: 14px system-ui;
-    color: var(--muted);
-  }
-  blockquote {
-    border-left: 3px solid var(--border);
-    padding-left: 1em;
-  }
-}
-</style>
+<BaseLayout title={title} description={description} type="article" publishedTime={date.toISOString()}>
+  <article class="w-full md:max-w-4xl">
+    <header class="pt-6 pb-5">
+      <h1 class="text-xl font-semibold text-gray-900 dark:text-white">{title}</h1>
+      <FormattedDate date={date} />
+      <EditLink server:defer collection={collection} documentId={document.id} />
+      <p>{description}</p>
+      {tags.length > 0 && <p aria-label="Tags">{tags.join(" · ")}</p>}
+      {headerImage && images[headerImage] && <DocumentImage source={images[headerImage]} alt="" priority />}
+    </header>
+    <div class="prose dark:prose-invert max-w-none">
+      <PostBody body={document.body} imageUrl={imageUrl} />
+    </div>
+  </article>
+</BaseLayout>

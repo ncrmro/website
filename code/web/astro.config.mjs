@@ -5,7 +5,6 @@ import { cacheCloudflare } from '@astrojs/cloudflare/cache';
 import { defineDocumentConfig } from '@quiescent/server/documents';
 import configuration from './quiescent.config.json' with { type: 'json' };
 defineDocumentConfig(configuration);
-import mdx from '@astrojs/mdx';
 import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -24,8 +23,6 @@ export default defineConfig({
 		'/posts/sops-secrets-with-a-yubikey/':
 			'/posts/bootstrapping-nixos-secrets-before-first-boot/',
 	},
-	// Drafts live under /drafts/* behind auth; keep them out of the public sitemap.
-	integrations: [mdx()],
 
 	// Bind every interface, not just loopback — the dev server is reached from
 	// other machines by hostname (ncrmro-workstation, ncrmro-laptop-14), and a

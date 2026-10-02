@@ -7,6 +7,8 @@ export interface ExampleMetadata extends Frontmatter {
   description: string;
   tags: string[];
   headerImage: string | null;
+  publish_date?: string | null;
+  places?: string[];
 }
 export function collectionSchema(collection: Collection): JSONSchema {
   return configuration.collections[collection].schema as JSONSchema;
@@ -27,7 +29,7 @@ export function initialDocument(_collection: Collection) {
 export const documentPath = (collection: Collection, document: DocumentRecord) =>
   `/${collection}/${encodeURIComponent(String(document.frontmatter.slug))}`;
 export const indexPaths = (_collection: Collection) =>
-  ["/", "/posts", "/rss.xml", "/sitemap-0.xml"];
+  ["/", "/posts", "/rss.xml", "/sitemap-0.xml", "/posts/tech", "/posts/food", "/posts/travel"];
 
 /** The example chooses title-based slugs; the editor remains schema agnostic. */
 export function titleSlug(title: unknown): string {

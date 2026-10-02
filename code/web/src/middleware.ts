@@ -6,7 +6,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
   const editor = path === "/admin" || path.startsWith("/admin/");
   const api = path.startsWith("/api/documents/") || path.startsWith("/api/tags/");
-  const privateRoute = editor || api || path.startsWith("/api/auth/") || path.startsWith("/_server-islands/") || path.startsWith("/drafts/");
+  const privateRoute = editor || api || path.startsWith("/api/auth/") || path.startsWith("/_server-islands/");
   if (privateRoute) context.cache.set(false);
   if ((editor || api) && !(await writingAuthor(context.request, env))) {
     const response = editor ? context.redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(context.url.pathname + context.url.search)}`) : new Response("Sign in to write", { status: 401 });
@@ -17,6 +17,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (api && !["GET", "HEAD", "OPTIONS"].includes(context.request.method) && context.request.headers.get("Origin") !== context.url.origin)
     return new Response("Invalid origin", { status: 403, headers: { "Cache-Control": "private, no-store" } });
   if (api && !env.SERVICE_TOKEN) return Response.json({error: "Writing is awaiting its repository connection (SERVICE_TOKEN)."}, {status: 503, headers: {"Cache-Control":"private, no-store"}});
+  const postPage = path === "/" || path === "/posts" || path.startsWith("/posts/") || path === "/rss.xml" || path === "/sitemap-0.xml";
+  if (postPage && !env.SERVICE_TOKEN) {
+    context.cache.set(false);
+    return new Response("Posts are temporarily unavailable while the repository connection is configured.", {status: 503, headers: {"Cache-Control": "no-store"}});
+  }
   const response = await next();
   if (privateRoute) response.headers.set("Cache-Control", "private, no-store");
   return response;

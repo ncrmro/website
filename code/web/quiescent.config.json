@@ -48,6 +48,51 @@
               "null"
             ],
             "title": "Image"
+          },
+          "publish_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Publication date",
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "string",
+                "format": "date-time"
+              }
+            ]
+          },
+          "places": {
+            "type": "array",
+            "title": "Places",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string"
+          },
+          "canonical": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "publish_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "syndication": {
+            "type": "array"
           }
         }
       }

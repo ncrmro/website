@@ -1,0 +1,16 @@
+---
+import ApolloReplayMap from "./ApolloReplayMap.astro";
+import { renderMarkdown, type ImageResolver } from "../writing/markdown";
+interface Props { body: string; imageUrl: ImageResolver; }
+const parts = renderMarkdown(Astro.props.body, Astro.props.imageUrl);
+---
+<div class="post-body">
+  {parts.map(part => part.kind === "apollo" ? <ApolloReplayMap /> : <Fragment set:html={part.html} />)}
+</div>
+<style>
+  .post-body { overflow-wrap: anywhere; }
+  .post-body :global(img), .post-body :global(svg) { max-width:100%; height:auto; }
+  .post-body :global(pre), .post-body :global(table) { max-width:100%; overflow-x:auto; }
+  .post-body :global(table) { display:block; border-collapse:collapse; }
+  .post-body :global(th), .post-body :global(td) { padding:.4rem .7rem; border:1px solid var(--border); }
+</style>

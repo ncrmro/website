@@ -1,4 +1,3 @@
-import { env } from "quiescent:runtime";
 import type { APIContext } from "astro";
 import type { Collection } from "./collections";
 import { collectionApp } from "./pages";
@@ -7,7 +6,6 @@ export async function reader(
   collection: Collection,
   slug?: string,
 ) {
-  if (!env.SERVICE_TOKEN) return new Response("Not found", {status: 404});
   const { service, pages } = collectionApp(context.url.origin, collection);
   const documents = await service.listPublished();
   const document = slug

@@ -7,7 +7,5 @@ export const reservedSlugs = new Set([
 export function canPublish(hostname: string): boolean {
  return ["ncrmro.com", "ncrmro-website.ncrmro.workers.dev", "localhost", "127.0.0.1"].includes(hostname);
 }
-/** Vault filenames have dates; document metadata already contains its public slug. */
-export function publicSlug(post: { id: string; slug?: string }): string {
- return post.slug ?? post.id.replace(/^\d{4}-\d{2}-\d{2}-/, "");
-}
+/** Metadata contains the complete public slug. */
+export function publicSlug(post: { slug: string }): string { return post.slug; }

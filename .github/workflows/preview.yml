@@ -3,7 +3,7 @@ name: Preview
 on:
   pull_request:
     paths:
-      - 'docs/posts/**'
+      - 'content/posts/**'
       - 'vendor/**'
       - 'code/web/quiescent.config.json'
       - 'code/web/src/**'

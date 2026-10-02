@@ -1,12 +1,10 @@
 ---
 import { publicSlug } from "../../writing/policy";
 import { writingPosts } from '../../writing/public-posts';
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostListItem from '../../components/PostListItem.astro';
-import { isVisibleInLocalDevelopment } from '../../lib/posts';
 
-const posts = [...await getCollection('blog', isVisibleInLocalDevelopment), ...await writingPosts(Astro.url.origin, Astro.cache)]
+const posts = (await writingPosts(Astro.url.origin, Astro.cache))
 	.sort((a, b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0));
 ---
 <BaseLayout title="Posts" description="Blog posts by Nicholas Romero">

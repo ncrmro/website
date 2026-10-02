@@ -1,44 +1,18 @@
 # ncrmro.com
 
-Personal site and blog. Astro 6 on Cloudflare Workers —
-https://ncrmro-website.ncrmro.workers.dev/
+Personal website built with Astro and Quiescent on Cloudflare Workers.
 
-## Where posts live
+Sign in at `/admin` with the allowlisted Google account to list posts, start a
+new post, save drafts, upload images and publish. New drafts stay local until
+first Save. The editor uses formatted text for supported Markdown and a lossless
+Markdown textarea for tables, code, HTML and other extended content.
 
-`docs/posts/<YYYY-MM-DD-slug>.mdx`, at the repository root (the `posts`
-symlink points there). The date prefix is stripped from the URL, so
-`docs/posts/2026-07-29-my-post.mdx` serves at `/posts/my-post/`.
+Posts live in `content/posts/<createdAt>-<slug>/index.md`, with stable UUIDs and
+Quiescent state files. Drafts live on dedicated Git branches, not public pages.
+All original images are Git LFS objects; R2 is a reconstructible delivery cache.
+Body images use document-relative filenames. The site preserves animated GIF
+originals instead of converting them to still images.
 
-**These files are synced copies — don't edit them here.** The canonical source
-of every post is the notes vault at
-`~/notes/publications/<YYYY-MM-DD-slug>/index.mdx`. A local edit to
-`docs/posts/` is overwritten by the next sync.
-
-## How to make a post
-
-In the vault (`~/notes`):
-
-1. Create `publications/<YYYY-MM-DD-slug>/index.mdx` with frontmatter —
-   `title` is required; `description`, `publish_date`, `tags`, and
-   `published: false` are the usual rest.
-2. Put any images in `publications/<YYYY-MM-DD-slug>/media/` and run
-   `publications/sync-media.sh <YYYY-MM-DD-slug>` to upload them to R2.
-   Reference them by absolute URL:
-   `https://r2.ncrmro.com/posts/<slug>/media/<file>`.
-3. Set `published: true` when it's ready to be public.
-4. Run `publications/sync-posts.sh` (`--dry-run` first to preview). It copies
-   the post into this repo, commits, and pushes to `main` — which deploys it.
-
-Anything still `published: false` syncs with `draft: true`: it lands on the
-site but is only visible at `/drafts/<slug>` behind the admin session, or
-locally under `bun run dev`.
-
-Posts carry no import statements and no client directives, so they stay
-identical in both repos. To use a component in one, see
-[docs/architecture.md](docs/architecture.md).
-
-## More
-
-- [docs/architecture.md](docs/architecture.md) — stack, layout, content
-  pipeline, deployment
-- [CONTRIBUTING.md](CONTRIBUTING.md) — dev shell, commands, conventions
+The concept configuration publishes to `feat/quiescent-concept`; it does not
+merge to main. See [the cutover guide](docs/quiescent-concept.md),
+[architecture](docs/architecture.md) and [development instructions](CONTRIBUTING.md).
