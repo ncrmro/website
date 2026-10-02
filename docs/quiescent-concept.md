@@ -8,8 +8,8 @@ Drizzle/Turso scaffolding and dual-source routing have been removed.
 
 ## Verified preparation, not a live cutover
 
-The migration manifest records 71 documents: 42 public and 29 private drafts.
-All 71 decode through the real Quiescent document layout and schema. Inverse
+The migration manifest records 73 documents: 42 public and 31 unpublished drafts, including two scratch drafts formerly in `public/hold`.
+All 73 decode through the real Quiescent document layout and schema. Inverse
 image-reference substitutions reproduce every original body exactly. All 43
 original images, totalling 136,045,387 bytes, match their original Git LFS hashes;
 R2 upload/download readback verifies the same hashes. Unreferenced originals are

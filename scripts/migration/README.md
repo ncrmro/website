@@ -2,7 +2,7 @@
 
 These maintenance scripts are not used by the application. They reconcile the content at commit `b5c52b93e92c` with the Quiescent store before the concept cutover.
 
-The import contains **71 documents: 42 published and 29 unpublished**, plus **43 image originals (136,045,387 bytes)**. Publication status comes from `published && !draft`. UUIDv5 uses each canonical post URL, so reruns produce the same identities. Browser slugs and original metadata remain unchanged; storage directories use `YYYY-MM-DD-slug`. Only media references change in the bodies, to document-relative filenames with content hashes. Inverse replacements must reconstruct the original body exactly. Animated GIF originals are retained unchanged.
+The import contains **73 documents: 42 published and 31 unpublished**, plus **43 image originals (136,045,387 bytes)**. Publication status comes from `published && !draft`. UUIDv5 uses each canonical post URL, so reruns produce the same identities. Browser slugs and original metadata remain unchanged; storage directories use `YYYY-MM-DD-slug`. Only media references change in the bodies, to document-relative filenames with content hashes. Inverse replacements must reconstruct the original body exactly. Animated GIF originals are retained unchanged. Two raw scratch drafts from `public/hold` are unpublished: filename underscores become date separators, absent/null titles become blank strings, and a scalar tag becomes a single-element array. Their bodies remain exact; no title or publication date is invented.
 
 Run from the repository root with the website dependencies installed:
 
@@ -18,7 +18,7 @@ After committing the verified application migration and removal of the old post/
 node scripts/migration/prepare-drafts.mjs <final-migration-commit> --create-local-refs
 ```
 
-Each branch contains only its own document changes above that final commit, with the original image bytes stored in LFS. The command refuses a base that still contains legacy sources and refuses to overwrite differing existing branch refs. It never pushes. Review and push the exact manifest branches separately; Git LFS must upload their originals as well as those on the published branch.
+Each branch contains only its own document changes above that final commit, with the original image bytes stored in LFS. The command refuses a base that still contains legacy sources and refuses to overwrite differing existing branch refs. It never pushes. For a later inventory addition, `--source-prefix=code/web/public/hold/` creates only those newly discovered drafts without touching previously prepared refs. Review and push the exact manifest branches separately; Git LFS must upload their originals as well as those on the published branch.
 
 Hydrate the dedicated delivery bucket using normal Wrangler credentials:
 

@@ -4,6 +4,38 @@
   "publishedBranch": "feat/quiescent-concept",
   "posts": [
     {
+      "source": "code/web/public/hold/2022_08_02_typescript-workspaces.md",
+      "id": "ff64dd68-3078-55e8-ae9a-674e6d8461d4",
+      "slug": "typescript-workspaces",
+      "createdAt": "2022-08-02",
+      "published": false,
+      "branch": "quiescent/posts/ff64dd68-3078-55e8-ae9a-674e6d8461d4/ff64dd68-3078-55e8-ae9a-674e6d8461d4",
+      "directory": "content/posts/2022-08-02-typescript-workspaces",
+      "sourceSha256": "e7d4b215393123fbd82b08becf35ff760144a25fe14f650b4086389990f87a96",
+      "originalBodySha256": "5d8f4fa5c6affc5baf6ae5320144a34d6a9ff508669d6bcedf447d01ba743301",
+      "bodySha256": "5d8f4fa5c6affc5baf6ae5320144a34d6a9ff508669d6bcedf447d01ba743301",
+      "markdownSha256": "bbb9f2c5b142c71f42e783527ee9fe01c4e726a3299c8df1ff788cf5ef959e20",
+      "statePath": "content/posts/.quiescent/ff64dd68-3078-55e8-ae9a-674e6d8461d4.json",
+      "replacements": [],
+      "assets": []
+    },
+    {
+      "source": "code/web/public/hold/2022_11_16-docker-rootless-etherium-node.md",
+      "id": "074d5757-2e41-539f-b9a5-18a18df3b001",
+      "slug": "docker-rootless-etherium-node",
+      "createdAt": "2022-11-16",
+      "published": false,
+      "branch": "quiescent/posts/074d5757-2e41-539f-b9a5-18a18df3b001/074d5757-2e41-539f-b9a5-18a18df3b001",
+      "directory": "content/posts/2022-11-16-docker-rootless-etherium-node",
+      "sourceSha256": "cd988aedc3cd9aeca1459ae319850adee8981d737013aae6e6d9b43145737b4f",
+      "originalBodySha256": "cd988aedc3cd9aeca1459ae319850adee8981d737013aae6e6d9b43145737b4f",
+      "bodySha256": "cd988aedc3cd9aeca1459ae319850adee8981d737013aae6e6d9b43145737b4f",
+      "markdownSha256": "7bc005c95990fd423847652ad0ff6d440d2519df8e87c75dab8e9f66b35d82f4",
+      "statePath": "content/posts/.quiescent/074d5757-2e41-539f-b9a5-18a18df3b001.json",
+      "replacements": [],
+      "assets": []
+    },
+    {
       "source": "docs/posts/2017-11-03-india-1.mdx",
       "id": "6a036ffb-fb26-5654-b5a8-65d898b6b090",
       "slug": "india-1",

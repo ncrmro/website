@@ -10,14 +10,16 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const base=process.argv[2];
 if(!base||!process.argv.includes('--create-local-refs'))throw new Error('Usage: node scripts/migration/prepare-drafts.mjs <verified-final-migration-commit> --create-local-refs');
 const output=path.resolve(process.env.MIGRATION_OUTPUT??'/tmp/website-quiescent-import');
+const onlyId=process.argv.find(arg=>arg.startsWith('--only='))?.slice('--only='.length);
+const sourcePrefix=process.argv.find(arg=>arg.startsWith('--source-prefix='))?.slice('--source-prefix='.length);
 const manifest=JSON.parse(await readFile(path.join(output,'manifest.json'),'utf8'));
 const git=(args,options={})=>execFileSync('git',args,{cwd:root,maxBuffer:40*1024*1024,...options}).toString().trim();
 const baseCommit=git(['rev-parse',`${base}^{commit}`]);
-if(git(['ls-tree','-r','--name-only',baseCommit,'docs/posts','code/web/public/posts']))throw new Error('Base still contains legacy posts/media; finalize the migration base first.');
+if(git(['ls-tree','-r','--name-only',baseCommit,'docs/posts','code/web/public/posts','code/web/public/hold']))throw new Error('Base still contains legacy posts/media; finalize the migration base first.');
 const hash=data=>createHash('sha256').update(data).digest('hex');
 const temporary=await mkdtemp(path.join(os.tmpdir(),'quiescent-draft-index-'));
 try{
-  for(const post of manifest.posts.filter(p=>!p.published)){
+  for(const post of manifest.posts.filter(p=>!p.published&&(!onlyId||p.id===onlyId)&&(!sourcePrefix||p.source.startsWith(sourcePrefix)))){
     const env={...process.env,GIT_INDEX_FILE:path.join(temporary,'index')};
     await rm(env.GIT_INDEX_FILE,{force:true});
     git(['read-tree',baseCommit],{env});

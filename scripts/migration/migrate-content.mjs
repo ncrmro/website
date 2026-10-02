@@ -30,7 +30,7 @@ async function write(relative, data, destination) {
   await mkdir(path.dirname(target), { recursive:true }); await writeFile(target,data);
 }
 const lfsAttributes = ['png','jpg','jpeg','webp','gif','avif','svg'].map(ext=>`*.${ext} filter=lfs diff=lfs merge=lfs -text`).join('\n')+'\n';
-const sources = git('ls-tree','-r','--name-only',sourceRef,'docs/posts').toString().trim().split('\n').filter(Boolean);
+const sources = git('ls-tree','-r','--name-only',sourceRef,'docs/posts','code/web/public/hold').toString().trim().split('\n').filter(Boolean);
 const mediaSources = git('ls-tree','-r','--name-only',sourceRef,'code/web/public/posts').toString().trim().split('\n').filter(Boolean);
 const manifest = { version:1, sourceRef:git('rev-parse',sourceRef).toString().trim(), publishedBranch:'feat/quiescent-concept', posts:[], assets:[] };
 const usedMedia = new Set();
@@ -38,14 +38,15 @@ for (const source of sources) {
   const original = git('show',`${sourceRef}:${source}`);
   const text = original.toString();
   const match = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text);
-  if (!match) throw new Error(`Missing frontmatter: ${source}`);
-  const metadata = parse(match[1]);
-  const originalBody = text.slice(match[0].length);
+  const held = source.startsWith('code/web/public/hold/');
+  if (!match && !held) throw new Error(`Missing frontmatter: ${source}`);
+  const metadata = match ? parse(match[1]) : {};
+  const originalBody = match ? text.slice(match[0].length) : text;
   let body = originalBody;
-  const slug = path.basename(source).replace(/^\d{4}-\d{2}-\d{2}-/,'').replace(/\.mdx?$/,'');
-  const createdAt = path.basename(source).slice(0,10);
+  const slug = path.basename(source).replace(/^\d{4}[-_]\d{2}[-_]\d{2}[-_]/,'').replace(/\.mdx?$/,'');
+  const createdAt = path.basename(source).slice(0,10).replaceAll('_','-');
   const id = idFor(slug);
-  const published = metadata.published === true && metadata.draft !== true;
+  const published = !held && metadata.published === true && metadata.draft !== true;
   const branch = published ? manifest.publishedBranch : `quiescent/posts/${id}/${id}`;
   const directory = `content/posts/${createdAt}-${slug}`;
   const destination = path.join(output, published ? 'published' : `drafts/${id}`);
@@ -84,7 +85,10 @@ for (const source of sources) {
   const {published:ignoredPublished,draft:ignoredDraft,heroImage,...fields} = metadata;
   const headerImage = heroImage ? assets.find(a=>path.basename(a.source)===heroImage)?.name : null;
   if(heroImage&&!headerImage) throw new Error(`Unresolved header image ${heroImage}: ${source}`);
-  const frontmatter = {...fields,description:fields.description??'',tags:fields.tags??[],slug,headerImage,id,createdAt};
+  // Held scratch drafts have no usable title; keep it blank, never invent a title.
+  // A single legacy tag represents one tag, not a comma-separated list.
+  const normalized = held ? {...fields,title:fields.title??'',tags:typeof fields.tags==='string'?[fields.tags]:fields.tags??[]} : fields;
+  const frontmatter = {...normalized,description:fields.description??'',tags:normalized.tags??[],slug,headerImage,id,createdAt};
   const markdown = `---\n${stringify(frontmatter,{lineWidth:0})}---\n${body}`;
   const state = {directory,...(published?{publishedAt:new Date(metadata.publish_date??createdAt).toISOString()}:{})};
   const statePath = `content/posts/.quiescent/${id}.json`;
