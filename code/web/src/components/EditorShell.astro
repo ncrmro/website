@@ -10,7 +10,7 @@ const label = collection === "posts" ? "Post" : "Recipe";
 
 <section id="editor-shell" aria-label="Document editor">
   <header class="editor-header">
-    <a data-document-control href="/write" aria-label="Back to documents">‹ Documents</a>
+    <a data-document-control href="/admin" aria-label="Back to documents">‹ Documents</a>
     <div data-save-status></div>
     <button type="button" data-primary data-document-control disabled>Save</button>
     <button
@@ -50,7 +50,7 @@ const label = collection === "posts" ? "Post" : "Recipe";
       <button type="button" data-show-preview>Preview</button>
       <div data-save-slot></div>
       <div data-delete-slot></div>
-      <a href={`/${collection}/new`} data-new-document={collection}>New {label.toLowerCase()}</a>
+      <a href={`/admin/${collection}/new`} data-new-document={collection}>New {label.toLowerCase()}</a>
       <a href="/">Stories</a>
       <ThemeControl />
     </div>

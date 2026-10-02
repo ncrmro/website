@@ -12,7 +12,11 @@ published branch `feat/quiescent-concept`, and the `posts` collection rooted at
 Draft branches and Git commits are managed by Quiescent. The remote concept
 branch must exist before writing is enabled. Publishing does not merge to main.
 
-`/write`, `/posts/new` and `/posts/<UUID>/edit` use the shared editor. Google JWT
+`/admin`, `/admin/posts/new` and `/admin/posts/<UUID>/edit` use the app-owned post list and shared mobile editor. The list page wraps
+`AdminPosts.astro`, so future status or page-view columns can evolve without
+library changes. `/admin/posts` redirects to `/admin`; the removed `/write`
+URL returns 404. Document APIs remain under `/api/documents/posts` and
+`/api/tags/posts`. Vault MDX remains editable in the notes vault. Google JWT
 sessions retain the existing `ncrmro@gmail.com` allowlist. Document APIs,
 private upload/media APIs and tag suggestions require that session; mutations
 also require a matching Origin. There is no example password. Authenticated

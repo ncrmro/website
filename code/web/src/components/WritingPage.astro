@@ -24,7 +24,7 @@ const { documentId, collection = "posts" } = Astro.props;
   </head>
   <body class="writing-page">
     {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection (SERVICE_TOKEN). Saving and publishing are unavailable.</p>}
-    {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/write to save and publish.</p>}
+    {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
     <EditorShell collection={collection} />
     {canPublish(Astro.url.hostname) && <div id="writing" data-document-id={documentId} data-collection={collection}></div>}
     <script>
@@ -34,7 +34,7 @@ const { documentId, collection = "posts" } = Astro.props;
     import { editorLayout, editorOpened, editorStatus } from "../writing/editor-layout";
     import { titleField } from "../writing/editor-title";
     import { editorToolbar } from "../writing/editor-toolbar";
-    import { wireNewLinks } from "../writing/navigation";
+    import { documentEditPath, wireNewLinks } from "../writing/navigation";
     import { tagPicker } from "../writing/tag-picker";
 
     wireNewLinks();
@@ -65,7 +65,7 @@ const { documentId, collection = "posts" } = Astro.props;
         onDocumentOpen: (document) => {
           editorOpened(root, true);
           sessionStorage.removeItem(pendingKey);
-          window.history.replaceState(null, "", `/${collection}/${document.id}/edit`);
+          window.history.replaceState(null, "", documentEditPath(collection, document.id));
         },
         onLocalDocumentOpen: (document) => {
           editorOpened(root, false);
@@ -73,7 +73,7 @@ const { documentId, collection = "posts" } = Astro.props;
         },
         onDelete: () => {
           sessionStorage.removeItem(pendingKey);
-          window.location.assign("/write");
+          window.location.assign("/admin");
         },
       });
     }

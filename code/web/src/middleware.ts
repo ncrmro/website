@@ -4,12 +4,12 @@ import { env } from "cloudflare:workers";
 import { writingAuthor } from "./writing/auth";
 export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
-  const editor = /^\/write\/?$/.test(path) || /^\/posts\/(new\/?$|[^/]+\/edit\/?$)/.test(path);
+  const editor = path === "/admin" || path.startsWith("/admin/");
   const api = path.startsWith("/api/documents/") || path.startsWith("/api/tags/");
   const privateRoute = editor || api || path.startsWith("/api/auth/") || path.startsWith("/_server-islands/") || path.startsWith("/drafts/");
   if (privateRoute) context.cache.set(false);
   if ((editor || api) && !(await writingAuthor(context.request, env))) {
-    const response = editor ? context.redirect("/api/auth/signin") : new Response("Sign in to write", { status: 401 });
+    const response = editor ? context.redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(context.url.pathname + context.url.search)}`) : new Response("Sign in to write", { status: 401 });
     response.headers.set("Cache-Control", "private, no-store"); return response;
   }
   if (path.startsWith("/api/documents/") && !canPublish(context.url.hostname))

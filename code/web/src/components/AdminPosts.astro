@@ -1,0 +1,82 @@
+---
+import { getCollection } from "astro:content";
+import { isPublic, postSlug } from "../lib/posts";
+import SiteNav from "./SiteNav.astro";
+import ThemeHead from "./ThemeHead.astro";
+import { canPublish } from "../writing/policy";
+import { env } from "cloudflare:workers";
+const vaultPosts = (await getCollection("blog")).sort((a,b) => (b.data.publish_date?.valueOf() ?? 0) - (a.data.publish_date?.valueOf() ?? 0));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <ThemeHead />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Admin · Nicholas Romero</title>
+  </head>
+  <body>
+    <SiteNav />
+    <main>
+      <h1>Posts</h1>
+      {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
+      {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection. Configure SERVICE_TOKEN with access to this website repository to save and publish.</p>}
+      {(canPublish(Astro.url.hostname) ? ["posts"] : []).map((collection) => (
+  <section data-collection={collection}>
+    <h2>Editable posts</h2>
+    
+    <p role="status">Loading documents…</p>
+    <ul></ul>
+  </section>
+))}
+      <section aria-labelledby="vault-heading">
+        <h2 id="vault-heading">Vault posts</h2>
+        <p>These posts are managed in the notes vault. Open a post to read it; edit its source in the vault.</p>
+        <ul class="vault-posts">
+          {vaultPosts.map(post => (
+            <li>
+              <a href={`/${isPublic(post) ? "posts" : "drafts"}/${postSlug(post.id)}/`}>{post.data.title}</a>
+              <span class="post-status">{isPublic(post) ? "Published" : "Draft"} · Vault-managed · Read-only</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
+    <script>
+    import { mountDocumentList } from "../writing/document-list";
+    import { wireNewLinks } from "../writing/navigation";
+
+    wireNewLinks();
+    document.querySelectorAll<HTMLElement>("[data-collection]").forEach(mountDocumentList);
+    </script>
+    <style>
+    :global(body) {
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+      font:
+        16px / 1.6 system-ui,
+        sans-serif;
+    }
+    main {
+      max-width: 850px;
+      margin: auto;
+      padding: clamp(1rem, 4vw, 2rem);
+    }
+    section {
+      margin-block: 2rem;
+    }
+    a {
+      color: var(--accent);
+    }
+    ul {
+      padding-left: 1.2rem;
+    }
+    li { margin-block: 1rem; overflow-wrap: anywhere; }
+    .vault-posts { list-style: none; padding: 0; }
+    .vault-posts li { padding-block: .65rem; border-bottom: 1px solid var(--border); }
+    .post-status { display: block; color: var(--muted); font-size: .85rem; }
+    </style>
+  </body>
+</html>

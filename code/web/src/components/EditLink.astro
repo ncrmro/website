@@ -1,4 +1,5 @@
 ---
+import { documentEditPath } from "../writing/navigation";
 import { env } from "quiescent:runtime";
 import { writingAuthor } from "../writing/auth";
 
@@ -14,7 +15,7 @@ const canEdit = await writingAuthor(Astro.request, env);
 {canEdit && (
   <a
     class="edit"
-    href={`/${Astro.props.collection}/${encodeURIComponent(Astro.props.documentId)}/edit`}
+    href={documentEditPath(Astro.props.collection, Astro.props.documentId)}
   >
     Edit
   </a>

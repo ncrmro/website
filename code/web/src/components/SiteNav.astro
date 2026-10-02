@@ -1,1 +1,27 @@
-<nav style="display:flex;gap:1.5rem;padding:1.5rem"><a href="/">Nicholas Romero</a><a href="/write">Documents</a><a href="/posts/new">New post</a><a href="/api/auth/signout">Sign out</a></nav>
+---
+import ThemeControl from "./ThemeControl.astro";
+---
+<header class="admin-header">
+  <a class="brand" href="/admin">Admin</a>
+  <a class="new-post" href="/admin/posts/new" data-new-document="posts">New post</a>
+  <details class="admin-menu">
+    <summary aria-label="Admin navigation"><span aria-hidden="true">☰</span> Menu</summary>
+    <nav aria-label="Admin navigation">
+      <a href="/admin">Posts</a>
+      <a href="/">View website</a>
+      <a href="/api/auth/signout">Sign out</a>
+      <ThemeControl />
+    </nav>
+  </details>
+</header>
+<style>
+  .admin-header { display:flex; align-items:center; gap:1rem; padding:1rem; border-bottom:1px solid var(--border); font:16px/1.6 system-ui,sans-serif; }
+  .brand { margin-right:auto; font-weight:700; }
+  a { color:var(--accent); text-decoration:none; }
+  .new-post, summary { min-height:44px; display:flex; align-items:center; gap:.5rem; padding:0 .7rem; border:1px solid var(--border); border-radius:6px; cursor:pointer; }
+  summary { list-style:none; }
+  summary::-webkit-details-marker { display:none; }
+  .admin-menu { position:relative; }
+  nav { position:absolute; z-index:10; top:calc(100% + .5rem); right:0; width:min(240px,calc(100vw - 2rem)); padding:1rem; box-sizing:border-box; display:flex; flex-direction:column; gap:.5rem; background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:0 8px 24px #0002; }
+  nav a { display:block; padding:.65rem; }
+</style>

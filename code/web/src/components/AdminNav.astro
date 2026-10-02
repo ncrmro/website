@@ -5,4 +5,4 @@ Astro.cache.set(false);
 Astro.response.headers.set('Cache-Control', 'private, no-store');
 const admin = await writingAuthor(Astro.request, env);
 ---
-{admin && <a href="/write">Write</a>}
+{admin && <a href="/admin">Admin</a>}

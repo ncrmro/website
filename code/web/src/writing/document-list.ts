@@ -1,3 +1,4 @@
+import { documentEditPath } from "./navigation";
 import { localDrafts } from "@quiescent/editor/local-drafts";
 import type { DocumentDraft } from "@quiescent/server/contracts";
 
@@ -16,7 +17,7 @@ export async function mountDocumentList(section: HTMLElement) {
     for (const draft of documents.values()) {
       const item = document.createElement("li");
       const link = document.createElement("a");
-      link.href = `/${collection}/${draft.document.id}/edit`;
+      link.href = documentEditPath(collection, draft.document.id);
       const label = draft.branch === "" ? "Local" : draft.state;
       link.textContent = `${String(draft.document.frontmatter.title || "Untitled")} — ${label}`;
       item.appendChild(link);
