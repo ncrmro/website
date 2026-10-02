@@ -1,64 +1,28 @@
 ---
-import SiteNav from "./SiteNav.astro";
-import ThemeHead from "./ThemeHead.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import { canPublish } from "../writing/policy";
 import { env } from "cloudflare:workers";
 ---
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <ThemeHead />
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Admin · Nicholas Romero</title>
-  </head>
-  <body>
-    <SiteNav />
-    <main>
-      <h1>Posts</h1>
-      {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
-      {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection. Configure SERVICE_TOKEN with access to this website repository to save and publish.</p>}
-      {(canPublish(Astro.url.hostname) ? ["posts"] : []).map((collection) => (
-  <section data-collection={collection}>
-    <h2>Editable posts</h2>
-    
-    <p role="status">Loading documents…</p>
-    <ul></ul>
+<BaseLayout title="Admin · Nicholas Romero" description="Manage posts">
+  <section class="w-full max-w-4xl py-6" aria-labelledby="admin-heading">
+    <header class="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <h1 id="admin-heading" class="text-xl font-semibold">Posts</h1>
+      <nav aria-label="Post actions" class="flex gap-4 text-slate-500 dark:text-white">
+        <a href="/admin/posts/new" data-new-document="posts">New post</a>
+        <a href="/api/auth/signout">Sign out</a>
+      </nav>
+    </header>
+    {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
+    {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection. Configure SERVICE_TOKEN with access to this website repository to save and publish.</p>}
+    {canPublish(Astro.url.hostname) && <section data-collection="posts" aria-label="Editable posts">
+      <p role="status">Loading documents…</p>
+      <ul class="space-y-4 break-words [&_a]:block [&_a]:py-2"></ul>
+    </section>}
   </section>
-))}
-    </main>
-    <script>
+  <script>
     import { mountDocumentList } from "../writing/document-list";
     import { wireNewLinks } from "../writing/navigation";
-
     wireNewLinks();
     document.querySelectorAll<HTMLElement>("[data-collection]").forEach(mountDocumentList);
-    </script>
-    <style>
-    :global(body) {
-      margin: 0;
-      background: var(--page);
-      color: var(--text);
-      font:
-        16px / 1.6 system-ui,
-        sans-serif;
-    }
-    main {
-      max-width: 850px;
-      margin: auto;
-      padding: clamp(1rem, 4vw, 2rem);
-    }
-    section {
-      margin-block: 2rem;
-    }
-    a {
-      color: var(--accent);
-    }
-    ul {
-      padding-left: 1.2rem;
-    }
-    li { margin-block: 1rem; overflow-wrap: anywhere; }
-    </style>
-  </body>
-</html>
+  </script>
+</BaseLayout>

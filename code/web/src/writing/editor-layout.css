@@ -1,10 +1,4 @@
 body.writing-page {
-  margin: 0;
-  background: var(--page);
-  color: var(--text);
-  font:
-    16px / 1.5 system-ui,
-    sans-serif;
   * {
     box-sizing: border-box;
   }
@@ -67,9 +61,9 @@ body.writing-page {
   [data-title] {
     resize: none;
     overflow: hidden;
-    font:
-      700 2rem / 1.25 Georgia,
-      serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.25;
     border: 0;
     padding: 0.5rem 0;
   }
@@ -134,9 +128,9 @@ body.writing-page {
   .tiptap,
   [aria-label="Markdown body"],
   [data-preview-area] {
-    font:
-      19px / 1.7 Georgia,
-      serif;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.75;
   }
   .tiptap {
     min-height: 55dvh;

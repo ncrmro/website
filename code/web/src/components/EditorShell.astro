@@ -1,5 +1,4 @@
 ---
-import ThemeControl from "./ThemeControl.astro";
 
 interface Props {
   collection: "posts";
@@ -27,7 +26,7 @@ const label = collection === "posts" ? "Post" : "Recipe";
   </header>
   <div data-editor-content>
     <div data-title-slot></div>
-    <div data-body-slot></div>
+    <div data-body-slot class="prose dark:prose-invert max-w-none"></div>
     <div data-result-slot></div>
   </div>
   <dialog id="post-details" class="editor-sheet" aria-labelledby="details-heading">
@@ -52,7 +51,6 @@ const label = collection === "posts" ? "Post" : "Recipe";
       <div data-delete-slot></div>
       <a href={`/admin/${collection}/new`} data-new-document={collection}>New {label.toLowerCase()}</a>
       <a href="/">Stories</a>
-      <ThemeControl />
     </div>
   </dialog>
   <dialog id="publish-review" class="editor-sheet" aria-labelledby="publish-heading">

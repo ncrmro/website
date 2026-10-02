@@ -4,7 +4,7 @@ import { env } from "cloudflare:workers";
 import EditorShell from "./EditorShell.astro";
 import "../writing/editor-layout.css";
 import "../writing/mobile-toolbar.css";
-import ThemeHead from "./ThemeHead.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import "../writing/tag-picker.css";
 
 interface Props {
@@ -14,15 +14,8 @@ interface Props {
 const { documentId, collection = "posts" } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <ThemeHead />
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Write · Quiescent</title>
-  </head>
-  <body class="writing-page">
+<BaseLayout title={`${documentId ? "Edit" : "New"} post · Nicholas Romero`} description="Write a post" bodyClass="writing-page">
+  <div class="w-full max-w-4xl py-6">
     {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection (SERVICE_TOKEN). Saving and publishing are unavailable.</p>}
     {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
     <EditorShell collection={collection} />
@@ -78,5 +71,5 @@ const { documentId, collection = "posts" } = Astro.props;
       });
     }
     </script>
-  </body>
-</html>
+  </div>
+</BaseLayout>

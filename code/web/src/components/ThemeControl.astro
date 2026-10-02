@@ -24,15 +24,15 @@ for (const control of controls) {
   control.addEventListener("change", () => {
     applyTheme(control.value);
     try {
-      if (control.value === "system") localStorage.removeItem("quiescent-theme");
-      else localStorage.setItem("quiescent-theme", control.value);
+      if (control.value === "system") localStorage.removeItem("website-theme");
+      else localStorage.setItem("website-theme", control.value);
     } catch {
       /* The current page still supports switching without storage. */
     }
   });
 }
 window.addEventListener("storage", (event) => {
-  if (event.key === "quiescent-theme" || event.key === null) applyTheme(event.newValue ?? "system");
+  if (event.key === "website-theme" || event.key === null) applyTheme(event.newValue ?? "system");
 });
 </script>
 <style>
@@ -42,9 +42,8 @@ window.addEventListener("storage", (event) => {
   gap: 0.5rem;
   margin: 0;
   color: var(--muted);
-  font:
-    0.875rem / 1.6 system-ui,
-    sans-serif;
+  font: inherit;
+  font-size: 0.875rem;
 }
 .theme-control select {
   width: auto;

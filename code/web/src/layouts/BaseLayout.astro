@@ -8,9 +8,10 @@ interface Props {
 	image?: string;
 	type?: 'website' | 'article';
 	publishedTime?: string;
+	bodyClass?: string;
 }
 
-const { title, description, image, type, publishedTime } = Astro.props;
+const { title, description, image, type, publishedTime, bodyClass } = Astro.props;
 ---
 <!doctype html>
 <html lang="en" class="dark:bg-gray-900 dark:text-white">
@@ -23,7 +24,7 @@ const { title, description, image, type, publishedTime } = Astro.props;
 			publishedTime={publishedTime}
 		/>
 	</head>
-	<body>
+	<body class={bodyClass}>
 		<main class="flex w-full flex-col items-center p-4">
 			<Navbar />
 			<slot />

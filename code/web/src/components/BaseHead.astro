@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ThemeHead from './ThemeHead.astro';
 import { SITE_TITLE } from '../consts';
 import { Font } from 'astro:assets';
 
@@ -24,6 +25,7 @@ const {
 const imageURL = new URL(image, Astro.site).toString();
 const isProd = import.meta.env.PROD;
 ---
+<ThemeHead />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
