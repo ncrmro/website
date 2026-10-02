@@ -1,13 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@custom-variant dark {
-  &:where([data-theme="dark"], [data-theme="dark"] *) { @slot; }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) { @slot; }
-  }
-}
-
 :root {
   color-scheme: light dark;
   --page: light-dark(var(--color-white), var(--color-gray-900));
@@ -24,8 +17,6 @@
   color: var(--text);
   accent-color: var(--accent);
 }
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"] { color-scheme: dark; }
 body { font-family: var(--font-atkinson), sans-serif; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 ::selection { background: var(--accent); color: var(--on-accent); }
