@@ -1,0 +1,14 @@
+---
+import "../styles/theme.css";
+---
+
+<meta name="color-scheme" content="light dark">
+<script is:inline>
+// Run before first paint, including on cached public pages.
+try {
+  const theme = localStorage.getItem("quiescent-theme");
+  if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+} catch {
+  /* Device storage may be unavailable; follow the system. */
+}
+</script>

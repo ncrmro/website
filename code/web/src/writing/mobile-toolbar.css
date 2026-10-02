@@ -1,0 +1,89 @@
+@media (max-width: 700px) {
+  body.writing-page {
+    .editor-header {
+      transform: translateY(var(--viewport-top, 0px));
+      height: 48px;
+      min-height: 48px;
+      padding: 2px max(0.5rem, env(safe-area-inset-right)) 2px
+        max(0.5rem, env(safe-area-inset-left));
+      gap: 0.25rem;
+    }
+    [data-editor-content] {
+      padding-bottom: 2rem;
+    }
+    [data-formatting-slot] {
+      display: none;
+    }
+    .writing-toolbar {
+      position: static;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      gap: 0.25rem;
+    }
+    .writing-toolbar > button {
+      padding: 0.5rem;
+      flex: 1 1 44px;
+    }
+    .writing-toolbar .finish-writing {
+      display: block;
+    }
+    .formatting-options {
+      inset: calc(var(--viewport-top, 0px) + 52px) 0.5rem auto auto;
+      max-height: calc(100dvh - 64px);
+      overflow-y: auto;
+    }
+    #writing[data-body-focused] {
+      [data-document-control] {
+        display: none;
+      }
+      .editor-header {
+        grid-template-columns: minmax(0, 1fr) 8px;
+      }
+      [data-formatting-slot] {
+        display: block;
+        grid-column: 1;
+        grid-row: 1;
+      }
+      [data-save-status] {
+        grid-column: 2;
+        grid-row: 1;
+      }
+      [role="status"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+      [data-save-status]::after {
+        content: "";
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      [data-save-status][data-state="busy"]::after {
+        background: transparent;
+        border: 1px solid var(--accent);
+      }
+      [data-save-status][data-state="notice"]::after {
+        background: var(--error);
+      }
+      [data-editor-notice]:not([hidden]) {
+        display: block;
+        position: absolute;
+        top: 48px;
+        left: 0;
+        right: 0;
+        margin: 0;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--page);
+        color: var(--error);
+        font-size: 0.875rem;
+      }
+    }
+  }
+}

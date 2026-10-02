@@ -5,7 +5,7 @@ how to work on it.
 
 ## Stack
 
-- **Framework**: Astro 6, server output with prerendered routes, in `code/web/`
+- **Framework**: Astro 7, server output with prerendered routes, in `code/web/`
 - **Adapter**: `@astrojs/cloudflare` → Cloudflare Workers (`ncrmro-website`);
   the `dist/` build output is served as static assets
 - **Content**: MDX in `docs/posts/`, validated by a Zod schema
@@ -117,3 +117,9 @@ To revive it:
 
 The `Deploy` workflow already runs `bun run db:migrate` before the worker
 deploy, so production migrations work as soon as the secrets are populated.
+
+## Quiescent concept
+
+The concept branch adds JSON-configured Git-backed writing alongside vault MDX.
+See [quiescent-concept.md](quiescent-concept.md) for authentication, bindings,
+validation, deployment and the concept-branch publishing boundary.

@@ -1,0 +1,56 @@
+{
+  "repository": {
+    "provider": "github",
+    "owner": "ncrmro",
+    "name": "website",
+    "publishedBranch": "feat/quiescent-concept"
+  },
+  "collections": {
+    "posts": {
+      "directory": "content/posts",
+      "filename": "{createdAt}-{slug}",
+      "draftBranch": "quiescent/{collection}/{id}/{cycle}",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "slug",
+          "description",
+          "tags",
+          "headerImage"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "maxLength": 300
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug",
+            "pattern": "^(?!new$)[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "tags": {
+            "type": "array",
+            "title": "Tags",
+            "items": {
+              "type": "string"
+            }
+          },
+          "headerImage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Image"
+          }
+        }
+      }
+    }
+  }
+}

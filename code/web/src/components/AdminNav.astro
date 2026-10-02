@@ -1,0 +1,8 @@
+---
+import { env } from 'cloudflare:workers';
+import { writingAuthor } from '../writing/auth';
+Astro.cache.set(false);
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+const admin = await writingAuthor(Astro.request, env);
+---
+{admin && <a href="/write">Write</a>}

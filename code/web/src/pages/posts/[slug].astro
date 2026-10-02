@@ -5,21 +5,17 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import ApolloReplayMap from '../../components/ApolloReplayMap.astro';
 import { isVisibleInLocalDevelopment, postSlug } from '../../lib/posts';
 
-export async function getStaticPaths() {
-	const posts = await getCollection('blog', isVisibleInLocalDevelopment);
-	return posts.map((post) => ({
-		params: { slug: postSlug(post.id) },
-		props: { post },
-	}));
-}
-
-const { post } = Astro.props;
-const { Content } = await render(post);
-const { title, description, publish_date } = post.data;
+import ReaderPage from '../../components/ReaderPage.astro';
+import { reader } from '../../writing/reader';
+const post = (await getCollection('blog', isVisibleInLocalDevelopment)).find((post) => postSlug(post.id) === Astro.params.slug);
+const data = post ? null : await reader(Astro, 'posts', Astro.params.slug);
+if (data instanceof Response) return data;
+const Content = post ? (await render(post)).Content : null;
+const { title, description, publish_date } = post?.data ?? {};
 ---
-<BaseLayout
-	title={title}
-	description={description}
+{data ? <ReaderPage {...data} /> : <BaseLayout
+	title={title ?? "Post"}
+	description={description ?? ""}
 	type="article"
 	publishedTime={publish_date?.toISOString()}
 >
@@ -40,10 +36,10 @@ const { title, description, publish_date } = post.data;
 			)}
 		</header>
 		<div id="post-body" class="pt-6 pb-3 prose dark:prose-invert max-w-none prose-img:cursor-zoom-in">
-			<Content components={{ ApolloReplayMap }} />
+			{Content && <Content components={{ ApolloReplayMap }} />}
 		</div>
 	</article>
-</BaseLayout>
+</BaseLayout>}
 
 <script>
 	// Click-to-zoom lightbox for post images: any <img> inside the

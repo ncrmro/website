@@ -1,0 +1,31 @@
+/* Shared example-app palette. System preference works even without JavaScript. */
+:root {
+  color-scheme: light dark;
+  --page: light-dark(#faf9f6, #171c19);
+  --surface: light-dark(#ffffff, #222a25);
+  --text: light-dark(#293530, #e3e9e2);
+  --muted: light-dark(#59655d, #aab9ad);
+  --accent: light-dark(#315c4c, #a0d5b8);
+  --on-accent: light-dark(#ffffff, #17271e);
+  --border: light-dark(#bac7be, #536258);
+  --hover: light-dark(#eaf0e8, #303f35);
+  --error: light-dark(#a12e26, #ffaaa2);
+  --backdrop: rgb(0 0 0 / 55%);
+  background: var(--page);
+  color: var(--text);
+  accent-color: var(--accent);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}

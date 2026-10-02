@@ -1,0 +1,79 @@
+---
+import ThemeControl from "./ThemeControl.astro";
+
+interface Props {
+  collection: "posts";
+}
+const { collection } = Astro.props;
+const label = collection === "posts" ? "Post" : "Recipe";
+---
+
+<section id="editor-shell" aria-label="Document editor">
+  <header class="editor-header">
+    <a data-document-control href="/write" aria-label="Back to documents">‹ Documents</a>
+    <div data-save-status></div>
+    <button type="button" data-primary data-document-control disabled>Save</button>
+    <button
+      type="button"
+      data-document-control
+      data-open="editor-menu"
+      aria-label="Editor options"
+      aria-haspopup="dialog"
+    >
+      ⋯
+    </button>
+    <div data-formatting-slot></div>
+    <p data-editor-notice aria-hidden="true" hidden></p>
+  </header>
+  <div data-editor-content>
+    <div data-title-slot></div>
+    <div data-body-slot></div>
+    <div data-result-slot></div>
+  </div>
+  <dialog id="post-details" class="editor-sheet" aria-labelledby="details-heading">
+    <div class="sheet-heading">
+      <h2 id="details-heading">{label} details</h2>
+      <button type="button" data-close>Done</button>
+    </div>
+    <div data-details-slot></div>
+    <div data-cover-slot></div>
+    <p class="image-save-hint">Save this draft before uploading images.</p>
+  </dialog>
+  <dialog id="editor-menu" class="editor-sheet" aria-label="Editor options">
+    <div class="sheet-heading">
+      <h2>Options</h2>
+      <button type="button" data-close>Done</button>
+    </div>
+    <div class="editor-menu-actions">
+      <button type="button" data-open="post-details">{label} details</button>
+      <button type="button" data-review>Review and publish</button>
+      <button type="button" data-show-preview>Preview</button>
+      <div data-save-slot></div>
+      <div data-delete-slot></div>
+      <a href={`/${collection}/new`} data-new-document={collection}>New {label.toLowerCase()}</a>
+      <a href="/">Stories</a>
+      <ThemeControl />
+    </div>
+  </dialog>
+  <dialog id="publish-review" class="editor-sheet" aria-labelledby="publish-heading">
+    <div class="sheet-heading">
+      <h2 id="publish-heading">Ready to publish?</h2>
+      <button type="button" data-close>Back to writing</button>
+    </div>
+    <h3 data-review-title>Untitled</h3>
+    <p data-review-url></p>
+    <p data-review-tags></p>
+    <p>Your latest text and details will be saved together and made public.</p>
+    <button type="button" data-show-preview>Preview</button>
+    <button type="button" data-open="post-details">Review details</button>
+    <div data-publish-slot></div>
+  </dialog>
+  <dialog id="editor-preview" class="editor-sheet preview-sheet" aria-label="Preview">
+    <div class="sheet-heading">
+      <h2>Preview</h2>
+      <button type="button" data-close>Back to writing</button>
+    </div>
+    <h3 data-preview-title>Untitled</h3>
+    <div data-preview-slot></div>
+  </dialog>
+</section>

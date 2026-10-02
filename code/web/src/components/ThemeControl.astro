@@ -1,0 +1,58 @@
+<label class="theme-control">
+  <span>Theme</span>
+  <select data-theme-control aria-label="Theme">
+    <option value="system">System</option>
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+  </select>
+</label>
+<script>
+const controls = Array.from(document.querySelectorAll("select")).filter((select) =>
+  select.hasAttribute("data-theme-control"),
+);
+function syncControls() {
+  for (const control of controls)
+    control.value = document.documentElement.dataset.theme ?? "system";
+}
+function applyTheme(theme: string) {
+  if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+  else delete document.documentElement.dataset.theme;
+  syncControls();
+}
+syncControls();
+for (const control of controls) {
+  control.addEventListener("change", () => {
+    applyTheme(control.value);
+    try {
+      if (control.value === "system") localStorage.removeItem("quiescent-theme");
+      else localStorage.setItem("quiescent-theme", control.value);
+    } catch {
+      /* The current page still supports switching without storage. */
+    }
+  });
+}
+window.addEventListener("storage", (event) => {
+  if (event.key === "quiescent-theme" || event.key === null) applyTheme(event.newValue ?? "system");
+});
+</script>
+<style>
+.theme-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--muted);
+  font:
+    0.875rem / 1.6 system-ui,
+    sans-serif;
+}
+.theme-control select {
+  width: auto;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+</style>

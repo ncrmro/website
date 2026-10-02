@@ -1,4 +1,5 @@
-import { Auth, type AuthConfig, type Session } from '@auth/core';
+import { Auth, type AuthConfig } from '@auth/core';
+import type { Session } from '@auth/core/types';
 import Google from '@auth/core/providers/google';
 
 export const ALLOWED_EMAIL = 'ncrmro@gmail.com';
@@ -63,6 +64,6 @@ export async function getSession(request: Request, env: AuthEnv): Promise<Sessio
 export async function requireAdminSession(request: Request, env: AuthEnv): Promise<Session> {
 	const session = await getSession(request, env);
 	const email = session?.user?.email;
-	if (!isAllowedEmail(email)) throw new Error('Unauthorized');
+	if (!session || !isAllowedEmail(email)) throw new Error('Unauthorized');
 	return session;
 }

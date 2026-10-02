@@ -1,0 +1,301 @@
+body.writing-page {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font:
+    16px / 1.5 system-ui,
+    sans-serif;
+  * {
+    box-sizing: border-box;
+  }
+  .writing-app [data-fields] {
+    display: none;
+  }
+  a {
+    color: var(--accent);
+  }
+  button {
+    min-height: 44px;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  button:hover {
+    background: var(--hover);
+  }
+  button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+  }
+  input,
+  textarea,
+  select {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+  label {
+    display: block;
+    color: var(--muted);
+  }
+  [data-metadata-field] {
+    margin-bottom: 1rem;
+  }
+  [data-metadata-field="headerImage"] {
+    display: none;
+  }
+  [data-metadata-field="title"] {
+    margin: 0;
+  }
+  .title-field {
+    font-size: 0;
+  }
+  [data-title] {
+    resize: none;
+    overflow: hidden;
+    font:
+      700 2rem / 1.25 Georgia,
+      serif;
+    border: 0;
+    padding: 0.5rem 0;
+  }
+  small[role="alert"],
+  [aria-invalid="true"] {
+    color: var(--error);
+  }
+  [aria-invalid="true"] {
+    border-color: var(--error);
+  }
+  .editor-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 64px;
+    padding: 0.5rem max(1rem, env(safe-area-inset-right)) 0.5rem
+      max(1rem, env(safe-area-inset-left));
+    background: var(--page);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-formatting-slot] {
+    display: contents;
+  }
+  .finish-writing {
+    display: none;
+  }
+  [data-editor-notice] {
+    display: none;
+  }
+  .editor-header > a {
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+  [data-save-status] {
+    min-width: 0;
+    text-align: center;
+  }
+  [role="status"] {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  [data-primary],
+  [data-publish] {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  [data-primary] {
+    min-width: 72px;
+  }
+  [data-editor-content] {
+    max-width: 760px;
+    margin: auto;
+    padding: 1rem 1rem 7rem;
+  }
+
+  .tiptap,
+  [aria-label="Markdown body"],
+  [data-preview-area] {
+    font:
+      19px / 1.7 Georgia,
+      serif;
+  }
+  .tiptap {
+    min-height: 55dvh;
+    outline: none;
+    padding: 0.25rem 0;
+  }
+  .tiptap p:first-child {
+    margin-top: 0;
+  }
+  .tiptap:has(> p:only-child > br:only-child)::before {
+    content: "Start writing…";
+    position: absolute;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .tiptap img,
+  [data-preview-area] img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  .tiptap .ProseMirror-selectednode {
+    outline: 2px solid var(--accent);
+  }
+  blockquote {
+    border-left: 3px solid var(--border);
+    padding-left: 1rem;
+  }
+  .writing-toolbar {
+    position: fixed;
+    bottom: var(--keyboard-inset, 0px);
+    left: 0;
+    right: 0;
+    z-index: 6;
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem max(0.5rem, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--page);
+  }
+  .writing-toolbar > button {
+    flex: 0 1 60px;
+    min-width: 44px;
+  }
+  .writing-toolbar [data-command="bold"] {
+    font-weight: bold;
+  }
+  .writing-toolbar [data-command="italic"] {
+    font-style: italic;
+  }
+  .formatting-options {
+    inset: auto 1rem calc(var(--keyboard-inset, 0px) + 76px) auto;
+    margin: 0;
+    padding: 0.5rem;
+    max-width: calc(100vw - 2rem);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .formatting-options:popover-open {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+  }
+  .editor-sheet {
+    position: fixed;
+    inset: auto 0 0;
+    width: min(100%, 600px);
+    max-width: 100%;
+    max-height: 85dvh;
+    margin: 0 auto;
+    padding: 1rem 1rem max(1.5rem, env(safe-area-inset-bottom));
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    background: var(--page);
+    color: var(--text);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .editor-sheet::backdrop {
+    background: var(--backdrop);
+  }
+  .sheet-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .sheet-heading h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  .editor-menu-actions {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .editor-menu-actions > button,
+  .editor-menu-actions > div > :where(button) {
+    width: 100%;
+    text-align: left;
+  }
+  [data-header-preview] {
+    display: block;
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 1rem;
+    border-radius: 8px;
+  }
+  [data-header-tools] button {
+    margin: 0.25rem;
+  }
+  [data-publish-slot] {
+    margin-top: 1.5rem;
+  }
+  [data-review-url] {
+    overflow-wrap: anywhere;
+    color: var(--muted);
+  }
+  .image-save-hint {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  #writing[data-persisted="true"] .image-save-hint {
+    display: none;
+  }
+  [data-delete] {
+    color: var(--error);
+  }
+  [data-result-slot] button {
+    margin-left: 1rem;
+  }
+  #writing[data-published="true"] :is(.writing-toolbar, [data-review], [data-save-slot]) {
+    display: none;
+  }
+  .preview-sheet {
+    width: min(100%, 760px);
+  }
+  @media (min-width: 701px) {
+    .editor-header {
+      padding-inline: max(1rem, calc((100% - 900px) / 2));
+    }
+    .writing-toolbar {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: 480px;
+      border: 1px solid var(--border);
+      border-radius: 12px 12px 0 0;
+    }
+  }
+}
+html:has(.editor-sheet[open]) {
+  overflow: hidden;
+}
+
+body.writing-page [hidden] {
+  display: none;
+}
