@@ -80,8 +80,9 @@ Astro sessions are disabled because authentication uses JWT; no SESSION KV or
 Turso database is used. Repository routing comes from JSON, not env overrides.
 Writing is allowed on `ncrmro.com`, `ncrmro-website.ncrmro.workers.dev` and local
 loopback hosts. Version previews are read-only: **all** document API methods are
-denied there because even GET can create a draft branch. Their editor/list does
-not mount draft-fetching code.
+denied there to keep preview versions isolated from private document workflows.
+Editor and media GET requests are read-only; the first save creates an editing
+branch when needed. Preview editor/list pages do not mount draft-fetching code.
 
 Build and deploy the compiled `dist/server/wrangler.json`. Main code pushes still
 auto-deploy and can overwrite a concept deployment. Content-only commits do not
@@ -95,17 +96,32 @@ The pre-concept Worker rollback version is
 `923b0a2a-1e9b-4bd4-bbb4-f04b6af61182`. This branch intentionally still publishes
 to itself; choose and reconcile the final published branch before merge.
 
-Initialize a fresh listing-cache database using the schema bundled with the
+Initialize a fresh document-cache database using the schema bundled with the
 vendored library (from `code/web`):
 
 ```sh
 node node_modules/wrangler/bin/wrangler.js d1 execute WRITING_CACHE --config wrangler.jsonc --remote --file node_modules/@quiescent/server/dist/documents-cache.schema.sql
 ```
 
-Use `--local` for local Worker development. The schema is idempotent. The cache
-contains private draft projections and is accessed only behind admin authorization;
-it can be discarded and rebuilt from Git. Main remains the library default, while
+Use `--local` for local Worker development. The schema is idempotent. If collection
+configuration declares additional scalar indexes, also apply the SQL returned by
+`documentCacheIndexStatements(indexes)` from the vendored server package during
+setup; skip built-in ID, slug, and date indexes. Request reads do not run DDL.
+The Quiescent example automates this with `scripts/cache-schema.mjs`; that script
+is part of the upstream example, not this website. The cache
+uses one table for published and private draft projections, with visibility-scoped
+queries. Private listings and refresh controls require admin authorization; public
+queries select only published rows. It can be discarded and rebuilt from Git.
+The document TTL is one hour: stale reads schedule a rebuild, and public HTML
+lifetime is bounded by the remaining data freshness. Successful Git mutations
+update the projection; cache failures cannot undo those Git writes. SQL scope keys are compact SHA-256 digests. Upgrading from the old scope format
+causes a refill; old-scope rows can be cleaned up after verification and the
+rollback window. This cleanup affects only the disposable cache.
+Main remains the library default, while
 this unmerged migration keeps its explicit publication-branch override.
+
+The editor shell, tag picker, mobile toolbar, and theme remain owned by this app.
+No component extraction is part of this cleanup.
 
 ## Validation
 

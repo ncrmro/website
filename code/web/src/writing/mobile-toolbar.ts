@@ -1,7 +1,6 @@
 /** Mobile switches controls in-place; the rich editor and selection stay mounted. */
-export function mobileToolbar(toolbar: HTMLElement, menu: HTMLElement) {
+export function mobileToolbar(toolbar: HTMLElement, menu: HTMLElement, body: HTMLElement) {
   const root = document.getElementById("writing")!;
-  const body = root.querySelector<HTMLElement>(".tiptap")!;
   root.querySelector("[data-formatting-slot]")!.appendChild(toolbar);
   const done = document.createElement("button");
   done.type = "button";

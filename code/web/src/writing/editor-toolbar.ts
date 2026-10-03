@@ -1,7 +1,8 @@
+import type { EditorToolbar } from "@quiescent/editor/writing";
 import { mobileToolbar } from "./mobile-toolbar";
 
 /** A single row of common actions. Extra commands stay in a native popover. */
-export function editorToolbar(toolbar: HTMLElement) {
+export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   const primary = ["add-image", "bold", "italic", "link"];
   const labels: Record<string, string> = {
     "add-image": "+",
@@ -9,7 +10,6 @@ export function editorToolbar(toolbar: HTMLElement) {
     italic: "I",
     link: "Link",
   };
-  const commands = Array.from(toolbar.querySelectorAll<HTMLButtonElement>("[data-command]"));
   const more = document.createElement("button");
   more.type = "button";
   more.textContent = "⋯";
@@ -22,19 +22,19 @@ export function editorToolbar(toolbar: HTMLElement) {
   more.popoverTargetElement = menu;
   more.addEventListener("pointerdown", (event) => event.preventDefault());
   for (const id of primary) {
-    const button = commands.find((command) => command.dataset.command === id)!;
+    const button = context.commands.get(id)!;
     button.textContent = labels[id]!;
     button.title = button.getAttribute("aria-label")!;
     toolbar.appendChild(button);
   }
-  for (const command of commands) {
-    if (primary.includes(command.dataset.command!)) continue;
+  for (const [id, command] of context.commands) {
+    if (primary.includes(id)) continue;
     menu.appendChild(command);
     command.addEventListener("click", () => menu.hidePopover());
   }
   toolbar.appendChild(more);
   toolbar.appendChild(menu);
-  const disposeMobile = mobileToolbar(toolbar, menu);
+  const disposeMobile = mobileToolbar(toolbar, menu, context.editable);
   // The browser visual viewport follows the on-screen keyboard and browser chrome.
   const viewport = window.visualViewport;
   const shell = document.getElementById("editor-shell")!;

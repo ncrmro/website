@@ -6,7 +6,7 @@ const jobs = defineCollection({
 	loader: glob({ base: './src/content/jobs', pattern: '**/*.md' }),
 	schema: z.object({
 		title: z.string(),
-		url: z.string().url().optional(),
+		url: z.url().optional(),
 		favicon: z.string().optional(),
 		role: z.string(),
 		type: z.string().optional(),

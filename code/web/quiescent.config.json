@@ -95,11 +95,7 @@
             "type": "array"
           }
         }
-      },
-      "indexes": [
-        "slug",
-        "title"
-      ]
+      }
     }
   }
 }

@@ -41,16 +41,15 @@ const { documentId, collection = "posts" } = Astro.props;
         .find((draft) => draft.document.id === pending);
       const initialId = root.dataset.documentId ?? resumed?.document.id;
       mountDocumentApp(root, {
-        navigation: false,
         layout: editorLayout,
         configureToolbar: editorToolbar,
-        formatStatus: (message) => editorStatus(root, message),
+        onState: (state) => editorStatus(root, state),
+        formatStatus: (message, state) => state.phase === "local" ? "Saved locally" : message,
         deriveMetadata: deriveSlug,
         startNew: !initialId,
         apiBase: `/api/documents/${collection}`,
         initialDocument: () => initialDocument(collection),
         documentPath: (document) => documentPath(collection, document),
-        displayName: (document) => String(document.frontmatter.title ?? document.id),
         imageFields: ["headerImage"],
         fieldControls: { title: titleField, tags: tagPicker(collection) },
         label: collection === "posts" ? "post" : "recipe",

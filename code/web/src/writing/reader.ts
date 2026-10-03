@@ -13,9 +13,7 @@ export async function reader(
   const document = "document" in result ? result.document : null;
   const documents = "documents" in result ? result.documents : [];
   pages.set(context.cache, document?.document.id, result.cache);
-  context.response.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
-  context.response.headers.set("X-Quiescent-Rendered", crypto.randomUUID());
-  context.response.headers.set("X-Quiescent-Revision", document?.headSha ?? "");
+  pages.setReaderHeaders(context.response.headers, document?.headSha);
   if (slug && !document)
     return new Response("Not found", { status: 404, headers: context.response.headers });
   return { post: document, posts: document ? [document] : documents, collection };
