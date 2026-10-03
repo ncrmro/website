@@ -1,9 +1,8 @@
-import { env } from "quiescent:runtime";
 import { documentCachePolicy, type RouteCache } from "@quiescent/astro";
-import { writingApp } from "./app";
-export async function publishedMedia(id: string, filename: string, cache?: RouteCache) {
+import { collectionApp } from "./pages";
+export async function publishedMedia(id: string, filename: string, cache: RouteCache, origin: string) {
   for (const collection of ["posts"] as const) {
-    const object = await writingApp(env, collection).service.readMedia(id, filename);
+    const object = await collectionApp(origin, collection, cache).service.readMedia(id, filename);
     if (!object) continue;
     cache?.set(documentCachePolicy({ collection }, id));
     return new Response(object.body, {

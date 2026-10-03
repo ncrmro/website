@@ -6,12 +6,13 @@ export async function reader(
   collection: Collection,
   slug?: string,
 ) {
-  const { service, pages } = collectionApp(context.url.origin, collection);
-  const documents = await service.listPublished();
-  const document = slug
-    ? (documents.find((draft) => draft.document.frontmatter.slug === slug) ?? null)
-    : null;
-  pages.set(context.cache, document?.document.id);
+  const { service, pages } = collectionApp(context.url.origin, collection, context.cache);
+  const result = slug
+    ? await service.getPublishedBySlugWithStatus(slug)
+    : await service.listPublishedWithStatus();
+  const document = "document" in result ? result.document : null;
+  const documents = "documents" in result ? result.documents : [];
+  pages.set(context.cache, document?.document.id, result.cache);
   context.response.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
   context.response.headers.set("X-Quiescent-Rendered", crypto.randomUUID());
   context.response.headers.set("X-Quiescent-Revision", document?.headSha ?? "");

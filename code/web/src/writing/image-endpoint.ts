@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ request, cache, logger }) => {
       request,
       cache,
       logger,
-      source: (id, filename) => publishedMedia(id, filename, cache),
+      source: (id, filename) => publishedMedia(id, filename, cache, new URL(request.url).origin),
       cacheImage: () => {},
       transform: transformImage,
     });
