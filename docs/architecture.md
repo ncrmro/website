@@ -1,119 +1,50 @@
 # Architecture
 
-How ncrmro.com is put together. See [CONTRIBUTING.md](../CONTRIBUTING.md) for
-how to work on it.
+`code/web` is an Astro 7 server application deployed to the `ncrmro-website`
+Cloudflare Worker. Tailwind provides site styles; the Quiescent packages supply
+Git document storage, draft lifecycle, media storage, editor controls and page
+cache invalidation. Four built packages are vendored in `vendor/`.
 
-## Stack
+## Documents
 
-- **Framework**: Astro 6, server output with prerendered routes, in `code/web/`
-- **Adapter**: `@astrojs/cloudflare` → Cloudflare Workers (`ncrmro-website`);
-  the `dist/` build output is served as static assets
-- **Content**: MDX in `docs/posts/`, validated by a Zod schema
-- **Styling**: Tailwind 4 via the `@tailwindcss/vite` plugin
-- **Package manager**: bun (single lockfile, `code/web/bun.lock`)
-- **Dev shell**: devenv, loaded by direnv
+`code/web/quiescent.config.json` declares GitHub repository `ncrmro/website`,
+published branch `feat/quiescent-concept`, `content/posts`, filename convention
+and metadata schema. Each post has a stable UUID and preserved slug, publication
+date, tags and other metadata. Draft visibility is represented by Git branches,
+not a public metadata flag. The same document service powers every reader,
+category, index, RSS, sitemap and admin view. There is no second post loader.
 
-## Layout
+The public renderer supports GFM Markdown, sanitized HTML/SVG and an explicit
+`<ApolloReplayMap />` marker implemented by the app's deck.gl component. It never
+executes imported MDX or JavaScript. The editor detects unsupported/lossy visual
+roundtrips and keeps the source in its Markdown textarea.
 
-```
-.
-├── docs/
-│   ├── posts/               MDX posts — the content root
-│   ├── architecture.md      This file
-│   └── README.md            Specs, conventions, research notes
-├── code/web/                The Astro app
-│   ├── src/
-│   │   ├── content.config.ts    Zod schemas for the `blog` and `jobs` collections
-│   │   ├── content/jobs/        Résumé entries
-│   │   ├── pages/               Routes
-│   │   ├── layouts/             Page shells
-│   │   ├── components/
-│   │   └── lib/                 posts.ts (slug/visibility helpers), auth.ts
-│   ├── public/posts/<slug>/media/   Legacy post images (Git LFS)
-│   ├── db/                  Drizzle schema (inert scaffolding)
-│   ├── drizzle/             SQL migrations (inert scaffolding)
-│   ├── astro.config.mjs
-│   ├── drizzle.config.ts
-│   └── wrangler.jsonc
-├── devenv.nix
-└── posts -> docs/posts      Convenience symlink
-```
+Original images and their filenames stay in Git LFS, including unused originals.
+Quiescent preserves these pointers on slug/folder renames. R2 can be restored from
+LFS; GIF delivery retains original animation. Browser uploads are limited to
+10 MiB; imported originals and LFS retrieval allow up to 32 MiB.
 
-The split is deliberate: content sits at the repository root, outside the
-Astro app, because the site is only one consumer of it. `code/` leaves room
-for a second consumer without moving the posts again.
+## Administration and authentication
 
-## Content pipeline
+`/admin` wraps the app-owned post list component. `/admin/posts/new` and
+`/admin/posts/<UUID>/edit` share the mobile editor. Google Auth.js JWT sessions
+retain the single-account allowlist; there is no database-backed session store.
+All admin/document APIs are private and noncacheable. Preview hosts cannot access
+document APIs even with GET, because opening a document can create a draft branch.
 
-Posts are MDX files in **`docs/posts/`**, named `YYYY-MM-DD-<slug>.mdx`. Each
-one is a synced copy of its canonical source in the notes vault
-(`~/notes/publications/<date>-<slug>/index.mdx`); `sync-posts.sh` there
-renders it into `docs/posts/`, commits, and pushes to `main`. The vault is the
-canonical home — this repo is a render target.
+Only the jobs collection remains in Astro content collections, for the résumé.
+No Drizzle/Turso or authentication database is used. A disposable D1 document
+listing cache (`WRITING_CACHE`) serves private admin lists without GitHub reads.
+Quiescent updates it after successful Git mutations, builds it on first read, and
+refreshes stale entries in the background after one hour. Git remains authoritative.
+The admin shows last fetch/update status, a manual refresh button, and local search.
+The portable cache and D1 adapter live in `@quiescent/server`; presentation remains
+here. Public Astro HTML caching remains separate and never reads cached drafts.
 
-- The Astro `blog` collection loads `docs/posts/` through a relative `base` in
-  `code/web/src/content.config.ts`, where the Zod schema lives. The schema
-  requires `title`; optional fields are `description`, `publish_date`
-  (coerced date), `published` (default false), `draft` (default false), `tags`
-  (default `[]`), `places` (travel posts), and `heroImage` (filename).
-- `postSlug()` in `code/web/src/lib/posts.ts` strips the date prefix, so
-  public URLs stay `/posts/<slug>/`.
-- Visibility is `isPublic()` — `published && !draft`. The sync stamps
-  `draft: true` on anything not yet published, so unpublished work lands here
-  but renders only at `/drafts/<slug>` behind the admin session. Under
-  `bun run dev` that check is skipped and `isVisibleInLocalDevelopment()`
-  lists drafts alongside published posts.
+## Deployment
 
-### Posts stay portable
-
-A post is a byte-identical copy of a vault file, so it cannot depend on this
-repo's layout: no import statements, no client directives. Components reach a
-post the other way round — the route injects them via
-`<Content components={{ … }} />` (Astro's documented mechanism), and a
-framework island gets an `.astro` wrapper here that owns its `client:*`
-directive. See `code/web/src/components/ApolloReplayMap.astro`.
-
-### Media
-
-New media is uploaded to Cloudflare R2 by the vault's `sync-media.sh` and
-referenced from posts by absolute URL
-(`https://r2.ncrmro.com/posts/<slug>/media/<file>`) — which is what keeps
-posts portable. Legacy media under `code/web/public/posts/<slug>/media/`
-predates R2 and stays in Git LFS (`.gitattributes` routes `*.jpg`, `*.jpeg`,
-`*.png`, `*.gif`, `*.webp`, `*.avif`).
-
-## Deployment topology
-
-- `.github/workflows/deploy.yml` — production on push to `main`. Runs
-  `bun run db:migrate`, then `wrangler deploy`. Path-filtered on `docs/posts/`
-  and `code/web/`, and checks out with `lfs: true` so LFS media isn't shipped
-  as pointer files.
-- `.github/workflows/preview.yml` — versioned Cloudflare alias for PRs from
-  the same repo; comments the URL on the PR (single comment, dedup'd by an
-  HTML marker). Alias pattern
-  `<branch-slug>-ncrmro-website.<acct>.workers.dev`.
-- `.github/workflows/validate.yml` — `astro build` on PRs (fork-safe).
-- `.github/actions/cloudflare-deploy/action.yml` — composite action shared by
-  deploy and preview.
-
-Because the site deploys on a push to `main` and the vault sync pushes to
-`main`, syncing a published piece publishes it. There is no separate release
-step.
-
-## DB scaffolding
-
-`code/web/db/` (Drizzle schema) and `code/web/drizzle/` (SQL migrations) are
-inert scaffolding from a previous Turso integration. There is no runtime DB
-client and no application code reads from `db/schema*.ts` today.
-`drizzle.config.ts` points at `db/schema.ts` and switches between Turso and a
-local sqlite/libsql URL depending on `TURSO_AUTH_TOKEN`, so `drizzle-kit` runs
-but has nothing to talk to.
-
-To revive it:
-
-1. Add a libsql client wherever it's needed (an Astro endpoint, etc).
-2. Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`.
-3. Run `bun run db:migrate`.
-
-The `Deploy` workflow already runs `bun run db:migrate` before the worker
-deploy, so production migrations work as soon as the secrets are populated.
+Build with `bun run build` and deploy `dist/server/wrangler.json`. Main pushes
+still auto-deploy; PR previews are read-only. See
+[quiescent-concept.md](quiescent-concept.md) for bindings, credentials, migration
+verification and the deployment gate. Never deploy the full cutover until the
+repository token and migrated public/private data and originals are verified.

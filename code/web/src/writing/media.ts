@@ -1,0 +1,18 @@
+import { documentCachePolicy, type RouteCache } from "@quiescent/astro";
+import { collectionApp } from "./pages";
+export async function publishedMedia(id: string, filename: string, cache: RouteCache, origin: string) {
+  for (const collection of ["posts"] as const) {
+    const object = await collectionApp(origin, collection, cache).service.readMedia(id, filename);
+    if (!object) continue;
+    cache?.set(documentCachePolicy({ collection }, id));
+    return new Response(object.body, {
+      headers: {
+        "Content-Type": object.contentType,
+        "Content-Length": String(object.size),
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "X-Content-Type-Options": "nosniff",
+      },
+    });
+  }
+  return new Response("Not found", { status: 404 });
+}

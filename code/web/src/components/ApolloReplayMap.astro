@@ -1,10 +1,5 @@
 ---
-// Island for the deck.gl trajectory view. Posts live outside the app in
-// docs/posts/ and are canonical copies of the notes vault's publications, so
-// they must not carry framework imports or client directives. Routes inject
-// this wrapper via <Content components=…>, and the post body just writes
-// <ApolloReplayMap />.
-//
+// App-owned renderer for the inert <ApolloReplayMap /> Markdown marker.
 // deck.gl loads through a dynamic import in the client script below, so it
 // never enters the server module graph — its dependency tree pulls Node
 // builtins (worker_threads) that the Cloudflare SSR environment refuses.

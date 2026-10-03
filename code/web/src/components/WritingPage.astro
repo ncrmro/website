@@ -1,0 +1,74 @@
+---
+import { canPublish } from "../writing/policy";
+import { env } from "cloudflare:workers";
+import EditorShell from "./EditorShell.astro";
+import "../writing/editor-layout.css";
+import "../writing/mobile-toolbar.css";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../writing/tag-picker.css";
+
+interface Props {
+  documentId?: string;
+  collection?: "posts";
+}
+const { documentId, collection = "posts" } = Astro.props;
+---
+
+<BaseLayout title={`${documentId ? "Edit" : "New"} post · Nicholas Romero`} description="Write a post" bodyClass="writing-page" fullScreen>
+  <div class="w-full">
+    {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection (SERVICE_TOKEN). Saving and publishing are unavailable.</p>}
+    {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
+    <EditorShell collection={collection} />
+    {canPublish(Astro.url.hostname) && <div id="writing" data-document-id={documentId} data-collection={collection}></div>}
+    <script>
+    import { localDrafts } from "@quiescent/editor/local-drafts";
+    import { mountDocumentApp } from "@quiescent/editor/writing";
+    import { deriveSlug, documentPath, initialDocument } from "../writing/collections";
+    import { editorLayout, editorOpened, editorStatus } from "../writing/editor-layout";
+    import { titleField } from "../writing/editor-title";
+    import { editorToolbar } from "../writing/editor-toolbar";
+    import { documentEditPath, wireNewLinks } from "../writing/navigation";
+    import { tagPicker } from "../writing/tag-picker";
+
+    wireNewLinks();
+    const root = document.getElementById("writing");
+    if (root) {
+      const collection = "posts";
+      const pendingKey = `quiescent-new:${collection}`;
+      const pending = sessionStorage.getItem(pendingKey);
+      const resumed = localDrafts(`/api/documents/${collection}`)
+        .list()
+        .find((draft) => draft.document.id === pending);
+      const initialId = root.dataset.documentId ?? resumed?.document.id;
+      mountDocumentApp(root, {
+        layout: editorLayout,
+        configureToolbar: editorToolbar,
+        onState: (state) => editorStatus(root, state),
+        formatStatus: (message, state) => state.phase === "local" ? "Saved locally" : message,
+        deriveMetadata: deriveSlug,
+        startNew: !initialId,
+        apiBase: `/api/documents/${collection}`,
+        initialDocument: () => initialDocument(collection),
+        documentPath: (document) => documentPath(collection, document),
+        imageFields: ["headerImage"],
+        fieldControls: { title: titleField, tags: tagPicker(collection) },
+        label: collection === "posts" ? "post" : "recipe",
+        ...(initialId ? { initialDocumentId: initialId } : {}),
+        onDocumentOpen: (document) => {
+          editorOpened(root, true);
+          sessionStorage.removeItem(pendingKey);
+          window.history.replaceState(null, "", documentEditPath(collection, document.id));
+        },
+        onLocalDocumentOpen: (document) => {
+          editorOpened(root, false);
+          if (!root.dataset.documentId) sessionStorage.setItem(pendingKey, document.id);
+        },
+        onDelete: () => {
+          sessionStorage.removeItem(pendingKey);
+          window.location.assign("/admin");
+        },
+      });
+    }
+    </script>
+  </div>
+</BaseLayout>
