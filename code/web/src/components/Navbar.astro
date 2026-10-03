@@ -11,6 +11,7 @@ const isHome = pathname === '/';
 <nav id="navbar" class="mx-auto flex flex-col items-center gap-2 text-slate-500 dark:text-white">
 	<a
 		href="/"
+		data-admin-shortcut
 		class="min-w-[10rem] border-b py-2 text-center uppercase dark:text-white"
 	>
 		{isHome ? 'Nicholas Romero' : 'Home'}
@@ -40,3 +41,35 @@ const isHome = pathname === '/';
 	)}
 <AdminNav server:defer />
 </nav>
+
+<script>
+  const storageKey = "home-admin-shortcut";
+  let clicks = 0;
+  let lastClick = 0;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(storageKey) ?? "null");
+    if (Number.isInteger(saved?.clicks) && saved.clicks > 0 && saved.clicks < 5 && typeof saved.at === "number") {
+      clicks = saved.clicks;
+      lastClick = saved.at;
+    }
+  } catch { /* Normal navigation still works when storage is unavailable. */ }
+
+  document.addEventListener("click", (event) => {
+    const home = event.target instanceof Element && event.target.closest("[data-admin-shortcut]");
+    const now = Date.now();
+    const eligible = home && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+    clicks = eligible ? (now - lastClick <= 10000 ? clicks + 1 : 1) : 0;
+    lastClick = now;
+    try {
+      if (clicks > 0 && clicks < 5) sessionStorage.setItem(storageKey, JSON.stringify({ clicks, at: now }));
+      else sessionStorage.removeItem(storageKey);
+    } catch { /* Do not interfere with the link if storage is blocked. */ }
+    if (clicks === 5) {
+      event.preventDefault();
+      window.location.assign("/admin");
+    } else if (eligible && window.location.pathname === "/") {
+      event.preventDefault();
+      window.scrollTo(0, 0);
+    }
+  });
+</script>
