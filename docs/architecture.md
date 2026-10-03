@@ -33,7 +33,13 @@ All admin/document APIs are private and noncacheable. Preview hosts cannot acces
 document APIs even with GET, because opening a document can create a draft branch.
 
 Only the jobs collection remains in Astro content collections, for the résumé.
-No Drizzle/Turso database code or migration step is used.
+No Drizzle/Turso or authentication database is used. A disposable D1 document
+listing cache (`WRITING_CACHE`) serves private admin lists without GitHub reads.
+Quiescent updates it after successful Git mutations, builds it on first read, and
+refreshes stale entries in the background after one hour. Git remains authoritative.
+The admin shows last fetch/update status, a manual refresh button, and local search.
+The portable cache and D1 adapter live in `@quiescent/server`; presentation remains
+here. Public Astro HTML caching remains separate and never reads cached drafts.
 
 ## Deployment
 

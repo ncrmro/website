@@ -72,6 +72,7 @@ Retain the existing Google/Auth.js secrets and vars. Configure:
 - `SERVICE_TOKEN`: GitHub token restricted to `ncrmro/website`, contents read/write,
   including draft branches, publication commits and Git LFS. Never commit it.
 - `WRITING_MEDIA`: R2 bucket `ncrmro-website-quiescent-media`.
+- `WRITING_CACHE`: disposable D1 database `ncrmro-website-document-cache`.
 - `WRITING_SELF`: service binding to `ncrmro-website` for publication cache warming.
 - `IMAGES`: Cloudflare Images for responsive delivery transforms.
 
@@ -93,6 +94,18 @@ public cache-mutation endpoint is exposed.
 The pre-concept Worker rollback version is
 `923b0a2a-1e9b-4bd4-bbb4-f04b6af61182`. This branch intentionally still publishes
 to itself; choose and reconcile the final published branch before merge.
+
+Initialize a fresh listing-cache database using the schema bundled with the
+vendored library (from `code/web`):
+
+```sh
+node node_modules/wrangler/bin/wrangler.js d1 execute WRITING_CACHE --config wrangler.jsonc --remote --file node_modules/@quiescent/server/dist/documents-cache.schema.sql
+```
+
+Use `--local` for local Worker development. The schema is idempotent. The cache
+contains private draft projections and is accessed only behind admin authorization;
+it can be discarded and rebuilt from Git. Main remains the library default, while
+this unmerged migration keeps its explicit publication-branch override.
 
 ## Validation
 

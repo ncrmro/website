@@ -1,4 +1,5 @@
-import { env } from "cloudflare:workers";
+import { env, waitUntil } from "cloudflare:workers";
+import { d1DocumentCache } from "@quiescent/server";
 import type { CacheFetch } from "@quiescent/astro";
 
 export { env };
@@ -28,4 +29,9 @@ export async function thumbnailImage(body: ReadableStream<Uint8Array>): Promise<
     .transform({ width: 320, height: 224, fit: "scale-down" })
     .output({ format: "image/webp", quality: 75, anim: false });
   return result.response();
+}
+
+export const scheduleCacheRefresh = waitUntil;
+export function hostedDocumentCache() {
+  return d1DocumentCache(env.WRITING_CACHE);
 }

@@ -15,7 +15,12 @@ import { env } from "cloudflare:workers";
     {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
     {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection. Configure SERVICE_TOKEN with access to this website repository to save and publish.</p>}
     {canPublish(Astro.url.hostname) && <section data-collection="posts" aria-label="Editable posts">
-      <p role="status">Loading documents…</p>
+      <div class="listing-controls">
+      <label>Search <input type="search" data-search placeholder="Title, tags, or text" /></label>
+      <button type="button" data-refresh>Refresh from GitHub</button>
+    </div>
+    <p data-cache-status class="listing-cache-status"></p>
+    <p role="status">Loading documents…</p>
       <ul class="admin-post-list"></ul>
     </section>}
   </section>
@@ -37,4 +42,10 @@ import { env } from "cloudflare:workers";
   .admin-post-list .post-description { margin-top: .5rem; }
   .admin-post-list img { width: 100px; height: 70px; flex: none; object-fit: cover; border-radius: .25rem; }
   @media (min-width: 640px) { .admin-post-list img { width: 160px; height: 112px; } }
+  .listing-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-top: 1rem; }
+  .listing-controls label { flex: 1; min-width: 12rem; }
+  .listing-controls input { width: 100%; box-sizing: border-box; padding: .5rem; border: 1px solid var(--border); border-radius: .25rem; background: var(--page); color: var(--text); }
+  .listing-controls button { padding: .5rem; border: 1px solid var(--border); border-radius: .25rem; cursor: pointer; }
+  .listing-controls button:disabled { opacity: .6; cursor: wait; }
+  .listing-cache-status { color: var(--muted); font-size: .875rem; margin-top: .75rem; }
 </style>

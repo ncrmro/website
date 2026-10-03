@@ -1,3 +1,4 @@
+import { cacheLabel, fetchListing, matchesSearch } from "./listing-view";
 import { documentEditPath } from "./navigation";
 import { localDrafts } from "@quiescent/editor/local-drafts";
 import type { DocumentDraft } from "@quiescent/server/contracts";
@@ -51,20 +52,36 @@ export async function mountDocumentList(section: HTMLElement) {
   const api = `/api/documents/${collection}`;
   const list = section.querySelector("ul")!;
   const status = section.querySelector<HTMLElement>("[role=status]")!;
-  const documents = new Map(localDrafts(api).list().map(draft => [draft.document.id, draft]));
-  const render = () => list.replaceChildren(...[...documents.values()].sort(oldestFirst).map(draft => postRow(collection, draft)));
+  const freshness = section.querySelector<HTMLElement>("[data-cache-status]")!;
+  const search = section.querySelector<HTMLInputElement>("[data-search]")!;
+  const refresh = section.querySelector<HTMLButtonElement>("[data-refresh]")!;
+  let documents = new Map(localDrafts(api).list().map(draft => [draft.document.id, draft]));
+  let polls = 0;
+  const render = () => {
+    const visible = [...documents.values()].filter(draft => matchesSearch(draft, search.value)).sort(oldestFirst);
+    list.replaceChildren(...visible.map(draft => postRow(collection, draft)));
+    status.textContent = `${visible.length} of ${documents.size} documents · Oldest first`;
+  };
+  search.addEventListener("input", render);
   render();
-  section.setAttribute("aria-busy", "true");
-  try {
-    const response = await fetch(api);
-    if (!response.ok) throw new Error("Could not load saved posts. Local drafts remain available.");
-    const saved: DocumentDraft[] = await response.json();
-    for (const draft of saved) documents.set(draft.document.id, draft);
-    render();
-    status.textContent = documents.size ? `${documents.size} posts · Oldest first` : "No posts yet.";
-  } catch (error) {
-    status.textContent = error instanceof Error ? error.message : "Could not load posts.";
-  } finally {
-    section.setAttribute("aria-busy", "false");
+  async function load(force = false) {
+    section.setAttribute("aria-busy", "true");
+    refresh.disabled = true;
+    try {
+      const saved = await fetchListing(api, force);
+      documents = new Map(localDrafts(api).list().map(draft => [draft.document.id, draft]));
+      for (const draft of saved.documents) documents.set(draft.document.id, draft);
+      freshness.textContent = cacheLabel(saved.cache);
+      render();
+      if (saved.cache.refreshing && polls++ < 3)
+        setTimeout(() => { if (section.isConnected) void load(); }, 2000);
+    } catch (error) {
+      status.textContent = error instanceof Error ? error.message : "Could not load documents.";
+    } finally {
+      section.setAttribute("aria-busy", "false");
+      refresh.disabled = false;
+    }
   }
+  refresh.addEventListener("click", () => { polls = 0; void load(true); });
+  await load();
 }
