@@ -7,8 +7,8 @@ export function postDate(draft: DocumentDraft): string {
     ? date
     : draft.document.createdAt;
 }
-export function oldestFirst(a: DocumentDraft, b: DocumentDraft): number {
-  return Date.parse(postDate(a)) - Date.parse(postDate(b)) || a.document.id.localeCompare(b.document.id);
+export function newestFirst(a: DocumentDraft, b: DocumentDraft): number {
+  return Date.parse(postDate(b)) - Date.parse(postDate(a)) || a.document.id.localeCompare(b.document.id);
 }
 export function coverFilename(draft: DocumentDraft): string | undefined {
   const local = (value: unknown): value is string =>

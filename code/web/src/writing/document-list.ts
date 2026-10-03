@@ -2,7 +2,7 @@ import { cacheLabel, fetchListing, matchesSearch } from "./listing-view";
 import { documentEditPath } from "./navigation";
 import { localDrafts } from "@quiescent/editor/local-drafts";
 import type { DocumentDraft } from "@quiescent/server/contracts";
-import { oldestFirst, postDate, thumbnailUrl } from "./admin-posts";
+import { newestFirst, postDate, thumbnailUrl } from "./admin-posts";
 
 const dates = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeZone: "UTC" });
 function postRow(collection: string, draft: DocumentDraft): HTMLLIElement {
@@ -58,7 +58,7 @@ export async function mountDocumentList(section: HTMLElement) {
   let documents = new Map(localDrafts(api).list().map(draft => [draft.document.id, draft]));
   let polls = 0;
   const render = () => {
-    const visible = [...documents.values()].filter(draft => matchesSearch(draft, search.value)).sort(oldestFirst);
+    const visible = [...documents.values()].filter(draft => matchesSearch(draft, search.value)).sort(newestFirst);
     list.replaceChildren(...visible.map(draft => postRow(collection, draft)));
     status.textContent = `${visible.length} of ${documents.size} documents · Oldest first`;
   };
