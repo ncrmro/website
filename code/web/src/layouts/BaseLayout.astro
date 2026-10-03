@@ -9,9 +9,10 @@ interface Props {
 	type?: 'website' | 'article';
 	publishedTime?: string;
 	bodyClass?: string;
+	fullScreen?: boolean;
 }
 
-const { title, description, image, type, publishedTime, bodyClass } = Astro.props;
+const { title, description, image, type, publishedTime, bodyClass, fullScreen = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="en" class="dark:bg-gray-900 dark:text-white">
@@ -25,8 +26,8 @@ const { title, description, image, type, publishedTime, bodyClass } = Astro.prop
 		/>
 	</head>
 	<body class={bodyClass}>
-		<main class="flex w-full flex-col items-center p-4">
-			<Navbar />
+		<main class:list={["flex w-full flex-col items-center", { "p-4": !fullScreen }]}>
+			{!fullScreen && <Navbar />}
 			<slot />
 		</main>
 	</body>

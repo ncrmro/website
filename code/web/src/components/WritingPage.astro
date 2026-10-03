@@ -14,8 +14,8 @@ interface Props {
 const { documentId, collection = "posts" } = Astro.props;
 ---
 
-<BaseLayout title={`${documentId ? "Edit" : "New"} post · Nicholas Romero`} description="Write a post" bodyClass="writing-page">
-  <div class="w-full max-w-4xl py-6">
+<BaseLayout title={`${documentId ? "Edit" : "New"} post · Nicholas Romero`} description="Write a post" bodyClass="writing-page" fullScreen>
+  <div class="w-full">
     {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection (SERVICE_TOKEN). Saving and publishing are unavailable.</p>}
     {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
     <EditorShell collection={collection} />
