@@ -3,7 +3,8 @@ name: Preview
 on:
   pull_request:
     paths:
-      - 'docs/posts/**'
+      - 'content/posts/**'
+      - 'code/web/quiescent.config.json'
       - 'code/web/src/**'
       - 'code/web/public/**'
       - 'code/web/package.json'
@@ -64,6 +65,7 @@ jobs:
         uses: ./.github/actions/cloudflare-deploy
         with:
           mode: upload
+          published-branch: ${{ github.head_ref }}
           preview-alias: ${{ steps.alias.outputs.slug }}
           working-directory: code/web
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}

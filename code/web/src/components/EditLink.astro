@@ -1,0 +1,22 @@
+---
+import { documentEditPath } from "../writing/navigation";
+import { env } from "quiescent:runtime";
+import { writingAuthor } from "../writing/auth";
+
+interface Props {
+  documentId: string;
+  collection: string;
+}
+Astro.cache.set(false);
+Astro.response.headers.set("Cache-Control", "private, no-store");
+const canEdit = await writingAuthor(Astro.request, env);
+---
+
+{canEdit && (
+  <a
+    class="edit"
+    href={documentEditPath(Astro.props.collection, Astro.props.documentId)}
+  >
+    Edit
+  </a>
+)}

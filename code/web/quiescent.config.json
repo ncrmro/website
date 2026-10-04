@@ -1,0 +1,101 @@
+{
+  "repository": {
+    "provider": "github",
+    "owner": "ncrmro",
+    "name": "website",
+    "publishedBranch": "main"
+  },
+  "collections": {
+    "posts": {
+      "directory": "content/posts",
+      "filename": "{createdAt}-{slug}",
+      "draftBranch": "quiescent/{collection}/{id}/{cycle}",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "slug",
+          "description",
+          "tags",
+          "headerImage"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "maxLength": 300
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug",
+            "pattern": "^(?!new$)[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "tags": {
+            "type": "array",
+            "title": "Tags",
+            "items": {
+              "type": "string"
+            }
+          },
+          "headerImage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Image"
+          },
+          "publish_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Publication date",
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "string",
+                "format": "date-time"
+              }
+            ]
+          },
+          "places": {
+            "type": "array",
+            "title": "Places",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string"
+          },
+          "canonical": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "publish_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "syndication": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  }
+}

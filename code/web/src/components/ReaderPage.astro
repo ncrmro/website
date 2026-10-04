@@ -1,0 +1,48 @@
+---
+import { getImage } from "astro:assets";
+import type { MarkdownImage } from "../writing/markdown";
+import type { DocumentDraft } from "@quiescent/server";
+import { documentMediaUrl } from "@quiescent/server/content";
+import DocumentImage from "@quiescent/astro/components/DocumentImage.astro";
+import { documentImages } from "@quiescent/astro/images";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FormattedDate from "./FormattedDate.astro";
+import PostBody from "./PostBody.astro";
+import EditLink from "./EditLink.astro";
+import { collectionApp } from "../writing/pages";
+import type { Collection, ExampleMetadata } from "../writing/collections";
+interface Props { collection: Collection; post: DocumentDraft<ExampleMetadata> | null; }
+const { collection, post } = Astro.props;
+if (!post) return new Response("Not found", {status: 404});
+const {document} = post;
+const {title, description, headerImage, tags} = document.frontmatter;
+const date = new Date(document.frontmatter.publish_date ?? document.publishedAt ?? document.createdAt);
+const {service} = collectionApp(Astro.url.origin, collection, Astro.cache);
+const images = await documentImages(post, service.references(document), service.readMedia);
+const responsive = new Map<string, MarkdownImage>();
+for (const [name, source] of Object.entries(images)) {
+  if (source.format === "gif") {
+    responsive.set(name, {src: source.src, width: source.width, height: source.height});
+    continue;
+  }
+  const width = Math.min(source.width, 1440);
+  const result = await getImage({src: source, width, widths: [...new Set([360,720,1080,1440,width].filter(value => value <= width))], format: "webp"});
+  responsive.set(name, {src: result.src, srcset: result.srcSet.attribute, sizes: "(max-width: 768px) calc(100vw - 48px), 896px", width, height: Math.round(source.height * width / source.width)});
+}
+const imageUrl = (filename: string) => responsive.get(filename) ?? documentMediaUrl(document.id, filename, {revision: post.headSha});
+---
+<BaseLayout title={title} description={description} type="article" publishedTime={date.toISOString()}>
+  <article class="w-full md:max-w-4xl">
+    <header class="pt-6 pb-5">
+      <h1 class="text-xl font-semibold text-gray-900 dark:text-white">{title}</h1>
+      <FormattedDate date={date} />
+      <EditLink server:defer collection={collection} documentId={document.id} />
+      <p>{description}</p>
+      {tags.length > 0 && <p aria-label="Tags">{tags.join(" · ")}</p>}
+      {headerImage && images[headerImage] && <DocumentImage source={images[headerImage]} alt="" priority />}
+    </header>
+    <div class="prose dark:prose-invert max-w-none">
+      <PostBody body={document.body} imageUrl={imageUrl} />
+    </div>
+  </article>
+</BaseLayout>

@@ -3,7 +3,8 @@ name: Validate
 on:
   pull_request:
     paths:
-      - 'docs/posts/**'
+      - 'content/posts/**'
+      - 'code/web/quiescent.config.json'
       - 'code/web/src/**'
       - 'code/web/public/**'
       - 'code/web/package.json'

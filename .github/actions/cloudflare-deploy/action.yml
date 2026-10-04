@@ -23,6 +23,10 @@ inputs:
     description: 'When "true", skip Node + bun setup and dependency install (caller already did it).'
     required: false
     default: 'false'
+  published-branch:
+    description: 'Git content branch used only by a preview build; production uses quiescent.config.json.'
+    required: false
+    default: ''
   preview-alias:
     description: 'DNS-safe alias for the preview URL (mode=upload only). When set, the preview URL becomes <alias>-ncrmro-website.<acct>.workers.dev instead of <version-id>-…. Sanitize before passing — only [a-z0-9-] survives in DNS.'
     required: false
@@ -74,6 +78,21 @@ runs:
         restore-keys: |
           ${{ runner.os }}-astro-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}-
 
+    - name: Select preview content branch
+      if: inputs.mode == 'upload' && inputs.published-branch != ''
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        PUBLISHED_BRANCH: ${{ inputs.published-branch }}
+      run: |
+        node --input-type=module <<'JS'
+        import { readFileSync, writeFileSync } from 'node:fs';
+        const path = 'quiescent.config.json';
+        const config = JSON.parse(readFileSync(path, 'utf8'));
+        config.repository.publishedBranch = process.env.PUBLISHED_BRANCH;
+        writeFileSync(path, JSON.stringify(config, null, 2) + '\n');
+        JS
+
     - name: Build Astro site
       shell: bash
       working-directory: ${{ inputs.working-directory }}
@@ -86,7 +105,7 @@ runs:
       env:
         CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare-account-id }}
-      run: bunx wrangler deploy
+      run: bunx wrangler deploy --config dist/server/wrangler.json
 
     # `wrangler versions upload` creates a versioned preview without
     # touching the production alias. `--preview-alias` gives it a
@@ -108,7 +127,7 @@ runs:
           passthrough+=(--preview-alias "$PREVIEW_ALIAS")
         fi
         log_file="$(mktemp)"
-        bunx wrangler versions upload "${passthrough[@]}" 2>&1 | tee "$log_file"
+        bunx wrangler versions upload --config dist/server/wrangler.json "${passthrough[@]}" 2>&1 | tee "$log_file"
         url="$(grep -oE 'Version Preview Alias URL: https://[^ ]+' "$log_file" | head -1 | sed 's/^Version Preview Alias URL: //')"
         if [ -z "$url" ]; then
           url="$(grep -oE 'Version Preview URL: https://[^ ]+' "$log_file" | head -1 | sed 's/^Version Preview URL: //')"

@@ -1,0 +1,31 @@
+.tag-field {
+  margin-bottom: 1rem;
+}
+.tag-field .tag-chips,
+.tag-field .tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 0.5rem;
+}
+.tag-field .tag-chips button,
+.tag-field .tag-suggestions button {
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.8rem;
+}
+.tag-field .tag-chips button {
+  background: var(--hover);
+}
+.tag-field > small {
+  display: block;
+  margin-block: 0.5rem;
+}
+.tag-field:has(input:disabled) button {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.tag-field:not(:focus-within) > :is(.tag-suggestions, small:not([role="alert"]), button) {
+  display: none;
+}
