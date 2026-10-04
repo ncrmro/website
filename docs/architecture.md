@@ -3,12 +3,12 @@
 `code/web` is an Astro 7 server application deployed to the `ncrmro-website`
 Cloudflare Worker. Tailwind provides site styles; the Quiescent packages supply
 Git document storage, draft lifecycle, media storage, editor controls and page
-cache invalidation. Four built packages are vendored in `vendor/`.
+cache invalidation. Four released packages are installed from npm with a committed lockfile.
 
 ## Documents
 
 `code/web/quiescent.config.json` declares GitHub repository `ncrmro/website`,
-published branch `feat/quiescent-concept`, `content/posts`, filename convention
+published branch `main`, `content/posts`, filename convention
 and metadata schema. Each post has a stable UUID and preserved slug, publication
 date, tags and other metadata. Draft visibility is represented by Git branches,
 not a public metadata flag. The same document service powers every reader,

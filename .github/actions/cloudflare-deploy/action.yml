@@ -23,6 +23,10 @@ inputs:
     description: 'When "true", skip Node + bun setup and dependency install (caller already did it).'
     required: false
     default: 'false'
+  published-branch:
+    description: 'Git content branch used only by a preview build; production uses quiescent.config.json.'
+    required: false
+    default: ''
   preview-alias:
     description: 'DNS-safe alias for the preview URL (mode=upload only). When set, the preview URL becomes <alias>-ncrmro-website.<acct>.workers.dev instead of <version-id>-…. Sanitize before passing — only [a-z0-9-] survives in DNS.'
     required: false
@@ -73,6 +77,21 @@ runs:
         key: ${{ runner.os }}-astro-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}-${{ hashFiles(format('{0}/src/content/**/*', inputs.working-directory), format('{0}/src/content.config.ts', inputs.working-directory)) }}
         restore-keys: |
           ${{ runner.os }}-astro-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}-
+
+    - name: Select preview content branch
+      if: inputs.mode == 'upload' && inputs.published-branch != ''
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        PUBLISHED_BRANCH: ${{ inputs.published-branch }}
+      run: |
+        node --input-type=module <<'JS'
+        import { readFileSync, writeFileSync } from 'node:fs';
+        const path = 'quiescent.config.json';
+        const config = JSON.parse(readFileSync(path, 'utf8'));
+        config.repository.publishedBranch = process.env.PUBLISHED_BRANCH;
+        writeFileSync(path, JSON.stringify(config, null, 2) + '\n');
+        JS
 
     - name: Build Astro site
       shell: bash

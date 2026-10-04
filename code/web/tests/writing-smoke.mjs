@@ -13,7 +13,7 @@ assert.equal(documentEditPath('posts', '00000000-0000-0000-0000-000000000000'), 
 const base = process.env.BASE_URL;
 assert.ok(base, 'Set BASE_URL to this checkout’s preview URL');
 const config = defineDocumentConfig(configuration);
-assert.equal(config.repository.publishedBranch, 'feat/quiescent-concept');
+assert.equal(config.repository.publishedBranch, 'main');
 assert.equal(config.collections.posts.directory, 'content/posts');
 assert.ok(configuredCollection(config, 'posts'));
 const request = (path, options = {}) => fetch(new URL(path, base), {redirect: 'manual', ...options});

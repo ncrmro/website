@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - 'content/posts/**'
-      - 'vendor/**'
       - 'code/web/quiescent.config.json'
       - 'code/web/src/**'
       - 'code/web/public/**'

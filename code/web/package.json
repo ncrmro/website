@@ -23,10 +23,10 @@
     "@deck.gl/layers": "^9.3.3",
     "astro": "^7.3.5",
     "sharp": "0.35.5",
-    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-1ddb477.tgz",
-    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-1ddb477.tgz",
-    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-1ddb477.tgz",
-    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-1ddb477.tgz",
+    "@quiescent/astro": "0.1.0",
+    "@quiescent/editor": "0.3.0",
+    "@quiescent/git": "0.3.0",
+    "@quiescent/server": "0.3.0",
     "marked": "^17.0.0",
     "sanitize-html": "^2.17.0"
   },
@@ -38,11 +38,5 @@
     "@astrojs/check": "^0.9.10",
     "typescript": "^5.8.0",
     "@types/sanitize-html": "^2.16.0"
-  },
-  "overrides": {
-    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-1ddb477.tgz",
-    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-1ddb477.tgz",
-    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-1ddb477.tgz",
-    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-1ddb477.tgz"
   }
 }

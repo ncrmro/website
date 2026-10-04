@@ -13,6 +13,6 @@ All original images are Git LFS objects; R2 is a reconstructible delivery cache.
 Body images use document-relative filenames. The site preserves animated GIF
 originals instead of converting them to still images.
 
-The concept configuration publishes to `feat/quiescent-concept`; it does not
-merge to main. See [the cutover guide](docs/quiescent-concept.md),
+The published Quiescent npm packages manage documents on `main`. Preview builds
+read their PR branch and remain read-only. See [the cutover guide](docs/quiescent-concept.md),
 [architecture](docs/architecture.md) and [development instructions](CONTRIBUTING.md).

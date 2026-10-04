@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'vendor/**'
       - 'code/web/quiescent.config.json'
       - 'code/web/src/**'
       - 'code/web/public/**'

@@ -3,7 +3,7 @@
     "provider": "github",
     "owner": "ncrmro",
     "name": "website",
-    "publishedBranch": "feat/quiescent-concept"
+    "publishedBranch": "main"
   },
   "collections": {
     "posts": {

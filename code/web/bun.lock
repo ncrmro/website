@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "astro",
+      "name": "ncrmro-website",
       "dependencies": {
         "@astrojs/cloudflare": "^14.3.3",
         "@astrojs/rss": "^4.0.18",
@@ -11,10 +11,10 @@
         "@deck.gl/core": "^9.3.3",
         "@deck.gl/geo-layers": "^9.3.3",
         "@deck.gl/layers": "^9.3.3",
-        "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-1ddb477.tgz",
-        "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-1ddb477.tgz",
-        "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-1ddb477.tgz",
-        "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-1ddb477.tgz",
+        "@quiescent/astro": "0.1.0",
+        "@quiescent/editor": "0.3.0",
+        "@quiescent/git": "0.3.0",
+        "@quiescent/server": "0.3.0",
         "astro": "^7.3.5",
         "marked": "^17.0.0",
         "sanitize-html": "^2.17.0",
@@ -30,12 +30,6 @@
         "wrangler": "^4.144.0",
       },
     },
-  },
-  "overrides": {
-    "@quiescent/astro": "file:../../vendor/quiescent-astro-0.0.0-1ddb477.tgz",
-    "@quiescent/editor": "file:../../vendor/quiescent-editor-0.2.0-1ddb477.tgz",
-    "@quiescent/git": "file:../../vendor/quiescent-git-0.2.0-1ddb477.tgz",
-    "@quiescent/server": "file:../../vendor/quiescent-server-0.2.0-1ddb477.tgz",
   },
   "packages": {
     "@astrojs/astro2tsx": ["@astrojs/astro2tsx@0.1.2", "", { "dependencies": { "@emnapi/core": "1.11.3", "@napi-rs/wasm-runtime": "1.2.4" } }, "sha512-Uj/M9zbrhu5cIZEvWAGTbQJRKSxXWJ/E59BZwt7F+chrKhbfttW+9rkS/l+1QxoJP1KU3UnpM62M7yszfAI0WA=="],
@@ -410,13 +404,13 @@
 
     "@probe.gl/stats": ["@probe.gl/stats@4.1.1", "", {}, "sha512-4VpAyMHOqydSvPlEyHwXaE+AkIdR03nX+Qhlxsk2D/IW4OVmDZgIsvJB1cDzyEEtcfKcnaEbfXeiPgejBceT6g=="],
 
-    "@quiescent/astro": ["@quiescent/astro@../../vendor/quiescent-astro-0.0.0-1ddb477.tgz", { "dependencies": { "@quiescent/server": "^0.2.0" }, "peerDependencies": { "astro": "^7.3.5" } }, "sha512-SDBi8GatkNx1nrVnHGWQ76NlDIO/6EDDQwct9rOW3MiROdTWh9dSPjppW42fw12WeggNi0LBLodmX1FhunX6NA=="],
+    "@quiescent/astro": ["@quiescent/astro@0.1.0", "", { "dependencies": { "@quiescent/server": "^0.3.0" }, "peerDependencies": { "astro": "^7.3.5" } }, "sha512-qjFMXKPoomxOhhYRET6x1ZtmI6jiT00qEBMQvJOF49A8yL0G50r0fFtp1BUhg4OpTqH31MwuluFdynX9a6JMJQ=="],
 
-    "@quiescent/editor": ["@quiescent/editor@../../vendor/quiescent-editor-0.2.0-1ddb477.tgz", { "dependencies": { "@quiescent/server": "^0.2.0", "@tiptap/core": "^3.31.3", "@tiptap/extension-image": "^3.31.3", "@tiptap/starter-kit": "^3.31.3" } }, "sha512-/2C6igWSpJX01whp+I4Vp0rbYtrTtiWyvNrdhFTN8gDtoLkFOSg1b6cimyFvaw0O4fHz67C5SbrSB1IX4k8E/Q=="],
+    "@quiescent/editor": ["@quiescent/editor@0.3.0", "", { "dependencies": { "@quiescent/server": "^0.3.0", "@tiptap/core": "^3.31.3", "@tiptap/extension-image": "^3.31.3", "@tiptap/starter-kit": "^3.31.3" } }, "sha512-OjiPpOVrobkwPuAnDWvr5ygt9uj6HabxvVbFHnTfqIrtu+rr37X2vFmS1i7mkG1S1/d439meZ/iPb4KiBNFTfQ=="],
 
-    "@quiescent/git": ["@quiescent/git@../../vendor/quiescent-git-0.2.0-1ddb477.tgz", {}, "sha512-Vv3/53n2ODoGX9lOA8s2DjabE+kQhb/mckf/23PmlreLRlsjkwcAqh/w8dn5OMcGpR4KcGe5456IUTq+FogVHQ=="],
+    "@quiescent/git": ["@quiescent/git@0.3.0", "", {}, "sha512-iz+fZOmJb61ZEbBAAzs6Jl/DzXQJNor09n3JBDCRNS5uZdc4xCrGQ9FgjIFrcfEWt1Ie1io6FhxOiN9dUb8+QQ=="],
 
-    "@quiescent/server": ["@quiescent/server@../../vendor/quiescent-server-0.2.0-1ddb477.tgz", { "dependencies": { "@cfworker/json-schema": "^4.1.1", "@quiescent/git": "^0.2.0", "@tiptap/core": "^3.31.3", "@tiptap/extension-image": "^3.31.3", "@tiptap/markdown": "^3.31.3", "@tiptap/starter-kit": "^3.31.3", "aws4fetch": "^1.0.20", "yaml": "^2.9.1" }, "peerDependencies": { "@libsql/client": "^0.18.0" }, "optionalPeers": ["@libsql/client"] }, "sha512-1cdtnFWl092YVt0kyO29oTGeq1ht5LYGFQODY77F+ZMdHIZpDS39OuBy6XxI4oD5HKdwo/DseCurtsg4Aez9IQ=="],
+    "@quiescent/server": ["@quiescent/server@0.3.0", "", { "dependencies": { "@cfworker/json-schema": "^4.1.1", "@quiescent/git": "^0.3.0", "@tiptap/core": "^3.31.3", "@tiptap/extension-image": "^3.31.3", "@tiptap/markdown": "^3.31.3", "@tiptap/starter-kit": "^3.31.3", "aws4fetch": "^1.0.20", "yaml": "^2.9.1" }, "peerDependencies": { "@libsql/client": "^0.18.0" }, "optionalPeers": ["@libsql/client"] }, "sha512-YlbwEYQINi1BGuuqsPzFTUny4r5SYrLwASPi29jYARMUb9VN2l7LwZZO81Y0Av1FiAalkTRKlm2DaRgVCS4SHw=="],
 
     "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.12", "", { "os": "android", "cpu": "arm" }, "sha512-dB/a1214qKfHMXCpgqR4OZT+jS4kTyEXbQGJPqzobt5EwH5rX080pxE37alt3RzvR1bf1Yz/yGqRfrYAxuPw0A=="],
 

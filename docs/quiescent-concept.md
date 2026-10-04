@@ -37,7 +37,7 @@ pre-cutover rollback version retaining the token is
 ## Document and editor contract
 
 `code/web/quiescent.config.json` targets `ncrmro/website`, branch
-`feat/quiescent-concept`, directory `content/posts`, and `{createdAt}-{slug}`
+`main`, directory `content/posts`, and `{createdAt}-{slug}`
 folders. Each document has a stable UUID and a date-only creation date. Metadata
 preserves the exact publication date (date or timestamp), places, kind,
 canonical URL, scheduled publication metadata and syndication fields. Workflow
@@ -97,7 +97,7 @@ The pre-concept Worker rollback version is
 to itself; choose and reconcile the final published branch before merge.
 
 Initialize a fresh document-cache database using the schema bundled with the
-vendored library (from `code/web`):
+published library (from `code/web`):
 
 ```sh
 node node_modules/wrangler/bin/wrangler.js d1 execute WRITING_CACHE --config wrangler.jsonc --remote --file node_modules/@quiescent/server/dist/documents-cache.schema.sql
@@ -105,7 +105,7 @@ node node_modules/wrangler/bin/wrangler.js d1 execute WRITING_CACHE --config wra
 
 Use `--local` for local Worker development. The schema is idempotent. If collection
 configuration declares additional scalar indexes, also apply the SQL returned by
-`documentCacheIndexStatements(indexes)` from the vendored server package during
+`documentCacheIndexStatements(indexes)` from the published server package during
 setup; skip built-in ID, slug, and date indexes. Request reads do not run DDL.
 The Quiescent example automates this with `scripts/cache-schema.mjs`; that script
 is part of the upstream example, not this website. The cache
@@ -142,3 +142,11 @@ local JWT allowlist checks using matching local Worker auth vars; it refuses
 non-loopback hosts. A separate local Worker with
 `--local-upstream concept-preview-ncrmro-website.ncrmro.workers.dev --upstream-protocol http`
 can be passed as `PREVIEW_URL` to check all-method preview API denial.
+
+## npm release cutover
+
+The app installs `@quiescent/astro` 0.1.0 and `@quiescent/git`,
+`@quiescent/server`, and `@quiescent/editor` 0.3.0 from npm. Production uses
+`main` as the publication branch. The preview action substitutes the PR head
+branch in its build-only config; preview routes remain read-only. The document
+cache key includes that branch, so production and previews use separate records.
