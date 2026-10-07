@@ -1,0 +1,127 @@
+---
+title: Stow-Style Dotfiles on NixOS Without the Rebuild Tax
+description: Home-manager's mkOutOfStoreSymlink can whole-directory link your dotfiles out of a git repo, giving you hyprctl-reload iteration speed on a hardened, declarative OS -- and the same trick powers live VM development and atomic theme switching.
+publish_date: 2026-07-11
+published: true
+tags: [nix, home-manager, dotfiles, hyprland]
+---
+
+NixOS gives you a hardened, reproducible OS and takes away the thing every
+desktop tinkerer actually does all day: edit a config file and reload.
+Home-manager's default answer to dotfiles is a read-only symlink into the
+Nix store -- change one Hyprland keybinding and you owe the machine a
+rebuild, a generation, and a context switch. GNU Stow has the opposite
+problem: instant symlinks into a repo you can edit live, but no opinion
+about packages, services, or sessions at all.
+
+The fix is to stop making one tool do both jobs. Nix owns everything that
+should be hardened -- packages, services, the session, the compositor
+binary. A stow-style tree in your own config repo owns everything that
+should be fast -- and home-manager bridges the two with symlinks that point
+*out* of the store.
+
+## The Pattern
+
+Your fleet config repo carries a `dotfiles/` tree, one directory per app.
+A home-manager module links each directory onto the path the app actually
+reads, through a fixed checkout location:
+
+```nix
+{ config, lib, ... }:
+let
+  cfg = config.keystone.desktop.dotfiles;
+  link = relativePath:
+    config.lib.file.mkOutOfStoreSymlink "${cfg.configRoot}/${relativePath}";
+in
+{
+  # configRoot is where you clone the repo, e.g. ~/.config/keystone
+  xdg.configFile = {
+    "hypr".source   = link "dotfiles/hyprland";
+    "waybar".source = link "dotfiles/waybar";
+    "zellij".source = link "dotfiles/zellij";
+    "yazi".source   = link "dotfiles/yazi";
+  };
+}
+```
+
+`mkOutOfStoreSymlink` is the whole trick: home-manager places a symlink
+whose *target* is an absolute path outside the store. The chain ends in
+your editable checkout:
+
+```
+~/.config/hypr -> /nix/store/...-home-manager-files/.config/hypr
+               -> ~/.config/keystone/dotfiles/hyprland
+```
+
+Edit `dotfiles/hyprland/bindings.conf`, run `hyprctl reload`, done. No
+rebuild, no new generation, no waiting.
+
+## What It Solves
+
+**The iteration loop collapses to the app's own reload.** Hyprland is
+`hyprctl reload`. Waybar styling is `pkill -SIGUSR2 waybar`. Zellij and
+yazi just restart. The edit-to-effect latency is whatever the app's config
+parser takes, which is the loop window managers were designed around.
+
+**Whole-directory links mean new files need no ceremony.** Because
+`~/.config/hypr` is one link to a directory (not per-file links), adding a
+new fragment that `hyprland.conf` sources -- or a new zellij layout -- is
+picked up immediately. Per-file linking would demand a home-manager run
+for every file you invent.
+
+**One source of truth, no drift.** There is no copy step anywhere. The
+file the compositor reads *is* the file in your repo, so `git status`
+after a week of tinkering is the honest changelog of what you actually
+changed. Copy-based seeding schemes (we tried one for about six hours)
+inevitably fork the truth into "the copy the app reads" and "the repo you
+forgot to sync."
+
+**The hardened/fast boundary is explicit.** Anything in the stow tree can
+be broken by a bad edit and fixed by the next edit. Anything that would
+compromise the system if edited live -- the session manager, PAM, the
+package set -- stays declarative and only changes through a rebuild you
+meant to do.
+
+## The Same Trick, Two More Times
+
+**Live VM development.** Our QEMU dev fleet mounts the *host's* checkout
+into each desktop VM at `configRoot` over 9p:
+
+```nix
+virtualisation.vmVariant.virtualisation.sharedDirectories.keystone-config = {
+  source = "/home/ncrmro/repos/ncrmro/ks-config";
+  target = "/home/ncrmro/.config/keystone";
+};
+```
+
+The symlinks inside the VM resolve through the mount into the same working
+tree your editor has open. Change a waybar color on the host, send the
+reload signal over ssh, screenshot the VM over VNC -- an agent can drive
+that whole loop without a rebuild. We debugged an unstyled-waybar bug this
+way in minutes: screenshot showed the rainbow default theme, which means
+"the app found no config," which means the directory was missing from the
+links module.
+
+**Atomic theme switching.** The legacy version of this system routes every
+app's colors through one more symlink inside the tree:
+`current-theme -> themes/tokyo-night`. Waybar CSS `@import`s through it,
+Hyprland `source`s through it, btop's theme file *is* it. Switching themes
+is `ln -sfn themes/gruvbox current-theme` plus reload signals -- atomic,
+rebuild-free, and because the symlink lives in the repo, the theme change
+shows up in `git diff`.
+
+## Gotchas
+
+- Home-manager modules that *generate* config (`programs.zellij.settings`,
+  `programs.yazi`) will collide with a directory link. Install those apps
+  as plain `home.packages` and let the stow tree own their config.
+- `readlink` shows the store hop; `readlink -f` shows the truth.
+- A directory that exists in the tree but not in the links module fails
+  silently -- the app quietly uses its defaults. If your bar suddenly looks
+  like stock waybar, that is what happened.
+- The checkout has to exist at `configRoot` before the links resolve;
+  dangling symlinks until first clone are expected, not a bug.
+
+The result is a machine whose OS is as rigid as Nix can make it and whose
+user surface iterates as fast as a dotfiles repo -- which was the point of
+having both.
