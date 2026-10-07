@@ -12,7 +12,7 @@
         "@deck.gl/geo-layers": "^9.3.3",
         "@deck.gl/layers": "^9.3.3",
         "@quiescent/astro": "0.1.0",
-        "@quiescent/editor": "0.3.0",
+        "@quiescent/editor": "0.4.0",
         "@quiescent/git": "0.3.0",
         "@quiescent/server": "0.3.0",
         "astro": "^7.3.5",
@@ -406,7 +406,7 @@
 
     "@quiescent/astro": ["@quiescent/astro@0.1.0", "", { "dependencies": { "@quiescent/server": "^0.3.0" }, "peerDependencies": { "astro": "^7.3.5" } }, "sha512-qjFMXKPoomxOhhYRET6x1ZtmI6jiT00qEBMQvJOF49A8yL0G50r0fFtp1BUhg4OpTqH31MwuluFdynX9a6JMJQ=="],
 
-    "@quiescent/editor": ["@quiescent/editor@0.3.0", "", { "dependencies": { "@quiescent/server": "^0.3.0", "@tiptap/core": "^3.31.3", "@tiptap/extension-image": "^3.31.3", "@tiptap/starter-kit": "^3.31.3" } }, "sha512-OjiPpOVrobkwPuAnDWvr5ygt9uj6HabxvVbFHnTfqIrtu+rr37X2vFmS1i7mkG1S1/d439meZ/iPb4KiBNFTfQ=="],
+    "@quiescent/editor": ["@quiescent/editor@0.4.0", "", { "dependencies": { "@quiescent/server": "^0.3.0", "@tiptap/core": "^3.31.3", "@tiptap/extension-image": "^3.31.3", "@tiptap/pm": "^3.31.3", "@tiptap/starter-kit": "^3.31.3" } }, "sha512-GP8G6r4l3fKA2liiLpu5GVn7PRo/1VpCdqs0fijZxdZ5U2Ft3nVxU1e7iVYtGpAs6yhqO4BwJEciZiKHROeccg=="],
 
     "@quiescent/git": ["@quiescent/git@0.3.0", "", {}, "sha512-iz+fZOmJb61ZEbBAAzs6Jl/DzXQJNor09n3JBDCRNS5uZdc4xCrGQ9FgjIFrcfEWt1Ie1io6FhxOiN9dUb8+QQ=="],
 

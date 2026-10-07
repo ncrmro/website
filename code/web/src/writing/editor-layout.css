@@ -208,6 +208,29 @@ body.writing-page {
   .writing-toolbar [data-command="italic"] {
     font-style: italic;
   }
+  [data-dictation-interim] {
+    display: none;
+  }
+  #writing[data-dictation-used]:not([data-published="true"]) [data-dictation-interim]:not(:empty),
+  #writing[data-dictation-active]:not([data-published="true"]) [data-dictation-interim] {
+    display: block;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding: 0.5rem 0;
+    height: 3.5rem;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  .editor-header:has([data-dictation-interim]) {
+    height: auto;
+  }
+  .writing-toolbar [data-command="dictate"] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .formatting-options {
     inset: auto 1rem calc(var(--keyboard-inset, 0px) + 76px) auto;
     margin: 0;
@@ -292,7 +315,7 @@ body.writing-page {
   [data-result-slot] button {
     margin-left: 1rem;
   }
-  #writing[data-published="true"] :is(.writing-toolbar, [data-review], [data-save-slot]) {
+  #writing[data-published="true"] :is(.writing-toolbar, [data-review], [data-save-slot], [data-dictation-interim]) {
     display: none;
   }
   .preview-sheet {
@@ -309,6 +332,9 @@ body.writing-page {
       width: 480px;
       border: 1px solid var(--border);
       border-radius: 12px 12px 0 0;
+    }
+    .writing-toolbar [data-command="dictate"] {
+      flex-basis: 9rem;
     }
   }
 }
