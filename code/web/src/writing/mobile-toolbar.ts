@@ -13,12 +13,15 @@ export function mobileToolbar(toolbar: HTMLElement, menu: HTMLElement, body: HTM
   let finishing = false;
   const focusOptions = () => root.querySelector<HTMLButtonElement>('[data-open="editor-menu"]')?.focus({ preventScroll: true });
   function update() {
+    root.toggleAttribute("data-dictation-active", dictating());
     if (dictate) dictate.title = dictate.getAttribute("aria-label") ?? "Dictate";
     if (finishing && !dictating()) {
       finishing = false;
-      root.removeAttribute("data-body-focused");
-      focusOptions();
-      return;
+      if (!document.activeElement || document.activeElement === document.body) {
+        root.removeAttribute("data-body-focused");
+        focusOptions();
+        return;
+      }
     }
     const focused = document.activeElement;
     const editing =
@@ -51,5 +54,6 @@ export function mobileToolbar(toolbar: HTMLElement, menu: HTMLElement, body: HTM
     document.removeEventListener("focusout", deferredUpdate);
     menu.removeEventListener("toggle", update);
     root.removeAttribute("data-body-focused");
+    root.removeAttribute("data-dictation-active");
   };
 }

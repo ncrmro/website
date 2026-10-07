@@ -49,12 +49,21 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   narrow.addEventListener("change", positionLink);
   positionLink();
   const interim = toolbar.querySelector<HTMLElement>("[data-dictation-interim]");
+  const root = document.getElementById("writing")!;
+  const header = document.querySelector<HTMLElement>(".editor-header")!;
+  const dictate = context.commands.get("dictate");
+  const showDictation = () => { root.dataset.dictationUsed = "true"; };
+  dictate?.addEventListener("click", showDictation, { capture: true });
   // A normal-flow row in the sticky header stays visible without covering text.
-  if (interim) document.querySelector(".editor-header")?.appendChild(interim);
+  if (interim) header.appendChild(interim);
   const disposeMobile = mobileToolbar(toolbar, menu, context.editable);
   // The browser visual viewport follows the on-screen keyboard and browser chrome.
   const viewport = window.visualViewport;
   const shell = document.getElementById("editor-shell")!;
+  const sizeHeader = () => shell.style.setProperty("--editor-header-height", `${header.getBoundingClientRect().height}px`);
+  const headerSize = new ResizeObserver(sizeHeader);
+  headerSize.observe(header);
+  sizeHeader();
   const position = () => {
     const inset = viewport
       ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)
@@ -66,6 +75,10 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   viewport?.addEventListener("scroll", position);
   position();
   return () => {
+    headerSize.disconnect();
+    shell.style.removeProperty("--editor-header-height");
+    dictate?.removeEventListener("click", showDictation, { capture: true });
+    delete root.dataset.dictationUsed;
     narrow.removeEventListener("change", positionLink);
     link?.removeEventListener("click", closeLinkMenu);
     interim?.remove();

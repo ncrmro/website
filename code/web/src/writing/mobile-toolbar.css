@@ -33,7 +33,7 @@
       display: block;
     }
     .formatting-options {
-      inset: calc(var(--viewport-top, 0px) + 52px) 0.5rem auto auto;
+      inset: calc(var(--viewport-top, 0px) + var(--editor-header-height, 48px) + 4px) 0.5rem auto auto;
       max-height: calc(100dvh - 64px);
       overflow-y: auto;
     }
@@ -78,7 +78,7 @@
       [data-editor-notice]:not([hidden]) {
         display: block;
         position: absolute;
-        top: 48px;
+        top: 100%;
         left: 0;
         right: 0;
         margin: 0;
