@@ -41,6 +41,7 @@ const { documentId, collection = "posts" } = Astro.props;
         .find((draft) => draft.document.id === pending);
       const initialId = root.dataset.documentId ?? resumed?.document.id;
       mountDocumentApp(root, {
+        localDictation: { lang: "en-US" },
         layout: editorLayout,
         configureToolbar: editorToolbar,
         onState: (state) => editorStatus(root, state),

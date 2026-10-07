@@ -208,6 +208,17 @@ body.writing-page {
   .writing-toolbar [data-command="italic"] {
     font-style: italic;
   }
+  [data-dictation-interim]:not(:empty) {
+    position: absolute;
+    inset: auto 0 100%;
+    padding: 0.5rem 1rem;
+    max-height: 6rem;
+    overflow-y: auto;
+    background: var(--page);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
   .formatting-options {
     inset: auto 1rem calc(var(--keyboard-inset, 0px) + 76px) auto;
     margin: 0;

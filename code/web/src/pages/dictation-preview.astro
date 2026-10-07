@@ -1,0 +1,61 @@
+---
+// Preview bindings point at production. This scratch editor has no document API.
+const previewHost = Astro.url.hostname.endsWith(".workers.dev") &&
+  Astro.url.hostname !== "ncrmro-website.ncrmro.workers.dev";
+if (!previewHost && !import.meta.env.DEV) return new Response(null, { status: 404 });
+Astro.response.headers.set("Cache-Control", "no-store");
+Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Local dictation preview</title>
+  </head>
+  <body>
+    <main>
+      <h1>Local dictation preview</h1>
+      <p>Try dictating into the editor, then undo or edit the text. Speech recognition runs on your device when supported.</p>
+      <p>This scratch text stays in this tab and is lost when you close or reload it. Nothing is saved or published.</p>
+      <div id="scratch-editor"></div>
+      <p id="scratch-status" role="status" aria-live="polite"></p>
+    </main>
+    <script>
+      import { createWritingEditor } from "@quiescent/editor/writing";
+
+      const parent = document.getElementById("scratch-editor")!;
+      const status = document.getElementById("scratch-status")!;
+      const editor = createWritingEditor({
+        parent,
+        document: { type: "doc", content: [{ type: "paragraph" }] },
+        localDictation: { lang: "en-US" },
+        onChange: () => {},
+        onStatus: (message) => { status.textContent = message; },
+        uploadImage: async () => { throw new Error("Images are unavailable in this scratch editor."); },
+        configureToolbar: (_toolbar, { commands }) => {
+          for (const name of ["add-image", "image-description", "remove-image"]) {
+            commands.get(name)?.remove();
+          }
+          return undefined;
+        },
+      });
+      window.addEventListener("pagehide", () => editor.destroy(), { once: true });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  body { margin: 0; background: #f8fafc; color: #172033; font: 16px/1.6 system-ui, sans-serif; }
+  main { max-width: 850px; margin: 3rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 1.6rem; }
+  .writing-toolbar { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.5rem 0 1rem; }
+  button { font: inherit; padding: .4rem .65rem; border: 1px solid #cbd5e1; border-radius: .4rem; background: white; color: inherit; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  button[aria-pressed="true"] { background: #dbeafe; border-color: #2563eb; }
+  .tiptap { min-height: 18rem; padding: 1.5rem; background: white; border: 1px solid #cbd5e1; border-radius: .5rem; }
+  .tiptap:focus { outline: 2px solid #2563eb; outline-offset: 2px; }
+  [hidden] { display: none !important; }
+</style>

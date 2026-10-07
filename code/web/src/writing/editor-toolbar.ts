@@ -3,7 +3,7 @@ import { mobileToolbar } from "./mobile-toolbar";
 
 /** A single row of common actions. Extra commands stay in a native popover. */
 export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
-  const primary = ["add-image", "bold", "italic", "link"];
+  const primary = ["add-image", "bold", "italic", "link", "dictate"];
   const labels: Record<string, string> = {
     "add-image": "+",
     bold: "B",
@@ -22,8 +22,9 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   more.popoverTargetElement = menu;
   more.addEventListener("pointerdown", (event) => event.preventDefault());
   for (const id of primary) {
-    const button = context.commands.get(id)!;
-    button.textContent = labels[id]!;
+    const button = context.commands.get(id);
+    if (!button) continue;
+    if (labels[id]) button.textContent = labels[id];
     button.title = button.getAttribute("aria-label")!;
     toolbar.appendChild(button);
   }

@@ -56,6 +56,13 @@
         overflow: hidden;
         clip-path: inset(50%);
       }
+      [data-dictation-interim]:not(:empty) {
+        inset: 100% 0 auto;
+        width: auto;
+        height: auto;
+        overflow-y: auto;
+        clip-path: none;
+      }
       [data-save-status]::after {
         content: "";
         display: block;
