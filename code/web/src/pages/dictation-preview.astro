@@ -1,7 +1,8 @@
 ---
+import { canPublish } from "../writing/policy";
 // Preview bindings point at production. This scratch editor has no document API.
 const previewHost = Astro.url.hostname.endsWith(".workers.dev") &&
-  Astro.url.hostname !== "ncrmro-website.ncrmro.workers.dev";
+  !canPublish(Astro.url.hostname);
 if (!previewHost && !import.meta.env.DEV) return new Response(null, { status: 404 });
 Astro.response.headers.set("Cache-Control", "no-store");
 Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
@@ -28,9 +29,12 @@ Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
 
       const parent = document.getElementById("scratch-editor")!;
       const status = document.getElementById("scratch-status")!;
-      const editor = createWritingEditor({
+      let scratchDocument: Parameters<typeof createWritingEditor>[0]["document"] = {
+        type: "doc", content: [{ type: "paragraph" }],
+      };
+      const mount = () => createWritingEditor({
         parent,
-        document: { type: "doc", content: [{ type: "paragraph" }] },
+        document: scratchDocument,
         localDictation: { lang: "en-US" },
         onChange: () => {},
         onStatus: (message) => { status.textContent = message; },
@@ -42,7 +46,14 @@ Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
           return undefined;
         },
       });
-      window.addEventListener("pagehide", () => editor.destroy(), { once: true });
+      let editor = mount();
+      window.addEventListener("pagehide", () => {
+        scratchDocument = editor.getDocument();
+        editor.destroy();
+      });
+      window.addEventListener("pageshow", (event) => {
+        if (event.persisted) editor = mount();
+      });
     </script>
   </body>
 </html>

@@ -24,8 +24,10 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   for (const id of primary) {
     const button = context.commands.get(id);
     if (!button) continue;
-    if (labels[id]) button.textContent = labels[id];
-    button.title = button.getAttribute("aria-label")!;
+    if (labels[id]) {
+      button.textContent = labels[id];
+      button.title = button.getAttribute("aria-label")!;
+    }
     toolbar.appendChild(button);
   }
   for (const [id, command] of context.commands) {
@@ -35,6 +37,10 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   }
   toolbar.appendChild(more);
   toolbar.appendChild(menu);
+  const interim = toolbar.querySelector<HTMLElement>("[data-dictation-interim]");
+  // Keep speech messages in document flow, clear of the fixed formatting bar.
+  const surface = context.editable.parentElement;
+  if (interim && surface) surface.parentNode?.insertBefore(interim, surface.nextSibling);
   const disposeMobile = mobileToolbar(toolbar, menu, context.editable);
   // The browser visual viewport follows the on-screen keyboard and browser chrome.
   const viewport = window.visualViewport;
@@ -50,6 +56,7 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   viewport?.addEventListener("scroll", position);
   position();
   return () => {
+    interim?.remove();
     disposeMobile();
     shell.style.removeProperty("--viewport-top");
     viewport?.removeEventListener("resize", position);

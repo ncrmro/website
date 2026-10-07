@@ -209,15 +209,16 @@ body.writing-page {
     font-style: italic;
   }
   [data-dictation-interim]:not(:empty) {
-    position: absolute;
-    inset: auto 0 100%;
-    padding: 0.5rem 1rem;
-    max-height: 6rem;
-    overflow-y: auto;
-    background: var(--page);
-    border: 1px solid var(--border);
+    display: block;
+    padding: 0.5rem 0;
+    overflow-wrap: anywhere;
     color: var(--muted);
     font-size: 0.875rem;
+  }
+  .writing-toolbar [data-command="dictate"] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .formatting-options {
     inset: auto 1rem calc(var(--keyboard-inset, 0px) + 76px) auto;
@@ -320,6 +321,9 @@ body.writing-page {
       width: 480px;
       border: 1px solid var(--border);
       border-radius: 12px 12px 0 0;
+    }
+    .writing-toolbar [data-command="dictate"] {
+      flex-basis: 9rem;
     }
   }
 }

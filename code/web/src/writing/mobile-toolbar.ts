@@ -8,26 +8,33 @@ export function mobileToolbar(toolbar: HTMLElement, menu: HTMLElement, body: HTM
   done.textContent = "✓";
   done.setAttribute("aria-label", "Finish writing");
   toolbar.insertBefore(done, toolbar.firstChild);
+  const dictate = toolbar.querySelector<HTMLButtonElement>('[data-command="dictate"]');
+  const dictating = () => ["Stop dictation", "Stopping dictation…"].includes(dictate?.getAttribute("aria-label") ?? "");
   function update() {
     const focused = document.activeElement;
     const editing =
-      body.contains(focused) || toolbar.contains(focused) || menu.matches(":popover-open");
+      body.contains(focused) || toolbar.contains(focused) || menu.matches(":popover-open") || dictating();
     root.toggleAttribute("data-body-focused", editing);
   }
   const deferredUpdate = () => queueMicrotask(update);
   done.onclick = () => {
+    if (dictate?.getAttribute("aria-label") === "Stop dictation") dictate.click();
     menu.hidePopover();
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     root.removeAttribute("data-body-focused");
     root
       .querySelector<HTMLButtonElement>('[data-open="editor-menu"]')
       ?.focus({ preventScroll: true });
+    update();
   };
+  const dictationState = new MutationObserver(update);
+  if (dictate) dictationState.observe(dictate, { attributes: true, attributeFilter: ["aria-label"] });
   document.addEventListener("focusin", update);
   document.addEventListener("focusout", deferredUpdate);
   menu.addEventListener("toggle", update);
   update();
   return () => {
+    dictationState.disconnect();
     document.removeEventListener("focusin", update);
     document.removeEventListener("focusout", deferredUpdate);
     menu.removeEventListener("toggle", update);
