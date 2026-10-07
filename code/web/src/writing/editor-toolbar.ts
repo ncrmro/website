@@ -37,10 +37,20 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   }
   toolbar.appendChild(more);
   toolbar.appendChild(menu);
+  const narrow = window.matchMedia("(max-width: 700px)");
+  const link = context.commands.get("link");
+  const positionLink = () => {
+    if (!link) return;
+    if (narrow.matches) menu.insertBefore(link, menu.firstChild);
+    else toolbar.insertBefore(link, context.commands.get("dictate") ?? more);
+  };
+  const closeLinkMenu = () => menu.hidePopover();
+  link?.addEventListener("click", closeLinkMenu);
+  narrow.addEventListener("change", positionLink);
+  positionLink();
   const interim = toolbar.querySelector<HTMLElement>("[data-dictation-interim]");
-  // Keep speech messages in document flow, clear of the fixed formatting bar.
-  const surface = context.editable.parentElement;
-  if (interim && surface) surface.parentNode?.insertBefore(interim, surface.nextSibling);
+  // A normal-flow row in the sticky header stays visible without covering text.
+  if (interim) document.querySelector(".editor-header")?.appendChild(interim);
   const disposeMobile = mobileToolbar(toolbar, menu, context.editable);
   // The browser visual viewport follows the on-screen keyboard and browser chrome.
   const viewport = window.visualViewport;
@@ -56,6 +66,8 @@ export function editorToolbar(toolbar: HTMLElement, context: EditorToolbar) {
   viewport?.addEventListener("scroll", position);
   position();
   return () => {
+    narrow.removeEventListener("change", positionLink);
+    link?.removeEventListener("click", closeLinkMenu);
     interim?.remove();
     disposeMobile();
     shell.style.removeProperty("--viewport-top");

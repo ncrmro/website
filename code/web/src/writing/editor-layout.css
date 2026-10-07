@@ -210,10 +210,17 @@ body.writing-page {
   }
   [data-dictation-interim]:not(:empty) {
     display: block;
+    grid-column: 1 / -1;
+    grid-row: 2;
     padding: 0.5rem 0;
+    max-height: 4.5rem;
+    overflow-y: auto;
     overflow-wrap: anywhere;
     color: var(--muted);
     font-size: 0.875rem;
+  }
+  .editor-header:has([data-dictation-interim]:not(:empty)) {
+    height: auto;
   }
   .writing-toolbar [data-command="dictate"] {
     white-space: nowrap;
