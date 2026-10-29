@@ -18,6 +18,7 @@ const { documentId, collection = "posts" } = Astro.props;
   <div class="w-full">
     {!env.SERVICE_TOKEN && <p role="alert">Writing is awaiting its repository connection (SERVICE_TOKEN). Saving and publishing are unavailable.</p>}
     {!canPublish(Astro.url.hostname) && <p role="alert">This preview is read-only. Open ncrmro.com/admin to save and publish.</p>}
+    <p id="dictation-status" role="status" aria-live="polite" hidden></p>
     <EditorShell collection={collection} />
     {canPublish(Astro.url.hostname) && <div id="writing" data-document-id={documentId} data-collection={collection}></div>}
     <script>
@@ -29,6 +30,7 @@ const { documentId, collection = "posts" } = Astro.props;
     import { editorToolbar } from "../writing/editor-toolbar";
     import { documentEditPath, wireNewLinks } from "../writing/navigation";
     import { tagPicker } from "../writing/tag-picker";
+    import { localDictation } from "../writing/local-dictation";
 
     wireNewLinks();
     const root = document.getElementById("writing");
@@ -41,7 +43,11 @@ const { documentId, collection = "posts" } = Astro.props;
         .find((draft) => draft.document.id === pending);
       const initialId = root.dataset.documentId ?? resumed?.document.id;
       mountDocumentApp(root, {
-        localDictation: { lang: "en-US" },
+        localDictation: localDictation((message) => {
+          const status = document.getElementById("dictation-status")!;
+          status.textContent = message;
+          status.hidden = !message;
+        }),
         layout: editorLayout,
         configureToolbar: editorToolbar,
         onState: (state) => editorStatus(root, state),

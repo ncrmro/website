@@ -26,6 +26,7 @@ Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
     </main>
     <script>
       import { createWritingEditor } from "@quiescent/editor/writing";
+      import { localDictation } from "../writing/local-dictation";
 
       const parent = document.getElementById("scratch-editor")!;
       const status = document.getElementById("scratch-status")!;
@@ -35,7 +36,7 @@ Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
       const mount = () => createWritingEditor({
         parent,
         document: scratchDocument,
-        localDictation: { lang: "en-US" },
+        localDictation: localDictation((message) => { status.textContent = message; }),
         onChange: () => {},
         onStatus: (message) => { status.textContent = message; },
         uploadImage: async () => { throw new Error("Images are unavailable in this scratch editor."); },
