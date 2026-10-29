@@ -13,6 +13,10 @@ syndication: []
 id: 37ce8bea-3c29-4f51-83d8-af64103c7d6b
 createdAt: 2026-10-29
 ---
+
+
+&nbsp;
+
 pi
 
 Waking life
