@@ -32,6 +32,12 @@ retain the single-account allowlist; there is no database-backed session store.
 All admin/document APIs are private and noncacheable. Preview hosts cannot access
 document APIs even with GET, because opening a document can create a draft branch.
 
+The new/edit post editor and dictation preview check the local `en-US` speech pack
+on initialization and automatically download it when Chrome reports it downloadable
+or downloading. Download progress and failures are shown without blocking writing;
+microphone access and recognition still require the Dictate button. Unsupported
+browsers retain Quiescent's disabled dictation control, with no cloud fallback.
+
 Only the jobs collection remains in Astro content collections, for the résumé.
 No Drizzle/Turso or authentication database is used. A disposable D1 document
 listing cache (`WRITING_CACHE`) serves private admin lists without GitHub reads.
