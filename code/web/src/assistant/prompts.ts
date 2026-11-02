@@ -1,4 +1,5 @@
-import type { ThreadRecord } from "./store";
+import type { Thread } from "../threads/store";
+import { KINDS } from "./threads";
 
 /** Stable instructions shared by every thread; cached across turns. */
 const CORE = `You are Nicholas Romero's writing partner inside the admin of his personal website (ncrmro.com), where he writes posts about tech, travel and food.
@@ -20,7 +21,7 @@ const POST = `This thread belongs to one post. When he writes from the editor, t
 
 const IDEA = `This is a subthread for exploring one idea. Stay on it, help him decide whether it is a post, and what its shape would be.`;
 
-export function threadInstructions(thread: ThreadRecord): string {
-  const role = thread.type === "writing.desk" ? DESK : thread.type === "writing.post" ? POST : IDEA;
+export function threadInstructions(thread: Thread): string {
+  const role = thread.kind === KINDS.desk ? DESK : thread.kind === KINDS.post ? POST : IDEA;
   return `${CORE}\n\n${role}`;
 }

@@ -4,17 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { editorPost, readDraft, subscribeEditorPost } from "../bridge";
 import { DictateButton } from "./BrainDump";
 
-type ThreadType = "writing.desk" | "writing.post" | "writing.idea";
-interface Thread {
-  id: string;
-  type: ThreadType;
-  title: string;
-  parentId: string | null;
-  contextId: string | null;
-  brief: string | null;
-  updatedAt: number;
-  entries?: number;
-}
+import type { Thread as StoredThread } from "../../threads/store";
+import { KINDS, type WritingKind } from "../threads";
+
+type Thread = StoredThread & { kind: WritingKind; messageCount?: number };
 interface ThreadView {
   thread: Thread;
   parent: Thread | null;
@@ -127,12 +120,12 @@ export default function AssistantSidebar({ scope }: { scope: Scope }) {
 /** Subthreads, and on the desk every post thread. */
 function ThreadNav({ view, scope, onOpen }: { view: ThreadView; scope: Scope; onOpen: (id: string) => void }) {
   const [all, setAll] = useState<Thread[] | null>(null);
-  const isDesk = view.thread.type === "writing.desk";
+  const isDesk = view.thread.kind === KINDS.desk;
   useEffect(() => {
     if (isDesk && scope === "desk") request<Thread[]>(API).then(setAll, () => setAll(null));
   }, [isDesk, scope, view.thread.updatedAt]);
-  const posts = (all ?? []).filter((thread) => thread.type === "writing.post" && (thread.entries ?? 0) > 0);
-  const children = view.children.filter((thread) => thread.type === "writing.idea");
+  const posts = (all ?? []).filter((thread) => thread.kind === KINDS.post && (thread.messageCount ?? 0) > 0);
+  const children = view.children.filter((thread) => thread.kind === KINDS.idea);
   if (!children.length && !posts.length) return null;
   return (
     <details className="assistant-threads">
@@ -157,10 +150,10 @@ function ThreadList({ label, threads, onOpen }: { label: string; threads: Thread
   );
 }
 
-const STARTERS: Record<ThreadType, string[]> = {
-  "writing.desk": ["What should I write next?", "Which drafts are closest to done?", "What have I not written about in a while?"],
-  "writing.post": ["Interview me about this post", "Give me angles", "What's missing?"],
-  "writing.idea": ["Is this a post?", "Interview me about it"],
+const STARTERS: Record<WritingKind, string[]> = {
+  [KINDS.desk]: ["What should I write next?", "Which drafts are closest to done?", "What have I not written about in a while?"],
+  [KINDS.post]: ["Interview me about this post", "Give me angles", "What's missing?"],
+  [KINDS.idea]: ["Is this a post?", "Interview me about it"],
 };
 
 function ThreadChat({ view, withDraft, onReplied, onOpenThread }: {
@@ -211,7 +204,7 @@ function ThreadChat({ view, withDraft, onReplied, onOpenThread }: {
           <div className="assistant-empty">
             <p>Tap <strong>Dictate</strong> and brain-dump what's on your mind. I'll reflect it back, ask questions and offer angles.</p>
             <div className="assistant-chips">
-              {STARTERS[view.thread.type].map((starter) => (
+              {STARTERS[view.thread.kind].map((starter) => (
                 <button key={starter} type="button" onClick={() => send(starter)} disabled={busy}>{starter}</button>
               ))}
             </div>

@@ -9,7 +9,7 @@ export const GET: APIRoute = async (context) => {
   if (!thread) return fail("Not found", 404);
   const [parent, children, messages] = await Promise.all([
     thread.parentId ? store.get(thread.parentId) : null,
-    store.children(thread.id),
+    store.list({ parentId: thread.id }),
     store.messages(thread.id),
   ]);
   return json({ thread, parent, children, messages });

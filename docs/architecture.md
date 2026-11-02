@@ -50,27 +50,43 @@ here. Public Astro HTML caching remains separate and never reads cached drafts.
 ## Writing assistant
 
 The admin has a writing assistant sidebar: a React island (`client:only`) built
-on the AI SDK's `useChat`, in `code/web/src/assistant/`. It is the only React on
-the site and loads only on `/admin` and the post editor. Its threads follow
-ai-outfitter's thread model, reduced to one author:
+on the AI SDK's `useChat`. It is the only React on the site and loads only on
+`/admin` and the post editor.
 
-- The **writing desk** (`writing-desk`) is the admin-wide, always-present parent
-  thread. Its tools can list and read every saved post (from the private D1
-  listing, never a branch checkout) and every other thread.
-- Each post has its own thread (`post-<UUID>`), a child of the desk. Messages
-  sent from the editor carry the on-screen draft.
-- Any thread can start subthreads (`parent_id`) to explore an idea.
+It sits on a small, feature-agnostic thread layer in `code/web/src/threads/`,
+modeled on ai-outfitter's thread service:
 
-Threads live in D1 under the `ASSISTANT_DB` binding (`assistant_threads`,
-`assistant_entries`, created on first use). Unlike `WRITING_CACHE` they are
-durable; the binding currently points at the same database, and moving it to
-a dedicated one is a `wrangler.jsonc` change. Threads never write documents:
+- `threads`: `id`, a free-form `kind`, `title`, `parent_id` and
+  `parent_message_id` (the thread and message it was started from),
+  `subject_type`/`subject_id` (the one thing it is about), JSON `metadata`, and
+  timestamps.
+- `thread_messages`: AI SDK `UIMessage`s saved by id, with `seq` for order, the
+  JSON `parts`, a plain `text` copy and JSON `metadata`. A message id never
+  moves between threads.
+- `thread_schema`: applied migration versions. Schema changes are appended to
+  `MIGRATIONS` in `store.ts` and run on first use.
+- `reply.ts` runs one turn: it saves the user's message, streams the model's
+  reply, and saves it when the stream ends, even if the browser disconnects.
+
+The writing use cases live in `code/web/src/assistant/` as three kinds:
+
+- `writing.desk` (`writing-desk`) is the admin-wide, always-present parent. Its
+  tools can list and read every saved post (from the private D1 listing, never
+  a branch checkout) and every other thread.
+- `writing.post` (`post-<UUID>`, subject `post`) is a child of the desk. Each
+  message sent from the editor carries the on-screen draft.
+- `writing.idea` is a subthread started from any thread, with its brief in
+  `metadata`.
+
+The tables live in D1 under the `ASSISTANT_DB` binding. Unlike `WRITING_CACHE`
+they are durable. The binding currently points at the same database; moving it
+to a dedicated one is a `wrangler.jsonc` change. Threads never write documents:
 Git and Quiescent remain the only post store.
 
 `/api/assistant/*` sits behind the admin session, the POST origin check and
 `canPublish` (previews never call the model). Replies stream from
 `claude-opus-5-5` through `@ai-sdk/anthropic` and need the Worker secret
-`ANTHROPIC_API_KEY`; without it the routes answer 503. Brain dumps use the
+`ANTHROPIC_API_KEY`; without it the chat route answers 503. Brain dumps use the
 editor's on-device dictation, so only text transcripts leave the browser.
 Assistant text is rendered as text, never HTML.
 

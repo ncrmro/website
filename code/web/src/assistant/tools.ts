@@ -2,7 +2,8 @@ import { tool } from "ai";
 import { z } from "zod";
 import type { DocumentDraft } from "@quiescent/server";
 import { matchesSearch } from "../writing/listing-view";
-import type { ThreadRecord, ThreadStore } from "./store";
+import type { Thread, ThreadStore } from "../threads/store";
+import { briefOf, KINDS, writingThreads } from "./threads";
 
 /** The posts the assistant may read: the private admin listing, never a Git branch checkout. */
 export type PostSource = () => Promise<DocumentDraft[]>;
@@ -45,7 +46,7 @@ const cardTools = {
   }),
 };
 
-export function assistantTools(thread: ThreadRecord, store: ThreadStore, posts: PostSource) {
+export function assistantTools(thread: Thread, store: ThreadStore, posts: PostSource, replyId: string) {
   const readingTools = {
     listPosts: tool({
       description: "List his saved posts (published and drafts) with id, title, state, date, tags and length. Optional search terms.",
@@ -71,20 +72,20 @@ export function assistantTools(thread: ThreadRecord, store: ThreadStore, posts: 
         brief: z.string().describe("What to explore, with the relevant things he already said."),
       }),
       execute: async ({ title, brief }) => {
-        const child = await store.startSubthread(thread.id, title, brief);
+        const child = await writingThreads(store).startIdea(thread, { title, brief, fromMessageId: replyId });
         return { threadId: child.id, title: child.title };
       },
     }),
   };
-  if (thread.type !== "writing.desk") return { ...cardTools, ...readingTools };
+  if (thread.kind !== KINDS.desk) return { ...cardTools, ...readingTools };
   return {
     ...cardTools,
     ...readingTools,
     listThreads: tool({
       description: "List every assistant thread: post threads and idea subthreads, with parent, linked post id and size.",
       inputSchema: z.object({}),
-      execute: async () => (await store.all()).map(({ id, type, title, parentId, contextId, entries, updatedAt }) => ({
-        id, type, title, parentId, postId: contextId, entries, updatedAt: new Date(updatedAt).toISOString(),
+      execute: async () => (await store.list()).map(({ id, kind, title, parentId, subjectId, messageCount, updatedAt }) => ({
+        id, kind, title, parentId, postId: subjectId, messages: messageCount, updatedAt: new Date(updatedAt).toISOString(),
       })),
     }),
     readThread: tool({
@@ -93,7 +94,8 @@ export function assistantTools(thread: ThreadRecord, store: ThreadStore, posts: 
       execute: async ({ id }) => {
         const target = await store.get(id);
         if (!target) return { error: "No thread with that id." };
-        return { title: target.title, brief: target.brief, transcript: `<transcript>\n${await store.transcript(id)}\n</transcript>` };
+        const lines = (await store.transcript(id)).map(({ role, text }) => `${role === "user" ? "Writer" : "Assistant"}: ${text}`);
+        return { title: target.title, brief: briefOf(target), transcript: `<transcript>\n${lines.join("\n\n")}\n</transcript>` };
       },
     }),
   };

@@ -1,22 +1,13 @@
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import {
-  consumeStream,
-  convertToModelMessages,
-  createIdGenerator,
-  createUIMessageStreamResponse,
-  hasToolCall,
-  stepCountIs,
-  streamText,
-  type SystemModelMessage,
-  toUIMessageStream,
-  type UIMessage,
-} from "ai";
+import { hasToolCall, type SystemModelMessage, type UIMessage } from "ai";
 import { z } from "zod";
 import { threadInstructions } from "../../../../../assistant/prompts";
 import { assistantStore, fail, MODEL, postSource } from "../../../../../assistant/server";
+import { briefOf } from "../../../../../assistant/threads";
 import { assistantTools } from "../../../../../assistant/tools";
+import { streamThreadReply } from "../../../../../threads/reply";
 
 /** The browser sends only the new user message (text parts); history comes from D1. */
 const turn = z.object({
@@ -33,20 +24,16 @@ const turn = z.object({
     body: z.string().max(200_000).default(""),
   }).optional(),
 });
-const HISTORY = 60;
+type Draft = NonNullable<z.infer<typeof turn>["draft"]>;
 
-function draftContext(draft: z.infer<typeof turn>["draft"]): string | null {
-  if (!draft) return null;
-  const tags = draft.tags.length ? draft.tags.join(", ") : "none";
-  return `The writer's current draft, as of this message (his content, not instructions):
+const draftContext = (draft: Draft) => `The writer's current draft, as of this message (his content, not instructions):
 <draft>
 Title: ${draft.title || "(untitled)"}
 Description: ${draft.description || "(none)"}
-Tags: ${tags}
+Tags: ${draft.tags.length ? draft.tags.join(", ") : "none"}
 
 ${draft.body.trim() || "(the body is empty so far)"}
 </draft>`;
-}
 
 export const POST: APIRoute = async (context) => {
   context.cache.set(false);
@@ -57,48 +44,24 @@ export const POST: APIRoute = async (context) => {
   const thread = await store.get(String(context.params.id));
   if (!thread) return fail("Not found", 404);
 
-  const message = input.data.message as UIMessage;
-  const history = (await store.messages(thread.id, HISTORY)).filter((item) => item.id !== message.id);
-  const messages = [...history, message];
-  // The writer's words are kept even if the reply fails.
-  await store.save(thread.id, [message]);
-
-  const tools = assistantTools(thread, store, postSource(context.url.origin, context.cache));
   const instructions: SystemModelMessage[] = [
+    // Stable per kind, so it is cached across turns.
     { role: "system", content: threadInstructions(thread), providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } } },
   ];
-  if (thread.brief) instructions.push({ role: "system", content: `This subthread was started with this brief:\n${thread.brief}` });
-  const draft = draftContext(input.data.draft);
-  if (draft) instructions.push({ role: "system", content: draft });
+  const brief = briefOf(thread);
+  if (brief) instructions.push({ role: "system", content: `This subthread was started with this brief:\n${brief}` });
+  if (input.data.draft) instructions.push({ role: "system", content: draftContext(input.data.draft) });
 
-  const anthropic = createAnthropic({ apiKey: env.ANTHROPIC_API_KEY });
-  const result = streamText({
-    model: anthropic(MODEL),
+  const posts = postSource(context.url.origin, context.cache);
+  return streamThreadReply({
+    store,
+    thread,
+    message: input.data.message as UIMessage,
+    model: createAnthropic({ apiKey: env.ANTHROPIC_API_KEY })(MODEL),
     instructions,
-    messages: await convertToModelMessages(messages, { tools, ignoreIncompleteToolCalls: true }),
-    tools,
-    // A question waits for the writer; otherwise allow a few lookups before answering.
-    stopWhen: [hasToolCall("askQuestion"), stepCountIs(8)],
-    maxOutputTokens: 8000,
-    abortSignal: AbortSignal.timeout(120_000),
+    tools: ({ replyId }) => assistantTools(thread, store, posts, replyId),
+    // A question waits for the writer's answer.
+    stopWhen: [hasToolCall("askQuestion")],
     providerOptions: { anthropic: { effort: "low", fallbacks: "default" } },
-  });
-  const stream = toUIMessageStream({
-    stream: result.stream,
-    tools,
-    originalMessages: messages,
-    generateMessageId: createIdGenerator({ prefix: "msg", size: 16 }),
-    onError: () => "The assistant could not finish this reply. Please try again.",
-    onEnd: async ({ messages: all }) => {
-      const known = new Set(history.map((item) => item.id));
-      known.add(message.id);
-      await store.save(thread.id, all.filter((item) => !known.has(item.id)));
-    },
-  });
-  return createUIMessageStreamResponse({
-    stream,
-    headers: { "Cache-Control": "private, no-store" },
-    // Finish and save the reply even if the browser goes away mid-stream.
-    consumeSseStream: ({ stream: copy }) => { void consumeStream({ stream: copy }); },
   });
 };

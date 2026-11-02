@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import type { RouteCache } from "@quiescent/astro";
 import type { DocumentDraft } from "@quiescent/server";
 import { collectionApp } from "../writing/pages";
-import { threadStore } from "./store";
+import { threadStore } from "../threads/store";
 import type { PostSource } from "./tools";
 
 export const MODEL = "claude-opus-5-5";
