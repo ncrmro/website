@@ -6,6 +6,8 @@ import "../writing/editor-layout.css";
 import "../writing/mobile-toolbar.css";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../writing/tag-picker.css";
+import AssistantSidebar from "../assistant/ui/AssistantSidebar";
+import "../assistant/ui/assistant.css";
 
 interface Props {
   documentId?: string;
@@ -21,6 +23,7 @@ const { documentId, collection = "posts" } = Astro.props;
     <p id="dictation-status" role="status" aria-live="polite" hidden></p>
     <EditorShell collection={collection} />
     {canPublish(Astro.url.hostname) && <div id="writing" data-document-id={documentId} data-collection={collection}></div>}
+    {canPublish(Astro.url.hostname) && <AssistantSidebar scope="post" client:only="react" />}
     <script>
     import { localDrafts } from "@quiescent/editor/local-drafts";
     import { mountDocumentApp } from "@quiescent/editor/writing";
@@ -31,6 +34,7 @@ const { documentId, collection = "posts" } = Astro.props;
     import { documentEditPath, wireNewLinks } from "../writing/navigation";
     import { tagPicker } from "../writing/tag-picker";
     import { localDictation } from "../writing/local-dictation";
+    import { setEditorPost } from "../assistant/bridge";
 
     wireNewLinks();
     const root = document.getElementById("writing");
@@ -62,11 +66,13 @@ const { documentId, collection = "posts" } = Astro.props;
         label: collection === "posts" ? "post" : "recipe",
         ...(initialId ? { initialDocumentId: initialId } : {}),
         onDocumentOpen: (document) => {
+          setEditorPost({ id: document.id, title: String(document.frontmatter.title ?? "") });
           editorOpened(root, true);
           sessionStorage.removeItem(pendingKey);
           window.history.replaceState(null, "", documentEditPath(collection, document.id));
         },
         onLocalDocumentOpen: (document) => {
+          setEditorPost({ id: document.id, title: String(document.frontmatter.title ?? "") });
           editorOpened(root, false);
           if (!root.dataset.documentId) sessionStorage.setItem(pendingKey, document.id);
         },

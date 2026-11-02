@@ -47,6 +47,33 @@ The admin shows last fetch/update status, a manual refresh button, and local sea
 The portable cache and D1 adapter live in `@quiescent/server`; presentation remains
 here. Public Astro HTML caching remains separate and never reads cached drafts.
 
+## Writing assistant
+
+The admin has a writing assistant sidebar: a React island (`client:only`) built
+on the AI SDK's `useChat`, in `code/web/src/assistant/`. It is the only React on
+the site and loads only on `/admin` and the post editor. Its threads follow
+ai-outfitter's thread model, reduced to one author:
+
+- The **writing desk** (`writing-desk`) is the admin-wide, always-present parent
+  thread. Its tools can list and read every saved post (from the private D1
+  listing, never a branch checkout) and every other thread.
+- Each post has its own thread (`post-<UUID>`), a child of the desk. Messages
+  sent from the editor carry the on-screen draft.
+- Any thread can start subthreads (`parent_id`) to explore an idea.
+
+Threads live in D1 under the `ASSISTANT_DB` binding (`assistant_threads`,
+`assistant_entries`, created on first use). Unlike `WRITING_CACHE` they are
+durable; the binding currently points at the same database, and moving it to
+a dedicated one is a `wrangler.jsonc` change. Threads never write documents:
+Git and Quiescent remain the only post store.
+
+`/api/assistant/*` sits behind the admin session, the POST origin check and
+`canPublish` (previews never call the model). Replies stream from
+`claude-opus-5-5` through `@ai-sdk/anthropic` and need the Worker secret
+`ANTHROPIC_API_KEY`; without it the routes answer 503. Brain dumps use the
+editor's on-device dictation, so only text transcripts leave the browser.
+Assistant text is rendered as text, never HTML.
+
 ## Deployment
 
 Build with `bun run build` and deploy `dist/server/wrangler.json`. Main pushes

@@ -5,13 +5,17 @@ import { writingAuthor } from "./writing/auth";
 export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
   const editor = path === "/admin" || path.startsWith("/admin/");
-  const api = path.startsWith("/api/documents/") || path.startsWith("/api/tags/");
+  const assistant = path.startsWith("/api/assistant/");
+  const api = path.startsWith("/api/documents/") || path.startsWith("/api/tags/") || assistant;
   const privateRoute = editor || api || path.startsWith("/api/auth/") || path.startsWith("/_server-islands/");
   if (privateRoute) context.cache.set(false);
   if ((editor || api) && !(await writingAuthor(context.request, env))) {
     const response = editor ? context.redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(context.url.pathname + context.url.search)}`) : new Response("Sign in to write", { status: 401 });
     response.headers.set("Cache-Control", "private, no-store"); return response;
   }
+  // Previews never spend model tokens or write assistant threads.
+  if (assistant && !canPublish(context.url.hostname))
+    return new Response("The writing assistant is available on ncrmro.com.", {status: 403, headers: {"Cache-Control": "private, no-store"}});
   if (path.startsWith("/api/documents/") && !canPublish(context.url.hostname))
     return new Response("Publishing is available on ncrmro.com. Version previews are read-only.", {status: 403, headers: {"Cache-Control": "private, no-store"}});
   if (api && !["GET", "HEAD", "OPTIONS"].includes(context.request.method) && context.request.headers.get("Origin") !== context.url.origin)
