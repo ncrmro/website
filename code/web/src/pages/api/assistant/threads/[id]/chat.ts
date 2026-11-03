@@ -37,13 +37,14 @@ ${draft.body.trim() || "(the body is empty so far)"}
 
 export const POST: APIRoute = async (context) => {
   context.cache.set(false);
-  let login: string | null;
+  const login = assistantLogin();
+  let token: string | null;
   try {
-    login = await assistantLogin().accessToken();
+    token = await login.accessToken();
   } catch (cause) {
     return fail(cause instanceof Error ? cause.message : "Could not reach Outfitter.", 502);
   }
-  const model = assistantModel(env, login);
+  const model = assistantModel(env, token, () => login.expire());
   if (!model) return fail("Connect Outfitter to use the writing assistant.", 503);
   const input = turn.safeParse(await context.request.json().catch(() => null));
   if (!input.success) return fail("Invalid input", 400);

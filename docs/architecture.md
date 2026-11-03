@@ -90,21 +90,25 @@ relay (`https://ai-outfitter.com/api/inference/v1`, model `flash`, GLM on
 Outfitter's DGX Spark) through `@ai-sdk/openai`, signed in one of two ways:
 
 - **Connect Outfitter** in the sidebar (`src/assistant/outfitter-login.ts`,
-  `/api/assistant/outfitter`). Outfitter issues inference tokens only through
-  the OAuth device authorization grant (RFC 8628), so the Worker requests a
-  code as the `outfitter-cli` public client (scope `inference`), the writer
-  approves it in an ai-outfitter.com tab, and the browser polls until the
-  Worker holds a 15-minute `oftr_at_` access token and a rotating refresh token
-  (30-day session). Both live in the `outfitter_login` row of `ASSISTANT_DB`,
+  `/api/assistant/outfitter/{connect,callback}`), Outfitter's standard OAuth 2.1
+  authorization code flow with PKCE (ai-outfitter/webapp
+  `docs/inference-oauth.md`). The site registers itself once per callback URL
+  (RFC 7591, public client, kept in `outfitter_clients`). Connect is a
+  same-origin form post that redirects to Outfitter's consent page with scope
+  `inference offline_access`; the callback checks the single-use `state`
+  (stored hashed in `outfitter_authorizations`, 10 minutes) and `iss`, then
+  exchanges the code. The 15-minute access token (bound to the relay) and the
+  rotating refresh token live in the `outfitter_login` row of `ASSISTANT_DB`,
   AES-GCM encrypted with a key derived from `AUTH_SECRET`; the browser never
-  sees them. Outfitter ends the session if a refresh token is reused, so a
-  refresh takes a 20-second lease on the row and other isolates wait for its
-  result. Disconnect revokes the session on Outfitter.
+  sees them. Each refresh takes a 20-second lease on the row so other isolates
+  wait for its result. A 401 from the relay forces a refresh, and a refused
+  refresh means the site was disconnected on Outfitter. Disconnect revokes the
+  refresh token.
 - The optional Worker secret `OUTFITTER_INFERENCE_TOKEN` (a personal `oftr_inf_`
   token, valid 90 days), used when nobody has connected.
 
-`OUTFITTER_INFERENCE_URL`, `OUTFITTER_INFERENCE_MODEL` and `OUTFITTER_CLIENT_ID`
-override the defaults; sign-in goes to the relay URL's origin. With neither
+`OUTFITTER_INFERENCE_URL` and `OUTFITTER_INFERENCE_MODEL` override the
+defaults; sign-in goes to the relay URL's origin. With neither
 sign-in, `ANTHROPIC_API_KEY` selects `claude-opus-5-5`; with nothing the chat
 route answers 503. Requests to Outfitter never follow redirects.
 Brain dumps use the

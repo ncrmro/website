@@ -7,14 +7,13 @@ export interface ModelEnv {
   OUTFITTER_INFERENCE_TOKEN?: string;
   OUTFITTER_INFERENCE_URL?: string;
   OUTFITTER_INFERENCE_MODEL?: string;
-  OUTFITTER_CLIENT_ID?: string;
   ANTHROPIC_API_KEY?: string;
 }
 
 /**
  * Outfitter's OpenAI-compatible relay (`/api/inference/v1`). The `flash` model
  * is GLM on Outfitter's DGX Spark. The token is the admin's Outfitter login
- * (`oftr_at_…`, see outfitter-login.ts) or a personal inference token
+ * (an OAuth access token, see outfitter-login.ts) or a personal inference token
  * (`oftr_inf_…`) set as OUTFITTER_INFERENCE_TOKEN.
  */
 export const OUTFITTER_INFERENCE_URL = "https://ai-outfitter.com/api/inference/v1";
@@ -46,7 +45,7 @@ export function outfitterOrigin(env: ModelEnv): string {
  * OUTFITTER_INFERENCE_TOKEN, else Claude, else none. Requests never follow
  * redirects, so the token is only sent to the configured host.
  */
-export function assistantModel(env: ModelEnv, outfitterToken?: string | null): AssistantModel | null {
+export function assistantModel(env: ModelEnv, outfitterToken?: string | null, onUnauthorized?: () => Promise<void>): AssistantModel | null {
   const token = outfitterToken || env.OUTFITTER_INFERENCE_TOKEN;
   if (token) {
     const name = env.OUTFITTER_INFERENCE_MODEL || OUTFITTER_MODEL;
@@ -54,7 +53,12 @@ export function assistantModel(env: ModelEnv, outfitterToken?: string | null): A
       name: "outfitter",
       baseURL: outfitterUrl(env.OUTFITTER_INFERENCE_URL),
       apiKey: token,
-      fetch: (input, init) => fetch(input, { ...init, redirect: "error" }),
+      fetch: async (input, init) => {
+        const response = await fetch(input, { ...init, redirect: "error" });
+        // An expired or disconnected login: refresh (or sign out) before the next turn.
+        if (response.status === 401 && outfitterToken) await onUnauthorized?.().catch(() => undefined);
+        return response;
+      },
     });
     return {
       label: `Outfitter ${name}`,

@@ -35,6 +35,5 @@ export function assistantLogin() {
     db: env.ASSISTANT_DB,
     secret: env.AUTH_SECRET ?? "",
     origin: outfitterOrigin(env),
-    clientId: env.OUTFITTER_CLIENT_ID,
   });
 }

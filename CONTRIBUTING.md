@@ -22,6 +22,6 @@ the full cutover until the checks in [quiescent-concept.md](docs/quiescent-conce
 pass. Production CI needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`;
 repository access is the Worker secret `SERVICE_TOKEN`, never a committed value.
 The writing assistant needs no secret of its own: open the assistant on
-ncrmro.com/admin and choose **Connect Outfitter**, then approve the code on
-ai-outfitter.com. `OUTFITTER_INFERENCE_TOKEN` (a personal inference token) or
+ncrmro.com/admin, choose **Connect Outfitter** and approve on Outfitter's
+consent page. `OUTFITTER_INFERENCE_TOKEN` (a personal inference token) or
 `ANTHROPIC_API_KEY` remain optional fallbacks.

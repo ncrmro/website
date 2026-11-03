@@ -1,49 +1,35 @@
 /**
- * Signing the admin in to Outfitter's DGX inference, with no CLI.
+ * Signing the admin in to Outfitter's DGX inference with the standard OAuth 2.1
+ * authorization code flow with PKCE (ai-outfitter/webapp docs/inference-oauth.md).
  *
- * ai-outfitter.com issues inference tokens through the OAuth 2.0 device
- * authorization grant (RFC 8628) only. The Worker asks for a code, the writer
- * approves it in an ai-outfitter.com tab, and the Worker exchanges it for a
- * 15-minute access token (`oftr_at_…`) and a rotating refresh token that keeps
- * the login for 30 days. Both are kept in D1, encrypted with AUTH_SECRET.
+ * The site registers itself with Outfitter once (RFC 7591, a public client),
+ * sends the writer to Outfitter's consent page asking for the `inference`
+ * scope, and on the callback exchanges the code for a 15-minute access token
+ * bound to the inference relay and a rotating refresh token. The tokens are
+ * kept in D1, encrypted with AUTH_SECRET, and never reach the browser.
  *
- * Outfitter ends the whole session if a refresh token is used twice, so
- * refreshes are serialized across isolates with a short lease in the row.
+ * Refresh tokens rotate, so refreshes are serialized across isolates with a
+ * short lease on the row.
  */
 
-export const OUTFITTER_CLIENT_ID = "outfitter-cli";
-const SCOPE = "inference";
-const DEVICE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
+export const SCOPE = "inference offline_access";
 /** Refresh when less than this is left, so a long turn never outlives its token. */
 const REFRESH_MARGIN_MS = 3 * 60_000;
 const LEASE_MS = 20_000;
+/** How long the writer has to approve on Outfitter. */
+const AUTHORIZATION_MS = 10 * 60_000;
 
-export interface Account { name?: string; email?: string }
-type Pending = {
-  status: "pending";
-  deviceCode: string;
-  userCode: string;
-  verificationUri: string;
-  verificationUriComplete: string;
-  interval: number;
-  nextPollAt: number;
-  expiresAt: number;
-};
 type Connected = {
-  status: "connected";
+  clientId: string;
   accessToken: string;
   accessExpiresAt: number;
   refreshToken: string;
-  account: Account;
   connectedAt: number;
 };
-type State = Pending | Connected;
+type Authorization = { clientId: string; redirectUri: string; verifier: string; returnTo: string };
 
-/** What the browser may see: never a token or the device code. */
-export type LoginStatus =
-  | { state: "none"; error?: string }
-  | { state: "pending"; userCode: string; verificationUri: string; verificationUriComplete: string; interval: number; expiresAt: number }
-  | { state: "connected"; account: Account; connectedAt: number };
+/** What the browser may see: never a token. */
+export type LoginStatus = { state: "none" } | { state: "connected"; connectedAt: number };
 
 export interface LoginOptions {
   db: D1Database;
@@ -51,17 +37,18 @@ export interface LoginOptions {
   secret: string;
   /** Outfitter's origin, e.g. https://ai-outfitter.com. */
   origin: string;
-  clientId?: string;
   now?: () => number;
   sleep?: (ms: number) => Promise<void>;
 }
 
-const SCHEMA = `CREATE TABLE IF NOT EXISTS outfitter_login (
-  id INTEGER PRIMARY KEY CHECK (id = 1),
-  data TEXT NOT NULL,
-  version INTEGER NOT NULL,
-  lease_until INTEGER
-)`;
+const SCHEMA = [
+  // One registration per callback URL; client ids are public.
+  `CREATE TABLE IF NOT EXISTS outfitter_clients (redirect_uri TEXT PRIMARY KEY, client_id TEXT NOT NULL, created_at INTEGER NOT NULL)`,
+  // Sign-ins waiting for the callback, by their `state`.
+  `CREATE TABLE IF NOT EXISTS outfitter_authorizations (state TEXT PRIMARY KEY, data TEXT NOT NULL, expires_at INTEGER NOT NULL)`,
+  // The one login.
+  `CREATE TABLE IF NOT EXISTS outfitter_login (id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT NOT NULL, version INTEGER NOT NULL, lease_until INTEGER)`,
+];
 const ready = new WeakMap<D1Database, Promise<unknown>>();
 
 export class OutfitterError extends Error {
@@ -74,37 +61,36 @@ export class OutfitterError extends Error {
 
 export function outfitterLogin(options: LoginOptions) {
   const { db, origin } = options;
-  const clientId = options.clientId || OUTFITTER_CLIENT_ID;
+  const issuer = `${origin}/api/auth`;
+  const endpoint = (name: string) => `${issuer}/oauth2/${name}`;
   const now = options.now ?? Date.now;
   const sleep = options.sleep ?? ((ms: number) => new Promise((resolve) => setTimeout(resolve, ms)));
   const key = sealingKey(options.secret);
   const schema = () => {
     let pending = ready.get(db);
-    if (!pending) ready.set(db, pending = db.prepare(SCHEMA).run());
+    if (!pending) ready.set(db, pending = db.batch(SCHEMA.map((statement) => db.prepare(statement))));
     return pending;
   };
 
-  type Row = { state: State | null; version: number };
-  async function read(): Promise<Row | null> {
+  async function read(): Promise<{ login: Connected | null; version: number } | null> {
     await schema();
-    const row = await db.prepare(`SELECT data, version FROM outfitter_login WHERE id = 1`)
-      .first<{ data: string; version: number }>();
+    const row = await db.prepare(`SELECT data, version FROM outfitter_login WHERE id = 1`).first<{ data: string; version: number }>();
     if (!row) return null;
-    const state = await open(await key, row.data).catch(() => null);
     // A changed AUTH_SECRET makes the old login unreadable: treat it as signed out.
-    return { state: state as State | null, version: row.version };
+    const login = await open(await key, row.data).catch(() => null) as Connected | null;
+    return { login, version: row.version };
   }
-  /** Replaces the row only if nobody changed it since `version` was read; true when written. */
-  async function write(state: State | null, version: number | null): Promise<boolean> {
+  /** Replaces the login; with `version`, only if nobody changed it since. True when written. */
+  async function write(login: Connected | null, version?: number): Promise<boolean> {
     await schema();
-    if (state === null) {
-      const result = version === null
+    if (!login) {
+      const result = version === undefined
         ? await db.prepare(`DELETE FROM outfitter_login WHERE id = 1`).run()
         : await db.prepare(`DELETE FROM outfitter_login WHERE id = 1 AND version = ?`).bind(version).run();
-      return version === null || result.meta.changes === 1;
+      return version === undefined || result.meta.changes === 1;
     }
-    const data = await seal(await key, state);
-    if (version === null) {
+    const data = await seal(await key, login);
+    if (version === undefined) {
       await db.prepare(`INSERT INTO outfitter_login (id, data, version, lease_until) VALUES (1, ?, 1, NULL)
         ON CONFLICT(id) DO UPDATE SET data = excluded.data, version = outfitter_login.version + 1, lease_until = NULL`).bind(data).run();
       return true;
@@ -114,26 +100,18 @@ export function outfitterLogin(options: LoginOptions) {
     return result.meta.changes === 1;
   }
 
-  async function post(path: string, form: Record<string, string>): Promise<{ status: number; body: Record<string, unknown> }> {
-    const response = await fetch(new URL(path, origin), {
+  async function send(url: string, body: BodyInit, type: string) {
+    const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
-      body: new URLSearchParams({ client_id: clientId, ...form }),
+      headers: { "Content-Type": type, Accept: "application/json" },
+      body,
       redirect: "error",
     });
-    const body = await response.json().catch(() => ({})) as Record<string, unknown>;
-    return { status: response.status, body };
+    const json = await response.json().catch(() => ({})) as Record<string, unknown>;
+    return { status: response.status, body: json };
   }
-  async function account(accessToken: string): Promise<Account> {
-    try {
-      const response = await fetch(new URL("/api/oauth/userinfo", origin), { headers: { Authorization: `Bearer ${accessToken}` }, redirect: "error" });
-      if (!response.ok) return {};
-      const body = await response.json() as Record<string, unknown>;
-      return { name: typeof body.name === "string" ? body.name : undefined, email: typeof body.email === "string" ? body.email : undefined };
-    } catch {
-      return {};
-    }
-  }
+  const form = (name: string, fields: Record<string, string>) =>
+    send(endpoint(name), new URLSearchParams(fields), "application/x-www-form-urlencoded");
   const tokens = (body: Record<string, unknown>) => {
     const { access_token, refresh_token, expires_in } = body;
     if (typeof access_token !== "string" || typeof refresh_token !== "string")
@@ -141,83 +119,108 @@ export function outfitterLogin(options: LoginOptions) {
     return { accessToken: access_token, refreshToken: refresh_token, accessExpiresAt: now() + (Number(expires_in) || 900) * 1000 };
   };
 
-  const view = (state: State | null | undefined): LoginStatus => {
-    if (!state) return { state: "none" };
-    if (state.status === "connected") return { state: "connected", account: state.account, connectedAt: state.connectedAt };
-    if (state.expiresAt <= now()) return { state: "none", error: "The sign-in code expired. Connect again." };
-    const { userCode, verificationUri, verificationUriComplete, interval, expiresAt } = state;
-    return { state: "pending", userCode, verificationUri, verificationUriComplete, interval, expiresAt };
-  };
+  /** This site's client id for `redirectUri`, registering it with Outfitter the first time. */
+  async function client(redirectUri: string): Promise<string> {
+    await schema();
+    const known = await db.prepare(`SELECT client_id FROM outfitter_clients WHERE redirect_uri = ?`).bind(redirectUri).first<{ client_id: string }>();
+    if (known) return known.client_id;
+    const { status, body } = await send(endpoint("register"), JSON.stringify({
+      client_name: new URL(redirectUri).hostname,
+      redirect_uris: [redirectUri],
+      token_endpoint_auth_method: "none",
+    }), "application/json");
+    if (status >= 300 || typeof body.client_id !== "string")
+      throw new OutfitterError(String(body.error ?? "register_failed"), `Outfitter would not register this site (${status}).`);
+    await db.prepare(`INSERT OR IGNORE INTO outfitter_clients (redirect_uri, client_id, created_at) VALUES (?, ?, ?)`)
+      .bind(redirectUri, body.client_id, now()).run();
+    return (await db.prepare(`SELECT client_id FROM outfitter_clients WHERE redirect_uri = ?`).bind(redirectUri).first<{ client_id: string }>())!.client_id;
+  }
+
+  async function revoke(login: Connected) {
+    await form("revoke", { token: login.refreshToken, token_type_hint: "refresh_token", client_id: login.clientId }).catch(() => undefined);
+  }
 
   return {
     async status(): Promise<LoginStatus> {
-      return view((await read())?.state);
+      const login = (await read())?.login;
+      return login ? { state: "connected", connectedAt: login.connectedAt } : { state: "none" };
     },
 
-    /** Asks Outfitter for a device code; the writer approves it at verificationUriComplete. */
-    async start(): Promise<LoginStatus> {
-      const { status, body } = await post("/api/oauth/device/code", { scope: SCOPE });
-      const { device_code, user_code, verification_uri, verification_uri_complete } = body;
-      if (status !== 200 || typeof device_code !== "string" || typeof user_code !== "string" || typeof verification_uri !== "string")
-        throw new OutfitterError(String(body.error ?? "device_code_failed"), `Outfitter would not start a sign-in (${status}).`);
-      const verify = new URL(typeof verification_uri_complete === "string" ? verification_uri_complete : verification_uri);
-      // Only ever send the writer to Outfitter itself.
-      if (verify.origin !== new URL(origin).origin) throw new OutfitterError("invalid_response", "Outfitter's sign-in link pointed elsewhere.");
-      const interval = Math.max(5, Number(body.interval) || 5);
-      const previous = await read();
-      const state: Pending = {
-        status: "pending",
-        deviceCode: device_code,
-        userCode: user_code,
-        verificationUri: verification_uri,
-        verificationUriComplete: verify.href,
-        interval,
-        nextPollAt: now() + interval * 1000,
-        expiresAt: now() + (Number(body.expires_in) || 600) * 1000,
-      };
-      // Connecting again replaces the old login.
-      if (previous?.state?.status === "connected") await revoke(previous.state.refreshToken);
-      await write(state, null);
-      return view(state);
+    /**
+     * Starts a sign-in: returns Outfitter's consent URL to send the writer to.
+     * `redirectUri` is this site's callback; `returnTo` is where the writer lands after.
+     */
+    async authorize(redirectUri: string, returnTo: string): Promise<string> {
+      const clientId = await client(redirectUri);
+      const state = randomToken();
+      const verifier = randomToken();
+      const authorization: Authorization = { clientId, redirectUri, verifier, returnTo };
+      await db.prepare(`DELETE FROM outfitter_authorizations WHERE expires_at < ?`).bind(now()).run();
+      await db.prepare(`INSERT INTO outfitter_authorizations (state, data, expires_at) VALUES (?, ?, ?)`)
+        .bind(await digest(state), await seal(await key, authorization), now() + AUTHORIZATION_MS).run();
+      const url = new URL(endpoint("authorize"));
+      url.search = new URLSearchParams({
+        response_type: "code",
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        scope: SCOPE,
+        state,
+        code_challenge: await challenge(verifier),
+        code_challenge_method: "S256",
+      }).toString();
+      return url.href;
     },
 
-    /** Checks once whether the writer approved the code. The browser calls this every `interval` seconds. */
-    async poll(): Promise<LoginStatus> {
-      const row = await read();
-      const state = row?.state;
-      if (!row || !state || state.status !== "pending") return view(state);
-      if (state.expiresAt <= now()) {
-        await write(null, row.version);
-        return view(state);
+    /**
+     * Finishes a sign-in from the callback's query. Returns where to send the
+     * writer, or throws an OutfitterError (`access_denied` when declined).
+     */
+    async callback(query: URLSearchParams): Promise<string> {
+      const state = query.get("state");
+      if (!state) throw new OutfitterError("invalid_request", "The sign-in is missing its state.");
+      await schema();
+      // Each state works once.
+      const row = await db.prepare(`DELETE FROM outfitter_authorizations WHERE state = ? RETURNING data, expires_at`)
+        .bind(await digest(state)).first<{ data: string; expires_at: number }>();
+      if (!row || row.expires_at < now()) throw new OutfitterError("invalid_request", "This sign-in expired. Connect again.");
+      const authorization = await open(await key, row.data) as Authorization;
+      const error = query.get("error");
+      if (error) throw new OutfitterError(error, error === "access_denied" ? "Sign-in was declined on Outfitter." : `Outfitter refused the sign-in (${error}).`);
+      const iss = query.get("iss");
+      if (iss && iss !== issuer) throw new OutfitterError("invalid_request", "The sign-in came back from the wrong issuer.");
+      const code = query.get("code");
+      if (!code) throw new OutfitterError("invalid_request", "The sign-in came back without a code.");
+      const { status, body } = await form("token", {
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: authorization.redirectUri,
+        client_id: authorization.clientId,
+        code_verifier: authorization.verifier,
+      });
+      if (status !== 200) {
+        // A registration Outfitter no longer knows is dropped, so the next Connect registers again.
+        if (body.error === "invalid_client")
+          await db.prepare(`DELETE FROM outfitter_clients WHERE redirect_uri = ?`).bind(authorization.redirectUri).run();
+        throw new OutfitterError(String(body.error ?? "token_failed"), `Outfitter would not finish the sign-in (${status}).`);
       }
-      if (now() < state.nextPollAt) return view(state);
-      const { status, body } = await post("/api/oauth/token", { grant_type: DEVICE_GRANT, device_code: state.deviceCode });
-      if (status === 200) {
-        const issued = tokens(body);
-        const connected: Connected = { status: "connected", ...issued, account: await account(issued.accessToken), connectedAt: now() };
-        if (await write(connected, row.version)) return view(connected);
-        // Another tab finished first and our tokens are spare: end that session.
-        await revoke(issued.refreshToken);
-        return view((await read())?.state);
-      }
-      const error = String(body.error ?? "");
-      if (error === "authorization_pending" || error === "slow_down") {
-        const interval = state.interval + (error === "slow_down" ? 5 : 0);
-        const next: Pending = { ...state, interval, nextPollAt: now() + interval * 1000 };
-        await write(next, row.version);
-        return view(next);
-      }
-      // access_denied, expired_token or invalid_grant: this code is finished.
-      if (!(await write(null, row.version))) return view((await read())?.state);
-      return { state: "none", error: error === "access_denied" ? "Sign-in was declined on Outfitter." : "The sign-in code expired. Connect again." };
+      const previous = (await read())?.login;
+      await write({ clientId: authorization.clientId, ...tokens(body), connectedAt: now() });
+      if (previous) await revoke(previous);
+      return authorization.returnTo;
     },
 
     /** Signs out on Outfitter (best effort) and forgets the tokens. */
     async disconnect(): Promise<LoginStatus> {
-      const row = await read();
-      if (row?.state?.status === "connected") await revoke(row.state.refreshToken);
-      await write(null, null);
+      const login = (await read())?.login;
+      if (login) await revoke(login);
+      await write(null);
       return { state: "none" };
+    },
+
+    /** Forces the next accessToken() to refresh, e.g. after the relay answered 401. */
+    async expire(): Promise<void> {
+      const row = await read();
+      if (row?.login) await write({ ...row.login, accessExpiresAt: 0 }, row.version);
     },
 
     /**
@@ -227,9 +230,9 @@ export function outfitterLogin(options: LoginOptions) {
     async accessToken(): Promise<string | null> {
       for (let attempt = 0; attempt < 40; attempt++) {
         const row = await read();
-        const state = row?.state;
-        if (!row || !state || state.status !== "connected") return null;
-        if (state.accessExpiresAt - now() > REFRESH_MARGIN_MS) return state.accessToken;
+        const login = row?.login;
+        if (!row || !login) return null;
+        if (login.accessExpiresAt - now() > REFRESH_MARGIN_MS) return login.accessToken;
         // Take the refresh lease, or wait for whoever holds it.
         const leased = await db.prepare(`UPDATE outfitter_login SET lease_until = ? WHERE id = 1 AND version = ? AND (lease_until IS NULL OR lease_until < ?)`)
           .bind(now() + LEASE_MS, row.version, now()).run();
@@ -238,47 +241,53 @@ export function outfitterLogin(options: LoginOptions) {
           continue;
         }
         // On a network error it is unknown whether Outfitter rotated the token, so the lease is left to expire.
-        const result = await post("/api/oauth/token", { grant_type: "refresh_token", refresh_token: state.refreshToken });
-        if (result.status === 200) {
-          const issued = tokens(result.body);
-          await write({ ...state, ...issued }, row.version);
+        const { status, body } = await form("token", { grant_type: "refresh_token", refresh_token: login.refreshToken, client_id: login.clientId });
+        if (status === 200) {
+          const issued = tokens(body);
+          await write({ ...login, ...issued }, row.version);
           return issued.accessToken;
         }
-        if (result.body.error === "invalid_grant") {
-          // Revoked or expired on Outfitter: signed out.
+        if (status === 400 || status === 401) {
+          // The writer disconnected the site on Outfitter, or the session ended.
           await write(null, row.version);
           return null;
         }
         await db.prepare(`UPDATE outfitter_login SET lease_until = NULL WHERE id = 1 AND version = ?`).bind(row.version).run();
-        throw new OutfitterError(String(result.body.error ?? "refresh_failed"), `Outfitter would not refresh the login (${result.status}).`);
+        throw new OutfitterError(String(body.error ?? "refresh_failed"), `Outfitter would not refresh the login (${status}).`);
       }
       throw new OutfitterError("refresh_busy", "Outfitter's login is being refreshed. Try again.");
     },
   };
-
-  async function revoke(token: string) {
-    await post("/api/oauth/revoke", { token }).catch(() => undefined);
-  }
 }
+
+const encoder = new TextEncoder();
+const base64url = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const randomToken = () => base64url(crypto.getRandomValues(new Uint8Array(32)));
+/** RFC 7636 S256. */
+const challenge = async (verifier: string) => base64url(new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(verifier))));
+/** States are stored hashed, so the table cannot be replayed into a callback. */
+const digest = challenge;
 
 // AES-GCM with a key derived from AUTH_SECRET, so D1 never holds a usable token.
 async function sealingKey(secret: string): Promise<CryptoKey> {
   if (!secret) throw new OutfitterError("no_secret", "AUTH_SECRET is not set.");
-  const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), "HKDF", false, ["deriveKey"]);
+  const material = await crypto.subtle.importKey("raw", encoder.encode(secret), "HKDF", false, ["deriveKey"]);
   return crypto.subtle.deriveKey(
-    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(), info: new TextEncoder().encode("ncrmro.com outfitter-login v1") },
+    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(), info: encoder.encode("ncrmro.com outfitter-login v1") },
     material, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"],
   );
 }
 async function seal(key: CryptoKey, value: unknown): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const data = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(value))));
-  return `${base64(iv)}.${base64(data)}`;
+  const data = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoder.encode(JSON.stringify(value))));
+  return `${base64url(iv)}.${base64url(data)}`;
 }
 async function open(key: CryptoKey, sealed: string): Promise<unknown> {
-  const [iv, data] = sealed.split(".").map(unbase64);
+  const [iv, data] = sealed.split(".").map(unbase64url);
   const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv! }, key, data!);
   return JSON.parse(new TextDecoder().decode(plain));
 }
-const base64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
-const unbase64 = (text: string) => Uint8Array.from(atob(text), (char) => char.charCodeAt(0));
+function unbase64url(text: string): Uint8Array<ArrayBuffer> {
+  const padded = text.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (text.length % 4)) % 4);
+  return Uint8Array.from(atob(padded), (char) => char.charCodeAt(0));
+}
