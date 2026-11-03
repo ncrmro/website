@@ -9,6 +9,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 import cloudflare from '@astrojs/cloudflare';
+import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
@@ -66,6 +67,9 @@ export default defineConfig({
 			},
 		},
 	],
+
+	// React only hydrates the admin's writing assistant island.
+	integrations: [react()],
 
 	adapter: cloudflare({ imageService: 'custom' }),
 });

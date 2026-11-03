@@ -2,6 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { canPublish } from "../writing/policy";
 import { env } from "cloudflare:workers";
+import AssistantSidebar from "../assistant/ui/AssistantSidebar";
+import "../assistant/ui/assistant.css";
 ---
 <BaseLayout title="Admin · Nicholas Romero" description="Manage posts">
   <section class="w-full max-w-4xl py-6" aria-labelledby="admin-heading">
@@ -24,6 +26,7 @@ import { env } from "cloudflare:workers";
       <ul class="admin-post-list"></ul>
     </section>}
   </section>
+  {canPublish(Astro.url.hostname) && <AssistantSidebar scope="desk" client:only="react" />}
   <script>
     import { mountDocumentList } from "../writing/document-list";
     import { wireNewLinks } from "../writing/navigation";

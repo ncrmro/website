@@ -38,6 +38,14 @@
       "binding": "WRITING_CACHE",
       "database_name": "ncrmro-website-document-cache",
       "database_id": "aae5ac8a-b9d6-4b15-8c2c-2a0eafb09ed1"
+    },
+    {
+      // Writing assistant threads. Durable, unlike the document cache; it shares that
+      // database for now under its own assistant_* tables. Point this binding at a
+      // dedicated database by changing database_name/database_id only.
+      "binding": "ASSISTANT_DB",
+      "database_name": "ncrmro-website-document-cache",
+      "database_id": "aae5ac8a-b9d6-4b15-8c2c-2a0eafb09ed1"
     }
   ]
 }

@@ -1,11 +1,14 @@
 import type { EditorHost, EditorState } from "@quiescent/editor/writing";
 import { sizeTitle } from "./editor-title";
+import { setEditorHost } from "../assistant/bridge";
 
 /** Example-only layout: keep Quiescent's controls and their existing event handlers. */
 export function editorLayout(root: HTMLElement, host: EditorHost) {
   const shell = document.getElementById("editor-shell")!;
   const find = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
   root.insertBefore(shell, root.firstChild);
+  // The writing assistant reads the draft on screen when the writer sends a message.
+  setEditorHost(host);
   const { slots } = host;
   const move = (source: HTMLElement, target: string) => find(target).appendChild(source);
   move(slots.status, "[data-save-status]");
@@ -95,6 +98,7 @@ export function editorLayout(root: HTMLElement, host: EditorHost) {
     attributeFilter: ["aria-invalid"],
   });
   return () => {
+    setEditorHost(null);
     window.removeEventListener("resize", resizeTitle);
     validation.disconnect();
     closeSheets();
