@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.94",
+    "@ai-sdk/openai": "^4.0.106",
     "@ai-sdk/react": "^4.0.163",
     "@astrojs/cloudflare": "^14.3.3",
     "@astrojs/react": "~7.0.1",

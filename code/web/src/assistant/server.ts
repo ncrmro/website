@@ -5,7 +5,6 @@ import { collectionApp } from "../writing/pages";
 import { threadStore } from "../threads/store";
 import type { PostSource } from "./tools";
 
-export const MODEL = "claude-opus-5-5";
 const noStore = { "Cache-Control": "private, no-store" };
 
 export function json(value: unknown, status = 200): Response {

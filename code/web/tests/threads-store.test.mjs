@@ -1,35 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { DatabaseSync } from "node:sqlite";
+import { d1 } from "./helpers/d1.mjs";
 import { threadStore } from "../src/threads/store.ts";
 import { DESK_ID, KINDS, writingThreads } from "../src/assistant/threads.ts";
 
-/** The slice of D1 the store uses, over in-memory SQLite. */
-function d1() {
-  const sqlite = new DatabaseSync(":memory:");
-  sqlite.exec("PRAGMA foreign_keys = ON");
-  const statement = (sql, values = []) => ({
-    bind: (...next) => statement(sql, next),
-    first: async () => sqlite.prepare(sql).get(...values) ?? null,
-    all: async () => ({ results: sqlite.prepare(sql).all(...values) }),
-    run: async () => sqlite.prepare(sql).run(...values),
-    exec: () => (/^\s*select/i.test(sql) ? sqlite.prepare(sql).all(...values) : sqlite.prepare(sql).run(...values)),
-  });
-  return {
-    prepare: (sql) => statement(sql),
-    async batch(statements) {
-      sqlite.exec("BEGIN");
-      try {
-        const results = statements.map((item) => item.exec());
-        sqlite.exec("COMMIT");
-        return results;
-      } catch (error) {
-        sqlite.exec("ROLLBACK");
-        throw error;
-      }
-    },
-  };
-}
 const text = (id, role, value) => ({ id, role, parts: [{ type: "text", text: value }] });
 
 test("schema migrations run once and record their version", async () => {

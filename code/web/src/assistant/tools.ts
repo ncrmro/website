@@ -1,9 +1,9 @@
 import { tool } from "ai";
 import { z } from "zod";
 import type { DocumentDraft } from "@quiescent/server";
-import { matchesSearch } from "../writing/listing-view";
+import { matchesSearch } from "../writing/listing-view.ts";
 import type { Thread, ThreadStore } from "../threads/store";
-import { briefOf, KINDS, writingThreads } from "./threads";
+import { briefOf, KINDS, writingThreads } from "./threads.ts";
 
 /** The posts the assistant may read: the private admin listing, never a Git branch checkout. */
 export type PostSource = () => Promise<DocumentDraft[]>;

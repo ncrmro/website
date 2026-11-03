@@ -84,9 +84,16 @@ to a dedicated one is a `wrangler.jsonc` change. Threads never write documents:
 Git and Quiescent remain the only post store.
 
 `/api/assistant/*` sits behind the admin session, the POST origin check and
-`canPublish` (previews never call the model). Replies stream from
-`claude-opus-5-5` through `@ai-sdk/anthropic` and need the Worker secret
-`ANTHROPIC_API_KEY`; without it the chat route answers 503. Brain dumps use the
+`canPublish` (previews never call the model). The model comes from
+`src/assistant/model.ts`: with the Worker secret `OUTFITTER_INFERENCE_TOKEN` (a
+personal `oftr_inf_` token from ai-outfitter.com → More → Inference, valid 90
+days) replies stream from Outfitter's OpenAI-compatible relay
+(`https://ai-outfitter.com/api/inference/v1`, model `flash`, GLM on Outfitter's
+DGX Spark) through `@ai-sdk/openai`. `OUTFITTER_INFERENCE_URL` and
+`OUTFITTER_INFERENCE_MODEL` override the defaults. Without that token,
+`ANTHROPIC_API_KEY` selects `claude-opus-5-5`; with neither the chat route
+answers 503. Requests to the relay never follow redirects.
+Brain dumps use the
 editor's on-device dictation, so only text transcripts leave the browser.
 Assistant text is rendered as text, never HTML.
 

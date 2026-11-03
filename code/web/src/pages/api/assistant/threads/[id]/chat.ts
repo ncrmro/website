@@ -1,10 +1,10 @@
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
-import { createAnthropic } from "@ai-sdk/anthropic";
 import { hasToolCall, type SystemModelMessage, type UIMessage } from "ai";
 import { z } from "zod";
 import { threadInstructions } from "../../../../../assistant/prompts";
-import { assistantStore, fail, MODEL, postSource } from "../../../../../assistant/server";
+import { assistantModel } from "../../../../../assistant/model";
+import { assistantStore, fail, postSource } from "../../../../../assistant/server";
 import { briefOf } from "../../../../../assistant/threads";
 import { assistantTools } from "../../../../../assistant/tools";
 import { streamThreadReply } from "../../../../../threads/reply";
@@ -37,7 +37,8 @@ ${draft.body.trim() || "(the body is empty so far)"}
 
 export const POST: APIRoute = async (context) => {
   context.cache.set(false);
-  if (!env.ANTHROPIC_API_KEY) return fail("The writing assistant is not configured (ANTHROPIC_API_KEY).", 503);
+  const model = assistantModel(env);
+  if (!model) return fail("The writing assistant has no model. Set OUTFITTER_INFERENCE_TOKEN (or ANTHROPIC_API_KEY).", 503);
   const input = turn.safeParse(await context.request.json().catch(() => null));
   if (!input.success) return fail("Invalid input", 400);
   const store = assistantStore();
@@ -46,7 +47,7 @@ export const POST: APIRoute = async (context) => {
 
   const instructions: SystemModelMessage[] = [
     // Stable per kind, so it is cached across turns.
-    { role: "system", content: threadInstructions(thread), providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } } },
+    { role: "system", content: threadInstructions(thread), ...(model.cache ? { providerOptions: model.cache } : {}) },
   ];
   const brief = briefOf(thread);
   if (brief) instructions.push({ role: "system", content: `This subthread was started with this brief:\n${brief}` });
@@ -57,11 +58,11 @@ export const POST: APIRoute = async (context) => {
     store,
     thread,
     message: input.data.message as UIMessage,
-    model: createAnthropic({ apiKey: env.ANTHROPIC_API_KEY })(MODEL),
+    model: model.model,
     instructions,
     tools: ({ replyId }) => assistantTools(thread, store, posts, replyId),
     // A question waits for the writer's answer.
     stopWhen: [hasToolCall("askQuestion")],
-    providerOptions: { anthropic: { effort: "low", fallbacks: "default" } },
+    providerOptions: model.providerOptions,
   });
 };

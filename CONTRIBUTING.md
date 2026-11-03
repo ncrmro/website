@@ -21,5 +21,7 @@ Use Conventional Commits. Keep deployment separate from review and do not deploy
 the full cutover until the checks in [quiescent-concept.md](docs/quiescent-concept.md)
 pass. Production CI needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`;
 repository access is the Worker secret `SERVICE_TOKEN`, never a committed value.
-The writing assistant needs the Worker secret `ANTHROPIC_API_KEY`
-(`bunx wrangler secret put ANTHROPIC_API_KEY`).
+The writing assistant needs the Worker secret `OUTFITTER_INFERENCE_TOKEN`, a
+personal inference token from ai-outfitter.com → More → Inference
+(`bunx wrangler secret put OUTFITTER_INFERENCE_TOKEN`; it expires after 90
+days), or `ANTHROPIC_API_KEY` to use Claude instead.
