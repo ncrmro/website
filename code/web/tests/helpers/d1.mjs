@@ -8,7 +8,7 @@ export function d1() {
     bind: (...next) => statement(sql, next),
     first: async () => sqlite.prepare(sql).get(...values) ?? null,
     all: async () => ({ results: sqlite.prepare(sql).all(...values) }),
-    run: async () => sqlite.prepare(sql).run(...values),
+    run: async () => { const result = sqlite.prepare(sql).run(...values); return { success: true, meta: { changes: Number(result.changes) } }; },
     exec: () => (/^\s*select/i.test(sql) ? sqlite.prepare(sql).all(...values) : sqlite.prepare(sql).run(...values)),
   });
   return {

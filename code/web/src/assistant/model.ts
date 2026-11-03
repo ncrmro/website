@@ -7,13 +7,15 @@ export interface ModelEnv {
   OUTFITTER_INFERENCE_TOKEN?: string;
   OUTFITTER_INFERENCE_URL?: string;
   OUTFITTER_INFERENCE_MODEL?: string;
+  OUTFITTER_CLIENT_ID?: string;
   ANTHROPIC_API_KEY?: string;
 }
 
 /**
  * Outfitter's OpenAI-compatible relay (`/api/inference/v1`). The `flash` model
- * is GLM on Outfitter's DGX Spark; the token is a personal inference token
- * (`oftr_inf_…`) from ai-outfitter.com → More → Inference.
+ * is GLM on Outfitter's DGX Spark. The token is the admin's Outfitter login
+ * (`oftr_at_…`, see outfitter-login.ts) or a personal inference token
+ * (`oftr_inf_…`) set as OUTFITTER_INFERENCE_TOKEN.
  */
 export const OUTFITTER_INFERENCE_URL = "https://ai-outfitter.com/api/inference/v1";
 export const OUTFITTER_MODEL = "flash";
@@ -34,17 +36,24 @@ function outfitterUrl(value: string | undefined): string {
   return url.href.replace(/\/$/, "");
 }
 
+/** Where Outfitter's sign-in lives: the inference relay's origin. */
+export function outfitterOrigin(env: ModelEnv): string {
+  return new URL(outfitterUrl(env.OUTFITTER_INFERENCE_URL)).origin;
+}
+
 /**
- * Outfitter's DGX inference when its token is set, else Claude, else none.
- * Requests never follow redirects, so the token is only sent to the configured host.
+ * Outfitter's DGX inference with the admin's Outfitter login, else with
+ * OUTFITTER_INFERENCE_TOKEN, else Claude, else none. Requests never follow
+ * redirects, so the token is only sent to the configured host.
  */
-export function assistantModel(env: ModelEnv): AssistantModel | null {
-  if (env.OUTFITTER_INFERENCE_TOKEN) {
+export function assistantModel(env: ModelEnv, outfitterToken?: string | null): AssistantModel | null {
+  const token = outfitterToken || env.OUTFITTER_INFERENCE_TOKEN;
+  if (token) {
     const name = env.OUTFITTER_INFERENCE_MODEL || OUTFITTER_MODEL;
     const outfitter = createOpenAI({
       name: "outfitter",
       baseURL: outfitterUrl(env.OUTFITTER_INFERENCE_URL),
-      apiKey: env.OUTFITTER_INFERENCE_TOKEN,
+      apiKey: token,
       fetch: (input, init) => fetch(input, { ...init, redirect: "error" }),
     });
     return {

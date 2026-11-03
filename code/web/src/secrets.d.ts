@@ -3,11 +3,12 @@ interface Env {
  AUTH_SECRET?: string;
  AUTH_GOOGLE_ID?: string;
  AUTH_GOOGLE_SECRET?: string;
- /** Writing assistant model: Outfitter's DGX inference (personal oftr_inf_ token) when set. */
+ /** Optional: a personal oftr_inf_ token, used when the admin has not connected Outfitter from the sidebar. */
  OUTFITTER_INFERENCE_TOKEN?: string;
- /** Optional overrides: the relay URL (…/v1) and model id (default "flash"). */
+ /** Optional overrides: the relay URL (…/v1), model id (default "flash") and OAuth client id (default "outfitter-cli"). */
  OUTFITTER_INFERENCE_URL?: string;
  OUTFITTER_INFERENCE_MODEL?: string;
+ OUTFITTER_CLIENT_ID?: string;
  /** Fallback writing assistant model (Claude) when no Outfitter token is set. */
  ANTHROPIC_API_KEY?: string;
 }

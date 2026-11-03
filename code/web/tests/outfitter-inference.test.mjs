@@ -21,6 +21,8 @@ test("assistantModel prefers Outfitter, falls back to Claude, else none", () => 
   assert.equal(assistantModel({ OUTFITTER_INFERENCE_TOKEN: TOKEN, ANTHROPIC_API_KEY: "k" }).label, "Outfitter flash");
   assert.equal(assistantModel({ ANTHROPIC_API_KEY: "k" }).label, "Claude");
   assert.equal(assistantModel({}), null);
+  // The admin's Outfitter login wins over the token secret.
+  assert.equal(assistantModel({ ANTHROPIC_API_KEY: "k" }, `oftr_at_${"b".repeat(64)}`).label, "Outfitter flash");
   assert.throws(() => assistantModel({ OUTFITTER_INFERENCE_TOKEN: TOKEN, OUTFITTER_INFERENCE_URL: "http://spark.local/v1" }));
 });
 

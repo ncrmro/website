@@ -4,6 +4,8 @@ import type { DocumentDraft } from "@quiescent/server";
 import { collectionApp } from "../writing/pages";
 import { threadStore } from "../threads/store";
 import type { PostSource } from "./tools";
+import { outfitterOrigin } from "./model";
+import { outfitterLogin } from "./outfitter-login";
 
 const noStore = { "Cache-Control": "private, no-store" };
 
@@ -27,3 +29,12 @@ export function postSource(origin: string, cache?: RouteCache): PostSource {
   };
 }
 
+/** The admin's Outfitter login, stored in ASSISTANT_DB. */
+export function assistantLogin() {
+  return outfitterLogin({
+    db: env.ASSISTANT_DB,
+    secret: env.AUTH_SECRET ?? "",
+    origin: outfitterOrigin(env),
+    clientId: env.OUTFITTER_CLIENT_ID,
+  });
+}

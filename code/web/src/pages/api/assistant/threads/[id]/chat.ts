@@ -4,7 +4,7 @@ import { hasToolCall, type SystemModelMessage, type UIMessage } from "ai";
 import { z } from "zod";
 import { threadInstructions } from "../../../../../assistant/prompts";
 import { assistantModel } from "../../../../../assistant/model";
-import { assistantStore, fail, postSource } from "../../../../../assistant/server";
+import { assistantLogin, assistantStore, fail, postSource } from "../../../../../assistant/server";
 import { briefOf } from "../../../../../assistant/threads";
 import { assistantTools } from "../../../../../assistant/tools";
 import { streamThreadReply } from "../../../../../threads/reply";
@@ -37,8 +37,14 @@ ${draft.body.trim() || "(the body is empty so far)"}
 
 export const POST: APIRoute = async (context) => {
   context.cache.set(false);
-  const model = assistantModel(env);
-  if (!model) return fail("The writing assistant has no model. Set OUTFITTER_INFERENCE_TOKEN (or ANTHROPIC_API_KEY).", 503);
+  let login: string | null;
+  try {
+    login = await assistantLogin().accessToken();
+  } catch (cause) {
+    return fail(cause instanceof Error ? cause.message : "Could not reach Outfitter.", 502);
+  }
+  const model = assistantModel(env, login);
+  if (!model) return fail("Connect Outfitter to use the writing assistant.", 503);
   const input = turn.safeParse(await context.request.json().catch(() => null));
   if (!input.success) return fail("Invalid input", 400);
   const store = assistantStore();

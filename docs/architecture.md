@@ -85,14 +85,28 @@ Git and Quiescent remain the only post store.
 
 `/api/assistant/*` sits behind the admin session, the POST origin check and
 `canPublish` (previews never call the model). The model comes from
-`src/assistant/model.ts`: with the Worker secret `OUTFITTER_INFERENCE_TOKEN` (a
-personal `oftr_inf_` token from ai-outfitter.com → More → Inference, valid 90
-days) replies stream from Outfitter's OpenAI-compatible relay
-(`https://ai-outfitter.com/api/inference/v1`, model `flash`, GLM on Outfitter's
-DGX Spark) through `@ai-sdk/openai`. `OUTFITTER_INFERENCE_URL` and
-`OUTFITTER_INFERENCE_MODEL` override the defaults. Without that token,
-`ANTHROPIC_API_KEY` selects `claude-opus-5-5`; with neither the chat route
-answers 503. Requests to the relay never follow redirects.
+`src/assistant/model.ts`. Replies stream from Outfitter's OpenAI-compatible
+relay (`https://ai-outfitter.com/api/inference/v1`, model `flash`, GLM on
+Outfitter's DGX Spark) through `@ai-sdk/openai`, signed in one of two ways:
+
+- **Connect Outfitter** in the sidebar (`src/assistant/outfitter-login.ts`,
+  `/api/assistant/outfitter`). Outfitter issues inference tokens only through
+  the OAuth device authorization grant (RFC 8628), so the Worker requests a
+  code as the `outfitter-cli` public client (scope `inference`), the writer
+  approves it in an ai-outfitter.com tab, and the browser polls until the
+  Worker holds a 15-minute `oftr_at_` access token and a rotating refresh token
+  (30-day session). Both live in the `outfitter_login` row of `ASSISTANT_DB`,
+  AES-GCM encrypted with a key derived from `AUTH_SECRET`; the browser never
+  sees them. Outfitter ends the session if a refresh token is reused, so a
+  refresh takes a 20-second lease on the row and other isolates wait for its
+  result. Disconnect revokes the session on Outfitter.
+- The optional Worker secret `OUTFITTER_INFERENCE_TOKEN` (a personal `oftr_inf_`
+  token, valid 90 days), used when nobody has connected.
+
+`OUTFITTER_INFERENCE_URL`, `OUTFITTER_INFERENCE_MODEL` and `OUTFITTER_CLIENT_ID`
+override the defaults; sign-in goes to the relay URL's origin. With neither
+sign-in, `ANTHROPIC_API_KEY` selects `claude-opus-5-5`; with nothing the chat
+route answers 503. Requests to Outfitter never follow redirects.
 Brain dumps use the
 editor's on-device dictation, so only text transcripts leave the browser.
 Assistant text is rendered as text, never HTML.

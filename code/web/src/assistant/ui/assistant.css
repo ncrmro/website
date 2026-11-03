@@ -116,3 +116,21 @@
 .assistant-dictate { display: flex; flex: 1; min-width: 0; align-items: center; gap: .5rem; }
 .assistant-interim { min-width: 0; color: var(--muted); font-size: .8rem; font-style: italic; overflow-wrap: anywhere; }
 .assistant-send { font-weight: 600; }
+
+.assistant-login { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .75rem; padding: .5rem 1rem; border-bottom: 1px solid var(--border); font-size: .875rem; }
+.assistant-login .assistant-error { flex-basis: 100%; padding: 0; }
+.assistant-login-pending { display: block; }
+.assistant-code { font-family: ui-monospace, monospace; letter-spacing: .08em; }
+.assistant-button {
+  display: inline-block;
+  padding: .4rem .75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: inherit;
+  font-size: .875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.assistant-button:disabled { opacity: .55; cursor: default; }

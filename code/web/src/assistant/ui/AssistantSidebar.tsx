@@ -3,6 +3,7 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { editorPost, readDraft, subscribeEditorPost } from "../bridge";
 import { DictateButton } from "./BrainDump";
+import { OutfitterLogin } from "./OutfitterLogin";
 
 import type { Thread as StoredThread } from "../../threads/store";
 import { KINDS, type WritingKind } from "../threads";
@@ -100,6 +101,7 @@ export default function AssistantSidebar({ scope }: { scope: Scope }) {
           <h2>{view?.thread.title ?? "Writing assistant"}</h2>
           <button type="button" className="assistant-close" aria-label="Close assistant" onClick={() => setOpen(false)}>×</button>
         </header>
+        <OutfitterLogin />
         {view && <ThreadNav view={view} scope={scope} onOpen={setThreadId} />}
         {error && <p className="assistant-error" role="alert">{error}</p>}
         {!view && !error && <p className="assistant-muted">{scope === "post" ? "Opening this post's thread…" : "Opening the writing desk…"}</p>}
