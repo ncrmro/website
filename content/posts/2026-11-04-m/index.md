@@ -17,4 +17,4 @@ So this document is about the sort of trials and tribulations of developing MCP�
 
 
 
-The other thing about the Claude and open AI ChatGPT like like they call it like three different things sometimes it’s sometimes it
+The other thing about the Claude and open AI ChatGPT like like they call it like three different things sometimes it’s sometimes it’s connected sometimes it’s plug-ins but they also don’t refresh
