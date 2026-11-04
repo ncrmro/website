@@ -17,4 +17,4 @@ So this document is about the sort of trials and tribulations of developing MCPâ
 
 
 
-The other thing about the Claude
+The other thing about the Claude and open AI ChatGPT
